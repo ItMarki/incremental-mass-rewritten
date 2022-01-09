@@ -130,7 +130,7 @@ const FORMS = {
             return gain.floor()
         },
         reset() {
-            if (tmp.rp.can) if (player.confirms.rp?confirm("Are you sure to reset?"):true) {
+            if (tmp.rp.can) if (player.confirms.rp?confirm("你確定要重置嗎？"):true) {
                 player.rp.points = player.rp.points.add(tmp.rp.gain)
                 player.rp.unl = true
                 this.doReset()
@@ -186,7 +186,7 @@ const FORMS = {
             return E(1).div(p.add(1))
         },
         reset() {
-            if (tmp.bh.dm_can) if (player.confirms.bh?confirm("Are you sure to reset?"):true) {
+            if (tmp.bh.dm_can) if (player.confirms.bh?confirm("你確定要重置嗎？"):true) {
                 player.bh.dm = player.bh.dm.add(tmp.bh.dm_gain)
                 player.bh.unl = true
                 this.doReset()
@@ -243,14 +243,14 @@ const FORMS = {
     },
     reset_msg: {
         msgs: {
-            rp: "Require over 1e9 tonne of mass to reset previous features for gain Rage Powers",
-            dm: "Require over 1e20 Rage Power to reset all previous features for gain Dark Matters",
-            atom: "Require over 1e100 uni of black hole to reset all previous features for gain Atoms & Quarks",
-            md: "Dilate mass, then cancel",
+            rp: "到達 1e9 噸質量後，重置以往功能以獲得怒氣點",
+            dm: "到達 1e20 怒氣點後，重置以往功能以獲得暗物質",
+            atom: "到達 1e100 宇宙的黑洞後，重置以往所有功能以獲得原子和夸克",
+            md: "膨脹質量，然後取消",
         },
         set(id) {
             if (id=="sn") {
-                player.reset_msg = "Reach over "+format(tmp.supernova.maxlimit)+" collapsed stars to be Supernova"
+                player.reset_msg = "到達 "+format(tmp.supernova.maxlimit)+" 塌縮恆星即可變成超新星"
                 return
             }
             player.reset_msg = this.msgs[id]
@@ -351,7 +351,7 @@ const UPGS = {
         },
         1: {
             unl() { return player.ranks.rank.gte(1) || player.mainUpg.atom.includes(1) },
-            title: "Muscler",
+            title: "提重器",
             start: E(10),
             inc: E(1.5),
             effect(x) {
@@ -364,7 +364,7 @@ const UPGS = {
             effDesc(eff) {
                 return {
                     step: "+"+formatMass(eff.step),
-                    eff: "+"+formatMass(eff.eff)+" to mass gain"
+                    eff: "質量獲得量 +"+formatMass(eff.eff)
                 }
             },
             bouns() {
@@ -376,7 +376,7 @@ const UPGS = {
         },
         2: {
             unl() { return player.ranks.rank.gte(2) || player.mainUpg.atom.includes(1) },
-            title: "Booster",
+            title: "提升器",
             start: E(100),
             inc: E(4),
             effect(x) {
@@ -389,7 +389,7 @@ const UPGS = {
             effDesc(eff) {
                 return {
                     step: "+"+format(eff.step)+"x",
-                    eff: "x"+format(eff.eff)+" to Muscler Power"
+                    eff: "提重器力量 x"+format(eff.eff)
                 }
             },
             bouns() {
@@ -401,7 +401,7 @@ const UPGS = {
         },
         3: {
             unl() { return player.ranks.rank.gte(3) || player.mainUpg.atom.includes(1) },
-            title: "Stronger",
+            title: "增強器",
             start: E(1000),
             inc: E(9),
             effect(x) {
@@ -422,7 +422,7 @@ const UPGS = {
             effDesc(eff) {
                 return {
                     step: "+^"+format(eff.step),
-                    eff: "^"+format(eff.eff)+" to Booster Power"+(eff.eff.gte(eff.ss)?` <span class='soft'>(softcapped${eff.eff.gte(1.8e5)?"^2":""})</span>`:"")
+                    eff: "提升器力量 ^"+format(eff.eff)+(eff.eff.gte(eff.ss)?`<span class='soft'>（軟限制${eff.eff.gte(1.8e5)?"^2":""}）</span>`:"")
                 }
             },
             bouns() {
@@ -445,8 +445,8 @@ const UPGS = {
         over(x,y) { player.main_upg_msg = [x,y] },
         reset() { player.main_upg_msg = [0,0] },
         1: {
-            title: "Rage Upgrades",
-            res: "Rage Power",
+            title: "怒氣升級",
+            res: "怒氣點",
             unl() { return player.rp.unl },
             can(x) { return player.rp.points.gte(this[x].cost) && !player.mainUpg.rp.includes(x) },
             buy(x) {
@@ -458,90 +458,90 @@ const UPGS = {
             auto_unl() { return player.mainUpg.bh.includes(5) },
             lens: 15,
             1: {
-                desc: "Boosters adds Musclers.",
+                desc: "提升器增加提重器。",
                 cost: E(1),
                 effect() {
                     let ret = E(player.massUpg[2]||0)
                     return ret
                 },
                 effDesc(x=this.effect()) {
-                    return "+"+format(x,0)+" Musclers"
+                    return "+"+format(x,0)+" 提重器"
                 },
             },
             2: {
-                desc: "Strongers adds Boosters.",
+                desc: "增強器增加提升器。",
                 cost: E(10),
                 effect() {
                     let ret = E(player.massUpg[3]||0)
                     return ret
                 },
                 effDesc(x=this.effect()) {
-                    return "+"+format(x,0)+" Boosters"
+                    return "+"+format(x,0)+" 提升器"
                 },
             },
             3: {
-                desc: "You can automatically buys mass upgrades.",
+                desc: "你可以自動購買質量升級。",
                 cost: E(25),
             },
             4: {
-                desc: "Ranks no longer resets anything.",
+                desc: "級不再重置任何東西。",
                 cost: E(50),
             },
             5: {
-                desc: "You can automatically rank up.",
+                desc: "你可以自動升級。",
                 cost: E(1e4),
             },
             6: {
-                desc: "You can automatically tier up.",
+                desc: "你可以自動升階。",
                 cost: E(1e5),
             },
             7: {
-                desc: "For every 3 tickspeeds adds Stronger.",
+                desc: "每 3 個時間速度，增加 1 個增強器。",
                 cost: E(1e7),
                 effect() {
                     let ret = player.tickspeed.div(3).add(player.atom.elements.includes(38)?tmp.elements.effect[38]:0).floor()
                     return ret
                 },
                 effDesc(x=this.effect()) {
-                    return "+"+format(x,0)+" Stronger"
+                    return "+"+format(x,0)+" 增強器"
                 },
             },
             8: {
-                desc: "Super Mass Upgrades scaling is weaker by Rage Points.",
+                desc: "怒氣點減輕超級質量升級價格增幅。",
                 cost: E(1e15),
                 effect() {
                     let ret = E(0.9).pow(player.rp.points.max(1).log10().max(1).log10().pow(1.25).softcap(2.5,0.5,0))
                     return ret
                 },
                 effDesc(x=this.effect()) {
-                    return format(E(1).sub(x).mul(100))+"% weaker"+(x.log(0.9).gte(2.5)?" <span class='soft'>(softcapped)</span>":"")
+                    return "弱 "+format(E(1).sub(x).mul(100))+"%"+(x.log(0.9).gte(2.5)?"<span class='soft'>（軟限制）</span>":"")
                 },
             },
             9: {
                 unl() { return player.bh.unl },
-                desc: "Stronger Power is added +^0.25.",
+                desc: "增強器力量增加 ^0.25。",
                 cost: E(1e31),
             },
             10: {
                 unl() { return player.bh.unl },
-                desc: "Super Rank scaling is 20% weaker.",
+                desc: "超級級價格增幅減弱 20%。",
                 cost: E(1e43),
             },
             11: {
                 unl() { return player.chal.unl },
-                desc: "Black Hole mass's gain is boosted by Rage Points.",
+                desc: "怒氣點加強黑洞質量獲得量。",
                 cost: E(1e72),
                 effect() {
                     let ret = player.rp.points.add(1).root(10).softcap('e4000',0.1,0)
                     return ret
                 },
                 effDesc(x=this.effect()) {
-                    return format(x)+"x"+(x.gte("e4000")?" <span class='soft'>(softcapped)</span>":"")
+                    return format(x)+"x"+(x.gte("e4000")?"<span class='soft'>（軟限制）</span>":"")
                 },
             },
             12: {
                 unl() { return player.chal.unl },
-                desc: "For every OoM of Rage Powers adds Stronger Power at a reduced rate.",
+                desc: "基於怒氣點的數量級，稍微加強增強器力量。",
                 cost: E(1e120),
                 effect() {
                     let ret = player.rp.points.max(1).log10().softcap(200,0.75,0).div(1000)
@@ -553,7 +553,7 @@ const UPGS = {
             },
             13: {
                 unl() { return player.chal.unl },
-                desc: "Mass gain softcap starts 3x later for every Rank you have.",
+                desc: "每擁有一個級，質量獲得量軟限制延遲 3x。",
                 cost: E(1e180),
                 effect() {
                     let ret = E(3).pow(player.ranks.rank)
