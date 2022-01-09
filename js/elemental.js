@@ -24,7 +24,7 @@ const ELEMENTS = {
         '鎵','鍺','砷','硒','溴','氪','銣','鍶','釔','鋯',
         '鈮','鉬','鍀','釕','銠','鈀','銀','鎘','銦','錫',
         '銻','碲','碘','氙','銫','鋇','鑭','鈰','鐠','釹',
-        '鉕','釤','銪','釓','鋱','鏑','鈥','鉺','銩','釔',
+        '鉕','釤','銪','釓','鋱','鏑','鈥','鉺','銩','鐿',
         '鑥','鉿','鉭','鎢','錸','鋨','銥','鉑','金','汞',
         '鉈','鉛','鉍','釙','砹','氡','鈁','鐳','錒','釷',
         '鏷','鈾','鎿','鈈','鎇','鋦','錇','鐦','鎄','鐨',
@@ -41,15 +41,15 @@ const ELEMENTS = {
     upgs: [
         null,
         {
-            desc: `Improves quark gain formula is better.`,
+            desc: `改善夸克獲得量公式。`,
             cost: E(5e8),
         },
         {
-            desc: `Hardened Challenge scale 25% weaker.`,
+            desc: `困難挑戰增幅減弱 25%。`,
             cost: E(2.5e12),
         },
         {
-            desc: `Electron Power boost Atomic Powers gain.`,
+            desc: `電子力加強原子力獲得量。`,
             cost: E(1e15),
             effect() {
                 let x = player.atom?player.atom.powers[2].add(1).root(2):E(1)
