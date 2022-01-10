@@ -31,7 +31,7 @@ const SCALE_START = {
 }
 
 const SCALE_TYPE = ['super', 'hyper', 'ultra', 'meta'] // super, hyper, ultra, meta
-const FULL_SCALE_NAME = ['Super', 'Hyper', 'Ultra', 'Meta']
+const FULL_SCALE_NAME = ['超級', '高級', '極高級', '元級']
 
 const SCALING_RES = {
     rank(x=0) { return player.ranks.rank },
@@ -46,15 +46,15 @@ const SCALING_RES = {
 }
 
 const NAME_FROM_RES = {
-	rank: "Rank",
-	tier: "Tier",
-	tetr: "Tetr",
-	massUpg: "Mass Upgrades",
-	tickspeed: "Tickspeed",
-	bh_condenser: "Black Hole Condenser",
-	gamma_ray: "Gamma Ray",
-	supernova: "Supernova",
-	fTier: "Fermion Tier",
+	rank: "級",
+	tier: "階",
+	tetr: "層",
+	massUpg: "質量升級",
+	tickspeed: "時間速度",
+	bh_condenser: "黑洞壓縮器",
+	gamma_ray: "伽馬射線",
+	supernova: "超新星",
+	fTier: "費米子階",
 }
 
 function updateScalingHTML() {
@@ -100,7 +100,7 @@ function getScalingName(name, x=0, y=0) {
 	let amt = SCALING_RES[name](x,y);
 	for (let n = cap - 1; n >= 0; n--) {
 		if (scalingActive(name, amt, Object.keys(SCALE_START)[n]))
-			return capitalFirst(Object.keys(SCALE_START)[n]) + (Object.keys(SCALE_START)[n]=="meta"?"-":" ");
+			return capitalFirst(Object.keys(SCALE_START)[n]) + (Object.keys(SCALE_START)[n]=="元級"?"-":" ");
 	}
 	return current;
 }

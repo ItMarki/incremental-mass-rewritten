@@ -33,7 +33,7 @@ const TABS = {
         4: [
             { id: "粒子" },
             { id: "元素", unl() { return player.chal.comps[7].gte(16) || player.supernova.times.gte(1) } },
-            { id: "質量品質", unl() { return MASS_DILATION.unlocked() }, style: "dilation" },
+            { id: "質量膨脹", unl() { return MASS_DILATION.unlocked() }, style: "dilation" },
         ],
         5: [
             { id: "中子樹" },

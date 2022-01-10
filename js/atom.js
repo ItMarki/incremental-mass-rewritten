@@ -287,7 +287,7 @@ function updateAtomicHTML() {
 	tmp.el.gamma_ray_pow.setTxt(format(tmp.atom.gamma_ray_eff.pow))
 	tmp.el.gamma_ray_eff.setHTML(format(tmp.atom.gamma_ray_eff.eff))
     tmp.el.gamma_ray_auto.setDisplay(player.atom.elements.includes(18))
-	tmp.el.gamma_ray_auto.setTxt(player.atom.auto_gr?"ON":"OFF")
+	tmp.el.gamma_ray_auto.setTxt(player.atom.auto_gr?"開啟":"關閉")
 }
 
 function updateAtomHTML() {

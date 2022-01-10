@@ -243,9 +243,9 @@ const FORMS = {
     },
     reset_msg: {
         msgs: {
-            rp: "到達 1e9 噸質量後，重置以往功能以獲得怒氣點",
-            dm: "到達 1e20 怒氣點後，重置以往功能以獲得暗物質",
-            atom: "到達 1e100 宇宙的黑洞後，重置以往所有功能以獲得原子和夸克",
+            rp: "到達 1e9 噸質量後，重置以往功能以獲得怒氣值",
+            dm: "到達 1e20 怒氣值後，重置以往功能以獲得暗物質",
+            atom: "到達 1e100 uni 的黑洞後，重置以往所有功能以獲得原子和夸克",
             md: "膨脹質量，然後取消",
         },
         set(id) {
@@ -446,7 +446,7 @@ const UPGS = {
         reset() { player.main_upg_msg = [0,0] },
         1: {
             title: "怒氣升級",
-            res: "怒氣點",
+            res: "怒氣值",
             unl() { return player.rp.unl },
             can(x) { return player.rp.points.gte(this[x].cost) && !player.mainUpg.rp.includes(x) },
             buy(x) {
@@ -507,7 +507,7 @@ const UPGS = {
                 },
             },
             8: {
-                desc: "怒氣點減輕超級質量升級價格增幅。",
+                desc: "怒氣值減輕超級質量升級價格增幅。",
                 cost: E(1e15),
                 effect() {
                     let ret = E(0.9).pow(player.rp.points.max(1).log10().max(1).log10().pow(1.25).softcap(2.5,0.5,0))
@@ -529,7 +529,7 @@ const UPGS = {
             },
             11: {
                 unl() { return player.chal.unl },
-                desc: "怒氣點加強黑洞質量獲得量。",
+                desc: "怒氣值加強黑洞質量獲得量。",
                 cost: E(1e72),
                 effect() {
                     let ret = player.rp.points.add(1).root(10).softcap('e4000',0.1,0)
@@ -541,7 +541,7 @@ const UPGS = {
             },
             12: {
                 unl() { return player.chal.unl },
-                desc: "基於怒氣點的數量級，稍微加強增強器力量。",
+                desc: "基於怒氣值的數量級，稍微加強增強器力量。",
                 cost: E(1e120),
                 effect() {
                     let ret = player.rp.points.max(1).log10().softcap(200,0.75,0).div(1000)
@@ -553,7 +553,7 @@ const UPGS = {
             },
             13: {
                 unl() { return player.chal.unl },
-                desc: "每擁有一個級，質量獲得量軟限制延遲 3x。",
+                desc: "每擁有一級，質量獲得量軟限制延遲 3x。",
                 cost: E(1e180),
                 effect() {
                     let ret = E(3).pow(player.ranks.rank)
@@ -565,12 +565,12 @@ const UPGS = {
             },
             14: {
                 unl() { return player.atom.unl },
-                desc: "Hyper Tickspeed starts 50 later.",
+                desc: "高級時間速度價格增幅延遲 50 個。",
                 cost: E('e320'),
             },
             15: {
                 unl() { return player.atom.unl },
-                desc: "Mass boost Atom gain.",
+                desc: "質量加強原子獲得量。",
                 cost: E('e480'),
                 effect() {
                     let ret = player.mass.max(1).log10().pow(1.25)
@@ -582,8 +582,8 @@ const UPGS = {
             },
         },
         2: {
-            title: "Black Hole Upgrades",
-            res: "Dark Matter",
+            title: "黑洞升級",
+            res: "暗物質",
             unl() { return player.bh.unl },
             auto_unl() { return player.mainUpg.atom.includes(2) },
             can(x) { return player.bh.dm.gte(this[x].cost) && !player.mainUpg.bh.includes(x) },
@@ -595,11 +595,11 @@ const UPGS = {
             },
             lens: 15,
             1: {
-                desc: "Mass Upgardes no longer spends mass.",
+                desc: "質量升級不再花費質量。",
                 cost: E(1),
             },
             2: {
-                desc: "Tickspeeds boosts BH Condenser Power.",
+                desc: "時間速度加強黑洞壓縮器力量。",
                 cost: E(10),
                 effect() {
                     let ret = player.tickspeed.add(1).root(8)
@@ -610,26 +610,26 @@ const UPGS = {
                 },
             },
             3: {
-                desc: "Super Mass Upgrade scales later based on mass of Black Hole.",
+                desc: "基於黑洞的陣列，延遲超級質量升級價格增幅。",
                 cost: E(100),
                 effect() {
                     let ret = player.bh.mass.max(1).log10().pow(1.5).softcap(100,1/3,0).floor()
                     return ret.min(400)
                 },
                 effDesc(x=this.effect()) {
-                    return "+"+format(x,0)+" later"+(x.gte(100)?" <span class='soft'>(softcapped)</span>":"")
+                    return "延遲 +"+format(x,0)+(x.gte(100)?"<span class='soft'>（軟限制）</span>":"")
                 },
             },
             4: {
-                desc: "Tiers no longer resets anything.",
+                desc: "階不再重置任何東西。",
                 cost: E(1e4),
             },
             5: {
-                desc: "You can automatically buy tickspeed and Rage Power upgrades.",
+                desc: "你可以自動購買時間速度和怒氣值升級。",
                 cost: E(5e5),
             },
             6: {
-                desc: "Gain 100% of Rage Power gained from reset per second. Rage Powers are boosted by mass of Black Hole.",
+                desc: "每秒獲得重置時獲得的怒氣值的 100%。黑洞質量加強怒氣值獲得量。",
                 cost: E(2e6),
                 effect() {
                     let ret = player.bh.mass.max(1).log10().add(1).pow(2)
@@ -641,24 +641,24 @@ const UPGS = {
             },
             7: {
                 unl() { return player.chal.unl },
-                desc: "Mass gain softcap start later based on mass of Black Hole.",
+                desc: "基於黑洞質量，延遲質量獲得量軟限制。",
                 cost: E(1e13),
                 effect() {
                     let ret = player.bh.mass.add(1).root(3)
                     return ret
                 },
                 effDesc(x=this.effect()) {
-                    return format(x)+"x later"
+                    return "延遲 "+format(x)+"x"
                 },
             },
             8: {
                 unl() { return player.chal.unl },
-                desc: "Raise Rage Power gain by 1.15.",
+                desc: "將怒氣值獲得量加以 1.15 的次方。",
                 cost: E(1e17),
             },
             9: {
                 unl() { return player.chal.unl },
-                desc: "Stronger Effect's softcap start later based on unspent Dark Matters.",
+                desc: "基於未花費暗物質，延遲增強器效果的軟限制。",
                 cost: E(1e27),
                 effect() {
                     let ret = player.bh.dm.max(1).log10().pow(0.5)
@@ -670,34 +670,34 @@ const UPGS = {
             },
             10: {
                 unl() { return player.chal.unl },
-                desc: "Mass gain is boosted by OoM of Dark Matters.",
+                desc: "暗物質的數量級加強質量獲得量。",
                 cost: E(1e33),
                 effect() {
                     let ret = E(2).pow(player.bh.dm.add(1).log10().softcap(11600,0.5,0))
                     return ret
                 },
                 effDesc(x=this.effect()) {
-                    return format(x)+"x"+(x.max(1).log2().gte(11600)?" <span class='soft'>(softcapped)</span>":"")
+                    return format(x)+"x"+(x.max(1).log2().gte(11600)?"<span class='soft'>（軟限制）</span>":"")
                 },
             },
             11: {
                 unl() { return player.atom.unl },
-                desc: "Mass gain softcap is 10% weaker.",
+                desc: "質量獲得量軟限制減弱 10%、",
                 cost: E(1e80),
             },
             12: {
                 unl() { return player.atom.unl },
-                desc: "Hyper Mass Upgrade & Tickspeed scales 15% weaker.",
+                desc: "高級質量升級和時間速度價格增幅減弱 15%。",
                 cost: E(1e120),
             },
             13: {
                 unl() { return player.atom.unl },
-                desc: "Quark gain is multiplied by 10.",
+                desc: "夸克獲得量乘以 10。",
                 cost: E(1e180),
             },
             14: {
                 unl() { return player.atom.unl },
-                desc: "Neutron Powers boosts mass of Black Hole gain.",
+                desc: "中子力加強黑洞質量獲得量。",
                 cost: E(1e210),
                 effect() {
                     let ret = player.atom.powers[1].add(1).pow(2)
@@ -709,7 +709,7 @@ const UPGS = {
             },
             15: {
                 unl() { return player.atom.unl },
-                desc: "Atomic Powers adds Black Hole Condensers at a reduced rate.",
+                desc: "原子力稍微增加黑洞壓縮器。",
                 cost: E('e420'),
                 effect() {
                     let ret = player.atom.atomic.add(1).log(5)
@@ -721,8 +721,8 @@ const UPGS = {
             },
         },
         3: {
-            title: "Atom Upgrades",
-            res: "Atom",
+            title: "原子升級",
+            res: "原子",
             unl() { return player.atom.unl },
             can(x) { return player.atom.points.gte(this[x].cost) && !player.mainUpg.atom.includes(x) },
             buy(x) {
@@ -734,19 +734,19 @@ const UPGS = {
             auto_unl() { return player.supernova.tree.includes("qol1") },
             lens: 12,
             1: {
-                desc: "Start with Mass upgrades unlocked.",
+                desc: "開始時解鎖質量升級。",
                 cost: E(1),
             },
             2: {
-                desc: "You can automatically buy BH Condenser and upgrades. Tickspeed no longer spent Rage Powers.",
+                desc: "你可以自動購買黑洞壓縮器和升級。時間速度不再花費怒氣值。",
                 cost: E(100),
             },
             3: {
-                desc: "[Tetr Era] Unlock Tetr.",
+                desc: "[層的紀元] 解鎖層。",
                 cost: E(25000),
             },
             4: {
-                desc: "Keep 1-4 Challenge on reset. BH Condensers adds Gamma Rays Power at a reduced rate.",
+                desc: "重置時保留挑戰 1-4。黑洞壓縮器稍微加強伽馬射線力量。",
                 cost: E(1e10),
                 effect() {
                     let ret = player.bh.condenser.pow(0.8).mul(0.01)
@@ -757,22 +757,22 @@ const UPGS = {
                 },
             },
             5: {
-                desc: "You can automatically Tetr up. Super Tier starts 10 later.",
+                desc: "你可以自動升層。超級階延遲 10 個。",
                 cost: E(1e16),
             },
             6: {
-                desc: "Gain 100% of Dark Matters gained from reset per second. Mass gain from Black Hole softcap starts later based on Atomic Powers.",
+                desc: "每秒獲得重置時獲得的暗物質的 100%。基於原子力，延遲黑洞質量獲得量軟限制。",
                 cost: E(1e18),
                 effect() {
                     let ret = player.atom.atomic.add(1).pow(0.5)
                     return ret
                 },
                 effDesc(x=this.effect()) {
-                    return format(x)+"x later"
+                    return "延遲 "+format(x)+"x"
                 },
             },
             7: {
-                desc: "Tickspeed boost each particle powers gain.",
+                desc: "時間速度加強每個粒子力的獲得量。",
                 cost: E(1e25),
                 effect() {
                     let ret = E(1.025).pow(player.tickspeed)
@@ -783,7 +783,7 @@ const UPGS = {
                 },
             },
             8: {
-                desc: "Atomic Powers boosts Quark gain.",
+                desc: "原子力加強夸克獲得量。",
                 cost: E(1e35),
                 effect() {
                     let ret = player.atom.atomic.max(1).log10().add(1)
@@ -794,23 +794,23 @@ const UPGS = {
                 },
             },
             9: {
-                desc: "Stronger effect softcap is 15% weaker.",
+                desc: "增強器效果軟限制減弱 15%。",
                 cost: E(2e44),
             },
             10: {
-                desc: "Tier requirement is halved. Hyper Rank starts later based on Tiers you have.",
+                desc: "階需求減半。基於所擁有的階，延遲高級級價格增幅。",
                 cost: E(5e47),
                 effect() {
                     let ret = player.ranks.tier.mul(2).floor()
                     return ret
                 },
                 effDesc(x=this.effect()) {
-                    return "+"+format(x,0)+" later"
+                    return "延遲 +"+format(x,0)
                 },
             },
             11: {
                 unl() { return MASS_DILATION.unlocked() },
-                desc: "Dilated mass also boost BH Condenser & Gamma Ray powers at a reduced rate.",
+                desc: "膨脹質量稍微加強黑洞壓縮器和伽馬射線力量。",
                 cost: E('e1640'),
                 effect() {
                     let ret = player.md.mass.max(1).log10().add(1).pow(0.1)
@@ -822,7 +822,7 @@ const UPGS = {
             },
             12: {
                 unl() { return MASS_DILATION.unlocked() },
-                desc: "Mass from Black Hole effect is better.",
+                desc: "黑洞質量效果更強。",
                 cost: E('e2015'),
                 effect() {
                     let ret = E(1)
@@ -859,7 +859,7 @@ function loop() {
 function format(ex, acc=4, type=player.options.notation) {
     ex = E(ex)
     neg = ex.lt(0)?"-":""
-    if (ex.mag == Infinity) return neg + 'Infinity'
+    if (ex.mag == Infinity) return neg + '無限'
     if (Number.isNaN(ex.mag)) return neg + 'NaN'
     if (ex.lt(0)) ex = ex.mul(-1)
     if (ex.eq(0)) return ex.toFixed(acc)
@@ -916,8 +916,8 @@ function formatMass(ex) {
 
 function formatGain(amt, gain, isMass=false) {
     let f = isMass?formatMass:format
-	if (gain.gte(1e100) && gain.gt(amt)) return "(+"+format(gain.max(1).log10().sub(amt.max(1).log10().max(1)).times(50))+" OoMs/sec)"
-	else return "(+"+f(gain)+"/sec)"
+	if (gain.gte(1e100) && gain.gt(amt)) return "（+"+format(gain.max(1).log10().sub(amt.max(1).log10().max(1)).times(50))+" 數量級/秒）"
+	else return "(+"+f(gain)+"/秒)"
 }
 
 function formatTime(ex,type="s") {

@@ -56,23 +56,23 @@ const ELEMENTS = {
                 if (x.gte('e1e4')) x = expMult(x.div('e1e4'),0.9).mul('e1e4')
                 return x
             },
-            effDesc(x) { return format(x)+"x"+(x.gte('e1e4')?" <span class='soft'>(softcapped)</span>":"") },
+            effDesc(x) { return format(x)+"x"+(x.gte('e1e4')?"<span class='soft'>（軟限制）</span>":"") },
         },
         {
-            desc: `Stronger's power is stronger based on Proton Powers.`,
+            desc: `基於質子力，加強增強器力量。`,
             cost: E(2.5e16),
             effect() {
                 let x = player.atom?player.atom.powers[0].max(1).log10().pow(0.8).div(50).add(1):E(1)
                 return x
             },
-            effDesc(x) { return format(x)+"x stronger" },
+            effDesc(x) { return "加強 "+format(x)+"x" },
         },
         {
-            desc: `The 7th challenge's effect is twice as effective.`,
+            desc: `第 7 挑戰的效果翻倍。`,
             cost: E(1e18),
         },
         {
-            desc: `Gain 1% more quarks for each challenge completion.`,
+            desc: `每完成一次挑戰，夸克獲得量增加 1%。`,
             cost: E(5e18),
             effect() {
                 let x = E(0)
@@ -83,7 +83,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Carbon's effect is now multiplied by the number of elements bought.`,
+            desc: `碳的效果乘以已購買元素數。`,
             cost: E(1e20),
             effect() {
                 let x = E(player.atom.elements.length+1)
@@ -93,27 +93,27 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `C2's reward's softcap is 75% weaker.`,
+            desc: `C2 獎勵的軟限制減弱 75%。`,
             cost: E(1e21),
         },
         {
-            desc: `The Tetr requirement is 15% weaker.`,
+            desc: `層需求減弱 15%。`,
             cost: E(6.5e21),
         },
         {
-            desc: `3rd & 4th challenges' scaling is weakened.`,
+            desc: `減弱第 3 和 4 挑戰的增幅。`,
             cost: E(1e24),
         },
         {
-            desc: `Nitrogen's multiplier is squared.`,
+            desc: `將氮的倍數平方。`,
             cost: E(1e27),
         },
         {
-            desc: `Power's gain from each particle formula is better.`,
+            desc: `改善每個原子力的獲得量的公式。`,
             cost: E(1e29),
         },
         {
-            desc: `For every c7 completion, add 2 c5 & 6 completion.`,
+            desc: `每完成一次 C7，C5 和 C6 的完成上限增加 2。`,
             cost: E(2.5e30),
             effect() {
                 let x = player.chal.comps[7].mul(2)
@@ -122,15 +122,15 @@ const ELEMENTS = {
             effDesc(x) { return "+"+format(x) },
         },
         {
-            desc: `Passively gain 5% of the quarks you would get from resetting each second.`,
+            desc: `每秒獲得重置時獲得的夸克的 5%。`,
             cost: E(1e33),
         },
         {
-            desc: `Super BH Condenser & Gamma Ray scales 20% weaker.`,
+            desc: `超級黑洞壓縮器和伽馬射線的價格增幅減弱 20%。`,
             cost: E(1e34),
         },
         {
-            desc: `Silicon now gets +2% for each element bought.`,
+            desc: `每購買一個元素，硅的效果增加 2%。`,
             cost: E(5e38),
             effect() {
                 let x = player.atom.elements.length*0.02
@@ -139,11 +139,11 @@ const ELEMENTS = {
             effDesc(x) { return "+"+format(x*100)+"%" },
         },
         {
-            desc: `Raise Atom's gain by 1.1.`,
+            desc: `原子獲得量 ^1.1。`,
             cost: E(1e40),
         },
         {
-            desc: `You can now automatically buy gamma rays. Gamma ray raise tickspeed effect at an extremely reduced rate.`,
+            desc: `你可以自動購買伽馬射線。伽馬射線極稍微加強時間速度效果。`,
             cost: E(1e44),
             effect() {
                 let x = player.atom.gamma_ray.pow(0.35).mul(0.01).add(1)
@@ -152,19 +152,19 @@ const ELEMENTS = {
             effDesc(x) { return "^"+format(x) },
         },
         {
-            desc: `2nd Neutron's effect is better.`,
+            desc: `改善中子的第二效果。`,
             cost: E(1e50),
         },
         {
-            desc: `Adds 50 more C7 maximum completions.`,
+            desc: `C7 完成上限增加 50 個。`,
             cost: E(1e53),
         },
         {
-            desc: `Unlock Mass Dilation.`,
+            desc: `解鎖質量膨脹。`,
             cost: E(1e56),
         },
         {
-            desc: `Dilated mass gain is affected by tickspeed at a reduced rate.`,
+            desc: `時間速度稍微增加膨脹質量獲得量。`,
             cost: E(1e61),
             effect() {
                 let x = E(1.25).pow(player.tickspeed.pow(0.55))
@@ -173,7 +173,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `The Atomic Power effect is better.`,
+            desc: `改善原子力效果。`,
             cost: E(1e65),
         },
         {

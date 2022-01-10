@@ -1,6 +1,6 @@
 const RANKS = {
     names: ['rank', 'tier', 'tetr'],
-    fullNames: ['Rank', 'Tier', 'Tetr'],
+    fullNames: ['級', '階', '層'],
     reset(type) {
         if (tmp.ranks[type].can) {
             player.ranks[type] = player.ranks[type].add(1)

@@ -60,11 +60,11 @@
     </div>
     <div id='app_supernova' style='display: none'>
         <div style="position: absolute; top: 25px; left: 25px;">
-            <button class="btn" onclick="tmp.tab = tmp.sn_tab;">返回主頁</button>
-            <button class="btn" onclick="SUPERNOVA.reset(true)">重置但不變成超新星</button>
+            <button class="btn" onclick="tmp.tab = tmp.sn_tab;">返回主要標籤</button>
+            <button class="btn" onclick="SUPERNOVA.reset(true)">重置但不超新星</button>
         </div>
         <div style="min-height: 70px; margin-top: 15px;">
-            <h2>你成為了 <span id="supernova_rank"></span> <span id="supernova_scale"></span> 次超新星</h2><br>
+            <h2>你變成了 <span id="supernova_rank"></span> <span id="supernova_scale"></span> 次超新星</h2><br>
             下一次超新星在 <span id="supernova_next">X</span> 個恆星
         </div>
         <div style="width: 100%; border-bottom: solid 2px white; height: 5px; margin-bottom: 13px;"></div>
@@ -179,9 +179,9 @@
                             <img src="images/tickspeed.png">
                             <span style="margin-left: 5px; text-align: left;"><span id="tickspeed_scale"></span>時間速度 [<span id="tickspeed_lvl">X</span>]</span>
                         </div>
-                    </div><button id="tickspeed_btn" class="btn" style="width: 200px;" onclick="FORMS.tickspeed.buy()">價格：<span id="tickspeed_cost">X</span> 怒氣點</button>
+                    </div><button id="tickspeed_btn" class="btn" style="width: 200px;" onclick="FORMS.tickspeed.buy()">價格：<span id="tickspeed_cost">X</span> 怒氣值</button>
                     <button class="btn" style="width: 120px;" onclick="FORMS.tickspeed.buyMax()">購買最大</button>
-                    <button id="tickspeed_auto" class="btn" style="width: 80px;" onclick="FORMS.tickspeed.autoSwitch()">關</button>
+                    <button id="tickspeed_auto" class="btn" style="width: 80px;" onclick="FORMS.tickspeed.autoSwitch()">關閉</button>
                     <div style="margin-left: 5px; text-align: left; width: 400px">
                         時間速度力量：<span id="tickspeed_step">X</span><br>
                         時間速度效果：質量獲得量 <span id="tickspeed_eff">X</span>x
@@ -203,7 +203,7 @@
                         </div>
                     </div><button id="bhCondenser_btn" class="btn" style="width: 200px;" onclick="FORMS.bh.condenser.buy()">價格：<span id="bhCondenser_cost">X</span> 暗物質</button>
                     <button class="btn" style="width: 120px;" onclick="FORMS.bh.condenser.buyMax()">購買最大</button>
-                    <button id="bhCondenser_auto" class="btn" style="width: 80px;" onclick="FORMS.bh.condenser.autoSwitch()">關</button>
+                    <button id="bhCondenser_auto" class="btn" style="width: 80px;" onclick="FORMS.bh.condenser.autoSwitch()">關閉</button>
                     <div style="margin-left: 5px; text-align: left; width: 400px">
                         黑洞壓縮器力量：<span id="bhCondenser_pow">X</span>x<br>
                     </div>
@@ -221,7 +221,7 @@
                         </div>
                     </div><button id="gamma_ray_btn" class="btn" style="width: 200px;" onclick="ATOM.gamma_ray.buy()">價格：<span id="gamma_ray_cost">X</span> 原子</button>
                     <button class="btn" style="width: 120px;" onclick="ATOM.gamma_ray.buyMax()">購買最大</button>
-                    <button id="gamma_ray_auto" class="btn" style="width: 80px;" onclick="player.atom.auto_gr = !player.atom.auto_gr">關</button>
+                    <button id="gamma_ray_auto" class="btn" style="width: 80px;" onclick="player.atom.auto_gr = !player.atom.auto_gr">關閉</button>
                     <div style="margin-left: 5px; text-align: left; width: 400px">
                         伽馬射線力量：<span id="gamma_ray_pow">X</span>x<br>
                         伽馬射線效果：<span id="gamma_ray_eff">X</span>
@@ -293,7 +293,7 @@
             <button class="btn" onclick="importy()">導入</button>
             <button class="btn" onclick="window.open('https://discord.gg/Ekp8FsSwzR')">加入Discord</button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.help)">幫助</button><br>
-            <button class="btn" onclick="turnOffline()">離線進度：<span id="offline_active">開</span></button>
+            <button class="btn" onclick="turnOffline()">離線進度：<span id="offline_active">開啟</span></button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.fonts)">字體</button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.notations)">標記法</button><br><br>
             <h2>Confirmation Settings</h2><br>

@@ -51,7 +51,7 @@ const MASS_DILATION = {
         },
         ids: [
             {
-                desc: `Double dilated mass gain.`,
+                desc: `翻倍膨脹質量獲得量。`,
                 cost(x) { return E(10).pow(x).mul(10) },
                 bulk() { return player.md.mass.gte(10)?player.md.mass.div(10).max(1).log10().add(1).floor():E(0) },
                 effect(x) {
@@ -59,37 +59,37 @@ const MASS_DILATION = {
                     if (player.atom.elements.includes(25)) b++
                     return E(b).pow(x.mul(tmp.md.upgs[11].eff||1)).softcap('e1.2e4',0.96,2)//.softcap('e2e4',0.92,2)
                 },
-                effDesc(x) { return format(x,0)+"x"+(x.gte('e1.2e4')?` <span class='soft'>(softcapped${x.gte('e2e400')?"^2":""})</span>`:"")},
+                effDesc(x) { return format(x,0)+"x"+(x.gte('e1.2e4')?`<span class='soft'>（軟限制${x.gte('e2e400')?"^2":""}）</span>`:"")},
             },{
-                desc: `Make dilated mass effect stronger.`,
+                desc: `加強膨脹質量效果。`,
                 cost(x) { return E(10).pow(x).mul(100) },
                 bulk() { return player.md.mass.gte(100)?player.md.mass.div(100).max(1).log10().add(1).floor():E(0) },
                 effect(x) {
                     return player.md.upgs[7].gte(1)?x.mul(tmp.md.upgs[11].eff||1).root(1.5).mul(0.25).add(1):x.mul(tmp.md.upgs[11].eff||1).root(2).mul(0.15).add(1)
                 },
-                effDesc(x) { return (x.gte(10)?format(x)+"x":format(x.sub(1).mul(100))+"%")+" stronger" },
+                effDesc(x) { return "加強 "+(x.gte(10)?format(x)+"x":format(x.sub(1).mul(100))+"%")},
             },{
-                desc: `Double relativistic particles gain.`,
+                desc: `翻倍相對粒子獲得量。`,
                 cost(x) { return E(10).pow(x.pow(E(1.25).pow(tmp.md.upgs[4].eff||1))).mul(1000) },
                 bulk() { return player.md.mass.gte(1000)?player.md.mass.div(1000).max(1).log10().root(E(1.25).pow(tmp.md.upgs[4].eff||1)).add(1).floor():E(0) },
                 effect(x) { return E(2).pow(x.mul(tmp.md.upgs[11].eff||1)).softcap(1e25,0.75,0) },
-                effDesc(x) { return format(x,0)+"x"+(x.gte(1e25)?" <span class='soft'>(softcapped)</span>":"") },
+                effDesc(x) { return format(x,0)+"x"+(x.gte(1e25)?"<span class='soft'>（軟限制）</span>":"") },
             },{
-                desc: `Dilated mass also boost Stronger's power.`,
+                desc: `膨脹質量加強增強器力量。`,
                 maxLvl: 1,
                 cost(x) { return E(1.619e20).mul(25) },
                 bulk() { return player.md.mass.gte(E(1.619e20).mul(25))?E(1):E(0) },
                 effect(x) { return player.md.mass.max(1).log(100).root(3).div(8).add(1) },
                 effDesc(x) { return format(x)+"x" },
             },{
-                desc: `Mass Dilation upgrade 3 scales 10% weaker.`,
+                desc: `質量膨脹升級 3 的價格增幅減弱 10%。`,
                 maxLvl: 5,
                 cost(x) { return E(1e5).pow(x).mul(E(1.619e20).mul(1e4)) },
                 bulk() { return player.md.mass.gte(E(1.619e20).mul(1e4))?player.md.mass.div(E(1.619e20).mul(1e4)).max(1).log(1e5).add(1).floor():E(0) },
                 effect(x) { return E(1).sub(x.mul(0.1)) },
-                effDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
+                effDesc(x) { return "減弱 "+format(E(1).sub(x).mul(100))+"%" },
             },{
-                desc: `Increase the exponent of the RP formula.`,
+                desc: `增加相對粒子公式的次方。`,
                 cost(x) { return E(1e3).pow(x.pow(1.5)).mul(1.5e73) },
                 bulk() { return player.md.mass.gte(1.5e73)?player.md.mass.div(1.5e73).max(1).log(1e3).max(0).root(1.5).add(1).floor():E(0) },
                 effect(i) {
@@ -98,22 +98,22 @@ const MASS_DILATION = {
                     if (player.atom.elements.includes(53)) x = x.mul(1.75)
                     return x.softcap(1e3,0.6,0)
                 },
-                effDesc(x) { return "+^"+format(x)+(x.gte(1e3)?" <span class='soft'>(softcapped)</span>":"") },
+                effDesc(x) { return "+^"+format(x)+(x.gte(1e3)?"<span class='soft'>（軟限制）</span>":"") },
             },{
-                desc: `Dilated mass boost quarks gain.`,
+                desc: `膨脹質量加強夸克獲得量。`,
                 maxLvl: 1,
                 cost(x) { return E(1.5e191) },
                 bulk() { return player.md.mass.gte(1.5e191)?E(1):E(0) },
                 effect(x) { return E(5).pow(player.md.mass.max(1).log10().root(2)) },
                 effDesc(x) { return format(x)+"x" },
             },{
-                desc: `Mass Dilation upgrade 2 effect's formula is better.`,
+                desc: `質量膨脹升級 2 效果的公式更好。`,
                 maxLvl: 1,
                 cost(x) { return E(1.5e246) },
                 bulk() { return player.md.mass.gte(1.5e246)?E(1):E(0) },
             },{
                 unl() { return STARS.unlocked() || player.supernova.times.gte(1) },
-                desc: `Tickspeed affect all-star resources at a reduced rate.`,
+                desc: `時間速度稍微加強所有恆星資源。`,
                 maxLvl: 1,
                 cost(x) { return E(1.5e296) },
                 bulk() { return player.md.mass.gte(1.5e296)?E(1):E(0) },
@@ -121,31 +121,31 @@ const MASS_DILATION = {
                 effDesc(x) { return format(x)+"x" },
             },{
                 unl() { return STARS.unlocked() || player.supernova.times.gte(1) },
-                desc: `Double quarks gain.`,
+                desc: `翻倍夸克獲得量。`,
                 cost(x) { return E(5).pow(x).mul('1.50001e536') },
                 bulk() { return player.md.mass.gte('1.50001e536')?player.md.mass.div('1.50001e536').max(1).log(5).add(1).floor():E(0) },
                 effect(x) {
                     return E(2).pow(x).softcap(1e25,2/3,0)
                 },
-                effDesc(x) { return format(x)+"x"+(x.gte(1e25)?" <span class='soft'>(softcapped)</span>":"") },
+                effDesc(x) { return format(x)+"x"+(x.gte(1e25)?"<span class='soft'>（軟限制）</span>":"") },
             },{
                 unl() { return player.supernova.times.gte(1) },
-                desc: `Add 0.015 Mass Dilation upgrade 6's base.`,
+                desc: `對質量膨脹升級 6 的底數增加 0.015。`,
                 cost(x) { return E(1e50).pow(x.pow(1.5)).mul('1.50001e1556') },
                 bulk() { return player.md.mass.gte('1.50001e1556')?player.md.mass.div('1.50001e1556').max(1).log(1e50).max(0).root(1.5).add(1).floor():E(0) },
                 effect(x) {
                     return x.mul(0.015).add(1).softcap(1.2,0.75,0).sub(1)
                 },
-                effDesc(x) { return "+"+format(x)+(x.gte(0.2)?" <span class='soft'>(softcapped)</span>":"") },
+                effDesc(x) { return "+"+format(x)+(x.gte(0.2)?"<span class='soft'>（軟限制）</span>":"") },
             },{
                 unl() { return player.supernova.post_10 },
-                desc: `First 3 Mass Dilation upgrades are stronger.`,
+                desc: `加強首 3 個質量膨脹升級。`,
                 cost(x) { return E(1e100).pow(x.pow(2)).mul('1.5e8056') },
                 bulk() { return player.md.mass.gte('1.5e8056')?player.md.mass.div('1.5e8056').max(1).log(1e100).max(0).root(2).add(1).floor():E(0) },
                 effect(x) {
                     return x.pow(0.5).softcap(3.5,0.5,0).div(100).add(1)
                 },
-                effDesc(x) { return "+"+format(x.sub(1).mul(100))+"% stronger" },
+                effDesc(x) { return "加強 +"+format(x.sub(1).mul(100))+"%" },
             },
         ],
     },
@@ -161,7 +161,7 @@ function setupMDHTML() {
         <div style="min-height: 80px">
             [Level <span id="md_upg${i}_lvl"></span>]<br>
             ${upg.desc}<br>
-            ${upg.effDesc?`Currently: <span id="md_upg${i}_eff"></span>`:""}
+            ${upg.effDesc?`目前：<span id="md_upg${i}_eff"></span>`:""}
         </div>
         <span id="md_upg${i}_cost"></span>
         </button>
@@ -197,8 +197,8 @@ function updateMDHTML() {
     tmp.el.md_eff.setTxt(tmp.md.mass_eff.gte(10)?format(tmp.md.mass_eff)+"x":format(tmp.md.mass_eff.sub(1).mul(100))+"%")
     tmp.el.md_mass.setTxt(formatMass(player.md.mass)+" "+formatGain(player.md.mass,tmp.md.mass_gain,true))
     tmp.el.md_btn.setTxt(player.md.active
-        ?(tmp.md.rp_gain.gte(1)?`Cancel for ${format(tmp.md.rp_gain,0)} Relativistic particles`:`Reach ${formatMass(tmp.md.mass_req)} to gain Relativistic particles, or cancel dilation`)
-        :"Dilate Mass"
+        ?(tmp.md.rp_gain.gte(1)?`取消以獲得 ${format(tmp.md.rp_gain,0)} 相對粒子：`:`到達 ${formatMass(tmp.md.mass_req)} 以獲得相對粒子，或取消膨脹`)
+        :"膨脹質量"
     )
     for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) {
         let upg = MASS_DILATION.upgs.ids[x]
@@ -208,7 +208,7 @@ function updateMDHTML() {
             tmp.el["md_upg"+x+"_div"].setClasses({btn: true, full: true, md: true, locked: !tmp.md.upgs[x].can})
             tmp.el["md_upg"+x+"_lvl"].setTxt(format(player.md.upgs[x],0)+(upg.maxLvl!==undefined?" / "+format(upg.maxLvl,0):""))
             if (upg.effDesc) tmp.el["md_upg"+x+"_eff"].setHTML(upg.effDesc(tmp.md.upgs[x].eff))
-            tmp.el["md_upg"+x+"_cost"].setTxt(player.md.upgs[x].lt(upg.maxLvl||1/0)?"Cost: "+formatMass(tmp.md.upgs[x].cost):"")
+            tmp.el["md_upg"+x+"_cost"].setTxt(player.md.upgs[x].lt(upg.maxLvl||1/0)?"價格："+formatMass(tmp.md.upgs[x].cost):"")
         }
     }
 }

@@ -19,16 +19,16 @@ function updateChalHTML() {
     }
     tmp.el.chal_enter.setVisible(player.chal.active == 0)
     tmp.el.chal_exit.setVisible(player.chal.active != 0)
-    tmp.el.chal_exit.setTxt(tmp.chal.canFinish ? "Finish Challenge for +"+tmp.chal.gain+" Completions" : "Exit Challenge")
+    tmp.el.chal_exit.setTxt(tmp.chal.canFinish ? "完成挑戰以獲得 +"+tmp.chal.gain+" 完成次數" : "退出挑戰")
     tmp.el.chal_desc_div.setDisplay(player.chal.choosed != 0)
     if (player.chal.choosed != 0) {
         let chal = CHALS[player.chal.choosed]
-        tmp.el.chal_ch_title.setTxt(`[${player.chal.choosed}]${player.chal.comps[player.chal.choosed].gte(player.chal.choosed>8?10:75)?player.chal.comps[player.chal.choosed].gte(player.chal.choosed==8?200:300)?" Insane":" Hardened":""} ${chal.title} [${player.chal.comps[player.chal.choosed]+"/"+tmp.chal.max[player.chal.choosed]} Completions]`)
+        tmp.el.chal_ch_title.setTxt(`[${player.chal.choosed}]${player.chal.comps[player.chal.choosed].gte(player.chal.choosed>8?10:75)?player.chal.comps[player.chal.choosed].gte(player.chal.choosed==8?200:300)?" 魔王":" 困難":""} ${chal.title} [${player.chal.comps[player.chal.choosed]+"/"+tmp.chal.max[player.chal.choosed]} 完成次數]`)
         tmp.el.chal_ch_desc.setHTML(chal.desc)
         tmp.el.chal_ch_reset.setTxt(CHALS.getReset(player.chal.choosed))
-        tmp.el.chal_ch_goal.setTxt("Goal: "+CHALS.getFormat(player.chal.choosed)(tmp.chal.goal[player.chal.choosed])+CHALS.getResName(player.chal.choosed))
-        tmp.el.chal_ch_reward.setHTML("Reward: "+chal.reward)
-        tmp.el.chal_ch_eff.setHTML("Currently: "+chal.effDesc(tmp.chal.eff[player.chal.choosed]))
+        tmp.el.chal_ch_goal.setTxt("目標："+CHALS.getFormat(player.chal.choosed)(tmp.chal.goal[player.chal.choosed])+CHALS.getResName(player.chal.choosed))
+        tmp.el.chal_ch_reward.setHTML("獎勵："+chal.reward)
+        tmp.el.chal_ch_eff.setHTML("目前："+chal.effDesc(tmp.chal.eff[player.chal.choosed]))
     }
 }
 
