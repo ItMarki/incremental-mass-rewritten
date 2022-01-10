@@ -28,16 +28,16 @@ function updateNotify() {
 const POPUP_GROUPS = {
     help: {
         html: `
-        <h1>Mass</h1><br>
-        g (gram): 1 g<br>
-        kg (kilogram): 1,000 g<br>
-        tonne (tonne): 1,000 kg = 1,000,000 g<br>
-        MME (mass of Mount Everest): 1.619e14 tonne = 1.619e20 g<br>
-        M⊕ (mass of Earth): 36,886,967 MME = 5.972e27 g<br>
-        M☉ (mass of Sun): 333,054 M⊕ = 1.989e33 g<br>
-        MMWG (mass of Milky Way Galaxy): 1.5e12 M☉ = 2.9835e45 g<br>
-        uni (mass of Universe): 50,276,520,864 MMWG = 1.5e56 g<br>
-        mlt (mass of Multiverse): 1e1e9 uni<br>
+        <h1>質量</h1><br>
+        g（克）：1 g<br>
+        kg（千克）：1,000 g<br>
+        tonne（噸）：1,000 kg = 1,000,000 g<br>
+        MME（珠穆朗瑪峰質量）：1.619e14 tonne = 1.619e20 g<br>
+        M⊕（地球質量）：36,886,967 MME = 5.972e27 g<br>
+        M☉（太陽質量）：333,054 M⊕ = 1.989e33 g<br>
+        MMWG（銀河系質量）：1.5e12 M☉ = 2.9835e45 g<br>
+        uni（宇宙質量）：50,276,520,864 MMWG = 1.5e56 g<br>
+        mlt（多元宙質量）：1e1e9 uni<br>
         `,
     },
     fonts: {
@@ -60,22 +60,22 @@ const POPUP_GROUPS = {
     },
     notations: {
         html: `
-            <button class="btn" onclick="player.options.notation = 'elemental'">Elemental</button>
-            <button class="btn" onclick="player.options.notation = 'eng'">Engineering</button>
-            <button class="btn" onclick="player.options.notation = 'mixed_sc'">Mixed Scientific</button>
-            <button class="btn" onclick="player.options.notation = 'layer'">Prestige Layer</button>
-            <button class="btn" onclick="player.options.notation = 'sc'">Scientific</button>
-            <button class="btn" onclick="player.options.notation = 'st'">Standard</button>
-            <button class="btn" onclick="player.options.notation = 'old_sc'">Old Scientific</button>
+            <button class="btn" onclick="player.options.notation = 'elemental'">元素</button>
+            <button class="btn" onclick="player.options.notation = 'eng'">工程記號</button>
+            <button class="btn" onclick="player.options.notation = 'mixed_sc'">混合科學記號</button>
+            <button class="btn" onclick="player.options.notation = 'layer'">重置層次</button>
+            <button class="btn" onclick="player.options.notation = 'sc'">科學記號</button>
+            <button class="btn" onclick="player.options.notation = 'st'">標準</button>
+            <button class="btn" onclick="player.options.notation = 'old_sc'">舊式科學記號</button>
             <button class="btn" onclick="player.options.notation = 'omega'">Omega</button>
-            <button class="btn" onclick="player.options.notation = 'omega_short'">Omega Short</button>
+            <button class="btn" onclick="player.options.notation = 'omega_short'">Omega 短</button>
         `,
     },
     supernova10: {
         html: `
-            Congratulations!<br><br>You have becomed 10 Supernovas!<br>
-            And you can manualy supernova!<br><br>
-            <b>Bosons are unlocked in Supernova tab!</b>
+            恭喜！<br><br>你變成了 10 次超新星了！<br>
+            你可以手動超新星！<br><br>
+            <b>超新星標籤裡解鎖了玻色子！</b>
         `,
         width: 400,
         height: 150,
@@ -85,8 +85,8 @@ const POPUP_GROUPS = {
     },
     fermions: {
         html: `
-            Congratulations!<br><br>You have beated Challenge 10!<br><br>
-            <b>Fermions are unlocked in Supernova tab!</b>
+            恭喜！<br><br>你打敗了挑戰10！<br><br>
+            <b>超新星標籤裡解鎖了費米子！</b>
         `,
         width: 400,
         height: 150,
@@ -99,7 +99,7 @@ const POPUP_GROUPS = {
 function addPopup(data) {
     tmp.popup.push({
         html: data.html||"",
-        button: data.button||"Okay",
+        button: data.button||"OK", 
         callFunctions: data.callFunction?function() {removePopup();data.callFunctions()}:removePopup,
 
         width: data.width||600,
