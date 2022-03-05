@@ -13,6 +13,7 @@
     <script src="js/saves.js"></script>
     <script src="js/challenges.js"></script>
 
+    <script src="js/supernova/radiation.js"></script>
     <script src="js/supernova/fermions.js"></script>
     <script src="js/supernova/bosons.js"></script>
     <script src="js/supernova/tree.js"></script>
@@ -31,14 +32,14 @@
 
     <script src="js/main.js"></script>
 
-    <title>質量增量（重寫）</title>
+    <title>質量增量（重寫版）</title>
 </head>
 <body onload="loadGame()">
     <input id="copy" style="position: absolute; top: 0; left: 0; user-select: all; visibility: hidden;">
     <div id="loading" class='table_center' style="align-items: center; height: 100%;">
         <div>
-            <h1>遊戲加載中……</h1><br>
-            <h2>加載離線進度……（<span id='offlineSpeed'>1</span>x 速度）</h2>
+            <h1>正在加載遊戲……</h1><br>
+            <h2>正在加載離線進度……（<span id='offlineSpeed'>1</span>x 速度）</h2>
         </div>
     </div>
     <div id="notify" class="hide">
@@ -53,7 +54,7 @@
     <div id="supernova_scene" style='display: none'>
         <br>
         <div id="sns1" style='font-size: 25px;'>你變成了超新星了！</div><br>
-        <div id="sns2" style='font-size: 15px;'>所有東西都會重置，並獲得超新星！</div><br>
+        <div id="sns2" style='font-size: 15px;'>所有東西都會被重置，但你會獲得超新星！</div><br>
         <div id="sns3" style='font-size: 15px;'>你可以通過它……</div><br>
         <div id="sns4" style='font-size: 20px;'>……探索更多東西！</div><br>
         <button class="btn" id="sns5" onclick="SUPERNOVA.reset()">你會變成超新星……</button>
@@ -61,7 +62,7 @@
     <div id='app_supernova' style='display: none'>
         <div style="position: absolute; top: 25px; left: 25px;">
             <button class="btn" onclick="tmp.tab = tmp.sn_tab;">返回主要標籤</button>
-            <button class="btn" onclick="SUPERNOVA.reset(true)">重置但不超新星</button>
+            <button class="btn" onclick="SUPERNOVA.reset(true)">重置但不變超新星</button>
         </div>
         <div style="min-height: 70px; margin-top: 15px;">
             <h2>你變成了 <span id="supernova_rank"></span> <span id="supernova_scale"></span> 次超新星</h2><br>
@@ -110,8 +111,8 @@
                 </div>
             </div>
         </div><div id="stab_frame5_2">
-            注意：選擇任何費米子會重置但不會變成超新星！<br><br>
-            <button class="btn" onclick="FERMIONS.backNormal()">返回正常</button><br><br>
+            注意：選擇任何費米子會強制執行重置，但不會變成超新星！<br><br>
+            <button class="btn" onclick="FERMIONS.backNormal()">恢復正常</button><br><br>
             <div class="fermions">
                 <div class="f_quark sub_f">
                     你有 <span id="fquarkAmt">X</span> 個 U-夸克<br><br>
@@ -122,45 +123,47 @@
                     <div id="fermions_lepton_table" class="table_center"></div>
                 </div>
             </div>
+        </div><div id="stab_frame5_3">
+            你的頻率是 <span id="frequency">0</span> Hz，將所有費米子獲得量乘以 <span id="frequency_eff">1</span>x<br>
+            <span id="nr_div">頻率到達 <span id="next_radiation">0</span> 時，則會解鎖 <span id="unl_radiation">X</span></span><br><br>
+            <div id="radiation_table"></div>
         </div>
     </div>
     <div id='app' style='display: none'>
         <div id="star"></div>
         <div style='height: 5px'></div>
-        <div style="height: 180px">
-            <div id="chal_upper" style='height: 50px'></div>
-            <div class="table_center" style="margin: 5px 0px;">
+        <div style="height: 200px">
+            <div id="chal_upper" style='height: 40px'></div>
+            <div class="table_center top_text" style="margin: 5px 0px;">
                 <div>
                     <div class="resources sml">
-                        <img src="images/mass.png">
+                        <img class="res_img" src="images/mass.png">
                         <span style="margin-left: 5px; text-align: left;" id="mass">X</span>
-                    </div><div class="resources red">
-                        <img src="images/rp.png" onclick="FORMS.rp.reset()" onmousemove="FORMS.reset_msg.set('rp')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
+                    </div><div class="resources sml red">
+                        <img class="res_img" src="images/rp.png" onclick="FORMS.rp.reset()" onmousemove="FORMS.reset_msg.set('rp')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
                         <span style="margin-left: 5px; text-align: left;" id="rpAmt">X</span>
-                    </div>
-                </div><div>
-                    <div class="resources sml yellow" id="dm_div">
-                        <img src="images/dm.png" onclick="FORMS.bh.reset()" onmousemove="FORMS.reset_msg.set('dm')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
+                    </div><div class="resources yellow" id="dm_div">
+                        <img class="res_img" src="images/dm.png" onclick="FORMS.bh.reset()" onmousemove="FORMS.reset_msg.set('dm')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
                         <span style="margin-left: 5px; text-align: left;" id="dmAmt">X</span>
-                    </div><div class="resources yellow" id="bh_div">
-                        <img src="images/bh.png">
-                        <span style="margin-left: 5px; text-align: left;" id="bhMass">X</span>
                     </div>
                 </div><div>
-                    <div class="resources sml" id="atom_div">
-                        <img src="images/atom.png" onclick="ATOM.reset()" onmousemove="FORMS.reset_msg.set('atom')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
+                    <div class="resources sml yellow" id="bh_div">
+                        <img class="res_img" src="images/bh.png">
+                        <span style="margin-left: 5px; text-align: left;" id="bhMass">X</span>
+                    </div><div class="resources sml" id="atom_div">
+                        <img class="res_img" src="images/atom.png" onclick="ATOM.reset()" onmousemove="FORMS.reset_msg.set('atom')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
                         <span style="margin-left: 5px; text-align: left;" id="atomAmt">X</span>
                     </div><div class="resources quark_color" id="quark_div">
-                        <img src="images/quark.png">
+                        <img class="res_img" src="images/quark.png">
                         <span style="margin-left: 5px; text-align: left;" id="quarkAmt">X</span>
                     </div>
                 </div><div>
                     <div class="resources sml green" id="md_div">
-                        <img src="images/md.png" onclick="MASS_DILATION.onactive()" onmousemove="FORMS.reset_msg.set('md')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
+                        <img class="res_img" class="res_img" src="images/md.png" onclick="MASS_DILATION.onactive()" onmousemove="FORMS.reset_msg.set('md')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
                         <span style="margin-left: 5px; text-align: left;" id="md_massAmt">X</span>
                     </div>
-                    <div class="resources sml magenta" id="sn_div">
-                        <img src="images/sn.png" onclick="SUPERNOVA.reset(false,false,true)" onmousemove="FORMS.reset_msg.set('sn')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
+                    <div class="resources magenta" id="sn_div">
+                        <img class="res_img" src="images/sn.png" onclick="SUPERNOVA.reset(false,false,true)" onmousemove="FORMS.reset_msg.set('sn')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
                         <span style="margin-left: 5px; text-align: left;" id="supernovaAmt">X</span>
                     </div>
                 </div>
@@ -189,7 +192,8 @@
                 </div><br><div>
                     <span id="massSoft1" class="red">質量獲得量到達 <b id="massSoftStart1">X</b> 後會被軟限制！</span><br>
                     <span id="massSoft3" style="color: rgb(121, 0, 0)">質量獲得量到達 <b id="massSoftStart3">X</b> 後會被軟限制^2！</span><br>
-                    <span id="massSoft4" style="color: rgb(122, 0, 86)">質量獲得量到達 <b id="massSoftStart4">X</b> 後會被軟限制^3！</span>
+                    <span id="massSoft4" style="color: rgb(122, 0, 86)">質量獲得量到達 <b id="massSoftStart4">X</b> 後會被軟限制^3！</span><br>
+					<span id="massSoft5" style="color: rgb(255, 94, 0)">質量獲得量到達 <b id="massSoftStart5">X</b> 後會被軟限制^4！</span>
                 </div>
             </div><div id="stab_frame0_1">
                 你 <span id="bhMass2">X</span><br> 的黑洞
@@ -209,6 +213,9 @@
                     </div>
                 </div><br><div>
                     <span id="massSoft2" class="red">黑洞質量獲得量到達 <b id="massSoftStart2">X</b> 後會被軟限制！</span>
+					<span id="bhFSoft1" class="red">
+                        (x + 1)<sup id="bhMassPower2">0.33</sup> 的公式會在 <b id="bhFSoftStart1">X</b> 被軟限制
+                    </span>
                 </div>
             </div><div id="stab_frame0_2">
                 你有 <span id="atomicAmt">X</span> 原子力<br>
@@ -217,26 +224,26 @@
                     <div style="width: 400px">
                         <div class="resources">
                             <img src="images/gamma_ray.png">
-                            <span style="margin-left: 5px; text-align: left;"><span id="gamma_ray_scale"></span>伽馬射線 [<span id="gamma_ray_lvl">X</span>]</span>
+                            <span style="margin-left: 5px; text-align: left;"><span id="gamma_ray_scale"></span>宇宙射線 [<span id="gamma_ray_lvl">X</span>]</span>
                         </div>
                     </div><button id="gamma_ray_btn" class="btn" style="width: 200px;" onclick="ATOM.gamma_ray.buy()">價格：<span id="gamma_ray_cost">X</span> 原子</button>
                     <button class="btn" style="width: 120px;" onclick="ATOM.gamma_ray.buyMax()">購買最大</button>
                     <button id="gamma_ray_auto" class="btn" style="width: 80px;" onclick="player.atom.auto_gr = !player.atom.auto_gr">關閉</button>
                     <div style="margin-left: 5px; text-align: left; width: 400px">
-                        伽馬射線力量：<span id="gamma_ray_pow">X</span>x<br>
-                        伽馬射線效果：<span id="gamma_ray_eff">X</span>
+                        宇宙射線力量：<span id="gamma_ray_pow">X</span>x<br>
+                        宇宙射線效果：<span id="gamma_ray_eff">X</span>
                     </div>
                 </div>
             </div><div id="stab_frame0_3">
-                你塌縮了 <span id="stars_Amt">X</span> 個恆星，基於各級的效果提升質量獲得量<br>
-                <span class="green">Currently: <span id="stars_Eff">X</span>x</span><br><br>
+                你塌縮了 <span id="stars_Amt">X</span> 個恆星，基於各等級的效果提升質量獲得量<br>
+                <span class="green">目前：<span id="stars_Eff">X</span>x</span><br><br>
                 <button id="star_btn" class="btn" onclick="STARS.generators.unl()">X</button><br><br>
                 <div id="stars_table" class="table_center"></div><br><br>
                 <span id="starSoft1" class="red">塌縮恆星獲得量到達 <b id="starSoftStart1">X</b> 後會被軟限制！</span><br>
             </div>
         </div><div id="tab_frame1">
             <div id="stab_frame1_0">
-                <button onclick="player.ranks_reward = Math.max(player.ranks_reward-1,0)" class="btn"><--</button><span id="ranks_reward_name" style="margin: 0px 10px">aaa</span><button onclick="player.ranks_reward = Math.min(player.ranks_reward+1,RANKS.names.length-1)" class="btn">--></button><br><br>
+                <button onclick="player.ranks_reward = Math.max(player.ranks_reward-1,0)" class="btn"><--</button><span id="ranks_reward_name" style="margin: 0px 10px">aaa</span><button onclick="player.ranks_reward = Math.min(player.ranks_reward+1,Math.max(...RANKS.names.map((v, i) => i==0 ? i : (RANKS.unl[v]() && i))))" class="btn">--></button><br><br>
                 <div id="ranks_rewards_table"></div>
             </div><div id="stab_frame1_1">
                 <button onclick="player.scaling_ch = Math.max(player.scaling_ch-1,0)" class="btn"><--</button><span id="scaling_name" style="margin: 0px 10px">aaa</span><button onclick="player.scaling_ch = Math.min(player.scaling_ch+1,SCALE_TYPE.length-1)" class="btn">--></button><br><br>
@@ -246,7 +253,7 @@
             <div id="main_upg_msg" style="min-height: 100px;"></div>
             <div id="main_upgs_table" class="table_center"></div>
         </div><div id="tab_frame3">
-            提示：點擊圖片即可查看挑戰描述。<br><br>
+            提示：點擊圖片以查看挑戰描述；再次點擊以進入挑戰。<br><br>
             <button class="btn" id="chal_exit" onclick="CHALS.exit()">退出挑戰</button><br><br>
             <div style="min-height: 120px;" id="chals_table" class="table_center"></div><br><br>
             <div id="chal_desc_div">
@@ -274,13 +281,13 @@
             </div><div id="stab_frame4_1">
                 <div id="elem_ch_div" style="min-height: 70px;">
                     <span id="elem_desc" class='sky'>X</span><br>
-                    成本：<span id="elem_cost">X</span> 夸克<br>
+                    價格：<span id="elem_cost">X</span> 夸克<br>
                     <span id="elem_eff" class='green'>X</span>
                 </div><br><div id="elements_table"></div>
             </div><div id="stab_frame4_2">
                 你有 <span id="md_particles">X</span> 個相對粒子<br>
-                你有 <span id="md_mass">X</span> 的膨脹質量，將時間速度加強 <span id="md_eff">X</span> 倍<br><br>
-                <button onclick="MASS_DILATION.onactive()" id="md_btn" class="btn full md" tooltip="膨脹質量時，原子會被重置，所有原子前資源和原子力的獲得量會受到x^0.8的懲罰;">膨脹質量</button><br><br>
+                你有 <span id="md_mass">X</span> 的膨脹質量，將時間速度加強 <span id="md_eff">X</span><br><br>
+                <button onclick="MASS_DILATION.onactive()" id="md_btn" class="btn full md" tooltip="膨脹質量時，原子會被重置，所有原子前資源和原子力的獲得量會得到x^0.8的懲罰;">膨脹質量</button><br><br>
                 <div class="table_center">
                     <div id="md_upg_table" class="table_center" style="width: 1000px;"></div>
                 </div>
@@ -291,7 +298,7 @@
             <button class="btn" onclick="exporty()">導出</button>
             <button class="btn" onclick="export_copy()">導出至剪貼板</button>
             <button class="btn" onclick="importy()">導入</button>
-            <button class="btn" onclick="window.open('https://discord.gg/Ekp8FsSwzR')">加入Discord</button>
+            <button class="btn" onclick="window.open('https://discord.gg/Ekp8FsSwzR')">加入Discord服務器</button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.help)">幫助</button><br>
             <button class="btn" onclick="turnOffline()">離線進度：<span id="offline_active">開啟</span></button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.fonts)">字體</button>

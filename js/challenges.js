@@ -2,7 +2,7 @@ function setupChalHTML() {
     let chals_table = new Element("chals_table")
 	let table = ""
 	for (let x = 1; x <= CHALS.cols; x++) {
-        table += `<div id="chal_div_${x}" style="margin: 5px;"><img id="chal_btn_${x}" onclick="player.chal.choosed = ${x}" class="img_chal" src="images/chal_${x}.png"><br><span id="chal_comp_${x}">X</span></div>`
+        table += `<div id="chal_div_${x}" style="width: 120px; margin: 5px;"><img id="chal_btn_${x}" onclick="CHALS.choose(${x})" class="img_chal" src="images/chal_${x}.png"><br><span id="chal_comp_${x}">X</span></div>`
 	}
 	chals_table.setHTML(table)
 }
@@ -14,16 +14,16 @@ function updateChalHTML() {
         tmp.el["chal_div_"+x].setDisplay(unl)
         tmp.el["chal_btn_"+x].setClasses({img_chal: true, ch: CHALS.inChal(x), chal_comp: player.chal.comps[x].gte(tmp.chal.max[x])})
         if (unl) {
-            tmp.el["chal_comp_"+x].setTxt(format(player.chal.comps[x],0)+"/"+format(tmp.chal.max[x],0))
+            tmp.el["chal_comp_"+x].setTxt(format(player.chal.comps[x],0)+" / "+format(tmp.chal.max[x],0))
         }
     }
-    tmp.el.chal_enter.setVisible(player.chal.active == 0)
+    tmp.el.chal_enter.setVisible(player.chal.active != player.chal.choosed)
     tmp.el.chal_exit.setVisible(player.chal.active != 0)
-    tmp.el.chal_exit.setTxt(tmp.chal.canFinish ? "完成挑戰以獲得 +"+tmp.chal.gain+" 完成次數" : "退出挑戰")
+    tmp.el.chal_exit.setTxt(tmp.chal.canFinish && !player.supernova.tree.includes("qol6") ? "結束挑戰以完成 +"+tmp.chal.gain+" 次" : "退出挑戰")
     tmp.el.chal_desc_div.setDisplay(player.chal.choosed != 0)
     if (player.chal.choosed != 0) {
         let chal = CHALS[player.chal.choosed]
-        tmp.el.chal_ch_title.setTxt(`[${player.chal.choosed}]${player.chal.comps[player.chal.choosed].gte(player.chal.choosed>8?10:75)?player.chal.comps[player.chal.choosed].gte(player.chal.choosed==8?200:300)?" 魔王":" 困難":""} ${chal.title} [${player.chal.comps[player.chal.choosed]+"/"+tmp.chal.max[player.chal.choosed]} 完成次數]`)
+        tmp.el.chal_ch_title.setTxt(`[${player.chal.choosed}]${CHALS.getScaleName(player.chal.choosed)}「${chal.title}」 [完成 ${player.chal.comps[player.chal.choosed]+"/"+tmp.chal.max[player.chal.choosed]} 次]`)
         tmp.el.chal_ch_desc.setHTML(chal.desc)
         tmp.el.chal_ch_reset.setTxt(CHALS.getReset(player.chal.choosed))
         tmp.el.chal_ch_goal.setTxt("目標："+CHALS.getFormat(player.chal.choosed)(tmp.chal.goal[player.chal.choosed])+CHALS.getResName(player.chal.choosed))
@@ -46,7 +46,7 @@ function updateChalTemp() {
         tmp.chal.max[x] = CHALS.getMax(x)
         tmp.chal.goal[x] = data.goal
         tmp.chal.bulk[x] = data.bulk
-        tmp.chal.eff[x] = CHALS[x].effect(player.chal.comps[x])
+        tmp.chal.eff[x] = CHALS[x].effect(FERMIONS.onActive("05")?E(0):player.chal.comps[x])
     }
     tmp.chal.format = player.chal.active != 0 ? CHALS.getFormat() : format
     tmp.chal.gain = player.chal.active != 0 ? tmp.chal.bulk[player.chal.active].min(tmp.chal.max[player.chal.active]).sub(player.chal.comps[player.chal.active]).max(0).floor() : E(0)
@@ -54,23 +54,35 @@ function updateChalTemp() {
 }
 
 const CHALS = {
+    choose(x) {
+        if (player.chal.choosed == x) {
+            this.enter()
+        }
+        player.chal.choosed = x
+    },
     inChal(x) { return player.chal.active == x },
     reset(x, chal_reset=true) {
         if (x < 5) FORMS.bh.doReset()
         else if (x < 9) ATOM.doReset(chal_reset)
         else SUPERNOVA.reset(true, true)
     },
-    exit() {
+    exit(auto=false) {
         if (!player.chal.active == 0) {
             if (tmp.chal.canFinish) {
                 player.chal.comps[player.chal.active] = player.chal.comps[player.chal.active].add(tmp.chal.gain)
             }
-            this.reset(player.chal.active)
-            player.chal.active = 0
+            if (!auto) {
+                this.reset(player.chal.active)
+                player.chal.active = 0
+            }
         }
     },
     enter() {
         if (player.chal.active == 0) {
+            player.chal.active = player.chal.choosed
+            this.reset(player.chal.choosed, false)
+        } else if (player.chal.choosed != player.chal.active) {
+            this.exit(true)
             player.chal.active = player.chal.choosed
             this.reset(player.chal.choosed, false)
         }
@@ -87,9 +99,9 @@ const CHALS = {
         return formatMass
     },
     getReset(x) {
-        if (x < 5) return "Entering challenge will reset with Dark Matters!"
-        if (x < 9) return "Entering challenge will reset with Atoms except previous challenges!"
-        return "Entering challenge will reset without being Supernova!"
+        if (x < 5) return "進入挑戰會執行一次暗物質重置！"
+        if (x < 9) return "進入挑戰會執行一次原子重置，但不會重置以往的挑戰！"
+        return "進入挑戰會強制執行重置，但不會變成超新星！"
     },
     getMax(i) {
         let x = this[i].max
@@ -100,8 +112,17 @@ const CHALS = {
         if (player.atom.elements.includes(60) && (i==7)) x = x.add(100)
         if (player.atom.elements.includes(33) && (i==8)) x = x.add(50)
         if (player.atom.elements.includes(56) && (i==8)) x = x.add(200)
+        if (player.atom.elements.includes(65) && (i==7||i==8)) x = x.add(200)
+        if (player.atom.elements.includes(70) && (i==7||i==8)) x = x.add(200)
+        if (player.atom.elements.includes(73) && (i==5||i==6||i==8)) x = x.add(tmp.elements.effect[73])
         if (player.supernova.tree.includes("chal1") && (i==7||i==8))  x = x.add(100)
         return x.floor()
+    },
+    getScaleName(i) {
+        if (player.chal.comps[i].gte(1000)) return " 極難"
+        if (player.chal.comps[i].gte(i==8?200:i>8?50:300)) return " 超難"
+        if (player.chal.comps[i].gte(i>8?10:75)) return " 困難"
+        return ""
     },
     getPower(i) {
         let x = E(1)
@@ -113,12 +134,19 @@ const CHALS = {
         let x = E(1)
         return x
     },
+    getPower3(i) {
+        let x = E(1)
+        return x
+    },
     getChalData(x, r=E(-1)) {
         let res = !CHALS.inChal(0)?this.getResource(x):E(0)
         let lvl = r.lt(0)?player.chal.comps[x]:r
         let chal = this[x]
         let s1 = x > 8 ? 10 : 75
-        let s2 = x == 8 ? 200 : 300
+        let s2 = 300
+        if (x == 8) s2 = 200
+        if (x > 8) s2 = 50
+        let s3 = 1000
         let pow = chal.pow
         if (player.atom.elements.includes(10) && (x==3||x==4)) pow = pow.mul(0.95)
         chal.pow = chal.pow.max(1)
@@ -163,12 +191,40 @@ const CHALS = {
                 .add(1)
                 .floor();
         }
+        if (lvl.max(bulk).gte(s3)) {
+            let start = E(s1);
+            let exp = E(3).pow(this.getPower());
+            let start2 = E(s2);
+            let exp2 = E(4.5).pow(this.getPower2())
+            let start3 = E(s3);
+            let exp3 = E(1.001).pow(this.getPower3())
+            goal =
+            chal.inc.pow(
+                    exp3.pow(lvl.sub(start3)).mul(start3)
+                    .pow(exp2).div(start2.pow(exp2.sub(1))).pow(exp).div(start.pow(exp.sub(1))).pow(pow)
+                ).mul(chal.start)
+            bulk = res
+                .div(chal.start)
+                .max(1)
+                .log(chal.inc)
+                .root(pow)
+                .times(start.pow(exp.sub(1)))
+                .root(exp)
+                .times(start2.pow(exp2.sub(1)))
+                .root(exp2)
+                .div(start3)
+			    .max(1)
+			    .log(exp3)
+			    .add(start3)
+                .add(1)
+                .floor();
+        }
         return {goal: goal, bulk: bulk}
     },
     1: {
-        title: "Instant Scale",
-        desc: "Super Ranks, Mass Upgrades starts at 25. In addtional, Super Tickspeed start at 50.",
-        reward: `Super Ranks starts later, Super Tickspeed scaling weaker by completions.`,
+        title: "即時增幅",
+        desc: "超級等級和超級質量升級在 25 個開始，超級時間速度在 50 個開始。",
+        reward: `超級等級延遲開始，超級時間速度基於完成次數增幅更慢。`,
         max: E(100),
         inc: E(5),
         pow: E(1.3),
@@ -178,13 +234,13 @@ const CHALS = {
             let tick = E(0.96).pow(x.root(2))
             return {rank: rank, tick: tick}
         },
-        effDesc(x) { return "+"+format(x.rank,0)+" later to Super Ranks, Super Tickspeed scaling "+format(E(1).sub(x.tick).mul(100))+"% weaker" },
+        effDesc(x) { return "超級等級延遲 "+format(x.rank,0)+" 個，超級時間速度的增幅弱 "+format(E(1).sub(x.tick).mul(100))+"%" },
     },
     2: {
         unl() { return player.chal.comps[1].gte(1) || player.atom.unl },
-        title: "Anti-Tickspeed",
-        desc: "You cannot buy Tickspeed.",
-        reward: `For every completions adds +7.5% to Tickspeed Power.`,
+        title: "反時間速度",
+        desc: "不能購買時間速度。",
+        reward: `每完成一次，時間速度力量增加 7.5%。`,
         max: E(100),
         inc: E(10),
         pow: E(1.3),
@@ -196,43 +252,45 @@ const CHALS = {
             let ret = x.mul(0.075).add(1).softcap(1.3,sp,0).sub(1)
             return ret
         },
-        effDesc(x) { return "+"+format(x.mul(100))+"%"+(x.gte(0.3)?" <span class='soft'>(softcapped)</span>":"") },
+        effDesc(x) { return "+"+format(x.mul(100))+"%"+(x.gte(0.3)?"<span class='soft'>（軟限制）</span>":"") },
     },
     3: {
         unl() { return player.chal.comps[2].gte(1) || player.atom.unl },
-        title: "Melted Mass",
-        desc: "Mass gain softcap is divided by 1e150, and is stronger.",
-        reward: `Mass gain are raised by completions, but cannot append while in this challenge!`,
+        title: "融化質量",
+        desc: "質量獲得量軟限制提早 1e150 開始，而且效果更強。",
+        reward: `質量獲得量基於完成次數獲得次方加成，但不適用於此挑戰中！`,
         max: E(100),
         inc: E(25),
         pow: E(1.25),
         start: E(2.9835e49),
         effect(x) {
+            if (player.atom.elements.includes(64)) x = x.mul(1.5)
             let ret = x.root(1.5).mul(0.01).add(1)
-            return ret
+            return ret.softcap(3,0.25,0)
         },
-        effDesc(x) { return "^"+format(x) },
+        effDesc(x) { return "^"+format(x)+(x.gte(3)?"<span class='soft'>（軟限制）</span>":"") },
     },
     4: {
         unl() { return player.chal.comps[3].gte(1) || player.atom.unl },
-        title: "Weakened Rage",
-        desc: "Rage Points gain is rooted by 10. In addtional, mass gain softcap is divided by 1e100.",
-        reward: `Rage Powers gain are raised by completions.`,
+        title: "弱化狂怒",
+        desc: "怒氣值獲得量開十次方根；質量獲得量軟限制提早 1e100 開始。",
+        reward: `怒氣值獲得量基於完成次數獲得次方加成。`,
         max: E(100),
         inc: E(30),
         pow: E(1.25),
         start: E(1.736881338559743e133),
         effect(x) {
+            if (player.atom.elements.includes(64)) x = x.mul(1.5)
             let ret = x.root(1.5).mul(0.01).add(1)
-            return ret
+            return ret.softcap(3,0.25,0)
         },
-        effDesc(x) { return "^"+format(x) },
+        effDesc(x) { return "^"+format(x)+(x.gte(3)?"<span class='soft'>（軟限制）</span>":"") },
     },
     5: {
         unl() { return player.atom.unl },
-        title: "No Rank",
-        desc: "You cannot rank up.",
-        reward: `Rank requirement are weaker by completions.`,
+        title: "無等級",
+        desc: "不能升等級。",
+        reward: `等級需求基於完成次數變弱。`,
         max: E(50),
         inc: E(50),
         pow: E(1.25),
@@ -241,13 +299,13 @@ const CHALS = {
             let ret = E(0.97).pow(x.root(2).softcap(5,0.5,0))
             return ret
         },
-        effDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker"+(x.log(0.97).gte(5)?" <span class='soft'>(softcapped)</span>":"") },
+        effDesc(x) { return "弱 "+format(E(1).sub(x).mul(100))+"%"+(x.log(0.97).gte(5)?"<span class='soft'>（軟限制）</span>":"") },
     },
     6: {
         unl() { return player.chal.comps[5].gte(1) || player.supernova.times.gte(1) },
-        title: "No Tickspeed & Condenser",
-        desc: "You cannot buy Tickspeed & BH Condenser.",
-        reward: `For every completions adds +10% to Tickspeed & BH Condenser Power.`,
+        title: "無時間速度和壓縮器",
+        desc: "不能購買時間速度和黑洞壓縮器。",
+        reward: `每完成一次，時間速度和黑洞壓縮器增加 10%。`,
         max: E(50),
         inc: E(64),
         pow: E(1.25),
@@ -256,13 +314,13 @@ const CHALS = {
             let ret = x.mul(0.1).add(1).softcap(1.5,player.atom.elements.includes(39)?1:0.5,0).sub(1)
             return ret
         },
-        effDesc(x) { return "+"+format(x)+"x"+(x.gte(0.5)?" <span class='soft'>(softcapped)</span>":"") },
+        effDesc(x) { return "+"+format(x)+"x"+(x.gte(0.5)?"<span class='soft'>（軟限制）</span>":"") },
     },
     7: {
         unl() { return player.chal.comps[6].gte(1) || player.supernova.times.gte(1) },
-        title: "No Rage Powers",
-        desc: "You cannot gain Rage Powers, but Dark Matters are gained by mass instead of Rage Powers at a reduced rate.<br>In addtional, mass gain softcap is stronger.",
-        reward: `Completions adds 2 maximum completions of 1-4 Challenge.<br><span class="yellow">On 16th completion, unlock Elements</span>`,
+        title: "無怒氣值",
+        desc: "不能獲得怒氣值，但你會根據質量獲得暗物質；<br>質量獲得量軟限制更強。",
+        reward: `每完成一次，挑戰 1 - 4 的完成上限增加 2 次。<br><span class="yellow">完成 16 次時，解鎖元素</span>`,
         max: E(50),
         inc: E(64),
         pow: E(1.25),
@@ -276,24 +334,25 @@ const CHALS = {
     },
     8: {
         unl() { return player.chal.comps[7].gte(1) || player.supernova.times.gte(1) },
-        title: "White Hole",
-        desc: "Dark Matter & Mass from Black Hole gains are rooted by 8.",
-        reward: `Dark Matter & Mass from Black Hole gains are raised by completions.<br><span class="yellow">On first completion, unlock 3 rows of Elements</span>`,
+        title: "白洞",
+        desc: "暗物質和黑洞的質量加成開八次方根。",
+        reward: `暗物質和黑洞的質量加成根據完成次數獲得次方加成。<br><span class="yellow">首次完成時，解鎖 3 行元素</span>`,
         max: E(50),
         inc: E(80),
         pow: E(1.3),
         start: E(1.989e38),
         effect(x) {
+            if (player.atom.elements.includes(64)) x = x.mul(1.5)
             let ret = x.root(1.75).mul(0.02).add(1)
-            return ret
+            return ret.softcap(2.3,0.25,0)
         },
-        effDesc(x) { return "^"+format(x) },
+        effDesc(x) { return "^"+format(x)+(x.gte(2.3)?"<span class='soft'>（軟限制）</span>":"") },
     },
     9: {
         unl() { return player.supernova.tree.includes("chal4") },
-        title: "No Particles",
-        desc: "You cannot assign quarks. In addtional, mass gains exponent is raised to 0.9th power.",
-        reward: `Improve Magnesium-12 better.`,
+        title: "無粒子No Particles",
+        desc: "不能分配夸克；質量獲得量的指數得到 0.9 次方的懲罰。",
+        reward: `加強鎂-12 的效果。`,
         max: E(100),
         inc: E('e500'),
         pow: E(2),
@@ -306,9 +365,9 @@ const CHALS = {
     },
     10: {
         unl() { return player.supernova.tree.includes("chal5") },
-        title: "The Reality I",
-        desc: "All challenges 1-8 are applied at once. In addtional, you are trapped in Mass Dilation!",
-        reward: `The exponent of the RP formula is multiplied by completions. (this effect doesn't work while in this challenge)<br><span class="yellow">On first completion, unlock Fermions!</span>`,
+        title: "現實·一",
+        desc: "挑戰 1 至 8的效果全部應用；你困在質量膨脹裡。",
+        reward: `相對粒子公式的指數根據完成次數獲得加成。（該效果不適用於此挑戰中）<br><span class="yellow">首次完成時，解鎖費米子。</span>`,
         max: E(100),
         inc: E('e2000'),
         pow: E(2),
@@ -319,7 +378,37 @@ const CHALS = {
         },
         effDesc(x) { return format(x)+"x" },
     },
-    cols: 10,
+    11: {
+        unl() { return player.supernova.tree.includes("chal6") },
+        title: "Absolutism",
+        desc: "You cannot gain relativistic particles or dilated mass. However, you are stuck in Mass Dilation.",
+        reward: `Star Booster is stonger by completions.`,
+        max: E(100),
+        inc: E("ee6"),
+        pow: E(2),
+        start: uni("e3.8e7"),
+        effect(x) {
+            let ret = x.root(2).div(10).add(1)
+            return ret
+        },
+        effDesc(x) { return format(x)+"x stronger" },
+    },
+    12: {
+        unl() { return player.supernova.tree.includes("chal7") },
+        title: "Decay of Atom",
+        desc: "You cannot gain Atoms & Quarks.",
+        reward: `Completions add free Radiation Boosters.<br><span class="yellow">On first completion, unlock new prestige layer! (coming soon in v0.5)</span>`,
+        max: E(100),
+        inc: E('e2e7'),
+        pow: E(2),
+        start: uni('e8.4e8'),
+        effect(x) {
+            let ret = x.root(2)
+            return ret
+        },
+        effDesc(x) { return "+"+format(x) },
+    },
+    cols: 12,
 }
 
 /*

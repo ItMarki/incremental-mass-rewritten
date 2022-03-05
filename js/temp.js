@@ -1,20 +1,56 @@
-var tmp = {
-    sn_tab: 0,
-    tab: 0,
-    stab: [],
-    pass: true,
-    notify: [],
-    popup: [],
-    saving: 0,
+var tmp = {}
 
-    fermions: {
-        ch: [0,0],
-        gains: [E(0),E(0)],
-        tiers: [[],[]],
-        effs:  [[],[]],
-    },
+function resetTemp() {
+    tmp = {
+        sn_tab: 0,
+        tab: 0,
+        stab: [],
+        pass: true,
+        notify: [],
+        popup: [],
+        saving: 0,
+    
+        fermions: {
+            ch: [0,0],
+            gains: [E(0),E(0)],
+            maxTier: [[],[]],
+            tiers: [[],[]],
+            effs:  [[],[]],
+        },
+    
+        supernova: {
+            time: 0,
+            tree_choosed: "",
+            tree_had: [],
+            tree_eff: {},
+            tree_unlocked: {},
+            tree_afford: {},
+        },
+    
+        radiation: {
+            unl: false,
+            ds_gain: [],
+            ds_eff: [],
+            bs: {
+                sum: [],
+                lvl: [],
+                bonus_lvl: [],
+                cost: [],
+                bulk: [],
+                eff: [],
+            },
+        },
+    }
+    for (let x = 0; x < TABS[1].length; x++) tmp.stab.push(0)
+    for (let i = 0; i < 19; i++) {
+        for (let j = 0; j < 19; j++) {
+            let id = TREE_IDS[i][j]
+            if (TREE_UPGS.ids[id]) tmp.supernova.tree_had.push(id)
+        }
+    }
 }
-for (let x = 0; x < TABS[1].length; x++) tmp.stab.push(0)
+
+resetTemp()
 
 function updateMassTemp() {
     tmp.massSoftPower = FORMS.massSoftPower()
@@ -23,6 +59,8 @@ function updateMassTemp() {
     tmp.massSoftGain2 = FORMS.massSoftGain2()
     tmp.massSoftPower3 = FORMS.massSoftPower3()
     tmp.massSoftGain3 = FORMS.massSoftGain3()
+    tmp.massSoftPower4 = FORMS.massSoftPower4()
+    tmp.massSoftGain4 = FORMS.massSoftGain4()
     tmp.massGain = FORMS.massGain()
 }
 
@@ -106,7 +144,7 @@ function updateTickspeedTemp() {
 			.add(1)
 			.floor();
 	}
-    /*if (scalingActive("tickspeed", player.tickspeed.max(tmp.tickspeedBulk), "meta")) {
+    if (scalingActive("tickspeed", player.tickspeed.max(tmp.tickspeedBulk), "meta")) {
 		let start = getScalingStart("super", "tickspeed");
 		let power = getScalingPower("super", "tickspeed");
 		let exp = E(2).pow(power);
@@ -118,10 +156,10 @@ function updateTickspeedTemp() {
 		let exp3 = E(7).pow(power3);
         let start4 = getScalingStart("meta", "tickspeed");
 		let power4 = getScalingPower("meta", "tickspeed");
-		let exp4 = E(1.01).pow(power4);
+		let exp4 = E(1.001).pow(power4);
 		tmp.tickspeedCost =
 			E(2).pow(
-                exp4.pow(player.tickspeed.sub(start4)).mul(start4)
+                exp4.pow(player.tickspeed.sub(start4)).mul(start4).div(tmp.tickspeedFP)
                 .pow(exp3)
 			    .div(start3.pow(exp3.sub(1)))
                 .pow(exp2)
@@ -137,14 +175,14 @@ function updateTickspeedTemp() {
             .mul(start2.pow(exp2.sub(1)))
 			.root(exp2)
             .mul(start3.pow(exp3.sub(1)))
-			.root(exp3)
+			.root(exp3).mul(tmp.tickspeedFP)
             .div(start4)
 			.max(1)
 			.log(exp4)
 			.add(start4)
 			.add(1)
 			.floor();
-	}*/
+	}
     tmp.tickspeedEffect = FORMS.tickspeed.effect()
 }
 
@@ -163,6 +201,9 @@ function updateRagePowerTemp() {
 function updateBlackHoleTemp() {
     if (!tmp.bh) tmp.bh = {}
     tmp.bh.dm_gain = FORMS.bh.DM_gain()
+    tmp.bh.fSoftStart = FORMS.bh.fSoftStart()
+    tmp.bh.fSoftPower = FORMS.bh.fSoftPower()
+    tmp.bh.f = FORMS.bh.f()
     tmp.bh.massSoftPower = FORMS.bh.massSoftPower()
     tmp.bh.massSoftGain = FORMS.bh.massSoftGain()
     tmp.bh.massPowerGain = FORMS.bh.massPowerGain()
@@ -170,9 +211,11 @@ function updateBlackHoleTemp() {
     tmp.bh.dm_can = tmp.bh.dm_gain.gte(1)
     tmp.bh.effect = FORMS.bh.effect()
 
-    tmp.bh.condenser_bouns = FORMS.bh.condenser.bouns()
-    tmp.bh.condenser_cost = E(1.75).pow(player.bh.condenser).floor()
-    tmp.bh.condenser_bulk = player.bh.dm.max(1).log(1.75).add(1).floor()
+    let fp = tmp.fermions.effs[1][5]
+
+    tmp.bh.condenser_bonus = FORMS.bh.condenser.bonus()
+    tmp.bh.condenser_cost = E(1.75).pow(player.bh.condenser.div(fp)).floor()
+    tmp.bh.condenser_bulk = player.bh.dm.max(1).log(1.75).mul(fp).add(1).floor()
     if (player.bh.dm.lt(1)) tmp.bh.condenser_bulk = E(0)
     if (scalingActive("bh_condenser", player.bh.condenser.max(tmp.bh.condenser_bulk), "super")) {
 		let start = getScalingStart("super", "bh_condenser");
@@ -180,7 +223,7 @@ function updateBlackHoleTemp() {
 		let exp = E(2).pow(power);
 		tmp.bh.condenser_cost =
 			E(1.75).pow(
-                player.bh.condenser
+                player.bh.condenser.div(fp)
                 .pow(exp)
 			    .div(start.pow(exp.sub(1)))
             ).floor()
@@ -188,7 +231,7 @@ function updateBlackHoleTemp() {
             .max(1)
             .log(1.75)
 			.mul(start.pow(exp.sub(1)))
-			.root(exp)
+			.root(exp).mul(fp)
 			.add(1)
 			.floor();
 	}
@@ -201,7 +244,7 @@ function updateBlackHoleTemp() {
         let exp2 = E(2).pow(power2);
 		tmp.bh.condenser_cost =
 			E(1.75).pow(
-                player.bh.condenser
+                player.bh.condenser.div(fp)
                 .pow(exp2)
 			    .div(start2.pow(exp2.sub(1)))
                 .pow(exp)
@@ -213,7 +256,7 @@ function updateBlackHoleTemp() {
 			.mul(start.pow(exp.sub(1)))
 			.root(exp)
             .mul(start2.pow(exp2.sub(1)))
-			.root(exp2)
+			.root(exp2).mul(fp)
 			.add(1)
 			.floor();
 	}
@@ -229,7 +272,7 @@ function updateBlackHoleTemp() {
         let exp3 = E(4).pow(power3);
 		tmp.bh.condenser_cost =
 			E(1.75).pow(
-                player.bh.condenser
+                player.bh.condenser.div(fp)
                 .pow(exp3)
 			    .div(start3.pow(exp3.sub(1)))
                 .pow(exp2)
@@ -245,7 +288,7 @@ function updateBlackHoleTemp() {
             .mul(start2.pow(exp2.sub(1)))
 			.root(exp2)
             .mul(start3.pow(exp3.sub(1)))
-			.root(exp3)
+			.root(exp3).mul(fp)
 			.add(1)
 			.floor();
 	}
@@ -255,6 +298,7 @@ function updateBlackHoleTemp() {
 function updateTemp() {
     tmp.offlineActive = player.offline.time > 1
     tmp.offlineMult = tmp.offlineActive?player.offline.time+1:1
+    updateRadiationTemp()
     updateFermionsTemp()
     updateBosonsTemp()
     updateSupernovaTemp()

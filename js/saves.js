@@ -1,5 +1,7 @@
 function E(x){return new Decimal(x)};
 
+function uni(x) { return E(1.5e56).mul(x) }
+
 Decimal.prototype.modular=Decimal.prototype.mod=function (other){
     other=E(other);
     if (other.eq(0)) return E(0);
@@ -47,10 +49,19 @@ function calc(dt, dt_offline) {
     }
     if (player.supernova.tree.includes("qol1")) for (let x = 1; x <= tmp.elements.unl_length; x++) if (x<=tmp.elements.upg_length) ELEMENTS.buyUpg(x)
     player.md.mass = player.md.mass.add(tmp.md.mass_gain.mul(dt))
-    if (player.supernova.tree.includes("qol3")) player.md.particles = player.md.particles.add(tmp.md.passive_rp_gain.mul(dt))
+    if (player.supernova.tree.includes("qol3")) player.md.particles = player.md.particles.add(player.md.active ? tmp.md.rp_gain.mul(dt) : tmp.md.passive_rp_gain.mul(dt))
     if (player.supernova.tree.includes("qol4")) STARS.generators.unl(true)
+    if (player.supernova.tree.includes("qol7")) {
+        for (let x = 0; x < BOSONS.upgs.ids.length; x++) {
+            let id = BOSONS.upgs.ids[x]
+            for (let y = 0; y < BOSONS.upgs[id].length; y++) BOSONS.upgs.buy(id,y)
+        }
+    }
+    RADIATION.autoBuyBoosts()
     calcStars(dt)
     calcSupernova(dt, dt_offline)
+
+    if (player.supernova.tree.includes("qol6")) CHALS.exit(true)
 
     tmp.pass = true
 
@@ -70,6 +81,7 @@ function getPlayerData() {
             rank: E(0),
             tier: E(0),
             tetr: E(0),
+            pent: E(0),
         },
         auto_ranks: {
             rank: false,
@@ -156,6 +168,11 @@ function getPlayerData() {
                 tiers: [[E(0),E(0),E(0),E(0),E(0),E(0)],[E(0),E(0),E(0),E(0),E(0),E(0)]],
                 choosed: "",
             },
+            radiation: {
+                hz: E(0),
+                ds: [],
+                bs: [],
+            },
         },
         reset_msg: "",
         main_upg_msg: [0,0],
@@ -180,11 +197,20 @@ function getPlayerData() {
     for (let x = 0; x < CONFIRMS.length; x++) s.confirms[CONFIRMS[x]] = true
     for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) s.md.upgs[x] = E(0)
     for (let x in BOSONS.upgs.ids) for (let y in BOSONS.upgs[BOSONS.upgs.ids[x]]) s.supernova.b_upgs[BOSONS.upgs.ids[x]][y] = E(0)
+    for (let x = 0; x < 7; x++) {
+        s.supernova.radiation.ds.push(E(0))
+        s.supernova.radiation.bs.push(E(0),E(0))
+    }
     return s
 }
 
 function wipe(reload=false) {
-    if (reload) {localStorage.setItem("testSave",""); location.reload()}
+    if (reload) {
+        wipe()
+        save()
+        resetTemp()
+        loadGame(false)
+    }
     else player = getPlayerData()
 }
 
@@ -198,7 +224,7 @@ function loadPlayer(load) {
     player.chal.choosed = 0
     for (i = 0; i < 2; i++) for (let x = 0; x < FERMIONS.types[i].length; x++) {
         let f = FERMIONS.types[i][x]
-        if (f.maxTier) player.supernova.fermions.tiers[i][x] = player.supernova.fermions.tiers[i][x].min(f.maxTier)
+        player.supernova.fermions.tiers[i][x] = player.supernova.fermions.tiers[i][x].min(typeof f.maxTier == "function" ? f.maxTier() : f.maxTier||1/0)
     }
     let off_time = (Date.now() - player.offline.current)/1000
     if (off_time >= 60 && player.offline.active) player.offline.time += off_time
@@ -278,7 +304,7 @@ function export_copy() {
 function importy() {
     let loadgame = prompt("Paste in your save WARNING: WILL OVERWRITE YOUR CURRENT SAVE")
     if (loadgame == 'monke') {
-        addNotify('monke<br><img src="https://pbs.twimg.com/profile_images/1359293274754744331/xfImzn4c.jpg">')
+        addNotify('monke<br><img style="width: 100%; height: 100%" src="https://i.kym-cdn.com/photos/images/original/001/132/314/cbc.jpg">')
         return
     }
     if (loadgame == 'matt parker') {
@@ -295,36 +321,42 @@ function importy() {
             setTimeout(_=>{
                 load(loadgame)
                 save()
+                resetTemp()
+                loadGame(false)
             }, 200)
         } catch (error) {
             addNotify("Error Importing")
+            player = keep
         }
-        player = keep
     }
 }
 
-function loadGame() {
+function loadGame(start=true) {
     wipe()
     load(localStorage.getItem("testSave"))
     setupHTML()
-    setInterval(save,60000)
-    for (let x = 0; x < 50; x++) updateTemp()
-    updateHTML()
-    for (let x = 0; x < 3; x++) {
-        let r = document.getElementById('ratio_d'+x)
-        r.value = player.atom.dRatio[x]
-        r.addEventListener('input', e=>{
-            let n = Number(e.target.value)
-            if (n < 1) {
-                player.atom.dRatio[x] = 1
-                r.value = 1
-            } else {
-                if (Math.floor(n) != n) r.value = Math.floor(n)
-                player.atom.dRatio[x] = Math.floor(n)
-            }
-        })
+    
+    if (start) {
+        setInterval(save,60000)
+        for (let x = 0; x < 50; x++) updateTemp()
+        updateHTML()
+        for (let x = 0; x < 3; x++) {
+            let r = document.getElementById('ratio_d'+x)
+            r.value = player.atom.dRatio[x]
+            r.addEventListener('input', e=>{
+                let n = Number(e.target.value)
+                if (n < 1) {
+                    player.atom.dRatio[x] = 1
+                    r.value = 1
+                } else {
+                    if (Math.floor(n) != n) r.value = Math.floor(n)
+                    player.atom.dRatio[x] = Math.floor(n)
+                }
+            })
+        }
+        setInterval(loop, 50)
+        setInterval(updateStarsScreenHTML, 50)
+        treeCanvas()
+        setInterval(drawTreeHTML, 50)
     }
-    setInterval(loop, 50)
-    treeCanvas()
-    setInterval(drawTreeHTML, 50)
 }

@@ -11,7 +11,7 @@ const TABS = {
         else tmp.stab[tmp.tab] = x
     },
     1: [
-        { id: "主要" },
+        { id: "主頁" },
         { id: "統計" },
         { id: "升級", unl() { return player.rp.unl } },
         { id: "挑戰", unl() { return player.chal.unl } },

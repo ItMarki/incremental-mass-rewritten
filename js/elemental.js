@@ -20,14 +20,14 @@ const ELEMENTS = {
         null,
         '氫','氦','鋰','鈹','硼','碳','氮','氧','氟','氖',
         '鈉','鎂','鋁','硅','磷','硫','氯','氬','鉀','鈣',
-        '炕','鈦','釩','鉻','錳','鐵','鈷','鎳','銅','鋅',
+        '鈧','鈦','釩','鉻','錳','鐵','鈷','鎳','銅','鋅',
         '鎵','鍺','砷','硒','溴','氪','銣','鍶','釔','鋯',
-        '鈮','鉬','鍀','釕','銠','鈀','銀','鎘','銦','錫',
+        '鈮','鉬','鍀','釕','銠','鈀','銀','鎘','銦','錫', // 鍀 ~ 鎝
         '銻','碲','碘','氙','銫','鋇','鑭','鈰','鐠','釹',
         '鉕','釤','銪','釓','鋱','鏑','鈥','鉺','銩','鐿',
-        '鑥','鉿','鉭','鎢','錸','鋨','銥','鉑','金','汞',
-        '鉈','鉛','鉍','釙','砹','氡','鈁','鐳','錒','釷',
-        '鏷','鈾','鎿','鈈','鎇','鋦','錇','鐦','鎄','鐨',
+        '鑥','鉿','鉭','鎢','錸','鋨','銥','鉑','金','汞', // 鑥 ~ 鎦
+        '鉈','鉛','鉍','釙','砹','氡','鈁','鐳','錒','釷', // 砹 ~ 砈; 鈁 ~ 鍅
+        '鏷','鈾','鎿','鈈','鎇','鋦','錇','鐦','鎄','鐨', // 鎿 ~ 錼; 鈈 ~ 鈽; 鎇 ~ 鋂; 錇 ~ 鉳; 鐦 ~ 鉲; 鎄 ~ 鑀
         '鍆','鍩','鐒','鑪','𨧀（⿰金杜）','𨭎（⿰金喜）','𨨏（⿰金波）','𨭆（⿰金黑）','䥑（⿰金麥）','鐽',
         '錀','鎶','鉨','鈇','鏌','鉝','鿬（⿰石田）','鿫（⿹气奥）'
     ],
@@ -126,7 +126,7 @@ const ELEMENTS = {
             cost: E(1e33),
         },
         {
-            desc: `超級黑洞壓縮器和伽馬射線的價格增幅減弱 20%。`,
+            desc: `超級黑洞壓縮器和宇宙射線的價格增幅減弱 20%。`,
             cost: E(1e34),
         },
         {
@@ -139,11 +139,11 @@ const ELEMENTS = {
             effDesc(x) { return "+"+format(x*100)+"%" },
         },
         {
-            desc: `原子獲得量 ^1.1。`,
+            desc: `原子獲得量獲得 1.1 次方的加成。`,
             cost: E(1e40),
         },
         {
-            desc: `你可以自動購買伽馬射線。伽馬射線極稍微加強時間速度效果。`,
+            desc: `你可以自動購買宇宙射線。宇宙射線極稍微加強時間速度效果。`,
             cost: E(1e44),
             effect() {
                 let x = player.atom.gamma_ray.pow(0.35).mul(0.01).add(1)
@@ -177,7 +177,7 @@ const ELEMENTS = {
             cost: E(1e65),
         },
         {
-            desc: `Passively gain 100% of the atoms you would get from resetting each second. Atomic Power boost Relativistic particles gain at a reduced rate.`,
+            desc: `每秒獲得你會獲得的原子的100%。原子力稍微提升相對粒子獲得量。`,
             cost: E(1e75),
             effect() {
                 let x = player.atom.atomic.max(1).log10().add(1).pow(0.4)
@@ -186,36 +186,36 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Adds 1 base of Mass Dilation upgrade 1 effect.`,
+            desc: `質量膨脹升級 1 的底數增加 1。`,
             cost: E(1e80),
         },
         {
-            desc: `Hardened Challenge scaling weaker for each element bought.`,
+            desc: `困難挑戰的增幅基於已購買的元素變弱。`,
             cost: E(1e85),
             effect() {
                 let x = E(0.99).pow(E(player.atom.elements.length).softcap(30,2/3,0)).max(0.5)
                 return x
             },
-            effDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
+            effDesc(x) { return "弱 "+format(E(1).sub(x).mul(100))+"%" },
         },
         {
-            desc: `Hyper/Ultra Rank & Tickspeed scales 25% weaker.`,
+            desc: `高級和極高級等級和時間速度增幅弱 25%。`,
             cost: E(1e90),
         },
         {
-            desc: `Mass gain is raised to the power of 1.5th if you dilated mass.`,
+            desc: `膨脹質量時，質量獲得量獲得 1.5 次方的加成。`,
             cost: E(1e97),
         },
         {
-            desc: `Proton powers effect is better.`,
+            desc: `質子力的效果更強。`,
             cost: E(1e100),
         },
         {
-            desc: `Electron powers effect is better. Passively gain 10% of each particle you would assign quarks.`,
+            desc: `電子力的效果更強。每種粒子每秒獲得夸克數量的 10%。`,
             cost: E(1e107),
         },
         {
-            desc: `Dilated mass boost Relativistic particles gain.`,
+            desc: `膨脹質量提升相對粒子獲得量。`,
             cost: E(1e130),
             effect() {
                 let x = player.md.mass.add(1).pow(0.0125)
@@ -224,15 +224,15 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Increase dilated mass gain exponent by 5%.`,
+            desc: `膨脹質量獲得量指數增加 5%。`,
             cost: E(1e140),
         },
         {
-            desc: `Add 50 more C8 maximum completions.`,
+            desc: `挑戰 8 的完成上限增加 50 次。`,
             cost: E(1e155),
         },
         {
-            desc: `Rage power boost Relativistic particles gain.`,
+            desc: `怒氣值提升相對粒子獲得量。`,
             cost: E(1e175),
             effect() {
                 let x = player.rp.points.max(1).log10().add(1).pow(0.75)
@@ -241,7 +241,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Mass from Black Hole boost dilated mass gain.`,
+            desc: `黑洞的質量加成提升膨脹質量獲得量。`,
             cost: E(1e210),
             effect() {
                 let x = player.bh.mass.max(1).log10().add(1).pow(0.8)
@@ -250,11 +250,11 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Unlock Stars.`,
+            desc: `解鎖恆星。`,
             cost: E(1e225),
         },
         {
-            desc: `Super Tier scale weaker based on Tetr.`,
+            desc: `超級階基於層增幅更慢。`,
             cost: E(1e245),
             effect() {
                 let x = E(0.9).pow(player.ranks.tetr.softcap(6,0.5,0))
@@ -263,20 +263,20 @@ const ELEMENTS = {
             effDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
         },
         {
-            desc: `Gamma ray's free tickspeeds now adds to RU7.`,
+            desc: `宇宙射線的免費時間速度適用於怒氣升級 7。`,
             cost: E(1e260),
             effect() {
                 let x = tmp.atom?tmp.atom.atomicEff:E(0)
                 return x.div(6).floor()
             },
-            effDesc(x) { return "+"+format(x,0)+" to Rage Power Upgrade 7" },
+            effDesc(x) { return "怒氣升級 7 +"+format(x,0)+"" },
         },
         {
-            desc: `Remove softcap from C2 & C6 effects.`,
+            desc: `移除挑戰 2 和 6 的效果的軟限制。`,
             cost: E(1e285),
         },
         {
-            desc: `Collapsed star boost dilated mass gain.`,
+            desc: `塌縮恆星提升膨脹質量獲得量。`,
             cost: E(1e303),
             effect() {
                 let x = player.stars.points.add(1).pow(0.5)
@@ -382,7 +382,8 @@ const ELEMENTS = {
             desc: `Tickspeed power boost base from Star Booster at a reduced rate.`,
             cost: E('e3.6e4'),
             effect() {
-                let x = tmp.tickspeedEffect?tmp.tickspeedEffect.step.max(1).log10().div(10):E(0)
+                let x = tmp.tickspeedEffect?tmp.tickspeedEffect.step.max(1).log10().div(10).max(1):E(1)
+                if (player.atom.elements.includes(66)) x = x.pow(2)
                 return x.max(1)
             },
             effDesc(x) { return format(x)+"x" },
@@ -420,6 +421,73 @@ const ELEMENTS = {
         {
             desc: `Non-bonus Tickspeed is 25x effective.`,
             cost: E('e3e5'),
+        },
+		{
+            desc: `Rewards from Challenges 3-4 & 8 are 50% effective.`,
+            cost: E('e5e5'),
+        },
+        {
+            desc: `Add 200 more C7 & c8 maximum completions.`,
+            cost: E('e8e5'),
+        },
+        {
+            desc: `Lanthanum's effect is twice stronger.`,
+            cost: E('e1.1e6'),
+        },
+        {
+            desc: `Collapsed star boost quarks gain.`,
+            cost: E('e1.7e6'),
+            effect() {
+                let x = player.stars.points.add(1)
+                return x
+            },
+            effDesc(x) { return format(x)+"x" },
+        },
+        {
+            desc: `Meta-Tickspeed start 2x later.`,
+            cost: E('e4.8e6'),
+        },
+        {
+            desc: `Pent is now added in mass gain formula from collapsed stars.`,
+            cost: E('e3.6e7'),
+        },
+        {
+            desc: `Add 200 more C7 & c8 maximum completions.`,
+            cost: E('e6.9e7'),
+        },
+        {
+            desc: `From BH the formulas softcap starts later based on Supernovas.`,
+            cost: E('e1.6e8'),
+            effect() {
+                let x = player.supernova.times.add(1).root(4)
+                return x
+            },
+            effDesc(x) { return "^"+format(x)+" later" },
+        },
+        {
+            desc: `Tetrs are 15% cheaper.`,
+            cost: E('e5.75e8'),
+        },
+        {
+            desc: `Add more C5-6 & C8 maximum completions based on Supernovas.`,
+            cost: E('e1.3e9'),
+            effect() {
+                let x = player.supernova.times.mul(5)
+                return x
+            },
+            effDesc(x) { return "+"+format(x,0) },
+        },
+        {
+            desc: `Super Tetr scales 25% weaker.`,
+            cost: E('e2.6e9'),
+        },
+        {
+            desc: `Remove 2 softcaps from Atomic Power's effect.`,
+            cost: E('e3.9e9'),
+        },
+        {
+            desc: `Collapsed Star's effect is 25% stronger.`,
+            cost: E('e3.75e10'),
         },
     ],
     /*

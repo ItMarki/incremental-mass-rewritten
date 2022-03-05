@@ -29,26 +29,28 @@ const FORMS = {
 
         if (player.ranks.tier.gte(2)) x = x.pow(1.15)
         if (player.ranks.rank.gte(180)) x = x.pow(1.025)
-        if (!CHALS.inChal(3) || CHALS.inChal(10)) x = x.pow(tmp.chal.eff[3])
-        if (player.md.active || CHALS.inChal(10) || FERMIONS.onActive("02")) {
-            x = expMult(x,FERMIONS.onActive("02")?0.64:0.8)
+        if (!CHALS.inChal(3) || CHALS.inChal(10) || FERMIONS.onActive("03")) x = x.pow(tmp.chal.eff[3])
+        if (player.md.active || CHALS.inChal(10) || FERMIONS.onActive("02") || FERMIONS.onActive("03") || CHALS.inChal(11)) {
+            x = expMult(x,tmp.md.pen)
             if (player.atom.elements.includes(28)) x = x.pow(1.5)
         }
         if (CHALS.inChal(9) || FERMIONS.onActive("12")) x = expMult(x,0.9)
-
-        return x.softcap(tmp.massSoftGain,tmp.massSoftPower,0).softcap(tmp.massSoftGain2,tmp.massSoftPower2,0).softcap(tmp.massSoftGain3,tmp.massSoftPower3,0)
+        return x.softcap(tmp.massSoftGain,tmp.massSoftPower,0)
+        .softcap(tmp.massSoftGain2,tmp.massSoftPower2,0)
+        .softcap(tmp.massSoftGain3,tmp.massSoftPower3,0)
+        .softcap(tmp.massSoftGain4,tmp.massSoftPower4,0)
     },
     massSoftGain() {
         let s = E(1.5e156)
-        if (CHALS.inChal(3) || CHALS.inChal(10)) s = s.div(1e150)
-        if (CHALS.inChal(4) || CHALS.inChal(10)) s = s.div(1e100)
+        if (CHALS.inChal(3) || CHALS.inChal(10) || FERMIONS.onActive("03")) s = s.div(1e150)
+        if (CHALS.inChal(4) || CHALS.inChal(10) || FERMIONS.onActive("03")) s = s.div(1e100)
         if (player.mainUpg.bh.includes(7)) s = s.mul(tmp.upgs.main?tmp.upgs.main[2][7].effect:E(1))
         if (player.mainUpg.rp.includes(13)) s = s.mul(tmp.upgs.main?tmp.upgs.main[1][13].effect:E(1))
-        return s
+        return s.min(tmp.massSoftGain2||1/0)
     },
     massSoftPower() {
         let p = E(1/3)
-        if (CHALS.inChal(3) || CHALS.inChal(10)) p = p.mul(4)
+        if (CHALS.inChal(3) || CHALS.inChal(10) || FERMIONS.onActive("03")) p = p.mul(4)
         if (CHALS.inChal(7) || CHALS.inChal(10)) p = p.mul(6)
         if (player.mainUpg.bh.includes(11)) p = p.mul(0.9)
         if (player.ranks.rank.gte(800)) p = p.mul(RANKS.effect.rank[800]())
@@ -57,11 +59,12 @@ const FORMS = {
     massSoftGain2() {
         let s = E('1.5e1000056')
         if (player.supernova.tree.includes("m2")) s = s.pow(1.5)
+        if (player.supernova.tree.includes("m2")) s = s.pow(tmp.supernova.tree_eff.m3)
         if (player.ranks.tetr.gte(8)) s = s.pow(1.5)
 
         s = s.pow(tmp.bosons.effect.neg_w[0])
 
-        return s
+        return s.min(tmp.massSoftGain3||1/0)
     },
     massSoftPower2() {
         let p = E(0.25)
@@ -70,10 +73,20 @@ const FORMS = {
     },
     massSoftGain3() {
         let s = uni("ee8")
+        if (player.supernova.tree.includes("m3")) s = s.pow(tmp.supernova.tree_eff.m3)
+        s = s.pow(tmp.radiation.bs.eff[2])
         return s
     },
     massSoftPower3() {
-        let p = E(0.1)
+        let p = E(0.2)
+        return p
+    },
+    massSoftGain4() {
+        let s = uni("e1e13")
+        return s
+    },
+    massSoftPower4() {
+        let p = E(0.01)
         return p
     },
     tickspeed: {
@@ -94,8 +107,9 @@ const FORMS = {
         effect() {
             let t = player.tickspeed
             if (player.atom.elements.includes(63)) t = t.mul(25)
-            let bouns = E(0)
-            if (player.atom.unl) bouns = bouns.add(tmp.atom.atomicEff)
+			t = t.mul(tmp.radiation.bs.eff[1])
+            let bonus = E(0)
+            if (player.atom.unl) bonus = bonus.add(tmp.atom.atomicEff)
             let step = E(1.5)
                 step = step.add(tmp.chal.eff[6])
                 step = step.add(tmp.chal.eff[2])
@@ -105,10 +119,14 @@ const FORMS = {
                 step = step.mul(tmp.md.mass_eff)
             step = step.mul(tmp.bosons.effect.z_boson[0])
             if (player.supernova.tree.includes("t1")) step = step.pow(1.15)
-            let eff = step.pow(t.add(bouns))
+
+            let ss = E(1e50).mul(tmp.radiation.bs.eff[13])
+            step = step.softcap(ss,0.1,0)
+            
+            let eff = step.pow(t.add(bonus))
             if (player.atom.elements.includes(18)) eff = eff.pow(tmp.elements.effect[18])
             if (player.ranks.tetr.gte(3)) eff = eff.pow(1.05)
-            return {step: step, eff: eff, bouns: bouns}
+            return {step: step, eff: eff, bonus: bonus}
         },
         autoUnl() { return player.mainUpg.bh.includes(5) },
         autoSwitch() { player.autoTickspeed = !player.autoTickspeed },
@@ -125,8 +143,8 @@ const FORMS = {
             if (player.supernova.tree.includes("rp1")) gain = gain.mul(tmp.supernova.tree_eff.rp1)
             if (player.mainUpg.bh.includes(8)) gain = gain.pow(1.15)
             gain = gain.pow(tmp.chal.eff[4])
-            if (CHALS.inChal(4) || CHALS.inChal(10)) gain = gain.root(10)
-            if (player.md.active || CHALS.inChal(10) || FERMIONS.onActive("02")) gain = expMult(gain,FERMIONS.onActive("02")?0.64:0.8)
+            if (CHALS.inChal(4) || CHALS.inChal(10) || FERMIONS.onActive("03")) gain = gain.root(10)
+            if (player.md.active || CHALS.inChal(10) || FERMIONS.onActive("02") || FERMIONS.onActive("03") || CHALS.inChal(11)) gain = expMult(gain,tmp.md.pen)
             return gain.floor()
         },
         reset() {
@@ -156,25 +174,41 @@ const FORMS = {
             gain = gain.mul(tmp.atom.particles[2].powerEffect.eff1)
             if (CHALS.inChal(8) || CHALS.inChal(10) || FERMIONS.onActive("12")) gain = gain.root(8)
             gain = gain.pow(tmp.chal.eff[8])
-            if (player.md.active || CHALS.inChal(10) || FERMIONS.onActive("02")) gain = expMult(gain,FERMIONS.onActive("02")?0.64:0.8)
+            if (player.md.active || CHALS.inChal(10) || FERMIONS.onActive("02") || FERMIONS.onActive("03") || CHALS.inChal(11)) gain = expMult(gain,tmp.md.pen)
             return gain.floor()
         },
         massPowerGain() {
             let x = E(0.33)
             if (FERMIONS.onActive("11")) return E(-1)
             if (player.atom.elements.includes(59)) x = E(0.45)
+			x = x.add(tmp.radiation.bs.eff[4])
             return x
         },
         massGain() {
-            let x = player.bh.mass.add(1).pow(tmp.bh.massPowerGain).mul(this.condenser.effect().eff)
+            let x = tmp.bh.f
+            .mul(this.condenser.effect().eff)
             if (player.mainUpg.rp.includes(11)) x = x.mul(tmp.upgs.main?tmp.upgs.main[1][11].effect:E(1))
             if (player.mainUpg.bh.includes(14)) x = x.mul(tmp.upgs.main?tmp.upgs.main[2][14].effect:E(1))
             if (player.atom.elements.includes(46)) x = x.mul(tmp.elements.effect[46])
             x = x.mul(tmp.bosons.upgs.photon[0].effect)
             if (CHALS.inChal(8) || CHALS.inChal(10) || FERMIONS.onActive("12")) x = x.root(8)
             x = x.pow(tmp.chal.eff[8])
-            if (player.md.active || CHALS.inChal(10) || FERMIONS.onActive("02")) x = expMult(x,FERMIONS.onActive("02")?0.64:0.8)
+            if (player.md.active || CHALS.inChal(10) || FERMIONS.onActive("02") || FERMIONS.onActive("03") || CHALS.inChal(11)) x = expMult(x,tmp.md.pen)
             return x.softcap(tmp.bh.massSoftGain, tmp.bh.massSoftPower, 0)
+        },
+        f() {
+            let x = player.bh.mass.add(1).pow(tmp.bh.massPowerGain).softcap(tmp.bh.fSoftStart,tmp.bh.fSoftPower,2)
+            return x
+        },
+        fSoftStart() {
+            let x = uni("e3e9")
+            if (player.atom.elements.includes(71)) x = x.pow(tmp.elements.effect[71])
+            x = x.pow(tmp.radiation.bs.eff[20])
+            return x
+        },
+        fSoftPower() {
+            let x = 0.95
+            return x
         },
         massSoftGain() {
             let s = E(1.5e156)
@@ -224,6 +258,8 @@ const FORMS = {
                 }
             },
             effect() {
+                let t = player.bh.condenser
+                t = t.mul(tmp.radiation.bs.eff[5])
                 let pow = E(2)
                     pow = pow.add(tmp.chal.eff[6])
                     if (player.mainUpg.bh.includes(2)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[2][2].effect:E(1))
@@ -231,10 +267,11 @@ const FORMS = {
                     if (player.mainUpg.atom.includes(11)) pow = pow.mul(tmp.upgs.main?tmp.upgs.main[3][11].effect:E(1))
                     pow = pow.mul(tmp.bosons.upgs.photon[1].effect)
                     if (player.supernova.tree.includes("bh2")) pow = pow.pow(1.15)
-                let eff = pow.pow(player.bh.condenser.add(tmp.bh.condenser_bouns))
+                pow = pow
+                let eff = pow.pow(t.add(tmp.bh.condenser_bonus))
                 return {pow: pow, eff: eff}
             },
-            bouns() {
+            bonus() {
                 let x = E(0)
                 if (player.mainUpg.bh.includes(15)) x = x.add(tmp.upgs.main?tmp.upgs.main[2][15].effect:E(0))
                 return x
@@ -271,7 +308,7 @@ const UPGS = {
                 tmp.upgs.mass[x].cost = data.cost
                 tmp.upgs.mass[x].bulk = data.bulk
                 
-                tmp.upgs.mass[x].bouns = this[x].bouns?this[x].bouns():E(0)
+                tmp.upgs.mass[x].bonus = this[x].bonus?this[x].bonus():E(0)
                 tmp.upgs.mass[x].eff = this[x].effect(player.massUpg[x]||E(0))
                 tmp.upgs.mass[x].effDesc = this[x].effDesc(tmp.upgs.mass[x].eff)
             }
@@ -358,7 +395,7 @@ const UPGS = {
                 let step = E(1)
                 if (player.ranks.rank.gte(3)) step = step.add(RANKS.effect.rank[3]())
                 step = step.mul(tmp.upgs.mass[2]?tmp.upgs.mass[2].eff.eff:1)
-                let ret = step.mul(x.add(tmp.upgs.mass[1].bouns))
+                let ret = step.mul(x.add(tmp.upgs.mass[1].bonus))
                 return {step: step, eff: ret}
             },
             effDesc(eff) {
@@ -367,10 +404,10 @@ const UPGS = {
                     eff: "質量獲得量 +"+formatMass(eff.eff)
                 }
             },
-            bouns() {
+            bonus() {
                 let x = E(0)
                 if (player.mainUpg.rp.includes(1)) x = x.add(tmp.upgs.main?tmp.upgs.main[1][1].effect:E(0))
-                if (player.mainUpg.rp.includes(2)) x = x.add(tmp.upgs.mass[2].bouns)
+                if (player.mainUpg.rp.includes(2)) x = x.add(tmp.upgs.mass[2].bonus)
                 return x
             },
         },
@@ -383,7 +420,7 @@ const UPGS = {
                 let step = E(2)
                 if (player.ranks.rank.gte(5)) step = step.add(RANKS.effect.rank[5]())
                 step = step.pow(tmp.upgs.mass[3]?tmp.upgs.mass[3].eff.eff:1)
-                let ret = step.mul(x.add(tmp.upgs.mass[2].bouns)).add(1)
+                let ret = step.mul(x.add(tmp.upgs.mass[2].bonus)).add(1)
                 return {step: step, eff: ret}
             },
             effDesc(eff) {
@@ -392,10 +429,10 @@ const UPGS = {
                     eff: "提重器力量 x"+format(eff.eff)
                 }
             },
-            bouns() {
+            bonus() {
                 let x = E(0)
                 if (player.mainUpg.rp.includes(2)) x = x.add(tmp.upgs.main?tmp.upgs.main[1][2].effect:E(0))
-                if (player.mainUpg.rp.includes(7)) x = x.add(tmp.upgs.mass[3].bouns)
+                if (player.mainUpg.rp.includes(7)) x = x.add(tmp.upgs.mass[3].bonus)
                 return x
             },
         },
@@ -416,7 +453,7 @@ const UPGS = {
                 let sp = 0.5
                 if (player.mainUpg.atom.includes(9)) sp *= 1.15
                 if (player.ranks.tier.gte(30)) sp *= 1.1
-                let ret = step.mul(x.add(tmp.upgs.mass[3].bouns)).add(1).softcap(ss,sp,0).softcap(1.8e5,0.5,0)
+                let ret = step.mul(x.add(tmp.upgs.mass[3].bonus)).add(1).softcap(ss,sp,0).softcap(1.8e5,0.5,0)
                 return {step: step, eff: ret, ss: ss}
             },
             effDesc(eff) {
@@ -425,7 +462,7 @@ const UPGS = {
                     eff: "提升器力量 ^"+format(eff.eff)+(eff.eff.gte(eff.ss)?`<span class='soft'>（軟限制${eff.eff.gte(1.8e5)?"^2":""}）</span>`:"")
                 }
             },
-            bouns() {
+            bonus() {
                 let x = E(0)
                 if (player.mainUpg.rp.includes(7)) x = x.add(tmp.upgs.main?tmp.upgs.main[1][7].effect:0)
                 return x
@@ -496,7 +533,7 @@ const UPGS = {
                 cost: E(1e5),
             },
             7: {
-                desc: "每 3 個時間速度，增加 1 個增強器。",
+                desc: "每擁有 3 個時間速度，增加 1 個增強器。",
                 cost: E(1e7),
                 effect() {
                     let ret = player.tickspeed.div(3).add(player.atom.elements.includes(38)?tmp.elements.effect[38]:0).floor()
@@ -524,7 +561,7 @@ const UPGS = {
             },
             10: {
                 unl() { return player.bh.unl },
-                desc: "超級級價格增幅減弱 20%。",
+                desc: "超級等級價格增幅減弱 20%。",
                 cost: E(1e43),
             },
             11: {
@@ -746,7 +783,7 @@ const UPGS = {
                 cost: E(25000),
             },
             4: {
-                desc: "重置時保留挑戰 1-4。黑洞壓縮器稍微加強伽馬射線力量。",
+                desc: "重置時保留挑戰 1-4。黑洞壓縮器稍微加強宇宙射線力量。",
                 cost: E(1e10),
                 effect() {
                     let ret = player.bh.condenser.pow(0.8).mul(0.01)
@@ -810,7 +847,7 @@ const UPGS = {
             },
             11: {
                 unl() { return MASS_DILATION.unlocked() },
-                desc: "膨脹質量稍微加強黑洞壓縮器和伽馬射線力量。",
+                desc: "膨脹質量稍微加強黑洞壓縮器和宇宙射線力量。",
                 cost: E('e1640'),
                 effect() {
                     let ret = player.md.mass.max(1).log10().add(1).pow(0.1)
@@ -892,7 +929,7 @@ function format(ex, acc=4, type=player.options.notation) {
                     })
                     final += (i > 0 && Number(arr) > 0 ? "-" : "") + ret + (i < str.length - 1 && Number(arr) > 0 ? ST_NAMES[3][str.length-i-1] : "")
                 });
-                return neg+(e.log10().gte(9)?'':(m.toFixed(E(3).sub(e.sub(e.div(3).floor().mul(3))).add(acc==0?0:1).toNumber())+" "))+final
+                return neg+(e.log10().gte(9)?'':(m.toFixed(E(3).sub(e.sub(e.div(3).floor().mul(3))).add(acc==0?0:1).toNumber())))+final
             }
         default:
             return neg+FORMATS[type].format(ex, acc)
@@ -917,7 +954,7 @@ function formatMass(ex) {
 function formatGain(amt, gain, isMass=false) {
     let f = isMass?formatMass:format
 	if (gain.gte(1e100) && gain.gt(amt)) return "（+"+format(gain.max(1).log10().sub(amt.max(1).log10().max(1)).times(50))+" 數量級/秒）"
-	else return "(+"+f(gain)+"/秒)"
+	else return "（+"+f(gain)+"/秒）"
 }
 
 function formatTime(ex,type="s") {
@@ -927,8 +964,6 @@ function formatTime(ex,type="s") {
     if (ex.gte(60)||type=="h") return (ex.div(60).gte(10)||type!="h"?"":"0")+format(ex.div(60).floor(),0)+":"+formatTime(ex.mod(60),'m')
     return (ex.gte(10)||type!="m" ?"":"0")+format(ex)
 }
-
-function uni(x) { return E(1.5e56).mul(x) }
 
 function expMult(a,b,base=10) { return E(a).gte(1) ? E(base).pow(E(a).log(base).pow(b)) : E(0) }
 

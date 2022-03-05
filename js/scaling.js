@@ -52,7 +52,7 @@ const NAME_FROM_RES = {
 	massUpg: "質量升級",
 	tickspeed: "時間速度",
 	bh_condenser: "黑洞壓縮器",
-	gamma_ray: "伽馬射線",
+	gamma_ray: "宇宙射線",
 	supernova: "超新星",
 	fTier: "費米子階",
 }

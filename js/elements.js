@@ -30,11 +30,11 @@ function setupHTML() {
 	for (let x = 0; x < RANKS.names.length; x++) {
 		let rn = RANKS.names[x]
 		table += `<div style="width: 300px" id="ranks_div_${x}">
-			<button id="ranks_auto_${x}" class="btn" style="width: 80px;" onclick="RANKS.autoSwitch('${rn}')">OFF</button>
-			<span id="ranks_scale_${x}""></span>${RANKS.fullNames[x]} <span id="ranks_amt_${x}">X</span><br><br>
+			<button id="ranks_auto_${x}" class="btn" style="width: 80px;" onclick="RANKS.autoSwitch('${rn}')">關閉</button>
+			<span id="ranks_scale_${x}""></span>第 <span id="ranks_amt_${x}">X</span> ${RANKS.fullNames[x]}<br><br>
 			<button onclick="RANKS.reset('${rn}')" class="btn reset" id="ranks_${x}">
-				Reset your ${x>0?RANKS.fullNames[x-1]:'mass and upgrades'}, but <span id="ranks_desc_${x}">X</span><br>
-				Req: <span id="ranks_req_${x}">X</span>
+				重置${x>0?RANKS.fullNames[x-1]:'質量和升級'}，但是升${RANKS.fullNames[x]}。<span id="ranks_desc_${x}"></span><br>
+				需求：<span id="ranks_req_${x}">X</span>
 			</button>
 		</div>`
 	}
@@ -51,7 +51,7 @@ function setupHTML() {
 					<span style="margin-left: 5px; text-align: left;"><span id="massUpg_scale_${x}"></span>${upg.title} [<span id="massUpg_lvl_${x}">X</span>]</span>
 				</div>
 			</div><button id="massUpg_btn_${x}" class="btn" style="width: 200px;" onclick="UPGS.mass.buy(${x}, true)">Cost: <span id="massUpg_cost_${x}">X</span></button>
-			<button class="btn" style="width: 120px;" onclick="UPGS.mass.buyMax(${x})">Buy Max</button>
+			<button class="btn" style="width: 120px;" onclick="UPGS.mass.buyMax(${x})">購買最大</button>
 			<button id="massUpg_auto_${x}" class="btn" style="width: 80px;" onclick="UPGS.mass.autoSwitch(${x})">OFF</button>
 			<div style="margin-left: 5px; text-align: left; width: 400px">
 				${upg.title} Power: <span id="massUpg_step_${x}">X</span><br>
@@ -108,6 +108,7 @@ function setupHTML() {
 	setupTreeHTML()
 	setupBosonsHTML()
 	setupFermionsHTML()
+	setupRadiationHTML()
 
 	/*
 	function setupTestHTML() {
@@ -175,8 +176,8 @@ function updateUpperHTML() {
 	tmp.el.chal_upper.setVisible(unl)
 	if (unl) {
 		let data = CHALS.getChalData(player.chal.active, tmp.chal.bulk[player.chal.active].max(player.chal.comps[player.chal.active]))
-		tmp.el.chal_upper.setHTML(`You are now in [${CHALS[player.chal.active].title}] Challenge! Go over ${tmp.chal.format(tmp.chal.goal[player.chal.active])+CHALS.getResName(player.chal.active)} to complete.
-		<br>+${tmp.chal.gain} Completions (+1 at ${tmp.chal.format(data.goal)+CHALS.getResName(player.chal.active)})`)
+		tmp.el.chal_upper.setHTML(`你目前在進行 [${CHALS[player.chal.active].title}] 挑戰！超過 ${tmp.chal.format(tmp.chal.goal[player.chal.active])+CHALS.getResName(player.chal.active)} 以完成。
+		<br>+${tmp.chal.gain} 完成次數（${tmp.chal.format(data.goal)+CHALS.getResName(player.chal.active)} 時完成次數 +1）`)
 	}
 	unl = player.atom.unl
 	tmp.el.quark_div.setVisible(unl)
@@ -195,13 +196,22 @@ function updateRanksHTML() {
 		let unl = RANKS.unl[rn]?RANKS.unl[rn]():true
 		tmp.el["ranks_div_"+x].setDisplay(unl)
 		if (unl) {
+			let keys = Object.keys(RANKS.desc[rn])
+			let desc = ""
+			for (let i = 0; i < keys.length; i++) {
+				if (player.ranks[rn].lt(keys[i])) {
+					desc = ` At ${RANKS.fullNames[x]} ${format(keys[i],0)}, ${RANKS.desc[rn][keys[i]]}`
+					break
+				}
+			}
+
 			tmp.el["ranks_scale_"+x].setTxt(getScalingName(rn))
 			tmp.el["ranks_amt_"+x].setTxt(format(player.ranks[rn],0))
 			tmp.el["ranks_"+x].setClasses({btn: true, reset: true, locked: !tmp.ranks[rn].can})
-			tmp.el["ranks_desc_"+x].setTxt(tmp.ranks[rn].desc,0)
+			tmp.el["ranks_desc_"+x].setTxt(desc)
 			tmp.el["ranks_req_"+x].setTxt(x==0?formatMass(tmp.ranks[rn].req):RANKS.fullNames[x-1]+" "+format(tmp.ranks[rn].req,0))
 			tmp.el["ranks_auto_"+x].setDisplay(RANKS.autoUnl[rn]())
-			tmp.el["ranks_auto_"+x].setTxt(player.auto_ranks[rn]?"ON":"OFF")
+			tmp.el["ranks_auto_"+x].setTxt(player.auto_ranks[rn]?"開啟":"關閉")
 		}
     }
 }
@@ -212,13 +222,13 @@ function updateMassUpgradesHTML() {
 		tmp.el["massUpg_div_"+x].setDisplay(upg.unl())
 		if (upg.unl()) {
 			tmp.el["massUpg_scale_"+x].setTxt(getScalingName("massUpg", x))
-			tmp.el["massUpg_lvl_"+x].setTxt(format(player.massUpg[x]||0,0)+(tmp.upgs.mass[x].bouns.gt(0)?" + "+format(tmp.upgs.mass[x].bouns,0):""))
+			tmp.el["massUpg_lvl_"+x].setTxt(format(player.massUpg[x]||0,0)+(tmp.upgs.mass[x].bonus.gt(0)?" + "+format(tmp.upgs.mass[x].bonus,0):""))
 			tmp.el["massUpg_btn_"+x].setClasses({btn: true, locked: player.mass.lt(tmp.upgs.mass[x].cost)})
 			tmp.el["massUpg_cost_"+x].setTxt(formatMass(tmp.upgs.mass[x].cost))
 			tmp.el["massUpg_step_"+x].setTxt(tmp.upgs.mass[x].effDesc.step)
 			tmp.el["massUpg_eff_"+x].setHTML(tmp.upgs.mass[x].effDesc.eff)
 			tmp.el["massUpg_auto_"+x].setDisplay(player.mainUpg.rp.includes(3))
-			tmp.el["massUpg_auto_"+x].setTxt(player.autoMassUpg[x]?"ON":"OFF")
+			tmp.el["massUpg_auto_"+x].setTxt(player.autoMassUpg[x]?"開啟":"關閉")
 		}
 	}
 }
@@ -231,11 +241,12 @@ function updateTickspeedHTML() {
 		tmp.el.tickspeed_lvl.setTxt(format(player.tickspeed,0)+(tmp.atom.atomicEff.gte(1)?" + "+format(tmp.atom.atomicEff,0):""))
 		tmp.el.tickspeed_btn.setClasses({btn: true, locked: !FORMS.tickspeed.can()})
 		tmp.el.tickspeed_cost.setTxt(format(tmp.tickspeedCost,0))
-		tmp.el.tickspeed_step.setTxt(tmp.tickspeedEffect.step.gte(10)?format(tmp.tickspeedEffect.step)+"x":format(tmp.tickspeedEffect.step.sub(1).mul(100))+"%")
+		tmp.el.tickspeed_step.setHTML((tmp.tickspeedEffect.step.gte(10)?format(tmp.tickspeedEffect.step)+"x":format(tmp.tickspeedEffect.step.sub(1).mul(100))+"%")
+		+(tmp.tickspeedEffect.step.gte(1e50)?" <span class='soft'>（軟限制）</span>":""))
 		tmp.el.tickspeed_eff.setTxt(format(tmp.tickspeedEffect.eff))
 
 		tmp.el.tickspeed_auto.setDisplay(FORMS.tickspeed.autoUnl())
-		tmp.el.tickspeed_auto.setTxt(player.autoTickspeed?"ON":"OFF")
+		tmp.el.tickspeed_auto.setTxt(player.autoTickspeed?"開啟":"關閉")
 	}
 }
 
@@ -259,8 +270,8 @@ function updateMainUpgradesHTML() {
 	if (player.main_upg_msg[0] != 0) {
 		let upg1 = UPGS.main[player.main_upg_msg[0]]
 		let upg2 = UPGS.main[player.main_upg_msg[0]][player.main_upg_msg[1]]
-		let msg = "<span class='sky'>"+upg2.desc+"</span><br><span>Cost: "+format(upg2.cost,0)+" "+upg1.res+"</span>"
-		if (upg2.effDesc !== undefined) msg += "<br><span class='green'>Currently: "+tmp.upgs.main[player.main_upg_msg[0]][player.main_upg_msg[1]].effDesc+"</span>"
+		let msg = "<span class='sky'>"+upg2.desc+"</span><br><span>價格："+format(upg2.cost,0)+" "+upg1.res+"</span>"
+		if (upg2.effDesc !== undefined) msg += "<br><span class='green'>目前："+tmp.upgs.main[player.main_upg_msg[0]][player.main_upg_msg[1]].effDesc+"</span>"
 		tmp.el.main_upg_msg.setHTML(msg)
 	} else tmp.el.main_upg_msg.setTxt("")
 	for (let x = 1; x <= UPGS.main.cols; x++) {
@@ -274,35 +285,39 @@ function updateMainUpgradesHTML() {
 				if (unl2) tmp.el["main_upg_"+x+"_"+y].setClasses({img_btn: true, locked: !UPGS.main[x].can(y), bought: player.mainUpg[id].includes(y)})
 			}
 			tmp.el["main_upg_"+x+"_auto"].setDisplay(UPGS.main[x].auto_unl ? UPGS.main[x].auto_unl() : false)
-			tmp.el["main_upg_"+x+"_auto"].setTxt(player.auto_mainUpg[id]?"ON":"OFF")
+			tmp.el["main_upg_"+x+"_auto"].setTxt(player.auto_mainUpg[id]?"開啟":"關閉")
 		}
 	}
 }
 
 function updateBlackHoleHTML() {
 	tmp.el.bhMass2.setHTML(formatMass(player.bh.mass)+" "+formatGain(player.bh.mass, tmp.bh.mass_gain, true))
-	tmp.el.bhMassPower.setTxt(format(tmp.bh.massPowerGain,2))
+	tmp.el.bhMassPower.setTxt(format(tmp.bh.massPowerGain))
+	tmp.el.bhFSoft1.setDisplay(tmp.bh.f.gte(tmp.bh.fSoftStart))
+	tmp.el.bhFSoftStart1.setTxt(format(tmp.bh.fSoftStart))
+	tmp.el.bhMassPower2.setTxt(format(tmp.bh.massPowerGain))
 	tmp.el.massSoft2.setDisplay(tmp.bh.mass_gain.gte(tmp.bh.massSoftGain))
 	tmp.el.massSoftStart2.setTxt(formatMass(tmp.bh.massSoftGain))
+
 	tmp.el.bhEffect.setTxt(format(tmp.bh.effect))
 
-	tmp.el.bhCondenser_lvl.setTxt(format(player.bh.condenser,0)+(tmp.bh.condenser_bouns.gte(1)?" + "+format(tmp.bh.condenser_bouns,0):""))
+	tmp.el.bhCondenser_lvl.setTxt(format(player.bh.condenser,0)+(tmp.bh.condenser_bonus.gte(1)?" + "+format(tmp.bh.condenser_bonus,0):""))
 	tmp.el.bhCondenser_btn.setClasses({btn: true, locked: !FORMS.bh.condenser.can()})
 	tmp.el.bhCondenser_scale.setTxt(getScalingName('bh_condenser'))
 	tmp.el.bhCondenser_cost.setTxt(format(tmp.bh.condenser_cost,0))
 	tmp.el.bhCondenser_pow.setTxt(format(tmp.bh.condenser_eff.pow))
 	tmp.el.bhCondenserEffect.setHTML(format(tmp.bh.condenser_eff.eff))
 	tmp.el.bhCondenser_auto.setDisplay(FORMS.bh.condenser.autoUnl())
-	tmp.el.bhCondenser_auto.setTxt(player.bh.autoCondenser?"ON":"OFF")
+	tmp.el.bhCondenser_auto.setTxt(player.bh.autoCondenser?"開啟":"關閉")
 }
 
 function updateOptionsHTML() {
 	for (let x = 0; x < CONFIRMS.length; x++) {
 		tmp.el["confirm_div_"+x].setDisplay(CONFIRMS[x] == "sn"?player.supernova.times.gte(1):player[CONFIRMS[x]].unl)
-		tmp.el["confirm_btn_"+x].setTxt(player.confirms[CONFIRMS[x]] ? "ON":"OFF")
+		tmp.el["confirm_btn_"+x].setTxt(player.confirms[CONFIRMS[x]] ? "開啟":"關閉")
 	}
 	tmp.el.total_time.setTxt(formatTime(player.time))
-	tmp.el.offline_active.setTxt(player.offline.active?"ON":"OFF")
+	tmp.el.offline_active.setTxt(player.offline.active?"開啟":"關閉")
 }
 
 function updateHTML() {
@@ -313,7 +328,6 @@ function updateHTML() {
 	updateSupernovaEndingHTML()
 	updateTabsHTML()
 	if ((!tmp.supernova.reached || player.supernova.post_10) && tmp.tab != 5) {
-		updateStarsScreenHTML()
 		updateUpperHTML()
 		if (tmp.tab == 0) {
 			if (tmp.stab[0] == 0) {
@@ -327,6 +341,8 @@ function updateHTML() {
 				tmp.el.massSoftStart3.setTxt(formatMass(tmp.massSoftGain2))
 				tmp.el.massSoft4.setDisplay(tmp.massGain.gte(tmp.massSoftGain3))
 				tmp.el.massSoftStart4.setTxt(formatMass(tmp.massSoftGain3))
+				tmp.el.massSoft5.setDisplay(tmp.massGain.gte(tmp.massSoftGain4))
+				tmp.el.massSoftStart5.setTxt(formatMass(tmp.massSoftGain4))
 			}
 			if (tmp.stab[0] == 1) {
 				updateBlackHoleHTML()
