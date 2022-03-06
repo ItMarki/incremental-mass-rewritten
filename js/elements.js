@@ -31,7 +31,7 @@ function setupHTML() {
 		let rn = RANKS.names[x]
 		table += `<div style="width: 300px" id="ranks_div_${x}">
 			<button id="ranks_auto_${x}" class="btn" style="width: 80px;" onclick="RANKS.autoSwitch('${rn}')">關閉</button>
-			<span id="ranks_scale_${x}""></span>第 <span id="ranks_amt_${x}">X</span> ${RANKS.fullNames[x]}<br><br>
+			第 <span id="ranks_amt_${x}">X</span> <span id="ranks_scale_${x}""></span>${RANKS.fullNames[x]}<br><br>
 			<button onclick="RANKS.reset('${rn}')" class="btn reset" id="ranks_${x}">
 				重置${x>0?RANKS.fullNames[x-1]:'質量和升級'}，但是升${RANKS.fullNames[x]}。<span id="ranks_desc_${x}"></span><br>
 				需求：<span id="ranks_req_${x}">X</span>
@@ -50,12 +50,12 @@ function setupHTML() {
 					<img src="images/mass_upg${x}.png">
 					<span style="margin-left: 5px; text-align: left;"><span id="massUpg_scale_${x}"></span>${upg.title} [<span id="massUpg_lvl_${x}">X</span>]</span>
 				</div>
-			</div><button id="massUpg_btn_${x}" class="btn" style="width: 200px;" onclick="UPGS.mass.buy(${x}, true)">Cost: <span id="massUpg_cost_${x}">X</span></button>
+			</div><button id="massUpg_btn_${x}" class="btn" style="width: 200px;" onclick="UPGS.mass.buy(${x}, true)">價格：<span id="massUpg_cost_${x}">X</span></button>
 			<button class="btn" style="width: 120px;" onclick="UPGS.mass.buyMax(${x})">購買最大</button>
 			<button id="massUpg_auto_${x}" class="btn" style="width: 80px;" onclick="UPGS.mass.autoSwitch(${x})">OFF</button>
 			<div style="margin-left: 5px; text-align: left; width: 400px">
-				${upg.title} Power: <span id="massUpg_step_${x}">X</span><br>
-				${upg.title} Effect: <span id="massUpg_eff_${x}">X</span>
+				${upg.title}力量：<span id="massUpg_step_${x}">X</span><br>
+				${upg.title}效果：<span id="massUpg_eff_${x}">X</span>
 			</div>
 		</div>`
 	}
@@ -68,7 +68,7 @@ function setupHTML() {
 		table += `<div id="ranks_reward_div_${x}">`
 		let keys = Object.keys(RANKS.desc[rn])
 		for (let y = 0; y < keys.length; y++) {
-			table += `<span id="ranks_reward_${rn}_${y}"><b>${RANKS.fullNames[x]} ${keys[y]}:</b> ${RANKS.desc[rn][keys[y]]}${RANKS.effect[rn][keys[y]]?` Currently: <span id='ranks_eff_${rn}_${y}'></span></span>`:""}<br>`
+			table += `<span id="ranks_reward_${rn}_${y}"><b>第 ${keys[y]} ${RANKS.fullNames[x]}：</b>${RANKS.desc[rn][keys[y]]}${RANKS.effect[rn][keys[y]]?`目前：<span id='ranks_eff_${rn}_${y}'></span></span>`:""}<br>`
 		}
 		table += `</div>`
 	}
@@ -94,7 +94,7 @@ function setupHTML() {
 		table += `<div id="scaling_div_${x}">`
 		let key = Object.keys(SCALE_START[SCALE_TYPE[x]])
 		for (let y = 0; y < key.length; y++) {
-			table += `<div id="scaling_${x}_${key[y]}_div" style="margin-bottom: 10px;"><b>${NAME_FROM_RES[key[y]]}</b> (<span id="scaling_${x}_${key[y]}_power"></span>): Starts at <span id="scaling_${x}_${key[y]}_start"></span></div>`
+			table += `<div id="scaling_${x}_${key[y]}_div" style="margin-bottom: 10px;"><b>${NAME_FROM_RES[key[y]]}</b>（<span id="scaling_${x}_${key[y]}_power"></span>）：於 <span id="scaling_${x}_${key[y]}_start"></span> 開始</div>`
 		}
 		table += `</div>`
 	}
@@ -242,7 +242,7 @@ function updateTickspeedHTML() {
 		tmp.el.tickspeed_btn.setClasses({btn: true, locked: !FORMS.tickspeed.can()})
 		tmp.el.tickspeed_cost.setTxt(format(tmp.tickspeedCost,0))
 		tmp.el.tickspeed_step.setHTML((tmp.tickspeedEffect.step.gte(10)?format(tmp.tickspeedEffect.step)+"x":format(tmp.tickspeedEffect.step.sub(1).mul(100))+"%")
-		+(tmp.tickspeedEffect.step.gte(1e50)?" <span class='soft'>（軟限制）</span>":""))
+		+(tmp.tickspeedEffect.step.gte(1e50)?"<span class='soft'>（軟限制）</span>":""))
 		tmp.el.tickspeed_eff.setTxt(format(tmp.tickspeedEffect.eff))
 
 		tmp.el.tickspeed_auto.setDisplay(FORMS.tickspeed.autoUnl())

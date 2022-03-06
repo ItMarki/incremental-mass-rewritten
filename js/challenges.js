@@ -93,7 +93,7 @@ const CHALS = {
     },
     getResName(x) {
         if (x < 5 || x > 8) return ''
-        return ' of Black Hole'
+        return ' 黑洞質量'
     },
     getFormat(x) {
         return formatMass
@@ -224,7 +224,7 @@ const CHALS = {
     1: {
         title: "即時增幅",
         desc: "超級等級和超級質量升級在 25 個開始，超級時間速度在 50 個開始。",
-        reward: `超級等級延遲開始，超級時間速度基於完成次數增幅更慢。`,
+        reward: `超級等級延遲開始；基於完成次數，超級時間速度增幅更慢。`,
         max: E(100),
         inc: E(5),
         pow: E(1.3),
@@ -258,7 +258,7 @@ const CHALS = {
         unl() { return player.chal.comps[2].gte(1) || player.atom.unl },
         title: "融化質量",
         desc: "質量獲得量軟限制提早 1e150 開始，而且效果更強。",
-        reward: `質量獲得量基於完成次數獲得次方加成，但不適用於此挑戰中！`,
+        reward: `基於完成次數，質量獲得量得到次方加成，但該加成不適用於此挑戰中！`,
         max: E(100),
         inc: E(25),
         pow: E(1.25),
@@ -274,7 +274,7 @@ const CHALS = {
         unl() { return player.chal.comps[3].gte(1) || player.atom.unl },
         title: "弱化狂怒",
         desc: "怒氣值獲得量開十次方根；質量獲得量軟限制提早 1e100 開始。",
-        reward: `怒氣值獲得量基於完成次數獲得次方加成。`,
+        reward: `基於完成次數，怒氣值獲得量得到次方加成。`,
         max: E(100),
         inc: E(30),
         pow: E(1.25),
@@ -290,7 +290,7 @@ const CHALS = {
         unl() { return player.atom.unl },
         title: "無等級",
         desc: "不能升等級。",
-        reward: `等級需求基於完成次數變弱。`,
+        reward: `基於完成次數，等級需求變弱。`,
         max: E(50),
         inc: E(50),
         pow: E(1.25),
@@ -336,7 +336,7 @@ const CHALS = {
         unl() { return player.chal.comps[7].gte(1) || player.supernova.times.gte(1) },
         title: "白洞",
         desc: "暗物質和黑洞的質量加成開八次方根。",
-        reward: `暗物質和黑洞的質量加成根據完成次數獲得次方加成。<br><span class="yellow">首次完成時，解鎖 3 行元素</span>`,
+        reward: `基於完成次數，暗物質和黑洞的質量加成獲得次方加成。<br><span class="yellow">首次完成時，解鎖 3 行元素</span>`,
         max: E(50),
         inc: E(80),
         pow: E(1.3),
@@ -350,7 +350,7 @@ const CHALS = {
     },
     9: {
         unl() { return player.supernova.tree.includes("chal4") },
-        title: "無粒子No Particles",
+        title: "無粒子",
         desc: "不能分配夸克；質量獲得量的指數得到 0.9 次方的懲罰。",
         reward: `加強鎂-12 的效果。`,
         max: E(100),
@@ -366,7 +366,7 @@ const CHALS = {
     10: {
         unl() { return player.supernova.tree.includes("chal5") },
         title: "現實·一",
-        desc: "挑戰 1 至 8的效果全部應用；你困在質量膨脹裡。",
+        desc: "挑戰 1-8 的效果全部應用；你困在質量膨脹裡。",
         reward: `相對粒子公式的指數根據完成次數獲得加成。（該效果不適用於此挑戰中）<br><span class="yellow">首次完成時，解鎖費米子。</span>`,
         max: E(100),
         inc: E('e2000'),
@@ -380,8 +380,8 @@ const CHALS = {
     },
     11: {
         unl() { return player.supernova.tree.includes("chal6") },
-        title: "Absolutism",
-        desc: "You cannot gain relativistic particles or dilated mass. However, you are stuck in Mass Dilation.",
+        title: "絕對主義",
+        desc: "不能獲得相對粒子和膨脹質量。你困在質量膨脹裡。",
         reward: `Star Booster is stonger by completions.`,
         max: E(100),
         inc: E("ee6"),
@@ -395,8 +395,8 @@ const CHALS = {
     },
     12: {
         unl() { return player.supernova.tree.includes("chal7") },
-        title: "Decay of Atom",
-        desc: "You cannot gain Atoms & Quarks.",
+        title: "原子的衰變",
+        desc: "不能獲得原子和夸克。",
         reward: `Completions add free Radiation Boosters.<br><span class="yellow">On first completion, unlock new prestige layer! (coming soon in v0.5)</span>`,
         max: E(100),
         inc: E('e2e7'),

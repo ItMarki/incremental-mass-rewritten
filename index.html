@@ -61,11 +61,11 @@
     </div>
     <div id='app_supernova' style='display: none'>
         <div style="position: absolute; top: 25px; left: 25px;">
-            <button class="btn" onclick="tmp.tab = tmp.sn_tab;">返回主要標籤</button>
+            <button class="btn" onclick="tmp.tab = tmp.sn_tab;">返回主標籤</button>
             <button class="btn" onclick="SUPERNOVA.reset(true)">重置但不變超新星</button>
         </div>
         <div style="min-height: 70px; margin-top: 15px;">
-            <h2>你變成了 <span id="supernova_rank"></span> <span id="supernova_scale"></span> 次超新星</h2><br>
+            <h2>你變成了 <span id="supernova_rank"></span>  次<span id="supernova_scale"></span>超新星</h2><br>
             下一次超新星在 <span id="supernova_next">X</span> 個恆星
         </div>
         <div style="width: 100%; border-bottom: solid 2px white; height: 5px; margin-bottom: 13px;"></div>
@@ -85,10 +85,10 @@
             <div class="bosons">
                 <div class="table_center">
                     <div class="graviton sub_b">
-                        你有 <span id="graviton_amt">X</span> 個引力子，將玻色子的生產加快<span id="graviton_eff0">Y</span>
+                        你有 <span id="graviton_amt">X</span> 個引力子，將玻色子的生產加快 <span id="graviton_eff0">Y</span>x
                     </div>
                     <div class="higgs_boson sub_b">
-                        你有 <span id="hb_amt">X</span> 個希格斯玻色子，將引力子的效果加強 x^<span id="hb_eff0">Y</span>
+                        你有 <span id="hb_amt">X</span> 個希格斯玻色子，給予引力子的效果 x^<span id="hb_eff0">Y</span> 的加成
                     </div>
                 </div><div class="table_center">
                     <div class="photon sub_b">
@@ -103,7 +103,7 @@
                     <div class="w_boson sub_b">
                         你有 <span id="pos_w_amt">X</span> 個 W<sup>+</sup> 玻色子，將質量獲得量乘以 <span id="pos_w_eff0">Y</span>，<br>並將 W<sup>-</sup> 玻色子的獲得量乘以 <span id="pos_w_eff1">Y</span>
                         <br><br>
-                        你有 <span id="neg_w_amt">X</span> 個 W<sup>-</sup> 玻色子，將質量獲得量軟限制^2 延遲 x^<span id="neg_w_eff0">Y</span>，<br>並將 W<sup>+</sup> 玻色子的獲得量乘以 <span id="neg_w_eff1">Y</span>
+                        你有 <span id="neg_w_amt">X</span> 個 W<sup>-</sup> 玻色子，給予質量獲得量軟限制^2 x^<span id="neg_w_eff0">Y</span> 的延遲，<br>並將 W<sup>+</sup> 玻色子的獲得量乘以 <span id="neg_w_eff1">Y</span>
                     </div>
                     <div class="z_boson sub_b">
                         你有 <span id="z_boson_amt">X</span> 個 Z<sup>0</sup> 玻色子，將時間速度力量乘以 <span id="z_boson_eff0">Y</span>，<br>並將 W 玻色子的獲得量乘以 <span id="z_boson_eff1">Y</span>
@@ -196,9 +196,9 @@
 					<span id="massSoft5" style="color: rgb(255, 94, 0)">質量獲得量到達 <b id="massSoftStart5">X</b> 後會被軟限制^4！</span>
                 </div>
             </div><div id="stab_frame0_1">
-                你 <span id="bhMass2">X</span><br> 的黑洞
+                你的黑洞質量為 <span id="bhMass2">X</span><br>
                 <span class="green">將質量獲得量乘以 <span id="bhEffect">X</span></span><br><br>
-                黑洞對質量獲得量的加成公式 - (x + 1)<sup id="bhMassPower">0.33</sup> * <span id="bhCondenserEffect">X</span><br><br>
+                黑洞對質量獲得量的加成公式：(x + 1)<sup id="bhMassPower">0.33</sup> * <span id="bhCondenserEffect">X</span><br><br>
                 <div style="width: 100%; margin-bottom: 5px;" class="table_center">
                     <div style="width: 400px">
                         <div class="resources">
@@ -303,7 +303,7 @@
             <button class="btn" onclick="turnOffline()">離線進度：<span id="offline_active">開啟</span></button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.fonts)">字體</button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.notations)">標記法</button><br><br>
-            <h2>Confirmation Settings</h2><br>
+            <h2>確認設定</h2><br>
             <div id="confirm_table" class="table_center"></div>
             <br><br>
             增量質量（重寫）v0.4.2.2——MrRedShark77製造，ItMarki翻譯<br>

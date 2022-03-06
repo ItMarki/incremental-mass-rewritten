@@ -280,14 +280,14 @@ const FORMS = {
     },
     reset_msg: {
         msgs: {
-            rp: "到達 1e9 噸質量後，重置以往功能以獲得怒氣值",
-            dm: "到達 1e20 怒氣值後，重置以往功能以獲得暗物質",
-            atom: "到達 1e100 uni 的黑洞後，重置以往所有功能以獲得原子和夸克",
+            rp: "到達 1e9 tonne 的質量後，可以重置以往功能以獲得怒氣值",
+            dm: "到達 1e20 怒氣值後，可以重置以往功能以獲得暗物質",
+            atom: "到達 1e100 uni 的黑洞後，可以重置以往所有功能以獲得原子和夸克",
             md: "膨脹質量，然後取消",
         },
         set(id) {
             if (id=="sn") {
-                player.reset_msg = "到達 "+format(tmp.supernova.maxlimit)+" 塌縮恆星即可變成超新星"
+                player.reset_msg = "到達 "+format(tmp.supernova.maxlimit)+" 塌縮恆星以變成超新星"
                 return
             }
             player.reset_msg = this.msgs[id]
@@ -585,7 +585,7 @@ const UPGS = {
                     return ret
                 },
                 effDesc(x=this.effect()) {
-                    return "+^"+format(x)+(x.gte(0.2)?" <span class='soft'>(softcapped)</span>":"")
+                    return "+^"+format(x)+(x.gte(0.2)?"<span class='soft'>（軟限制）</span>":"")
                 },
             },
             13: {
@@ -647,7 +647,7 @@ const UPGS = {
                 },
             },
             3: {
-                desc: "基於黑洞的陣列，延遲超級質量升級價格增幅。",
+                desc: "基於黑洞的質量，延遲超級質量升級價格增幅。",
                 cost: E(100),
                 effect() {
                     let ret = player.bh.mass.max(1).log10().pow(1.5).softcap(100,1/3,0).floor()

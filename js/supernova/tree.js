@@ -77,7 +77,7 @@ const TREE_UPGS = {
                 let x = player.supernova.times.mul(0.1).softcap(1.5,0.75,0)
                 return x
             },
-            effDesc(x) { return "+"+format(x)+(x.gte(1.5)?" <span class='soft'>(softcapped)</span>":"") },
+            effDesc(x) { return "+"+format(x)+(x.gte(1.5)?"<span class='soft'>（軟限制）</span>":"") },
         },
         m1: {
             branch: ["c"],
@@ -87,7 +87,7 @@ const TREE_UPGS = {
                 let x = E(1e100).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
                 return x
             },
-            effDesc(x) { return format(x)+"x"+(x.max(1).log(1e100).gte(1e3)?" <span class='soft'>(softcapped)</span>":"") },
+            effDesc(x) { return format(x)+"x"+(x.max(1).log(1e100).gte(1e3)?"<span class='soft'>（軟限制）</span>":"") },
         },
         m2: {
             branch: ["m1"],
@@ -120,7 +120,7 @@ const TREE_UPGS = {
                 let x = E(1e50).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
                 return x
             },
-            effDesc(x) { return format(x)+"x"+(x.max(1).log(1e50).gte(1e3)?" <span class='soft'>(softcapped)</span>":"") },
+            effDesc(x) { return format(x)+"x"+(x.max(1).log(1e50).gte(1e3)?"<span class='soft'>（軟限制）</span>":"") },
         },
         bh1: {
             branch: ["c"],
@@ -130,7 +130,7 @@ const TREE_UPGS = {
                 let x = E(1e35).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
                 return x
             },
-            effDesc(x) { return format(x)+"x"+(x.max(1).log(1e35).gte(1e3)?" <span class='soft'>(softcapped)</span>":"") },
+            effDesc(x) { return format(x)+"x"+(x.max(1).log(1e35).gte(1e3)?"<span class='soft'>（軟限制）</span>":"") },
         },
         bh2: {
             branch: ['bh1'],
@@ -554,13 +554,13 @@ function drawTreeBranch(num1, num2) {
 
 function updateTreeHTML() {
     let req = ""
-    if (tmp.supernova.tree_choosed != "") req = TREE_UPGS.ids[tmp.supernova.tree_choosed].req?`<span class="${TREE_UPGS.ids[tmp.supernova.tree_choosed].req()?"green":"red"}">${TREE_UPGS.ids[tmp.supernova.tree_choosed].reqDesc?" Require: "+(typeof TREE_UPGS.ids[tmp.supernova.tree_choosed].reqDesc == "function"?TREE_UPGS.ids[tmp.supernova.tree_choosed].reqDesc():TREE_UPGS.ids[tmp.supernova.tree_choosed].reqDesc):""}</span>`:""
+    if (tmp.supernova.tree_choosed != "") req = TREE_UPGS.ids[tmp.supernova.tree_choosed].req?`<span class="${TREE_UPGS.ids[tmp.supernova.tree_choosed].req()?"green":"red"}">${TREE_UPGS.ids[tmp.supernova.tree_choosed].reqDesc?"需求："+(typeof TREE_UPGS.ids[tmp.supernova.tree_choosed].reqDesc == "function"?TREE_UPGS.ids[tmp.supernova.tree_choosed].reqDesc():TREE_UPGS.ids[tmp.supernova.tree_choosed].reqDesc):""}</span>`:""
     tmp.el.tree_desc.setHTML(
-        tmp.supernova.tree_choosed == "" ? `<div style="font-size: 12px; font-weight: bold;"><span class="gray">(click any tree upgrade to show)</span></div>`
-        : `<div style="font-size: 12px; font-weight: bold;"><span class="gray">(click again to buy if affordable)</span>${req}</div>
+        tmp.supernova.tree_choosed == "" ? `<div style="font-size: 12px; font-weight: bold;"><span class="gray">（點擊任意升級以顯示）</span></div>`
+        : `<div style="font-size: 12px; font-weight: bold;"><span class="gray">（再次點擊以購買）</span>${req}</div>
         <span class="sky">[${tmp.supernova.tree_choosed}] ${TREE_UPGS.ids[tmp.supernova.tree_choosed].desc}</span><br>
-        <span>Cost: ${format(TREE_UPGS.ids[tmp.supernova.tree_choosed].cost,2)} Neutron star</span><br>
-        <span class="green">${TREE_UPGS.ids[tmp.supernova.tree_choosed].effDesc?"Currently: "+TREE_UPGS.ids[tmp.supernova.tree_choosed].effDesc(tmp.supernova.tree_eff[tmp.supernova.tree_choosed]):""}</span>
+        <span>價格：${format(TREE_UPGS.ids[tmp.supernova.tree_choosed].cost,2)} 中子星</span><br>
+        <span class="green">${TREE_UPGS.ids[tmp.supernova.tree_choosed].effDesc?"目前："+TREE_UPGS.ids[tmp.supernova.tree_choosed].effDesc(tmp.supernova.tree_eff[tmp.supernova.tree_choosed]):""}</span>
         `
     )
     for (let x = 0; x < tmp.supernova.tree_had.length; x++) {

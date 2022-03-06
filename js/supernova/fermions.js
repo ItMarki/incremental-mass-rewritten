@@ -99,7 +99,7 @@ const FERMIONS = {
         return u
     },
     names: ['quark', 'lepton'],
-    sub_names: [["Up","Down","Charm","Strange","Top","Bottom"],["Electron","Muon","Tau","Neutrion","Neut-Muon","Neut-Tau"]],
+    sub_names: [["上","下","粲","奇","頂","底"],["電子","μ子","τ子","中微子","μ中微子","τ中微子"]],
     types: [
         [
             {
@@ -118,10 +118,10 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `Adds ${format(x,0)} free Cosmic Rays`
+                    return `免費給予 ${format(x,0)} 個宇宙射線`
                 },
-                inc: "Atomic Powers",
-                cons: "^0.6 to the exponent of Atomic Powers gain",
+                inc: "原子力",
+                cons: "原子力獲得量得到 ^0.6 的懲罰",
             },{
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
@@ -138,10 +138,10 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `x${format(x)} to Relativistic Particles gain`+(x.gte('ee3')?" <span class='soft'>(softcapped)</span>":"")
+                    return `相對粒子獲得量 x${format(x)}`+(x.gte('ee3')?"<span class='soft'>（軟限制）</span>":"")
                 },
-                inc: "Relativistic Particle",
-                cons: "The exponent of the RP formula is divided by 10",
+                inc: "相對粒子",
+                cons: "相對粒子公式的指數除以 10",
             },{
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
@@ -158,10 +158,10 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `Z<sup>0</sup> Boson's first effect is ${format(x.sub(1).mul(100))}% stronger`+(x.gte(5)?" <span class='soft'>(softcapped)</span>":"")
+                    return `Z<sup>0</sup> 玻色子的第一個效果強 ${format(x.sub(1).mul(100))}%`+(x.gte(5)?"<span class='soft'>（軟限制）</span>":"")
                 },
-                inc: "Mass",
-                cons: "You are trapped in Mass Dilation, but they are twice effective",
+                inc: "質量",
+                cons: "你困在效果翻倍的質量膨脹裡",
                 isMass: true,
             },{
                 maxTier() {
@@ -184,10 +184,10 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `4th Photon & Gluon upgrades are ${format(x)}x stronger`+(x.gte(1.5)?" <span class='soft'>(softcapped)</span>":"")
+                    return `第 4 個光子和膠子升級強 ${format(x)}x`+(x.gte(1.5)?"<span class='soft'>（軟限制）</span>":"")
                 },
-                inc: "Rage Power",
-                cons: "You are trapped in Mass Dilation and Challenges 3-5",
+                inc: "怒氣值",
+                cons: "你困在質量膨脹和挑戰 3-5 裡",
             },{
                 maxTier: 30,
                 nextTierAt(x) {
@@ -205,7 +205,7 @@ const FERMIONS = {
                     return x.softcap(1.15,0.5,0)
                 },
                 desc(x) {
-                    return `Radiation Boosters are ${format(x)}x cheaper`+(x.gte(1.15)?" <span class='soft'>(softcapped)</span>":"")
+                    return `Radiation Boosters are ${format(x)}x cheaper`+(x.gte(1.15)?"<span class='soft'>（軟限制）</span>":"")
                 },
                 inc: "Dilated Mass",
                 cons: "U-Quarks, Photons & Gluons do nothing",
@@ -255,10 +255,10 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `Collapse Stars gain softcap starts ^${format(x)} later`+(x.gte(1.5)?" <span class='soft'>(softcapped)</span>":"")
+                    return `塌縮恆星獲得量的軟限制得到 ^${format(x)} 的延遲`+(x.gte(1.5)?"<span class='soft'>（軟限制）</span>":"")
                 },
-                inc: "Quark",
-                cons: "^0.625 to the exponent of Atoms gain",
+                inc: "夸克",
+                cons: "原子獲得量的指數得到 ^0.625 的懲罰",
             },{
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
@@ -275,11 +275,11 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `x${format(x)} to Higgs Bosons & Gravitons gain`+(x.gte(1e6)?" <span class='soft'>(softcapped)</span>":"")
+                    return `希格斯玻色子和引力子的獲得量 x${format(x)}`+(x.gte(1e6)?"<span class='soft'>（軟限制）</span>":"")
                 },
                 isMass: true,
-                inc: "Mass of Black Hole",
-                cons: "The power from the mass of the BH formula is always -1",
+                inc: "黑洞質量",
+                cons: "黑洞質量公式的指數一律設為 -1",
             },{
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
@@ -296,10 +296,10 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `Tickspeed is ${format(x)}x cheaper (before Meta scaling)`
+                    return `時間速度便宜 ${format(x)}x（元級價格增幅應用之前）`
                 },
-                inc: "Dark Matter",
-                cons: "You are trapped in Challenges 8-9",
+                inc: "暗物質",
+                cons: "你困在挑戰 8-9 裡",
             },{
                 maxTier() {
                     let x = 15
@@ -321,7 +321,7 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `Tier requirement is ${format(x)}x cheaper`+(x.gte(1.5)?" <span class='soft'>(softcapped)</span>":"")
+                    return `Tier requirement is ${format(x)}x cheaper`+(x.gte(1.5)?"<span class='soft'>（軟限制）</span>":"")
                 },
                 inc: "Collapsed Star",
                 cons: "Star generators are decreased to ^0.5",
@@ -402,12 +402,12 @@ function setupFermionsHTML() {
             let id = `f${FERMIONS.names[i]}${x}`
             table += `
             <button id="${id}_div" class="fermion_btn ${FERMIONS.names[i]}" onclick="FERMIONS.choose(${i},${x})">
-                <b>[${FERMIONS.sub_names[i][x]}]</b><br>[<span id="${id}_tier_scale"></span>Tier <span id="${id}_tier">0</span>]<br>
-                <span id="${id}_cur">Currently: X</span><br>
-                Next Tier at: <span id="${id}_nextTier">X</span><br>
-                (Increased by ${f.inc})<br><br>
-                Effect: <span id="${id}_desc">X</span><br>
-                On Active: ${f.cons}
+                <b>[${FERMIONS.sub_names[i][x]}]</b><br>[第 <span id="${id}_tier">0</span> <span id="${id}_tier_scale"></span>階]<br>
+                <span id="${id}_cur">目前：X</span><br>
+                下一階：<span id="${id}_nextTier">X</span><br>
+                （由${f.inc}加強）<br><br>
+                效果：<span id="${id}_desc">X</span><br>
+                啟動時：${f.cons}
             </button>
             `
         }
@@ -452,7 +452,7 @@ function updateFermionsHTML() {
 
                 tmp.el[id+"_cur"].setDisplay(active)
                 if (active) {
-                    tmp.el[id+"_cur"].setTxt(`Currently: ${fm(
+                    tmp.el[id+"_cur"].setTxt(`目前：${fm(
                         [
                             [player.atom.atomic, player.md.particles, player.mass, player.rp.points, player.md.mass, tmp.tickspeedEffect.eff],
                             [player.atom.quarks, player.bh.mass, player.bh.dm, player.stars.points, player.atom.points, tmp.tickspeedEffect.step]

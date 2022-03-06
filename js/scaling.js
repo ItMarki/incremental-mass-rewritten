@@ -12,21 +12,26 @@ const SCALE_START = {
     },
 	hyper: {
 		rank: E(120),
+		tier: E(200),
 		massUpg: E(500),
 		tickspeed: E(250),
 		bh_condenser: E(300),
 		gamma_ray: E(300),
 		supernova: E(35),
+		fTier: E(50),
 	},
 	ultra: {
 		rank: E(600),
 		tickspeed: E(700),
 		bh_condenser: E(750),
 		gamma_ray: E(800),
+		supernova: E(60),
+		fTier: E(100),
 	},
-	meta: {/*
-		rank: E(1200),
-		tickspeed: E(3000),*/
+	meta: {
+		rank: E(1e4),
+		tickspeed: E(5e4),
+		supernova: E(100),
 	},
 }
 
@@ -37,6 +42,7 @@ const SCALING_RES = {
     rank(x=0) { return player.ranks.rank },
 	tier(x=0) { return player.ranks.tier },
 	tetr(x=0) { return player.ranks.tetr },
+	pent(x=0) { return player.ranks.pent },
 	tickspeed(x=0) { return player.tickspeed },
     massUpg(x=1) { return E(player.massUpg[x]||0) },
 	bh_condenser(x=0) { return player.bh.condenser },
@@ -46,9 +52,10 @@ const SCALING_RES = {
 }
 
 const NAME_FROM_RES = {
-	rank: "級",
+	rank: "等級",
 	tier: "階",
 	tetr: "層",
+	pent: "五級層",
 	massUpg: "質量升級",
 	tickspeed: "時間速度",
 	bh_condenser: "黑洞壓縮器",
@@ -100,7 +107,13 @@ function getScalingName(name, x=0, y=0) {
 	let amt = SCALING_RES[name](x,y);
 	for (let n = cap - 1; n >= 0; n--) {
 		if (scalingActive(name, amt, Object.keys(SCALE_START)[n]))
-			return capitalFirst(Object.keys(SCALE_START)[n]) + (Object.keys(SCALE_START)[n]=="元級"?"-":" ");
+			if (Object.keys(SCALE_START)[n] == "super"
+				)return "超級";
+			else if (Object.keys(SCALE_START)[n] == "hyper"
+				)return "高級";
+			else if (Object.keys(SCALE_START)[n] == "ultra"
+				)return "極高級";
+			else return "元級"; // improvised code for the purpose of translation; do not delete
 	}
 	return current;
 }
@@ -143,11 +156,26 @@ function getScalingStart(type, name) {
 			if (player.ranks.tetr.gte(5)) start = start.add(RANKS.effect.tetr[5]())
 		}
 	}
+	if (type=="meta") {
+		if (name=="rank") {
+			if (player.ranks.pent.gte(1)) start = start.mul(1.1)
+			if (player.ranks.pent.gte(5)) start = start.mul(RANKS.effect.pent[5]())
+			start = start.mul(tmp.radiation.bs.eff[14])
+		}
+		if (name=="tickspeed") {
+			if (player.atom.elements.includes(68)) start = start.mul(2)
+			if (player.ranks.pent.gte(4)) start = start.mul(RANKS.effect.pent[4]())
+			start = start.mul(tmp.fermions.effs[0][5])
+		}
+	}
 	return start.floor()
 }
 
 function getScalingPower(type, name) {
 	let power = E(1)
+	if (name == "supernova" && type != "meta") {
+		power = power.mul(tmp.fermions.effs[1][4])
+	}
 	if (type=="super") {
 		if (name=="rank") {
 			if (player.mainUpg.rp.includes(10)) power = power.mul(0.8)
@@ -156,6 +184,9 @@ function getScalingPower(type, name) {
 		if (name=="tier") {
 			if (player.ranks.tetr.gte(4)) power = power.mul(0.8)
 			if (player.atom.elements.includes(37)) power = power.mul(tmp.elements.effect[37])
+		}
+		if (name=="tetr") {
+			if (player.atom.elements.includes(74)) power = power.mul(0.75)
 		}
 		if (name=="massUpg") {
 			if (player.mainUpg.rp.includes(8)) power = power.mul(tmp.upgs.main?tmp.upgs.main[1][8].effect:1)
@@ -206,6 +237,11 @@ function getScalingPower(type, name) {
 		}
 		if (name=='gamma_ray') {
 			if (player.atom.elements.includes(55)) power = power.mul(0.75)
+		}
+	}
+	if (type=="meta") {
+		if (name=='tickspeed') {
+			
 		}
 	}
 	return power

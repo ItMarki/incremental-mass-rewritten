@@ -11,7 +11,7 @@ const TABS = {
         else tmp.stab[tmp.tab] = x
     },
     1: [
-        { id: "主頁" },
+        { id: "主標籤" },
         { id: "統計" },
         { id: "升級", unl() { return player.rp.unl } },
         { id: "挑戰", unl() { return player.chal.unl } },
@@ -39,6 +39,8 @@ const TABS = {
             { id: "中子樹" },
             { id: "玻色子", unl() { return player.supernova.post_10 } },
             { id: "費米子", unl() { return player.supernova.fermions.unl } },
+			{ id: "輻射", unl() { return tmp.radiation.unl } },
+
         ],
     },
 }

@@ -125,8 +125,8 @@ function updateStarsHTML() {
 
     tmp.el.star_btn.setDisplay(player.supernova.tree.includes("s4") || player.stars.unls < 5)
     tmp.el.star_btn.setHTML((player.stars.unls < 5 || !player.supernova.tree.includes("s4"))
-    ? `Unlock new type of Stars, require ${format(tmp.stars.generator_req)} Quark`
-    : `Boost all-Star resources gain, require ${format(tmp.stars.generator_boost_req)} Quark<br>Currently: ${format(tmp.stars.generator_boost_eff)}x`)
+    ? `解鎖一類新的恆星，需要 ${format(tmp.stars.generator_req)} 夸克`
+    : `提升所有恆星資源的獲得量，需要 ${format(tmp.stars.generator_boost_req)} 夸克<br>目前：${format(tmp.stars.generator_boost_eff)}x`)
 
     tmp.el.star_btn.setClasses({btn: true, locked: !player.atom.quarks.gte(!player.supernova.tree.includes("s4")||player.stars.unls < 5?tmp.stars.generator_req:tmp.stars.generator_boost_req)})
 

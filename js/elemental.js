@@ -285,11 +285,11 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Add 50 more C7 maximum completions.`,
+            desc: `挑戰 7 的完成上限增加 50 次。`,
             cost: E('e315'),
         },
         {
-            desc: `Collapsed star boost quark gain.`,
+            desc: `塌縮恆星提升夸克獲得量。`,
             cost: E('e325'),
             effect() {
                 let x = player.stars.points.add(1).pow(1/3)
@@ -298,15 +298,15 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `You can now automatically buy mass dilation upgrades if you purchased any first. They no longer spent dilated mass.`,
+            desc: `如果已經購買某個質量膨脹升級，則可以自動購買它。它們不再花費膨脹質量。`,
             cost: E('e360'),
         },
         {
-            desc: `The Tetr requirement is broken.`,
+            desc: `減弱層的需求。`,
             cost: E('e380'),
         },
         {
-            desc: `Collapsed star boost relativistic particles gain.`,
+            desc: `塌縮恆星提升相對粒子獲得量。`,
             cost: E('e420'),
             effect() {
                 let x = player.stars.points.add(1).pow(0.15).min(1e20)
@@ -315,7 +315,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Collapsed star's effect boost mass gain from the black hole at a reduced rate.`,
+            desc: `塌縮恆星的效果稍微加強黑洞的質量加成。`,
             cost: E('e510'),
             effect() {
                 let x = tmp.stars?tmp.stars.effect.add(1).pow(0.02):E(1)
@@ -324,15 +324,15 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Quarks gain is raised to the 1.05th power.`,
+            desc: `夸克獲得量獲得 1.05 次方的加成。`,
             cost: E('e610'),
         },
         {
-            desc: `Collapsed stars effect is 10% stronger.`,
+            desc: `塌縮恆星的效果強 10%。`,
             cost: E('e800'),
         },
         {
-            desc: `Collapsed star boost last type of stars.`,
+            desc: `塌縮恆星加強最後一類恆星。`,
             cost: E('e1000'),
             effect() {
                 let x = player.stars.points.add(1).log10().add(1).pow(1.1)
@@ -341,11 +341,11 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Star generator is now ^1.05 stronger.`,
+            desc: `恆星生產器獲得 1.05 次方的加成。`,
             cost: E('e1750'),
         },
         {
-            desc: `Mass gain softcap^2 is 10% weaker.`,
+            desc: `質量獲得量軟限制^2 弱 10%。`,
             cost: E('e2400'),
         },
         {
@@ -541,7 +541,7 @@ function updateElementsHTML() {
     if (ch) {
         tmp.el.elem_desc.setTxt("["+ELEMENTS.fullNames[ch]+"] "+ELEMENTS.upgs[ch].desc)
         tmp.el.elem_cost.setTxt(format(ELEMENTS.upgs[ch].cost,0))
-        tmp.el.elem_eff.setHTML(ELEMENTS.upgs[ch].effDesc?"Currently: "+ELEMENTS.upgs[ch].effDesc(tmp.elements.effect[ch]):"")
+        tmp.el.elem_eff.setHTML(ELEMENTS.upgs[ch].effDesc?"目前："+ELEMENTS.upgs[ch].effDesc(tmp.elements.effect[ch]):"")
     }
     tmp.el.element_la_1.setVisible(tmp.elements.unl_length>57)
     tmp.el.element_la_3.setVisible(tmp.elements.unl_length>57)
