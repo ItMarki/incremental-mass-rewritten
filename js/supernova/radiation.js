@@ -1,10 +1,10 @@
 const RADIATION = {
-    names: ["Radio","Microwave","Infrared","Visible","Ultraviolet","X-ray","Gamma-ray"],
+    names: ["無線電波","微波","紅外線","可見光","紫外線","X 射線","伽馬射線"],
     unls: ["0","1e6","1e13","1e20","1e26","1e33","1e49"],
     hz_gain() {
         let x = E(1)
         x = x.mul(tmp.radiation.ds_eff[0])
-        if (player.supernova.tree.includes('rad1')) x = x.mul(tmp.supernova.tree_eff.rad1||1)
+        if (hasTree('rad1')) x = x.mul(tmp.supernova.tree_eff.rad1||1)
         if (player.ranks.pent.gte(2)) x = x.mul(RANKS.effect.pent[2]())
         return x
     },
@@ -14,19 +14,20 @@ const RADIATION = {
     },
     ds_gain(i) {
         if (i>0&&player.supernova.radiation.hz.lt(RADIATION.unls[i])) return E(0)
-        let x = E(1)
-        if (player.supernova.tree.includes('rad2')) x = x.mul(10)
+        let x = E(1).mul(tmp.prim.eff[6][0])
+        if (hasTree('rad2')) x = x.mul(10)
         if (player.ranks.pent.gte(2)) x = x.mul(RANKS.effect.pent[2]())
         if (i<RAD_LEN-1) {
-            if (player.supernova.tree.includes('rad1') && player.supernova.radiation.hz.gte(RADIATION.unls[i+1])) x = x.mul(tmp.supernova.tree_eff.rad1||1)
+            if (hasTree('rad1') && player.supernova.radiation.hz.gte(RADIATION.unls[i+1])) x = x.mul(tmp.supernova.tree_eff.rad1||1)
             x = x.mul(tmp.radiation.ds_eff[i+1])
         }
-        if (player.supernova.tree.includes('rad5')) x = x.mul(tmp.supernova.tree_eff.rad5||1)
+        if (hasTree('rad5')) x = x.mul(tmp.supernova.tree_eff.rad5||1)
         x = x.mul(tmp.radiation.bs.eff[3*i])
         return x
     },
     ds_eff(i) {
         let x = player.supernova.radiation.ds[i].add(1).root(3)
+        if (hasTree('prim2')) x = x.pow(tmp.prim.eff[6][1])
         return x
     },
     getBoostData(i) {
@@ -43,187 +44,190 @@ const RADIATION = {
     },
     getLevelEffect(i) {
         let b = tmp.radiation.bs.lvl[i].add(tmp.radiation.bs.bonus_lvl[i])
-        if (FERMIONS.onActive("15") || Math.floor(i/2)>0&&player.supernova.radiation.hz.lt(RADIATION.unls[Math.floor(i/2)])) b = E(0)
+        if (FERMIONS.onActive("15") || Math.floor(i/3)>0&&player.supernova.radiation.hz.lt(RADIATION.unls[Math.floor(i/3)])) b = E(0)
         //b = b.mul(tmp.chal?tmp.chal.eff[12]:1)
         let x = this.boosts[i].eff(b)
         return x
     },
     getbonusLevel(i) {
         let x = E(0)
-        x = x.add(tmp.chal?tmp.chal.eff[12]:1)
+        x = x.add(tmp.chal?tmp.chal.eff[12]:0)
         if (i < 8) x = x.add(tmp.radiation.bs.eff[8])
         if (i < 17) x = x.add(tmp.radiation.bs.eff[17])
+
+        if (hasTree('rad6')) x = x.mul(1.6-0.05*Math.floor(i/3))
+
         return x
     },
     buyBoost(i) {
         let [cost, bulk, j] = [tmp.radiation.bs.cost[i], tmp.radiation.bs.bulk[i], Math.floor(i/2)]
         if (player.supernova.radiation.ds[j].gte(cost) && bulk.gt(player.supernova.radiation.bs[i])) {
             player.supernova.radiation.bs[i] = player.supernova.radiation.bs[i].max(bulk)
-            if (!player.supernova.tree.includes("qol9")) {
+            if (!hasTree("qol9")) {
                 let [f1,f2,f3,fp] = [2+i/2,1.3+i*0.05,(i*0.5+1)**2*10,tmp.radiation.bs.fp]
                 player.supernova.radiation.ds[j] = player.supernova.radiation.ds[j].sub(E(f1).pow(bulk.sub(1).div(fp).pow(f2)).mul(f3)).max(0)
             }
         }
     },
     autoBuyBoosts() {
-        if (player.supernova.tree.includes("qol9")) for (let x = 0; x < 2*RAD_LEN; x++) this.buyBoost(x)
+        if (hasTree("qol9")) for (let x = 0; x < 2*RAD_LEN; x++) this.buyBoost(x)
     },
     getBoostsFP() {
         let x = E(1)
-        if (player.supernova.tree.includes('rad3')) x = x.mul(1.1)
+        if (hasTree('rad3')) x = x.mul(1.1)
         x = x.mul(tmp.fermions.effs[0][4])
         return x
     },
     boosts: [
         {
-            title: `Radio Boost`,
+            title: `無線電波加成`,
             eff(b) {
                 let x = player.supernova.radiation.hz.add(1).log10().add(1).pow(b).softcap(1e30,0.5,0)
                 return x
             },
-            desc(x) { return `Radiowave is boosted by ${format(x)}x (based on Frequency)` },
+            desc(x) { return `無線電波獲得量提升 ${format(x)}x（基於頻率）` },
         },{
-            title: `Tickspeed Boost`,
+            title: `時間速度加成`,
             eff(b) {
                 let x = b.add(1).root(2)
                 return x
             },
-            desc(x) { return `Non-bonus tickspeed is ${format(x)}x stronger` },
+            desc(x) { return `非獎勵時間速度加强 ${format(x)}x` },
         },{
-            title: `Mass-Softcap Boost`,
+            title: `質量軟限制加成`,
             eff(b) {
                 let x = b.add(1).root(4)
                 return x
             },
-            desc(x) { return `Softcap^3 from mass gain start ^${format(x)} later` },
+            desc(x) { return `質量軟限制^3 得到 ^${format(x)} 的延遲` },
         },{
-            title: `Microwave Boost`,
+            title: `微波加成`,
             eff(b) {
                 let x = player.supernova.radiation.ds[0].add(1).log10().add(1).pow(b).softcap(1e30,0.5,0)
                 return x
             },
-            desc(x) { return `Microwave is boosted by ${format(x)}x (based on Radio)` },
+            desc(x) { return `微波獲得量提升 ${format(x)}x（基於無線電波）` },
         },{
-            title: `BH-Exponent Boost`,
+            title: `黑洞指數加成`,
             eff(b) {
                 let x = b.root(2).div(100)
                 return x.min(.15)
             },
-            desc(x) { return `Exponent from the mass of BH formula is increased by ${format(x)} (hardcapped to 0.15)` },
+            desc(x) { return `黑洞質量公式的指數增加 ${format(x)}（最高 0.15）` },
         },{
-            title: `BH-Condenser Boost`,
+            title: `黑洞壓縮器加成`,
             eff(b) {
                 let x = b.add(1).pow(2)
                 return x.softcap(100,0.5,0)
             },
-            desc(x) { return `Non-bonus BH condenser is ${format(x)}x stronger` },
+            desc(x) { return `非獎勵黑洞壓縮器强 ${format(x)}x` },
         },{
-            title: `Infrared Boost`,
+            title: `紅外線加成`,
             eff(b) {
                 let x = player.supernova.radiation.ds[1].add(1).log10().add(1).pow(b).softcap(1e30,0.5,0)
                 return x
             },
-            desc(x) { return `Infrared is boosted by ${format(x)}x (based on Microwave)` },
+            desc(x) { return `紅外線獲得量提升 ${format(x)}x（基於無線電波）` },
         },{
-            title: `Photo-Gluon Boost`,
+            title: `光子-膠子加成`,
             eff(b) {
                 let x = b.add(1).root(3)
                 return x
             },
-            desc(x) { return `1st Photon & Gluon upgrades are ${format(x)}x stronger` },
+            desc(x) { return `第 1 個光子和膠子升級强 ${format(x)}x` },
         },{
-            title: `Meta-Boost I`,
+            title: `元加成 I`,
             eff(b) {
-                if (player.supernova.tree.includes('rad4')) b = b.pow(2)
+                if (hasTree('rad4')) b = b.pow(2)
                 let x = b.root(2.5).div(1.75)
                 return x
             },
-            desc(x) { return `Add ${format(x)} levels to all above boosts` },
+            desc(x) { return `以上加成增加 ${format(x)} 等級` },
         },{
-            title: `Visible Boost`,
+            title: `可見光加成`,
             eff(b) {
                 let x = player.supernova.radiation.ds[2].add(1).log10().add(1).pow(b).softcap(1e30,0.5,0)
                 return x
             },
-            desc(x) { return `Visible is boosted by ${format(x)}x (based on Infrared)` },
+            desc(x) { return `可見光獲得量增加 ${format(x)}x（基於紅外線）` },
         },{
-            title: `Cosmic-Ray Boost`,
+            title: `宇宙射線加成`,
             eff(b) {
                 let x = b.add(1).root(3)
                 return x
             },
-            desc(x) { return `Cosmic Ray power is boosted by ${format(x)}x` },
+            desc(x) { return `宇宙射線力量加强 ${format(x)}x` },
         },{
-            title: `Neturon-Star Boost`,
+            title: `中子星加成`,
             eff(b) {
                 let x = player.supernova.radiation.hz.add(1).log10().add(1).pow(b)
                 return x
             },
-            desc(x) { return `Neutron Star is boosted by ${format(x)}x (based on Frequency)` },
+            desc(x) { return `中子星獲得量提升 ${format(x)}x（基於頻率）` },
         },{
-            title: `Ultraviolet Boost`,
+            title: `紫外線加成`,
             eff(b) {
                 let x = player.supernova.radiation.ds[3].add(1).log10().add(1).pow(b).softcap(1e30,0.5,0)
                 return x
             },
-            desc(x) { return `Ultraviolet is boosted by ${format(x)}x (based on Visible)` },
+            desc(x) { return `紫外線獲得量提升 ${format(x)}x（基於可見光）` },
         },{
-            title: `Tickspeed-Softcap Boost`,
+            title: `時間速度軟限制加成`,
             eff(b) {
                 let x = E(1e3).pow(b.pow(0.9))
                 return x
             },
-            desc(x) { return `Tickspeed power's softcap starts ${format(x)}x later` },
+            desc(x) { return `時間速度軟限制延遲 ${format(x)}x` },
         },{
-            title: `Meta-Rank Boost`,
+            title: `元級等級加成`,
             eff(b) {
                 let x = E(1.025).pow(b)
                 return x
             },
-            desc(x) { return `Meta-Rank starts ${format(x)}x later` },
+            desc(x) { return `元級等級延遲 ${format(x)}x` },
         },{
-            title: `X-ray Boost`,
+            title: `X 射線加成`,
             eff(b) {
                 let x = player.supernova.radiation.ds[4].add(1).log10().add(1).pow(b).softcap(1e30,0.5,0)
                 return x
             },
-            desc(x) { return `X-ray is boosted by ${format(x)}x (based on Ultraviolet)` },
+            desc(x) { return `X 射線獲得量提升 ${format(x)}x（基於紫外線）` },
         },{
-            title: `U-Lepton Boost`,
+            title: `U-輕子加成`,
             eff(b) {
                 let x = b.add(1).root(4)
                 return x
             },
-            desc(x) { return `U-Leptons are ${format(x)}x stronger` },
+            desc(x) { return `U-輕子强 ${format(x)}x` },
         },{
-            title: `Meta-Boost II`,
+            title: `元加成 II`,
             eff(b) {
-                if (player.supernova.tree.includes('rad4')) b = b.pow(2)
+                if (hasTree('rad4')) b = b.pow(2)
                 let x = b.root(2.5).div(1.75)
                 return x
             },
-            desc(x) { return `Add ${format(x)} levels to all above boosts` },
+            desc(x) { return `以上加成增加 ${format(x)} 等級` },
         },{
-            title: `Gamma-ray Boost`,
+            title: `伽馬射線加成`,
             eff(b) {
                 let x = player.supernova.radiation.ds[5].add(1).log10().add(1).pow(b).softcap(1e30,0.5,0)
                 return x
             },
-            desc(x) { return `Gamma-ray is boosted by ${format(x)}x (based on X-ray)` },
+            desc(x) { return `伽馬射線獲得量提升 ${format(x)}x（基於 X 射線）` },
         },{
-            title: `U-Quark Boost`,
+            title: `U-夸克加成`,
             eff(b) {
                 let x = b.add(1).root(5)
                 return x
             },
-            desc(x) { return `U-Quarks are ${format(x)}x stronger` },
+            desc(x) { return `U-夸克强 ${format(x)}x` },
         },{
-            title: `BH-Exponent Boost II`,
+            title: `黑洞指數加成 II`,
             eff(b) {
                 let x = b.div(2).add(1).root(3)
                 return x
             },
-            desc(x) { return `From BH the formulas softcap starts ^${format(x)} later` },
+            desc(x) { return `黑洞公式軟限制延遲 ^${format(x)}` },
         },
 
         /*
@@ -242,7 +246,7 @@ const RADIATION = {
 const RAD_LEN = 7
 
 function updateRadiationTemp() {
-    tmp.radiation.unl = player.supernova.tree.includes("unl1")
+    tmp.radiation.unl = hasTree("unl1")
     tmp.radiation.hz_gain = RADIATION.hz_gain()
     tmp.radiation.hz_effect = RADIATION.hz_effect()
     tmp.radiation.bs.fp = RADIATION.getBoostsFP()
@@ -273,19 +277,19 @@ function setupRadiationHTML() {
         table += `
         <div id="${id}_div" class="table_center radiation">
             <div class="sub_rad" style="width: 450px">
-                Your distance of ${name}'s wave is <span id="${id}_distance">0</span> meter.<br>Which multiples ${x==0?"Frequency":"distance of "+RADIATION.names[x-1]} gain by <span id="${id}_disEff">1</span>x
+                你的${name}距離是 <span id="${id}_distance">0</span> 米，<br>將${x==0?"頻率":RADIATION.names[x-1]+"距離"}的獲得量增加 <span id="${id}_disEff">1</span>x
             </div><div class="table_center sub_rad" style="align-items: center">
                 <button id="${b1}_btn" class="btn rad" onclick="RADIATION.buyBoost(${2*x})">
-                    Aplitude: <span id="${b1}_lvl1">0</span><br>
-                    Cost: <span id="${b1}_cost">0</span> meters
+                    振幅：<span id="${b1}_lvl1">0</span><br>
+                    價格：<span id="${b1}_cost">0</span> 米
                 </button><button id="${b2}_btn" class="btn rad" onclick="RADIATION.buyBoost(${2*x+1})">
-                    Velocity: <span id="${b2}_lvl1">0</span><br>
-                    Cost: <span id="${b2}_cost">0</span> meters
+                    波速：<span id="${b2}_lvl1">0</span><br>
+                    價格：<span id="${b2}_cost">0</span> 米
                 </button>
             </div><div class="sub_rad" style="width: 100%">
-                ${RADIATION.boosts[3*x].title} [<span id="rad_level_${3*x}">0</span>]: <span id="rad_level_${3*x}_desc">0</span><br>
-                ${RADIATION.boosts[3*x+1].title} [<span id="rad_level_${3*x+1}">0</span>]: <span id="rad_level_${3*x+1}_desc">0</span><br>
-                ${RADIATION.boosts[3*x+2].title} [<span id="rad_level_${3*x+2}">0</span>]: <span id="rad_level_${3*x+2}_desc">0</span>
+                ${RADIATION.boosts[3*x].title} [<span id="rad_level_${3*x}">0</span>]：<span id="rad_level_${3*x}_desc">0</span><br>
+                ${RADIATION.boosts[3*x+1].title} [<span id="rad_level_${3*x+1}">0</span>]：<span id="rad_level_${3*x+1}_desc">0</span><br>
+                ${RADIATION.boosts[3*x+2].title} [<span id="rad_level_${3*x+2}">0</span>]：<span id="rad_level_${3*x+2}_desc">0</span>
             </div>
         </div>
         `
@@ -294,14 +298,14 @@ function setupRadiationHTML() {
 }
 
 function updateRadiationHTML() {
-    tmp.el.frequency.setTxt(format(player.supernova.radiation.hz,1)+" "+formatGain(player.supernova.radiation.hz,tmp.radiation.hz_gain))
+    tmp.el.frequency.setTxt(format(player.supernova.radiation.hz,1)+" "+formatGain(player.supernova.radiation.hz,tmp.radiation.hz_gain.mul(tmp.preQUGlobalSpeed)))
     tmp.el.frequency_eff.setTxt(format(tmp.radiation.hz_effect))
 
     let rad_id = 1
     let comp = false
     for (let x = 1; x < RAD_LEN; x++) {
         if (x == RAD_LEN-1) comp = true;
-        if (player.supernova.radiation.hz.lt(RADIATION.unls[x]||1/0)) break
+        if (player.supernova.radiation.hz.lt(RADIATION.unls[x]||1/0) || comp) break
         rad_id++
     }
     tmp.el.next_radiation.setTxt()
@@ -316,7 +320,7 @@ function updateRadiationHTML() {
 
         tmp.el[id+"_div"].setDisplay(unl)
         if (unl) {
-            tmp.el[id+"_distance"].setTxt(format(player.supernova.radiation.ds[x],1)+" "+formatGain(player.supernova.radiation.ds[x],tmp.radiation.ds_gain[x]))
+            tmp.el[id+"_distance"].setTxt(format(player.supernova.radiation.ds[x],1)+" "+formatGain(player.supernova.radiation.ds[x],tmp.radiation.ds_gain[x].mul(tmp.preQUGlobalSpeed)))
             tmp.el[id+"_disEff"].setTxt(format(tmp.radiation.ds_eff[x]))
 
             for (let y = 0; y < 2; y++) {

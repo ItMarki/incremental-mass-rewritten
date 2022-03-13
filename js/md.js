@@ -1,5 +1,5 @@
 const MASS_DILATION = {
-    unlocked() { return player.atom.elements.includes(21) },
+    unlocked() { return hasElement(21) },
     penalty() {
         let x = 0.8
         if (FERMIONS.onActive("02")) x **= 2
@@ -13,16 +13,16 @@ const MASS_DILATION = {
     },
     RPexpgain() {
         let x = E(2).add(tmp.md.upgs[5].eff).mul((tmp.chal && !CHALS.inChal(10))?tmp.chal.eff[10]:1)
-        if (!player.md.active && player.supernova.tree.includes("d1")) x = x.mul(1.25)
+        if (!player.md.active && hasTree("d1")) x = x.mul(1.25)
         if (FERMIONS.onActive("01")) x = x.div(10)
         return x
     },
     RPmultgain() {
         let x = E(1).mul(tmp.md.upgs[2].eff)
-        if (player.atom.elements.includes(24)) x = x.mul(tmp.elements.effect[24])
-        if (player.atom.elements.includes(31)) x = x.mul(tmp.elements.effect[31])
-        if (player.atom.elements.includes(34)) x = x.mul(tmp.elements.effect[34])
-        if (player.atom.elements.includes(45)) x = x.mul(tmp.elements.effect[45])
+        if (hasElement(24)) x = x.mul(tmp.elements.effect[24])
+        if (hasElement(31)) x = x.mul(tmp.elements.effect[31])
+        if (hasElement(34)) x = x.mul(tmp.elements.effect[34])
+        if (hasElement(45)) x = x.mul(tmp.elements.effect[45])
         x = x.mul(tmp.fermions.effs[0][1]||1)
         return x
     },
@@ -36,10 +36,10 @@ const MASS_DILATION = {
         let pow = E(2)
         let x = player.md.particles.pow(pow)
         x = x.mul(tmp.md.upgs[0].eff)
-        if (player.atom.elements.includes(22)) x = x.mul(tmp.elements.effect[22])
-        if (player.atom.elements.includes(35)) x = x.mul(tmp.elements.effect[35])
-        if (player.atom.elements.includes(40)) x = x.mul(tmp.elements.effect[40])
-        if (player.atom.elements.includes(32)) x = x.pow(1.05)
+        if (hasElement(22)) x = x.mul(tmp.elements.effect[22])
+        if (hasElement(35)) x = x.mul(tmp.elements.effect[35])
+        if (hasElement(40)) x = x.mul(tmp.elements.effect[40])
+        if (hasElement(32)) x = x.pow(1.05)
         return x
     },
     mass_req() {
@@ -53,7 +53,7 @@ const MASS_DILATION = {
     upgs: {
         buy(x) {
             if (tmp.md.upgs[x].can) {
-                if (!player.atom.elements.includes(43)) player.md.mass = player.md.mass.sub(this.ids[x].cost(tmp.md.upgs[x].bulk.sub(1))).max(0)
+                if (!hasElement(43)) player.md.mass = player.md.mass.sub(this.ids[x].cost(tmp.md.upgs[x].bulk.sub(1))).max(0)
                 player.md.upgs[x] = player.md.upgs[x].max(tmp.md.upgs[x].bulk)
             }
         },
@@ -64,18 +64,18 @@ const MASS_DILATION = {
                 bulk() { return player.md.mass.gte(10)?player.md.mass.div(10).max(1).log10().add(1).floor():E(0) },
                 effect(x) {
                     let b = 2
-                    if (player.atom.elements.includes(25)) b++
+                    if (hasElement(25)) b++
                     return E(b).pow(x.mul(tmp.md.upgs[11].eff||1)).softcap('e1.2e4',0.96,2)//.softcap('e2e4',0.92,2)
                 },
                 effDesc(x) { return format(x,0)+"x"+(x.gte('e1.2e4')?`<span class='soft'>（軟限制${x.gte('e2e400')?"^2":""}）</span>`:"")},
             },{
-                desc: `加強膨脹質量效果。`,
+                desc: `加强膨脹質量效果。`,
                 cost(x) { return E(10).pow(x).mul(100) },
                 bulk() { return player.md.mass.gte(100)?player.md.mass.div(100).max(1).log10().add(1).floor():E(0) },
                 effect(x) {
                     return player.md.upgs[7].gte(1)?x.mul(tmp.md.upgs[11].eff||1).root(1.5).mul(0.25).add(1):x.mul(tmp.md.upgs[11].eff||1).root(2).mul(0.15).add(1)
                 },
-                effDesc(x) { return "加強 "+(x.gte(10)?format(x)+"x":format(x.sub(1).mul(100))+"%")},
+                effDesc(x) { return "加强 "+(x.gte(10)?format(x)+"x":format(x.sub(1).mul(100))+"%")},
             },{
                 desc: `翻倍相對粒子獲得量。`,
                 cost(x) { return E(10).pow(x.pow(E(1.25).pow(tmp.md.upgs[4].eff||1))).mul(1000) },
@@ -83,7 +83,7 @@ const MASS_DILATION = {
                 effect(x) { return E(2).pow(x.mul(tmp.md.upgs[11].eff||1)).softcap(1e25,0.75,0) },
                 effDesc(x) { return format(x,0)+"x"+(x.gte(1e25)?"<span class='soft'>（軟限制）</span>":"") },
             },{
-                desc: `膨脹質量加強增強器力量。`,
+                desc: `膨脹質量加强增强器力量。`,
                 maxLvl: 1,
                 cost(x) { return E(1.619e20).mul(25) },
                 bulk() { return player.md.mass.gte(E(1.619e20).mul(25))?E(1):E(0) },
@@ -95,7 +95,7 @@ const MASS_DILATION = {
                 cost(x) { return E(1e5).pow(x).mul(E(1.619e20).mul(1e4)) },
                 bulk() { return player.md.mass.gte(E(1.619e20).mul(1e4))?player.md.mass.div(E(1.619e20).mul(1e4)).max(1).log(1e5).add(1).floor():E(0) },
                 effect(x) { return E(1).sub(x.mul(0.1)) },
-                effDesc(x) { return "減弱 "+format(E(1).sub(x).mul(100))+"%" },
+                effDesc(x) { return "弱 "+format(E(1).sub(x).mul(100))+"%" },
             },{
                 desc: `增加相對粒子公式的次方。`,
                 cost(x) { return E(1e3).pow(x.pow(1.5)).mul(1.5e73) },
@@ -103,12 +103,12 @@ const MASS_DILATION = {
                 effect(i) {
                     let s = E(0.25).add(tmp.md.upgs[10].eff||1)
                     let x = i.mul(s)
-                    if (player.atom.elements.includes(53)) x = x.mul(1.75)
+                    if (hasElement(53)) x = x.mul(1.75)
                     return x.softcap(1e3,0.6,0)
                 },
                 effDesc(x) { return "+^"+format(x)+(x.gte(1e3)?"<span class='soft'>（軟限制）</span>":"") },
             },{
-                desc: `膨脹質量加強夸克獲得量。`,
+                desc: `膨脹質量加强夸克獲得量。`,
                 maxLvl: 1,
                 cost(x) { return E(1.5e191) },
                 bulk() { return player.md.mass.gte(1.5e191)?E(1):E(0) },
@@ -121,7 +121,7 @@ const MASS_DILATION = {
                 bulk() { return player.md.mass.gte(1.5e246)?E(1):E(0) },
             },{
                 unl() { return STARS.unlocked() || player.supernova.times.gte(1) },
-                desc: `時間速度稍微加強所有恆星資源。`,
+                desc: `時間速度稍微加强所有恆星資源。`,
                 maxLvl: 1,
                 cost(x) { return E(1.5e296) },
                 bulk() { return player.md.mass.gte(1.5e296)?E(1):E(0) },
@@ -147,13 +147,13 @@ const MASS_DILATION = {
                 effDesc(x) { return "+"+format(x)+(x.gte(0.2)?"<span class='soft'>（軟限制）</span>":"") },
             },{
                 unl() { return player.supernova.post_10 },
-                desc: `加強首 3 個質量膨脹升級。`,
+                desc: `加强首 3 個質量膨脹升級。`,
                 cost(x) { return E(1e100).pow(x.pow(2)).mul('1.5e8056') },
                 bulk() { return player.md.mass.gte('1.5e8056')?player.md.mass.div('1.5e8056').max(1).log(1e100).max(0).root(2).add(1).floor():E(0) },
                 effect(x) {
                     return x.pow(0.5).softcap(3.5,0.5,0).div(100).add(1)
                 },
-                effDesc(x) { return "加強 +"+format(x.sub(1).mul(100))+"%" },
+                effDesc(x) { return "加强 +"+format(x.sub(1).mul(100))+"%" },
             },
         ],
     },
@@ -195,14 +195,14 @@ function updateMDTemp() {
     tmp.md.rp_exp_gain = MASS_DILATION.RPexpgain()
     tmp.md.rp_mult_gain = MASS_DILATION.RPmultgain()
     tmp.md.rp_gain = MASS_DILATION.RPgain()
-    tmp.md.passive_rp_gain = player.supernova.tree.includes("qol3")?MASS_DILATION.RPgain(expMult(player.mass,tmp.md.pen)):E(0)
+    tmp.md.passive_rp_gain = hasTree("qol3")?MASS_DILATION.RPgain(expMult(player.mass,tmp.md.pen)):E(0)
     tmp.md.mass_gain = MASS_DILATION.massGain()
     tmp.md.mass_req = MASS_DILATION.mass_req()
     tmp.md.mass_eff = MASS_DILATION.effect()
 }
 
 function updateMDHTML() {
-    tmp.el.md_particles.setTxt(format(player.md.particles,0)+(player.supernova.tree.includes("qol3")?" "+formatGain(player.md.particles,tmp.md.passive_rp_gain):""))
+    tmp.el.md_particles.setTxt(format(player.md.particles,0)+(hasTree("qol3")?" "+formatGain(player.md.particles,tmp.md.passive_rp_gain.mul(tmp.preQUGlobalSpeed)):""))
     tmp.el.md_eff.setTxt(tmp.md.mass_eff.gte(10)?format(tmp.md.mass_eff)+"x":format(tmp.md.mass_eff.sub(1).mul(100))+"%")
     tmp.el.md_mass.setTxt(formatMass(player.md.mass)+" "+formatGain(player.md.mass,tmp.md.mass_gain,true))
     tmp.el.md_btn.setTxt(player.md.active

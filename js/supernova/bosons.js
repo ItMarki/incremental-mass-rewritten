@@ -11,19 +11,19 @@ const BOSONS = {
         },
         z_boson() {
             let x = E(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
-            if (player.supernova.tree.includes("sn4")) x = x.pow(1.5)
+            if (hasTree("sn4")) x = x.pow(1.5)
             return x
         },
         photon() {
             let x = E(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
             x = x.mul(tmp.bosons.upgs.photon[2]?tmp.bosons.upgs.photon[2].effect:1)
-            if (player.supernova.tree.includes("bs2") && tmp.supernova.tree_eff.bs2) x = x.mul(tmp.supernova.tree_eff.bs2[1])
+            if (hasTree("bs2") && tmp.supernova.tree_eff.bs2) x = x.mul(tmp.supernova.tree_eff.bs2[1])
             return x
         },
         gluon() {
             let x = E(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
             x = x.mul(tmp.bosons.upgs.gluon[2]?tmp.bosons.upgs.gluon[2].effect:1)
-            if (player.supernova.tree.includes("bs2") && tmp.supernova.tree_eff.bs2) x = x.mul(tmp.supernova.tree_eff.bs2[0])
+            if (hasTree("bs2") && tmp.supernova.tree_eff.bs2) x = x.mul(tmp.supernova.tree_eff.bs2[0])
             return x
         },
         graviton() {
@@ -32,13 +32,14 @@ const BOSONS = {
         },
         hb() {
             let x = E(0.01).mul(tmp.fermions.effs[1][1])
-            if (player.supernova.tree.includes("bs1")) x = x.mul(tmp.supernova?tmp.supernova.tree_eff.bs1:1)
+            if (hasTree("bs1")) x = x.mul(tmp.supernova?tmp.supernova.tree_eff.bs1:1)
             return x
         },
     },
     effect: {
         pos_w(x) {
             let a = x.add(1).pow(2e4)
+            if (hasTree("qu2")) a = a.pow(x.add(1).log10().add(1).pow(4/3))
             let b = expMult(x.add(1),2/3,2)
             return [a,b]
         },
@@ -57,7 +58,7 @@ const BOSONS = {
             return [a]
         },
         hb(x) {
-            let a = x.add(1).log10().max(0).root(2)
+            let a = x.add(1).log10().max(0).root(2).mul(tmp.prim.eff[4])
             return [a]
         },
     },
@@ -66,65 +67,65 @@ const BOSONS = {
         buy(id,x) {
             if (tmp.bosons.upgs[id][x].can) {
                 player.supernova.b_upgs[id][x] = player.supernova.b_upgs[id][x].max(tmp.bosons.upgs[id][x].bulk)
-                if (!player.supernova.tree.includes("qol7")) player.supernova.bosons[id] = player.supernova.bosons[id].sub(BOSONS.upgs[id][x].cost(tmp.bosons.upgs[id][x].bulk.sub(1))).max(0)
+                if (!hasTree("qol7")) player.supernova.bosons[id] = player.supernova.bosons[id].sub(BOSONS.upgs[id][x].cost(tmp.bosons.upgs[id][x].bulk.sub(1))).max(0)
             }
         },
         photon: [
             {
-                desc: "Gain more Dark Matters & Mass from Black Hole based on Photon.",
+                desc: "基於光子數量，獲得更多暗物質和黑洞質量。",
                 cost(x) { return E(1.5).pow(x.pow(1.25)).mul(10) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(10) ? x.div(10).max(1).log(1.5).root(1.25).add(1).floor() : E(0) },
                 effect(x) { return player.supernova.bosons.photon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100)) },
                 effDesc(x) { return format(x)+"x" },
             },{
-                desc: "Boost BH Condenser Power.",
+                desc: "加强黑洞壓縮器的力量。",
                 cost(x) { return E(2).pow(x.pow(1.25)).mul(100) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(100) ? x.div(100).max(1).log(2).root(1.25).add(1).floor() : E(0) },
                 effect(x) {
                     let a = x.add(1).pow(0.75)
-                    if (player.supernova.tree.includes("fn4")) a = a.pow(2)
+                    if (hasTree("fn4")) a = a.pow(2)
                     return a
                 },
                 effDesc(x) { return format(x)+"x" },
             },{
-                desc: "Photons gain is boosted by Collapsed Star.",
+                desc: "塌縮恆星提升光子獲得量。",
                 cost(x) { return E(5).pow(x.pow(1.25)).mul(500) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(500) ? x.div(500).max(1).log(5).root(1.25).add(1).floor() : E(0) },
                 effect(x) { return player.stars.points.add(1).log10().add(1).pow(x.mul(0.2)).softcap(1e15,0.6,0) },
                 effDesc(x) { return format(x)+"x"+(x.gte(1e15)?"<span class='soft'>（軟限制）</span>":"") },
             },{
-                desc: "All-Star resources gain is boosted by Photon.",
+                desc: "光子提升所有恆星資源的獲得量。",
                 cost(x) { return E(5).pow(x.pow(1.25)).mul(1e5) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(1e5) ? x.div(1e5).max(1).log(5).root(1.25).add(1).floor() : E(0) },
-                effect(x) { return player.supernova.bosons.photon.add(1).log10().add(1).pow(x.pow(tmp.fermions.effs[0][3]).mul(0.5)) },
+                effect(x) { return player.supernova.bosons.photon.add(1).log10().add(1).pow(x.pow(tmp.fermions.effs[0][3]).mul(0.5)).softcap("ee11",0.8,2) },
                 effDesc(x) { return format(x)+"x" },
             },
         ],
         gluon: [
             {
-                desc: "Gain more Atoms & Atomic Powers based on Gluon.",
+                desc: "基於膠子數量，獲得更多原子和原子力量。",
                 cost(x) { return E(1.5).pow(x.pow(1.25)).mul(10) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(10) ? x.div(10).max(1).log(1.5).root(1.25).add(1).floor() : E(0) },
                 effect(x) { return player.supernova.bosons.gluon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100)) },
                 effDesc(x) { return format(x)+"x" },
             },{
-                desc: "Boost Cosmic Ray Power.",
+                desc: "加强宇宙射線力量。",
                 cost(x) { return E(2).pow(x.pow(1.25)).mul(100) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(100) ? x.div(100).max(1).log(2).root(1.25).add(1).floor() : E(0) },
                 effect(x) {
                     let a = x.add(1).pow(0.75)
-                    if (player.supernova.tree.includes("fn4")) a = a.pow(2)
+                    if (hasTree("fn4")) a = a.pow(2)
                     return a
                 },
                 effDesc(x) { return format(x)+"x" },
             },{
-                desc: "Gluons gain is boosted by Quark.",
+                desc: "夸克提升膠子獲得量。",
                 cost(x) { return E(5).pow(x.pow(1.25)).mul(500) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(500) ? x.div(500).max(1).log(5).root(1.25).add(1).floor() : E(0) },
                 effect(x) { return player.atom.quarks.add(1).log10().add(1).pow(x.mul(0.125)).softcap(1e15,0.6,0) },
                 effDesc(x) { return format(x)+"x"+(x.gte(1e15)?"<span class='soft'>（軟限制）</span>":"") },
             },{
-                desc: "Supernova requirement is decreased based on Gluon.",
+                desc: "膠子減少超新星需求。",
                 cost(x) { return E(10).pow(x.pow(1.25)).mul(1e5) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(1e5) ? x.div(1e5).max(1).log(10).root(1.25).add(1).floor() : E(0) },
                 effect(x) { return player.supernova.bosons.gluon.add(1).log10().add(1).log10().mul(x.pow(tmp.fermions.effs[0][3]).root(3)).div(10).add(1).softcap(5.5,0.25,0).softcap(10,0.25,0) },
@@ -139,16 +140,21 @@ function setupBosonsHTML() {
         let id = BOSONS.upgs.ids[x]
         let new_table = new Element(id+"_upgs_table")
         let table = ""
+        let currency = ""
+            if ((id) == "photon"
+                )currency = "光子";
+            else if ((id) == "gluon"
+                )currency = "膠子"; // improvised code
         for (let y in BOSONS.upgs[id]) {
             let id2 = id+"_upg"+y
             table += `
             <button class="btn b_btn full" id="${id2}_div" onclick="BOSONS.upgs.buy('${id}',${y})">
                 <div style="min-height: 80px">
-                    [Level <span id="${id2}_lvl">X</span>]<br>
+                    [第 <span id="${id2}_lvl">X</span> 級]<br>
                     ${BOSONS.upgs[id][y].desc}<br>
                     目前：<span id="${id2}_eff">X</span><br>
                 </div>
-                Cost: <span id="${id2}_cost">X</span> ${capitalFirst(id)}
+                價格：<span id="${id2}_cost">X</span> ${currency}
             </button>
             `
         }
@@ -185,13 +191,13 @@ function updateBosonsTemp() {
 function updateBosonsHTML() {
     for (let x in BOSONS.names) {
         let id = BOSONS.names[x]
-        tmp.el[id+"_amt"].setTxt(format(player.supernova.bosons[id])+" "+formatGain(player.supernova.bosons[id],tmp.bosons.gain[id]))
+        tmp.el[id+"_amt"].setTxt(format(player.supernova.bosons[id])+" "+formatGain(player.supernova.bosons[id],tmp.bosons.gain[id].mul(tmp.preQUGlobalSpeed)))
         if (tmp.bosons.effect[id]) for (let y in tmp.bosons.effect[id]) tmp.el[id+"_eff"+y].setTxt(format(tmp.bosons.effect[id][y]))
 
         if (BOSONS.upgs.ids.includes(id)) for (let y in BOSONS.upgs[id]) {
             let id2 = id+"_upg"+y
             tmp.el[id2+"_div"].setClasses({btn: true, full: true, b_btn: true, locked: !tmp.bosons.upgs[id][y].can})
-            tmp.el[id2+"_lvl"].setTxt(format(player.supernova.b_upgs[id][y],0,"sc"))
+            tmp.el[id2+"_lvl"].setTxt(format(player.supernova.b_upgs[id][y],0))
             tmp.el[id2+"_eff"].setHTML(BOSONS.upgs[id][y].effDesc(tmp.bosons.upgs[id][y].effect))
             tmp.el[id2+"_cost"].setTxt(format(tmp.bosons.upgs[id][y].cost))
         }

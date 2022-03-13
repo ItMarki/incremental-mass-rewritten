@@ -16,7 +16,8 @@ const TABS = {
         { id: "升級", unl() { return player.rp.unl } },
         { id: "挑戰", unl() { return player.chal.unl } },
         { id: "原子", unl() { return player.atom.unl }, style: "atom" },
-        { id: "超新星", unl() { return player.supernova.times.gte(1) } },
+        { id: "超新星", unl() { return player.supernova.times.gte(1) || quUnl() }, style: "sn" },
+		{ id: "量子", unl() { return quUnl() }, style: "qu" },
         { id: "選項" },
     ],
     2: {
@@ -25,9 +26,10 @@ const TABS = {
             { id: "黑洞", unl() { return player.bh.unl }, style: "bh" },
             { id: "原子生產器", unl() { return player.atom.unl }, style: "atom" },
             { id: "恆星", unl() { return STARS.unlocked() } },
+			{ id: "不可描述的物質", unl() { return quUnl() } },
         ],
         1: [
-            { id: "級獎勵" },
+            { id: "等級獎勵" },
             { id: "價格增幅", unl() { return tmp.scaling ? tmp.scaling.super.length>0 : false } },
         ],
         4: [
@@ -40,7 +42,11 @@ const TABS = {
             { id: "玻色子", unl() { return player.supernova.post_10 } },
             { id: "費米子", unl() { return player.supernova.fermions.unl } },
 			{ id: "輻射", unl() { return tmp.radiation.unl } },
-
+        ],
+        6: [
+            { id: "賦色子" },
+            { id: "量子里程碑" },
+            { id: "原始素", unl() { return PRIM.unl() } },
         ],
     },
 }

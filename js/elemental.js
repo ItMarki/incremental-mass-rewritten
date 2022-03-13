@@ -49,7 +49,7 @@ const ELEMENTS = {
             cost: E(2.5e12),
         },
         {
-            desc: `電子力加強原子力獲得量。`,
+            desc: `電子力加强原子力量獲得量。`,
             cost: E(1e15),
             effect() {
                 let x = player.atom?player.atom.powers[2].add(1).root(2):E(1)
@@ -59,13 +59,13 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x"+(x.gte('e1e4')?"<span class='soft'>（軟限制）</span>":"") },
         },
         {
-            desc: `基於質子力，加強增強器力量。`,
+            desc: `質子力加强增强器力量。`,
             cost: E(2.5e16),
             effect() {
                 let x = player.atom?player.atom.powers[0].max(1).log10().pow(0.8).div(50).add(1):E(1)
                 return x
             },
-            effDesc(x) { return "加強 "+format(x)+"x" },
+            effDesc(x) { return "加强 "+format(x)+"x" },
         },
         {
             desc: `第 7 挑戰的效果翻倍。`,
@@ -109,14 +109,15 @@ const ELEMENTS = {
             cost: E(1e27),
         },
         {
-            desc: `改善每個原子力的獲得量的公式。`,
+            desc: `改善每個原子力量的獲得量的公式。`,
             cost: E(1e29),
         },
         {
-            desc: `每完成一次 C7，C5 和 C6 的完成上限增加 2。`,
+            desc: `每完成一次 C7，C5 和 C6 的完成上限增加 2 次。`,
             cost: E(2.5e30),
             effect() {
                 let x = player.chal.comps[7].mul(2)
+                if (hasElement(79)) x = x.mul(tmp.qu.chroma_eff[2])
                 return x
             },
             effDesc(x) { return "+"+format(x) },
@@ -143,7 +144,7 @@ const ELEMENTS = {
             cost: E(1e40),
         },
         {
-            desc: `你可以自動購買宇宙射線。宇宙射線極稍微加強時間速度效果。`,
+            desc: `你可以自動購買宇宙射線。宇宙射線極稍微加强時間速度效果。`,
             cost: E(1e44),
             effect() {
                 let x = player.atom.gamma_ray.pow(0.35).mul(0.01).add(1)
@@ -173,11 +174,11 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `改善原子力效果。`,
+            desc: `改善原子力量的效果。`,
             cost: E(1e65),
         },
         {
-            desc: `每秒獲得你會獲得的原子的100%。原子力稍微提升相對粒子獲得量。`,
+            desc: `每秒獲得你會獲得的原子的 100%。原子力量稍微提升相對粒子獲得量。`,
             cost: E(1e75),
             effect() {
                 let x = player.atom.atomic.max(1).log10().add(1).pow(0.4)
@@ -190,7 +191,7 @@ const ELEMENTS = {
             cost: E(1e80),
         },
         {
-            desc: `困難挑戰的增幅基於已購買的元素變弱。`,
+            desc: `基於已購買的元素，困難挑戰的增幅更弱。`,
             cost: E(1e85),
             effect() {
                 let x = E(0.99).pow(E(player.atom.elements.length).softcap(30,2/3,0)).max(0.5)
@@ -207,11 +208,11 @@ const ELEMENTS = {
             cost: E(1e97),
         },
         {
-            desc: `質子力的效果更強。`,
+            desc: `質子力的效果更强。`,
             cost: E(1e100),
         },
         {
-            desc: `電子力的效果更強。每種粒子每秒獲得夸克數量的 10%。`,
+            desc: `電子力的效果更强。每種粒子每秒獲得夸克數量的 10%。`,
             cost: E(1e107),
         },
         {
@@ -254,7 +255,7 @@ const ELEMENTS = {
             cost: E(1e225),
         },
         {
-            desc: `超級階基於層增幅更慢。`,
+            desc: `基於層數，超級階增幅更慢。`,
             cost: E(1e245),
             effect() {
                 let x = E(0.9).pow(player.ranks.tetr.softcap(6,0.5,0))
@@ -302,7 +303,7 @@ const ELEMENTS = {
             cost: E('e360'),
         },
         {
-            desc: `減弱層的需求。`,
+            desc: `大幅減弱層的需求。`,
             cost: E('e380'),
         },
         {
@@ -315,7 +316,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `塌縮恆星的效果稍微加強黑洞的質量加成。`,
+            desc: `塌縮恆星的效果稍微加强黑洞的質量加成。`,
             cost: E('e510'),
             effect() {
                 let x = tmp.stars?tmp.stars.effect.add(1).pow(0.02):E(1)
@@ -328,11 +329,11 @@ const ELEMENTS = {
             cost: E('e610'),
         },
         {
-            desc: `塌縮恆星的效果強 10%。`,
+            desc: `塌縮恆星的效果强 10%。`,
             cost: E('e800'),
         },
         {
-            desc: `塌縮恆星加強最後一類恆星。`,
+            desc: `塌縮恆星加强最後一類恆星。`,
             cost: E('e1000'),
             effect() {
                 let x = player.stars.points.add(1).log10().add(1).pow(1.1)
@@ -345,11 +346,11 @@ const ELEMENTS = {
             cost: E('e1750'),
         },
         {
-            desc: `質量獲得量軟限制^2 弱 10%。`,
+            desc: `質量軟限制^2 弱 10%。`,
             cost: E('e2400'),
         },
         {
-            desc: `Mass of black hole boost atomic powers gain at a reduced rate.`,
+            desc: `黑洞質量稍微提升原子力量獲得量。`,
             cost: E('e2800'),
             effect() {
                 let x = expMult(player.bh.mass.add(1),0.6)
@@ -358,11 +359,11 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Mass Dilation upgrade 6 is 75% stronger.`,
+            desc: `質量膨脹升級 6 强 75%。`,
             cost: E('e4600'),
         },
         {
-            desc: `Collapsed stars boost all-star resources at a reduced rate.`,
+            desc: `塌縮恆星稍微提升所有恆星資源。`,
             cost: E('e5200'),
             effect() {
                 let x = player.mass.max(1).log10().root(2)
@@ -371,15 +372,15 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Hyper/Ultra BH Condenser & Gamma Ray scale 25% weaker.`,
+            desc: `高級/極高級黑洞壓縮器和宇宙射線的價格增幅弱 25%。`,
             cost: E('e1.6e4'),
         },
         {
-            desc: `Add 200 more C8 maximum completions.`,
+            desc: `挑戰 8 的完成上限增加 200 次。`,
             cost: E('e2.2e4'),
         },
         {
-            desc: `Tickspeed power boost base from Star Booster at a reduced rate.`,
+            desc: `時間速度力量稍微加强恆星提升器的底數。`,
             cost: E('e3.6e4'),
             effect() {
                 let x = tmp.tickspeedEffect?tmp.tickspeedEffect.step.max(1).log10().div(10).max(1):E(1)
@@ -389,28 +390,28 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Ultra Rank & Tickspeed scales weaker based on Tier.`,
+            desc: `基於階數，極高級等級和時間速度增幅更弱。`,
             cost: E('e5.7e4'),
             effect() {
                 let x = E(0.975).pow(player.ranks.tier.pow(0.5))
                 return x
             },
-            effDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
+            effDesc(x) { return "弱 "+format(E(1).sub(x).mul(100))+"%" },
         },
         {
-            desc: `The power from the mass of the BH formula is increased to 0.5.`,
+            desc: `黑洞質量公式的指數增加至 0.5。`,
             cost: E('e6.6e4'),
         },
         {
-            desc: `Add 100 more C7 maximum completions.`,
+            desc: `挑戰 7 的完成上限增加 100 次。`,
             cost: E('e7.7e4'),
         },
         {
-            desc: `Multiply Particle Powers gain by ^0.5 of its Particle's amount after softcap.`,
+            desc: `軟限制生效後，粒子力獲得量乘以對應粒子數量的平方根。`,
             cost: E('e1.5e5'),
         },
         {
-            desc: `Ultra Rank scale 3 later for every Supernova.`,
+            desc: `每擁有一個超新星，極高級階延遲 3 階。`,
             cost: E('e2.5e5'),
             effect() {
                 let x = player.supernova.times.mul(3)
@@ -419,23 +420,23 @@ const ELEMENTS = {
             effDesc(x) { return format(x,0)+" later" },
         },
         {
-            desc: `Non-bonus Tickspeed is 25x effective.`,
+            desc: `非獎勵時間速度强 25x。`,
             cost: E('e3e5'),
         },
 		{
-            desc: `Rewards from Challenges 3-4 & 8 are 50% effective.`,
+            desc: `挑戰 3 - 4 和 8 的獎勵强 50%。`,
             cost: E('e5e5'),
         },
         {
-            desc: `Add 200 more C7 & c8 maximum completions.`,
+            desc: `挑戰 7 和 8 的完成上限增加 200 次。`,
             cost: E('e8e5'),
         },
         {
-            desc: `Lanthanum's effect is twice stronger.`,
+            desc: `鑭的效果强一倍。`,
             cost: E('e1.1e6'),
         },
         {
-            desc: `Collapsed star boost quarks gain.`,
+            desc: `塌縮恆星提升夸克獲得量。`,
             cost: E('e1.7e6'),
             effect() {
                 let x = player.stars.points.add(1)
@@ -444,50 +445,67 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `Meta-Tickspeed start 2x later.`,
+            desc: `元級時間速度延遲 2x。`,
             cost: E('e4.8e6'),
         },
         {
-            desc: `Pent is now added in mass gain formula from collapsed stars.`,
+            desc: `五次層計入塌縮恆星的質量獲得量提升公式內。`,
             cost: E('e3.6e7'),
         },
         {
-            desc: `Add 200 more C7 & c8 maximum completions.`,
+            desc: `挑戰 7 和 8 的完成上限增加 200 次。`,
             cost: E('e6.9e7'),
         },
         {
-            desc: `From BH the formulas softcap starts later based on Supernovas.`,
+            desc: `超新星延遲黑洞公式的軟限制。`,
             cost: E('e1.6e8'),
             effect() {
                 let x = player.supernova.times.add(1).root(4)
                 return x
             },
-            effDesc(x) { return "^"+format(x)+" later" },
+            effDesc(x) { return "延遲 ^"+format(x) },
         },
         {
-            desc: `Tetrs are 15% cheaper.`,
+            desc: `層便宜 15%。`,
             cost: E('e5.75e8'),
         },
         {
-            desc: `Add more C5-6 & C8 maximum completions based on Supernovas.`,
+            desc: `超新星增加挑戰 5、6 和 8 的完成上限。`,
             cost: E('e1.3e9'),
             effect() {
                 let x = player.supernova.times.mul(5)
+                if (hasElement(79)) x = x.mul(tmp.qu.chroma_eff[2])
                 return x
             },
             effDesc(x) { return "+"+format(x,0) },
         },
         {
-            desc: `Super Tetr scales 25% weaker.`,
+            desc: `超級層的增幅弱 25%。`,
             cost: E('e2.6e9'),
         },
         {
-            desc: `Remove 2 softcaps from Atomic Power's effect.`,
+            desc: `從原子力量的效果中移除 2 個軟限制。`,
             cost: E('e3.9e9'),
         },
         {
-            desc: `Collapsed Star's effect is 25% stronger.`,
+            desc: `塌縮恆星的效果强 25%。`,
             cost: E('e3.75e10'),
+        },
+        {
+            desc: `質量軟限制^3 弱 17.5%。`,
+            cost: E('e4e11'),
+        },
+        {
+            desc: `元級超新星的增幅弱 20%。`,
+            cost: E('e3.4e12'),
+        },
+        {
+            desc: `中子元素-0 影響鋁-13 和鉭-73。`,
+            cost: E('e4.8e12'),
+        },
+        {
+            desc: `增强器和時間速度强 10x。`,
+            cost: E('e1.4e13'),
         },
     ],
     /*
@@ -503,16 +521,24 @@ const ELEMENTS = {
     */
     getUnlLength() {
         let u = 4
-        if (player.chal.comps[8].gte(1)) u += 14
-        if (player.atom.elements.includes(18)) u += 3
-        if (MASS_DILATION.unlocked()) u += 15
-        if (STARS.unlocked()) u += 18
-        if (player.supernova.times.gte(1)) u = 49+5
-        if (player.supernova.post_10) u += 3
-        if (player.supernova.fermions.unl) u += 10
+        if (quUnl()) u = 77+3
+        else {
+            if (player.supernova.times.gte(1)) u = 49+5
+            else {
+                if (player.chal.comps[8].gte(1)) u += 14
+                if (hasElement(18)) u += 3
+                if (MASS_DILATION.unlocked()) u += 15
+                if (STARS.unlocked()) u += 18
+            }
+            if (player.supernova.post_10) u += 3
+            if (player.supernova.fermions.unl) u += 10
+            if (tmp.radiation.unl) u += 10
+        }
         return u
     },
 }
+
+function hasElement(x) { return player.atom.elements.includes(x) }
 
 function setupElementsHTML() {
     let elements_table = new Element("elements_table")
@@ -552,7 +578,7 @@ function updateElementsHTML() {
         if (upg) {
             upg.setVisible(x <= tmp.elements.unl_length)
             if (x <= tmp.elements.unl_length) {
-                upg.setClasses({elements: true, locked: !ELEMENTS.canBuy(x), bought: player.atom.elements.includes(x)})
+                upg.setClasses({elements: true, locked: !ELEMENTS.canBuy(x), bought: hasElement(x)})
             }
         }
     }

@@ -1,8 +1,16 @@
-<html lang="zh-hant-CN">
+<html lang="zh-hant-CN" prefix="og: https://ogp.me/ns#">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Incremental Mass REWRITTEN made by MrRedShark77">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Incremental Mass Rewritten made by MrRedShark77" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://mrredshark77.github.io/incremental-mass-rewritten/" />
+    <meta property="og:title" content="Incremental Mass Rewritten v0.5" />
+    <meta property="og:description" content="Incremental Mass Rewritten made by MrRedShark77." />
+    <meta property="og:image" content="https://mrredshark77.github.io/incremental-mass-rewritten//images/thumbail.jpg" />
+
+    <link rel="image_src" href="images/thumbail.png">
     <link rel="icon" href="images/mass.png">
     <link rel="stylesheet" href="style.css">
 
@@ -12,6 +20,10 @@
     <script src="js/other.js"></script>
     <script src="js/saves.js"></script>
     <script src="js/challenges.js"></script>
+
+    <script src="js/quantum/primordium.js"></script>
+    <script src="js/quantum/chroma.js"></script>
+    <script src="js/quantum/quantum.js"></script>
 
     <script src="js/supernova/radiation.js"></script>
     <script src="js/supernova/fermions.js"></script>
@@ -32,7 +44,7 @@
 
     <script src="js/main.js"></script>
 
-    <title>質量增量（重寫版）</title>
+    <title>增量質量（重寫版）</title>
 </head>
 <body onload="loadGame()">
     <input id="copy" style="position: absolute; top: 0; left: 0; user-select: all; visibility: hidden;">
@@ -59,10 +71,13 @@
         <div id="sns4" style='font-size: 20px;'>……探索更多東西！</div><br>
         <button class="btn" id="sns5" onclick="SUPERNOVA.reset()">你會變成超新星……</button>
     </div>
+	<div id="other_stats">
+        
+    </div>
     <div id='app_supernova' style='display: none'>
         <div style="position: absolute; top: 25px; left: 25px;">
             <button class="btn" onclick="tmp.tab = tmp.sn_tab;">返回主標籤</button>
-            <button class="btn" onclick="SUPERNOVA.reset(true)">重置但不變超新星</button>
+            <button class="btn" onclick="SUPERNOVA.reset(true)">重置但不變成超新星</button>
         </div>
         <div style="min-height: 70px; margin-top: 15px;">
             <h2>你變成了 <span id="supernova_rank"></span>  次<span id="supernova_scale"></span>超新星</h2><br>
@@ -88,7 +103,7 @@
                         你有 <span id="graviton_amt">X</span> 個引力子，將玻色子的生產加快 <span id="graviton_eff0">Y</span>x
                     </div>
                     <div class="higgs_boson sub_b">
-                        你有 <span id="hb_amt">X</span> 個希格斯玻色子，給予引力子的效果 x^<span id="hb_eff0">Y</span> 的加成
+                        你有 <span id="hb_amt">X</span> 個希格斯玻色子，給予引力子效果 <span id="hb_eff0">Y</span> 次方的加成
                     </div>
                 </div><div class="table_center">
                     <div class="photon sub_b">
@@ -103,7 +118,7 @@
                     <div class="w_boson sub_b">
                         你有 <span id="pos_w_amt">X</span> 個 W<sup>+</sup> 玻色子，將質量獲得量乘以 <span id="pos_w_eff0">Y</span>，<br>並將 W<sup>-</sup> 玻色子的獲得量乘以 <span id="pos_w_eff1">Y</span>
                         <br><br>
-                        你有 <span id="neg_w_amt">X</span> 個 W<sup>-</sup> 玻色子，給予質量獲得量軟限制^2 x^<span id="neg_w_eff0">Y</span> 的延遲，<br>並將 W<sup>+</sup> 玻色子的獲得量乘以 <span id="neg_w_eff1">Y</span>
+                        你有 <span id="neg_w_amt">X</span> 個 W<sup>-</sup> 玻色子，給予質量獲得量軟限制^2 <span id="neg_w_eff0">Y</span> 次方的延遲，<br>並將 W<sup>+</sup> 玻色子的獲得量乘以 <span id="neg_w_eff1">Y</span>
                     </div>
                     <div class="z_boson sub_b">
                         你有 <span id="z_boson_amt">X</span> 個 Z<sup>0</sup> 玻色子，將時間速度力量乘以 <span id="z_boson_eff0">Y</span>，<br>並將 W 玻色子的獲得量乘以 <span id="z_boson_eff1">Y</span>
@@ -111,7 +126,7 @@
                 </div>
             </div>
         </div><div id="stab_frame5_2">
-            注意：選擇任何費米子會強制執行重置，但不會變成超新星！<br><br>
+            注意：選擇任何費米子會强制執行重置，但不會變成超新星！<br><br>
             <button class="btn" onclick="FERMIONS.backNormal()">恢復正常</button><br><br>
             <div class="fermions">
                 <div class="f_quark sub_f">
@@ -125,7 +140,7 @@
             </div>
         </div><div id="stab_frame5_3">
             你的頻率是 <span id="frequency">0</span> Hz，將所有費米子獲得量乘以 <span id="frequency_eff">1</span>x<br>
-            <span id="nr_div">頻率到達 <span id="next_radiation">0</span> 時，則會解鎖 <span id="unl_radiation">X</span></span><br><br>
+            <span id="nr_div">頻率到達 <span id="next_radiation">0</span> 時，會解鎖<span id="unl_radiation">X</span></span><br><br>
             <div id="radiation_table"></div>
         </div>
     </div>
@@ -162,9 +177,13 @@
                         <img class="res_img" class="res_img" src="images/md.png" onclick="MASS_DILATION.onactive()" onmousemove="FORMS.reset_msg.set('md')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
                         <span style="margin-left: 5px; text-align: left;" id="md_massAmt">X</span>
                     </div>
-                    <div class="resources magenta" id="sn_div">
+                    <div class="resources sml magenta" id="sn_div">
                         <img class="res_img" src="images/sn.png" onclick="SUPERNOVA.reset(false,false,true)" onmousemove="FORMS.reset_msg.set('sn')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
                         <span style="margin-left: 5px; text-align: left;" id="supernovaAmt">X</span>
+                    </div>
+                    <div class="resources light_green" id="qu_div">
+                        <img class="res_img" class="res_img" src="images/qu.png" onclick="QUANTUM.enter()" onmousemove="FORMS.reset_msg.set('qu')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;">
+                        <span style="margin-left: 5px; text-align: left;" id="quAmt">X</span>
                     </div>
                 </div>
             </div><span id="reset_desc"></span>
@@ -218,7 +237,7 @@
                     </span>
                 </div>
             </div><div id="stab_frame0_2">
-                你有 <span id="atomicAmt">X</span> 原子力<br>
+                你有 <span id="atomicAmt">X</span> 原子力量<br>
                 <span class="green">提供 <span id="atomicEff">X</span> 個免費時間速度</span><br><br>
                 <div style="width: 100%; margin-bottom: 5px;" class="table_center">
                     <div style="width: 400px">
@@ -240,6 +259,23 @@
                 <button id="star_btn" class="btn" onclick="STARS.generators.unl()">X</button><br><br>
                 <div id="stars_table" class="table_center"></div><br><br>
                 <span id="starSoft1" class="red">塌縮恆星獲得量到達 <b id="starSoftStart1">X</b> 後會被軟限制！</span><br>
+            </div><div id="stab_frame0_4">
+                你有 <span id="bpAmt">0</span> 個藍圖粒子，<br>
+                <span class="green">將量子前部分的運行速度加快 <span id="bpEff">1</span>x</span><br><br>
+                <div style="width: 100%; margin-bottom: 5px;" class="table_center">
+                    <div style="width: 400px">
+                        <div class="resources">
+                            <img src="images/cosmic_string.png">
+                            <span style="margin-left: 5px; text-align: left;"><span id="cosmic_str_scale"></span>宇宙弦 [<span id="cosmic_str_lvl">X</span>]</span>
+                        </div>
+                    </div><button id="cosmic_str_btn" class="btn" style="width: 200px;" onclick="QUANTUM.cosmic_str.buy()">價格：<span id="cosmic_str_cost">X</span> 量子泡沫</button>
+                    <button class="btn" style="width: 120px;" onclick="QUANTUM.cosmic_str.buyMax()">購買最大</button>
+                    <!--<button id="cosmic_str_auto" class="btn" style="width: 80px;" onclick="player.atom.auto_gr = !player.atom.auto_gr">OFF</button>-->
+                    <div style="margin-left: 5px; text-align: left; width: 400px">
+                        宇宙弦力量：<span id="cosmic_str_pow">X</span>x<br>
+                        宇宙弦效果：<span id="cosmic_str_eff">X</span>x
+                    </div>
+                </div>
             </div>
         </div><div id="tab_frame1">
             <div id="stab_frame1_0">
@@ -269,7 +305,7 @@
             <div id="stab_frame4_0">
                 你有 <span id="unassignQuarkAmt">X</span> 個未分配夸克<br><br>
                 <div>
-                    <button class="btn" onclick="ATOM.particles.assignAll()">分發</button><br><br>
+                    <button class="btn" onclick="ATOM.particles.assignAll()">根據以下比例分配</button><br><br>
                     <input class="input_ratio" style="color: #0f0;" type="number" min="1" id="ratio_d0">
                     <input class="input_ratio" style="color: #ff0;" type="number" min="1" id="ratio_d1">
                     <input class="input_ratio" style="color: #f00;" type="number" min="1" id="ratio_d2">
@@ -286,13 +322,29 @@
                 </div><br><div id="elements_table"></div>
             </div><div id="stab_frame4_2">
                 你有 <span id="md_particles">X</span> 個相對粒子<br>
-                你有 <span id="md_mass">X</span> 的膨脹質量，將時間速度加強 <span id="md_eff">X</span><br><br>
-                <button onclick="MASS_DILATION.onactive()" id="md_btn" class="btn full md" tooltip="膨脹質量時，原子會被重置，所有原子前資源和原子力的獲得量會得到x^0.8的懲罰;">膨脹質量</button><br><br>
+                你有 <span id="md_mass">X</span> 的膨脹質量，將時間速度加强 <span id="md_eff">X</span><br><br>
+                <button onclick="MASS_DILATION.onactive()" id="md_btn" class="btn full md" tooltip="膨脹質量時，原子會被重置，所有原子前資源和原子力量的獲得量會得到 0.8 次方的懲罰。">膨脹質量</button><br><br>
                 <div class="table_center">
                     <div id="md_upg_table" class="table_center" style="width: 1000px;"></div>
                 </div>
             </div>
         </div><div id="tab_frame6">
+            <div id="stab_frame6_0">
+                <span id="qu_theory_div">你有 <span id="qu_theory">0</span> 個量子理論（基於量子化次數）</span><br><br>
+                <div id="chroma_table" class="table_center" style="justify-content: space-evenly;"></div>
+            </div><div id="stab_frame6_1">
+                你量子化了 <span id="qu_times">0</span> 次<br><br>
+                <div id="qu_milestones_table"></div>
+            </div><div id="stab_frame6_2">
+                你有 <span id="prim_theorem">0</span> 個原始素定理（基於藍圖離子的數量）<br>
+                （到達 <span id="prim_next_theorem">X</span> 個時增加一個）<br><br>
+                <button class="btn" onclick="giveRandomPParticles(1)">隨機給出 1 個粒子</button>
+                <button class="btn" onclick="giveRandomPParticles(10)">隨機給出 10 個粒子</button>
+                <button class="btn" onclick="giveRandomPParticles(1,true)">隨機給出所有粒子</button>
+                <button class="btn" onclick="respecPParticles()">重置所有粒子</button><br><br>
+                <div id="primordium_table"></div>
+            </div>
+		</div><div id="tab_frame7">
             <button class="btn" onclick="save()">保存</button>
             <button class="btn" onclick="if (confirm('你確定要重置你的進度，開始新的遊戲嗎？')) {wipe(true)}">硬重置</button>
             <button class="btn" onclick="exporty()">導出</button>
@@ -303,10 +355,12 @@
             <button class="btn" onclick="turnOffline()">離線進度：<span id="offline_active">開啟</span></button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.fonts)">字體</button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.notations)">標記法</button><br><br>
+			<button class="btn" id="tree_anim_btn" onclick="changeTreeAnimation()">樹的動畫：<span id="tree_anim">ON</span></button>
+            <br><br>
             <h2>確認設定</h2><br>
             <div id="confirm_table" class="table_center"></div>
             <br><br>
-            增量質量（重寫）v0.4.2.2——MrRedShark77製造，ItMarki翻譯<br>
+            增量質量（重寫版）v0.5——量子更新——MrRedShark77製造，ItMarki翻譯<br>
             此遊戲受到<ruby>Distance Incremental<rt>距離增量</rt></ruby>和<ruby>Synergism<rt>協同放置</rt></ruby>的啟發<br><br><br>
             提示 1：把光標放在標籤上方的圖片上，即可查看描述……<br><br>
             總遊玩時間：<span id="total_time">X</span>

@@ -7,8 +7,8 @@ const RANKS = {
             let reset = true
             if (type == "rank" && player.mainUpg.rp.includes(4)) reset = false
             if (type == "tier" && player.mainUpg.bh.includes(4)) reset = false
-            if (type == "tetr" && player.supernova.tree.includes("qol5")) reset = false
-            if (type == "pent" && player.supernova.tree.includes("qol8")) reset = false
+            if (type == "tetr" && hasTree("qol5")) reset = false
+            if (type == "pent" && hasTree("qol8")) reset = false
             if (reset) this.doReset[type]()
             updateRanksTemp()
         }
@@ -19,8 +19,8 @@ const RANKS = {
             let reset = true
             if (type == "rank" && player.mainUpg.rp.includes(4)) reset = false
             if (type == "tier" && player.mainUpg.bh.includes(4)) reset = false
-            if (type == "tetr" && player.supernova.tree.includes("qol5")) reset = false
-            if (type == "pent" && player.supernova.tree.includes("qol8")) reset = false
+            if (type == "tetr" && hasTree("qol5")) reset = false
+            if (type == "pent" && hasTree("qol8")) reset = false
             if (reset) this.doReset[type]()
             updateRanksTemp()
         }
@@ -53,54 +53,55 @@ const RANKS = {
         rank() { return player.mainUpg.rp.includes(5) },
         tier() { return player.mainUpg.rp.includes(6) },
         tetr() { return player.mainUpg.atom.includes(5) },
-        pent() { return player.supernova.tree.includes("qol8") },
+        pent() { return hasTree("qol8") },
     },
     desc: {
         rank: {
-            '1': "unlock mass upgrade 1.",
-            '2': "unlock mass upgrade 2, reduce mass upgrade 1 cost scaled by 20%.",
-            '3': "unlock mass upgrade 3, reduce mass upgrade 2 cost scaled by 20%, mass upgrade 1 boosts itself.",
-            '4': "reduce mass upgrade 3 cost scale by 20%.",
-            '5': "mass upgrade 2 boosts itself.",
-            '6': "make mass gain is boosted by (x+1)^2, where x is rank.",
-            '13': "triple mass gain.",
-            '14': "double Rage Powers gain.",
-            '17': "make rank 6 reward effect is better. [(x+1)^2 -> (x+1)^x^1/3]",
-            '34': "make mass upgrade 3 softcap start 1.2x later.",
-            '40': "adds tickspeed power based on ranks.",
-            '45': "ranks boosts Rage Powers gain.",
-            '90': "rank 40 reward is stronger.",
-            '180': "mass gain is raised by 1.025.",
-            '220': "rank 40 reward is overpowered.",
-            '300': "rank multiplie quark gain.",
-            '380': "rank multiplie mass gain.",
-            '800': "make mass gain softcap 0.25% weaker based on rank.",
+            '1': "解鎖質量升級 1。",
+            '2': "解鎖質量升級 2；質量升級 1 的價格增幅弱 20%。",
+            '3': "解鎖質量升級 3；質量升級 2 的價格增幅弱 20%；質量升級 1 加强自己。",
+            '4': "質量升級 3 的價格增幅弱 20%。",
+            '5': "質量升級 2 加强自己。",
+            '6': "質量獲得量獲得 (x+1)^2 x 的加成，其中 x 是等級數。",
+            '13': "質量獲得量三倍。",
+            '14': "怒氣值獲得量翻倍。",
+            '17': "等級 6 的獎勵效果更好。[(x+1)^2 -> (x+1)^x^1/3]",
+            '34': "質量升級 3 的軟限制延遲 1.2x 。",
+            '40': "等級提升時間速度力量。",
+            '45': "等級提升怒氣值獲得量。",
+            '90': "第 40 等級的獎勵更强。",
+            '180': "質量獲得量獲得 1.025 次方的加成。",
+            '220': "第 40 等級的獎勵進一步加强。",
+            '300': "夸克獲得量乘以等於。",
+            '380': "質量獲得量乘以等於。",
+            '800': "基於等級，質量軟限制弱 0.25%。",
         },
         tier: {
-            '1': "reduce rank reqirements by 20%.",
-            '2': "raise mass gain by 1.15",
-            '3': "reduce all mass upgrades cost scale by 20%.",
-            '4': "adds +5% tickspeed power for every tier you have, softcaps at +40%.",
-            '6': "make rage powers boosted by tiers.",
-            '8': "make tier 6's reward effect stronger by dark matters.",
-            '12': "make tier 4's reward effect twice effective and remove softcap.",
-            '30': "stronger effect's softcap is 10% weaker.",
-            '55': "make rank 380's effect stronger based on tier.",
-            '100': "Super Tetr scale 5 later.",
+            '1': "等級需求減少 20%。",
+            '2': "質量獲得量獲得 1.15 次方的加成。",
+            '3': "所有質量升級的價格增幅弱 20%。",
+            '4': "每擁有一個階，時間速度力量增加 5%，在 +40% 開始軟限制。",
+            '6': "階提升怒氣值獲得量。",
+            '8': "暗物質加强第 6 階的獎勵效果。",
+            '12': "第 4 階的獎勵效果翻倍，並移除軟限制。",
+            '30': "增强器的效果軟限制弱 10%。",
+            '55': "階加强第 380 等級的效果。",
+            '100': "超級階延遲 5 階開始。",
         },
         tetr: {
-            '1': "reduce tier reqirements by 25%, make Hyper Rank scaling is 15% weaker.",
-            '2': "mass upgrade 3 boosts itself.",
-            '3': "raise tickspeed effect by 1.05.",
-            '4': "Super Rank scale weaker based on Tier, Super Tier scale 20% weaker.",
-            '5': "Hyper/Ultra Tickspeed starts later based on tetr.",
-            '8': "Mass gain softcap^2 starts ^1.5 later.",
+            '1': "階的需求減少 25%；高級階的增幅弱 15%。",
+            '2': "質量升級 3 加强自己。",
+            '3': "時間速度效果獲得 1.05 次方的加成。",
+            '4': "階減弱超級等級的增幅；超級階的增幅弱 20%。",
+            '5': "層延遲高級/極高級時間速度。",
+            '8': "質量軟限制^2 獲得 1.5 次方的延遲。",
         },
         pent: {
-            '1': "reduce tetr reqirements by 15%, make Meta-Rank starts 1.1x later.",
-            '2': "tetr boost all radiations gain.",
-            '4': "Meta-Tickspeeds start later based on Supernovas.",
-            '5': "Meta-Ranks start later based on Pent.",
+            '1': "層的需求減少 15%；元級等級延遲 1.1x 開始。",
+            '2': "層提升所有輻射的獲得量。",
+            '4': "超新星延遲元級時間速度。",
+            '5': "五級層延遲元級等級。",
+			'8': "五級層延遲質量軟限制^4。",
         },
     },
     effect: {
@@ -188,6 +189,10 @@ const RANKS = {
                 let ret = E(1.05).pow(player.ranks.pent)
                 return ret
             },
+			'8'() {
+                let ret = E(1.1).pow(player.ranks.pent)
+                return ret
+            },
         },
     },
     effDesc: {
@@ -216,6 +221,7 @@ const RANKS = {
             2(x) { return format(x)+"x" },
             4(x) { return format(x)+"x later" },
             5(x) { return format(x)+"x later" },
+			8(x) { return "^"+format(x)+" later" },
         },
     },
     fp: {
@@ -238,9 +244,10 @@ const RANKS = {
 function updateRanksTemp() {
     if (!tmp.ranks) tmp.ranks = {}
     for (let x = 0; x < RANKS.names.length; x++) if (!tmp.ranks[RANKS.names[x]]) tmp.ranks[RANKS.names[x]] = {}
+    let fp2 = tmp.qu.chroma_eff[1]
     let fp = RANKS.fp.rank()
-    tmp.ranks.rank.req = E(10).pow(player.ranks.rank.div(fp).pow(1.15)).mul(10)
-    tmp.ranks.rank.bulk = player.mass.div(10).max(1).log10().root(1.15).mul(fp).add(1).floor();
+    tmp.ranks.rank.req = E(10).pow(player.ranks.rank.div(fp).div(fp2).pow(1.15)).mul(10)
+    tmp.ranks.rank.bulk = player.mass.div(10).max(1).log10().root(1.15).mul(fp).mul(fp2).add(1).floor();
     if (player.mass.lt(10)) tmp.ranks.rank.bulk = 0
     if (scalingActive("rank", player.ranks.rank.max(tmp.ranks.rank.bulk), "super")) {
 		let start = getScalingStart("super", "rank");
@@ -248,7 +255,7 @@ function updateRanksTemp() {
 		let exp = E(1.5).pow(power);
 		tmp.ranks.rank.req =
 			E(10).pow(
-				player.ranks.rank
+				player.ranks.rank.div(fp2)
 					.pow(exp)
 					.div(start.pow(exp.sub(1)))
                     .div(fp)
@@ -263,6 +270,7 @@ function updateRanksTemp() {
             .mul(fp)
 			.mul(start.pow(exp.sub(1)))
 			.root(exp)
+			.mul(fp2)
 			.add(1)
 			.floor();
 	}
@@ -275,7 +283,7 @@ function updateRanksTemp() {
 		let exp2 = E(2.5).pow(power2);
 		tmp.ranks.rank.req =
 			E(10).pow(
-				player.ranks.rank
+				player.ranks.rank.div(fp2)
                     .pow(exp2)
                     .div(start2.pow(exp2.sub(1)))
 					.pow(exp)
@@ -294,6 +302,7 @@ function updateRanksTemp() {
 			.root(exp)
             .mul(start2.pow(exp2.sub(1)))
 			.root(exp2)
+			.mul(fp2)
 			.add(1)
 			.floor();
 	}
@@ -309,7 +318,7 @@ function updateRanksTemp() {
 		let exp3 = E(4).pow(power3);
 		tmp.ranks.rank.req =
 			E(10).pow(
-				player.ranks.rank
+				player.ranks.rank.div(fp2)
                     .pow(exp3)
                     .div(start3.pow(exp3.sub(1)))
                     .pow(exp2)
@@ -332,6 +341,7 @@ function updateRanksTemp() {
 			.root(exp2)
             .mul(start3.pow(exp3.sub(1)))
 			.root(exp3)
+			.mul(fp2)
 			.add(1)
 			.floor();
 	}
@@ -350,7 +360,7 @@ function updateRanksTemp() {
 		let exp4 = E(1.0025).pow(power4);
 		tmp.ranks.rank.req =
 			E(10).pow(
-				exp4.pow(player.ranks.rank.sub(start4)).mul(start4)
+				exp4.pow(player.ranks.rank.div(fp2).sub(start4)).mul(start4)
                     .pow(exp3)
                     .div(start3.pow(exp3.sub(1)))
                     .pow(exp2)
@@ -377,6 +387,7 @@ function updateRanksTemp() {
 			.max(1)
 			.log(exp4)
 			.add(start4)
+			.mul(fp2)
 			.add(1)
 			.floor();
 	}
@@ -390,7 +401,7 @@ function updateRanksTemp() {
 		let power = getScalingPower("super", "tier");
 		let exp = E(1.5).pow(power);
 		tmp.ranks.tier.req =
-			player.ranks.tier
+			player.ranks.tier.div(fp2)
 			.pow(exp)
 			.div(start.pow(exp.sub(1))).div(fp)
 			.add(2).pow(2).floor()
@@ -401,6 +412,7 @@ function updateRanksTemp() {
             .mul(fp)
 			.mul(start.pow(exp.sub(1)))
 			.root(exp)
+			.mul(fp2)
 			.add(1)
 			.floor();
 	}
@@ -410,9 +422,9 @@ function updateRanksTemp() {
 		let exp = E(1.5).pow(power);
         let start2 = getScalingStart("hyper", "tier");
 		let power2 = getScalingPower("hyper", "tier");
-		let exp2 = E(2.5).pow(power);
+		let exp2 = E(2.5).pow(power2);
 		tmp.ranks.tier.req =
-			player.ranks.tier
+			player.ranks.tier.div(fp2)
             .pow(exp2)
 			.div(start2.pow(exp2.sub(1)))
 			.pow(exp)
@@ -427,24 +439,25 @@ function updateRanksTemp() {
 			.root(exp)
             .mul(start2.pow(exp2.sub(1)))
 			.root(exp2)
+            .mul(fp2)
 			.add(1)
 			.floor();
 	}
 
     fp = E(1)
     let pow = 2
-    if (player.atom.elements.includes(44)) pow = 1.75
-    if (player.atom.elements.includes(9)) fp = fp.mul(1/0.85)
+    if (hasElement(44)) pow = 1.75
+    if (hasElement(9)) fp = fp.mul(1/0.85)
     if (player.ranks.pent.gte(1)) fp = fp.mul(1/0.85)
-    if (player.atom.elements.includes(72)) fp = fp.mul(1/0.85)
-    tmp.ranks.tetr.req = player.ranks.tetr.div(fp).pow(pow).mul(3).add(10).floor()
-    tmp.ranks.tetr.bulk = player.ranks.tier.sub(10).div(3).max(0).root(pow).mul(fp).add(1).floor();
+    if (hasElement(72)) fp = fp.mul(1/0.85)
+    tmp.ranks.tetr.req = player.ranks.tetr.div(fp2).div(fp).pow(pow).mul(3).add(10).floor()
+    tmp.ranks.tetr.bulk = player.ranks.tier.sub(10).div(3).max(0).root(pow).mul(fp).mul(fp2).add(1).floor();
     if (scalingActive("tetr", player.ranks.tetr.max(tmp.ranks.tetr.bulk), "super")) {
 		let start = getScalingStart("super", "tetr");
 		let power = getScalingPower("super", "tetr");
 		let exp = E(2).pow(power);
 		tmp.ranks.tetr.req =
-			player.ranks.tetr
+			player.ranks.tetr.div(fp2)
 			.pow(exp)
 			.div(start.pow(exp.sub(1))).div(fp)
 			.pow(pow).mul(3).add(10).floor()
@@ -453,6 +466,7 @@ function updateRanksTemp() {
             .mul(fp)
 			.mul(start.pow(exp.sub(1)))
 			.root(exp)
+            .mul(fp2)
 			.add(1)
 			.floor();
 	}

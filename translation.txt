@@ -1,0 +1,129 @@
+the translation of this game will use the Mainland standard in Traditional Chinese characters
+
+1. EARLY GAME
+mass - 質量
+rank - 等級
+tier - 階
+tetr - 層
+pent - 五級階
+
+1.1. GENERATORS
+muscler - 提重器
+booster - 提升器
+stronger - 增强器
+
+1.2. SCALING
+super - 超級
+hyper - 高級
+ultra - 極高級
+meta - 元級
+
+2. RAGE
+rage point - 怒氣值
+tickspeed - 時間速度
+
+3. BLACK HOLE
+dark matter - 暗物質
+black hole - 黑洞
+black hole condenser - 黑洞壓縮器
+
+4. ATOMS
+atom - 原子
+atomic power - 原子力量
+cosmic ray - 宇宙射線
+
+4.1. PARTICLES
+particle - 粒子
+quark - 夸克
+proton (power) - 質子（力量）
+neutron (power) - 中子（力量）
+electron (power) - 電子（力量）
+element - 元素
+
+4.2. MASS DILATION
+mass dilation - 質量膨脹
+dilated mass - 膨脹質量
+relativistic particle - 相對粒子
+
+4.3. STARS
+star - 恆星
+collapse - 塌縮
+all-star resources - 所有恆星資源
+star booster - 恆星提升器
+
+5. SUPERNOVA
+supernova - 超新星
+neutron tree - 中子樹
+neutron star - 中子星
+
+5.1. BOSONS
+boson - 玻色子
+graviton - 引力子
+higgs boson - 希格斯玻色子
+photon - 光子
+gluon - 膠子
+W+ boson - W+ 玻色子
+W- boson - W- 玻色子
+Z0 boson - Z0 玻色子
+
+5.2. FERMIONS
+fermion - 費米子
+
+5.2.1 U-QUARKS
+U-quark - U-夸克
+up - 上
+down - 下
+charm - 粲
+strange - 奇
+top - 頂
+bottom - 底
+
+5.2.2. U-LEPTONS
+U-lepton - U-輕子
+electron - 電子
+muon - μ子
+tau - τ子
+neutrino - 中微子
+neut-muon - μ中微子
+neut-tau - τ中微子
+
+5.3. RADIATION
+radiation - 輻射
+radio - 無線電波
+microwave - 微波
+infrared - 紅外線
+visible - 可見光
+ultraviolet - 紫外線
+x-ray - X 射線
+gamma-ray - 伽馬射線
+
+6. QUANTUM
+quantum foam - 量子泡沫
+quantum theory - 量子理論
+quantum milestone - 量子里程碑
+
+6.1. INDESCRIBABLE MATTER
+indescribable matter - 不可描述的物質
+blueprint particle - 藍圖粒子
+cosmic string - 宇宙弦
+
+6.2. CHROMA
+chroma - 賦色子 (literally: the particle that grants color)
+pyro-radioactive plasma - 熾熱放射性等離子體
+hybridized uran-astatine - 鈾砹混合體
+neutronium-0 - 中子元素-0
+red - 紅
+green - 綠
+blue - 藍
+
+7. TERMS IN INCREMENTAL GAMES
+cost - 價格
+upgrade - 升級
+scale/scaling - 增幅
+
+8. OTHER
+a. the general rule is to put a space beetwen a number and surrounding text (except for punctuation)
+b. use "[number]x" instead of "[number]倍"
+c. use 到達 not 達到
+d. use 質量軟限制 as an abbreviation of 質量獲得量軟限制
+e. use 强 not 強; this is a result of using the Mainland standard

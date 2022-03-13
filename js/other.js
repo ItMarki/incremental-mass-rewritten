@@ -63,20 +63,21 @@ const POPUP_GROUPS = {
         html: `
             <button class="btn" onclick="player.options.notation = 'elemental'">元素</button>
             <button class="btn" onclick="player.options.notation = 'eng'">工程記號</button>
+			<button class="btn" onclick="player.options.notation = 'inf'">無限</button>
             <button class="btn" onclick="player.options.notation = 'mixed_sc'">混合科學記號</button>
             <button class="btn" onclick="player.options.notation = 'layer'">重置層次</button>
             <button class="btn" onclick="player.options.notation = 'sc'">科學記號</button>
             <button class="btn" onclick="player.options.notation = 'st'">標準</button>
             <button class="btn" onclick="player.options.notation = 'old_sc'">舊式科學記號</button>
             <button class="btn" onclick="player.options.notation = 'omega'">Omega</button>
-            <button class="btn" onclick="player.options.notation = 'omega_short'">Omega 短</button>
+            <button class="btn" onclick="player.options.notation = 'omega_short'">短 Omega</button>
         `,
     },
     supernova10: {
         html: `
             恭喜！<br><br>你變成了 10 次超新星了！<br>
             你可以手動超新星！<br><br>
-            <b>超新星標籤裡解鎖了玻色子！</b>
+            <b>超新星標籤裏解鎖了玻色子！</b>
         `,
         width: 400,
         height: 150,
@@ -87,10 +88,41 @@ const POPUP_GROUPS = {
     fermions: {
         html: `
             恭喜！<br><br>你打敗了挑戰10！<br><br>
-            <b>超新星標籤裡解鎖了費米子！</b>
+            <b>超新星標籤裏解鎖了費米子！</b>
         `,
         width: 400,
         height: 150,
+        otherStyle: {
+            'font-size': "14px",
+        },
+    },
+	qu: {
+        html() { return `
+            恭喜！<br><br>你完成了挑戰 12 後到達了 ${formatMass(mlt(1e4))} 質量！<br><br>
+            <b>你需要量子化！</b>
+        `},
+        width: 400,
+        height: 150,
+        otherStyle: {
+            'font-size': "14px",
+        },
+    },
+    qus1: {
+        html() { return `
+            <img src="images/qu_story1.png"><br><br>
+            質量在量子化的過程中塌縮了！看來是蒸發了！但代價是什麼呢？
+        `},
+        button: "我去",
+        otherStyle: {
+            'font-size': "14px",
+        },
+    },
+    qus2: {
+        html() { return `
+            <img src="images/qu_story2.png"><br><br>
+            不用擔心，新的功能會很快到達！
+        `},
+        button: "好",
         otherStyle: {
             'font-size': "14px",
         },
@@ -99,8 +131,8 @@ const POPUP_GROUPS = {
 
 function addPopup(data) {
     tmp.popup.push({
-        html: data.html||"",
-        button: data.button||"OK", 
+        html: typeof data.html == "function" ? data.html() : data.html||"",
+        button: data.button||"好",
         callFunctions: data.callFunction?function() {removePopup();data.callFunctions()}:removePopup,
 
         width: data.width||600,

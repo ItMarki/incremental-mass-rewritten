@@ -19,7 +19,7 @@ function updateChalHTML() {
     }
     tmp.el.chal_enter.setVisible(player.chal.active != player.chal.choosed)
     tmp.el.chal_exit.setVisible(player.chal.active != 0)
-    tmp.el.chal_exit.setTxt(tmp.chal.canFinish && !player.supernova.tree.includes("qol6") ? "結束挑戰以完成 +"+tmp.chal.gain+" 次" : "退出挑戰")
+    tmp.el.chal_exit.setTxt(tmp.chal.canFinish && !player.supernova.tree.includes("qol6") ? "結束挑戰以獲得 +"+tmp.chal.gain+" 完成次數" : "退出挑戰")
     tmp.el.chal_desc_div.setDisplay(player.chal.choosed != 0)
     if (player.chal.choosed != 0) {
         let chal = CHALS[player.chal.choosed]
@@ -41,12 +41,13 @@ function updateChalTemp() {
         canFinish: false,
         gain: E(0),
     }
+	let s = tmp.qu.chroma_eff[2]
     for (let x = 1; x <= CHALS.cols; x++) {
         let data = CHALS.getChalData(x)
         tmp.chal.max[x] = CHALS.getMax(x)
         tmp.chal.goal[x] = data.goal
         tmp.chal.bulk[x] = data.bulk
-        tmp.chal.eff[x] = CHALS[x].effect(FERMIONS.onActive("05")?E(0):player.chal.comps[x])
+        tmp.chal.eff[x] = CHALS[x].effect(FERMIONS.onActive("05")?E(0):player.chal.comps[x].mul(x<=8?s:1))
     }
     tmp.chal.format = player.chal.active != 0 ? CHALS.getFormat() : format
     tmp.chal.gain = player.chal.active != 0 ? tmp.chal.bulk[player.chal.active].min(tmp.chal.max[player.chal.active]).sub(player.chal.comps[player.chal.active]).max(0).floor() : E(0)
@@ -101,21 +102,22 @@ const CHALS = {
     getReset(x) {
         if (x < 5) return "進入挑戰會執行一次暗物質重置！"
         if (x < 9) return "進入挑戰會執行一次原子重置，但不會重置以往的挑戰！"
-        return "進入挑戰會強制執行重置，但不會變成超新星！"
+        return "進入挑戰會强制執行重置，但不會變成超新星！"
     },
     getMax(i) {
         let x = this[i].max
         if (i <= 4) x = x.add(tmp.chal?tmp.chal.eff[7]:0)
-        if (player.atom.elements.includes(13) && (i==5||i==6)) x = x.add(tmp.elements.effect[13])
-        if (player.atom.elements.includes(20) && (i==7)) x = x.add(50)
-        if (player.atom.elements.includes(41) && (i==7)) x = x.add(50)
-        if (player.atom.elements.includes(60) && (i==7)) x = x.add(100)
-        if (player.atom.elements.includes(33) && (i==8)) x = x.add(50)
-        if (player.atom.elements.includes(56) && (i==8)) x = x.add(200)
-        if (player.atom.elements.includes(65) && (i==7||i==8)) x = x.add(200)
-        if (player.atom.elements.includes(70) && (i==7||i==8)) x = x.add(200)
-        if (player.atom.elements.includes(73) && (i==5||i==6||i==8)) x = x.add(tmp.elements.effect[73])
-        if (player.supernova.tree.includes("chal1") && (i==7||i==8))  x = x.add(100)
+        if (hasElement(13) && (i==5||i==6)) x = x.add(tmp.elements.effect[13])
+        if (hasElement(20) && (i==7)) x = x.add(50)
+        if (hasElement(41) && (i==7)) x = x.add(50)
+        if (hasElement(60) && (i==7)) x = x.add(100)
+        if (hasElement(33) && (i==8)) x = x.add(50)
+        if (hasElement(56) && (i==8)) x = x.add(200)
+        if (hasElement(65) && (i==7||i==8)) x = x.add(200)
+        if (hasElement(70) && (i==7||i==8)) x = x.add(200)
+        if (hasElement(73) && (i==5||i==6||i==8)) x = x.add(tmp.elements.effect[73])
+        if (hasTree("chal1") && (i==7||i==8))  x = x.add(100)
+        if (hasTree("chal4b") && (i==9))  x = x.add(100)
         return x.floor()
     },
     getScaleName(i) {
@@ -126,8 +128,8 @@ const CHALS = {
     },
     getPower(i) {
         let x = E(1)
-        if (player.atom.elements.includes(2)) x = x.mul(0.75)
-        if (player.atom.elements.includes(26)) x = x.mul(tmp.elements.effect[26])
+        if (hasElement(2)) x = x.mul(0.75)
+        if (hasElement(26)) x = x.mul(tmp.elements.effect[26])
         return x
     },
     getPower2(i) {
@@ -139,7 +141,7 @@ const CHALS = {
         return x
     },
     getChalData(x, r=E(-1)) {
-        let res = !CHALS.inChal(0)?this.getResource(x):E(0)
+        let res = this.getResource(x)
         let lvl = r.lt(0)?player.chal.comps[x]:r
         let chal = this[x]
         let s1 = x > 8 ? 10 : 75
@@ -148,7 +150,7 @@ const CHALS = {
         if (x > 8) s2 = 50
         let s3 = 1000
         let pow = chal.pow
-        if (player.atom.elements.includes(10) && (x==3||x==4)) pow = pow.mul(0.95)
+        if (hasElement(10) && (x==3||x==4)) pow = pow.mul(0.95)
         chal.pow = chal.pow.max(1)
         let goal = chal.inc.pow(lvl.pow(pow)).mul(chal.start)
         let bulk = res.div(chal.start).max(1).log(chal.inc).root(pow).add(1).floor()
@@ -257,8 +259,8 @@ const CHALS = {
     3: {
         unl() { return player.chal.comps[2].gte(1) || player.atom.unl },
         title: "融化質量",
-        desc: "質量獲得量軟限制提早 1e150 開始，而且效果更強。",
-        reward: `基於完成次數，質量獲得量得到次方加成，但該加成不適用於此挑戰中！`,
+        desc: "質量獲得量軟限制提早 1e150 開始，而且效果更强。",
+        reward: `基於完成次數，質量獲得量獲得次方加成，但該加成不適用於此挑戰中！`,
         max: E(100),
         inc: E(25),
         pow: E(1.25),
@@ -274,7 +276,7 @@ const CHALS = {
         unl() { return player.chal.comps[3].gte(1) || player.atom.unl },
         title: "弱化狂怒",
         desc: "怒氣值獲得量開十次方根；質量獲得量軟限制提早 1e100 開始。",
-        reward: `基於完成次數，怒氣值獲得量得到次方加成。`,
+        reward: `基於完成次數，怒氣值獲得量獲得次方加成。`,
         max: E(100),
         inc: E(30),
         pow: E(1.25),
@@ -290,7 +292,7 @@ const CHALS = {
         unl() { return player.atom.unl },
         title: "無等級",
         desc: "不能升等級。",
-        reward: `基於完成次數，等級需求變弱。`,
+        reward: `基於完成次數，等級需求更弱。`,
         max: E(50),
         inc: E(50),
         pow: E(1.25),
@@ -319,7 +321,7 @@ const CHALS = {
     7: {
         unl() { return player.chal.comps[6].gte(1) || player.supernova.times.gte(1) },
         title: "無怒氣值",
-        desc: "不能獲得怒氣值，但你會根據質量獲得暗物質；<br>質量獲得量軟限制更強。",
+        desc: "不能獲得怒氣值，但你會根據質量獲得暗物質；<br>質量獲得量軟限制更强。",
         reward: `每完成一次，挑戰 1 - 4 的完成上限增加 2 次。<br><span class="yellow">完成 16 次時，解鎖元素</span>`,
         max: E(50),
         inc: E(64),
@@ -352,7 +354,7 @@ const CHALS = {
         unl() { return player.supernova.tree.includes("chal4") },
         title: "無粒子",
         desc: "不能分配夸克；質量獲得量的指數得到 0.9 次方的懲罰。",
-        reward: `加強鎂-12 的效果。`,
+        reward: `加强鎂-12 的效果。`,
         max: E(100),
         inc: E('e500'),
         pow: E(2),
@@ -366,7 +368,7 @@ const CHALS = {
     10: {
         unl() { return player.supernova.tree.includes("chal5") },
         title: "現實·一",
-        desc: "挑戰 1-8 的效果全部應用；你困在質量膨脹裡。",
+        desc: "挑戰 1-8 的效果全部應用；你困在質量膨脹裏。",
         reward: `相對粒子公式的指數根據完成次數獲得加成。（該效果不適用於此挑戰中）<br><span class="yellow">首次完成時，解鎖費米子。</span>`,
         max: E(100),
         inc: E('e2000'),
@@ -381,8 +383,8 @@ const CHALS = {
     11: {
         unl() { return player.supernova.tree.includes("chal6") },
         title: "絕對主義",
-        desc: "不能獲得相對粒子和膨脹質量。你困在質量膨脹裡。",
-        reward: `Star Booster is stonger by completions.`,
+        desc: "不能獲得相對粒子和膨脹質量。你困在質量膨脹裏。",
+        reward: `完成次數加强恆星提升器。`,
         max: E(100),
         inc: E("ee6"),
         pow: E(2),
@@ -397,7 +399,7 @@ const CHALS = {
         unl() { return player.supernova.tree.includes("chal7") },
         title: "原子的衰變",
         desc: "不能獲得原子和夸克。",
-        reward: `Completions add free Radiation Boosters.<br><span class="yellow">On first completion, unlock new prestige layer! (coming soon in v0.5)</span>`,
+        reward: `完成次數免費給予輻射加成。<br><span class="yellow">首次完成時，解鎖新的重置層次！</span>`,
         max: E(100),
         inc: E('e2e7'),
         pow: E(2),

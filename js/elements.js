@@ -6,13 +6,13 @@ function setupHTML() {
 	let table2 = ""
 	let table3 = ""
 	for (let x = 0; x < TABS[1].length; x++) {
-		table += `<div style="width: 130px">
+		table += `<div style="width: 145px">
 			<button onclick="TABS.choose(${x})" class="btn_tab" id="tab${x}">${TABS[1][x].id}</button>
 		</div>`
 		if (TABS[2][x]) {
 			let a = `<div id="stabs${x}" class="table_center">`
 			for (let y = 0; y < TABS[2][x].length; y++) {
-				a += `<div style="width: 130px">
+				a += `<div style="width: 145px">
 					<button onclick="TABS.choose(${y}, true)" class="btn_tab" id="stab${x}_${y}">${TABS[2][x][y].id}</button>
 				</div>`
 			}
@@ -109,6 +109,7 @@ function setupHTML() {
 	setupBosonsHTML()
 	setupFermionsHTML()
 	setupRadiationHTML()
+	setupQuantumHTML()
 
 	/*
 	function setupTestHTML() {
@@ -126,7 +127,7 @@ function setupHTML() {
 	let confirm_table = new Element("confirm_table")
 	table = ""
 	for (let x = 0; x < CONFIRMS.length; x++) {
-		table += `<div style="width: 100px" id="confirm_div_${x}"><img src="images/${x == 1 ? "dm" : CONFIRMS[x]}.png"><br><button onclick="player.confirms.${CONFIRMS[x]} = !player.confirms.${CONFIRMS[x]}" class="btn" id="confirm_btn_${x}">OFF</button></div>`
+		table += `<div style="width: 100px" id="confirm_div_${x}"><img src="images/${x == 1 ? "dm" : CONFIRMS[x]}.png"><br><button onclick="player.confirms.${CONFIRMS[x]} = !player.confirms.${CONFIRMS[x]}" class="btn" id="confirm_btn_${x}">關閉</button></div>`
 	}
 	confirm_table.setHTML(table)
 
@@ -159,18 +160,20 @@ function updateTabsHTML() {
 }
 
 function updateUpperHTML() {
+	let gs = tmp.preQUGlobalSpeed
+
 	tmp.el.reset_desc.setHTML(player.reset_msg)
-	tmp.el.mass.setHTML(formatMass(player.mass)+"<br>"+formatGain(player.mass, tmp.massGain, true))
-	tmp.el.rpAmt.setHTML(format(player.rp.points,0)+"<br>"+(player.mainUpg.bh.includes(6)||player.mainUpg.atom.includes(6)?formatGain(player.rp.points, tmp.rp.gain):"(+"+format(tmp.rp.gain,0)+")"))
+	tmp.el.mass.setHTML(formatMass(player.mass)+"<br>"+formatGain(player.mass, tmp.massGain.mul(gs), true))
+	tmp.el.rpAmt.setHTML(format(player.rp.points,0)+"<br>"+(player.mainUpg.bh.includes(6)||player.mainUpg.atom.includes(6)?formatGain(player.rp.points, tmp.rp.gain.mul(gs)):"(+"+format(tmp.rp.gain,0)+")"))
 	let unl = FORMS.bh.see()
 	tmp.el.dm_div.setVisible(unl)
-	if (unl) tmp.el.dmAmt.setHTML(format(player.bh.dm,0)+"<br>"+(player.mainUpg.atom.includes(6)?formatGain(player.bh.dm, tmp.bh.dm_gain):"(+"+format(tmp.bh.dm_gain,0)+")"))
+	if (unl) tmp.el.dmAmt.setHTML(format(player.bh.dm,0)+"<br>"+(player.mainUpg.atom.includes(6)?formatGain(player.bh.dm, tmp.bh.dm_gain.mul(gs)):"(+"+format(tmp.bh.dm_gain,0)+")"))
 	unl = player.bh.unl
 	tmp.el.bh_div.setVisible(unl)
 	tmp.el.atom_div.setVisible(unl)
 	if (unl) {
-		tmp.el.bhMass.setHTML(formatMass(player.bh.mass)+"<br>"+formatGain(player.bh.mass, tmp.bh.mass_gain, true))
-		tmp.el.atomAmt.setHTML(format(player.atom.points,0)+"<br>"+(player.atom.elements.includes(24)?formatGain(player.atom.points,tmp.atom.gain):"(+"+format(tmp.atom.gain,0)+")"))
+		tmp.el.bhMass.setHTML(formatMass(player.bh.mass)+"<br>"+formatGain(player.bh.mass, tmp.bh.mass_gain.mul(gs), true))
+		tmp.el.atomAmt.setHTML(format(player.atom.points,0)+"<br>"+(hasElement(24)?formatGain(player.atom.points,tmp.atom.gain.mul(gs)):"(+"+format(tmp.atom.gain,0)+")"))
 	}
 	unl = !CHALS.inChal(0)
 	tmp.el.chal_upper.setVisible(unl)
@@ -181,10 +184,10 @@ function updateUpperHTML() {
 	}
 	unl = player.atom.unl
 	tmp.el.quark_div.setVisible(unl)
-	if (unl) tmp.el.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+(player.atom.elements.includes(14)?formatGain(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(tmp.atom.quarkGainSec):0):"(+"+format(tmp.atom.quarkGain,0)+")"))
+	if (unl) tmp.el.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+(hasElement(14)?formatGain(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(tmp.atom.quarkGainSec).mul(gs):0):"(+"+format(tmp.atom.quarkGain,0)+")"))
 	unl = MASS_DILATION.unlocked()
 	tmp.el.md_div.setVisible(unl)
-	if (unl) tmp.el.md_massAmt.setHTML(format(player.md.particles,0)+"<br>"+(player.md.active?"(+"+format(tmp.md.rp_gain,0)+")":(player.supernova.tree.includes("qol3")?formatGain(player.md.particles,tmp.md.passive_rp_gain):"(inactive)")))
+	if (unl) tmp.el.md_massAmt.setHTML(format(player.md.particles,0)+"<br>"+(player.md.active?"(+"+format(tmp.md.rp_gain,0)+")":(hasTree("qol3")?formatGain(player.md.particles,tmp.md.passive_rp_gain.mul(gs)):"(inactive)")))
 	unl = player.supernova.post_10
 	tmp.el.sn_div.setVisible(unl)
 	if (unl) tmp.el.supernovaAmt.setHTML(format(player.supernova.times,0)+"<br>(+"+format(tmp.supernova.bulk.sub(player.supernova.times).max(0),0)+")")
@@ -200,7 +203,7 @@ function updateRanksHTML() {
 			let desc = ""
 			for (let i = 0; i < keys.length; i++) {
 				if (player.ranks[rn].lt(keys[i])) {
-					desc = ` At ${RANKS.fullNames[x]} ${format(keys[i],0)}, ${RANKS.desc[rn][keys[i]]}`
+					desc = `在第 ${format(keys[i],0)} ${RANKS.fullNames[x]}，${RANKS.desc[rn][keys[i]]}`
 					break
 				}
 			}
@@ -209,7 +212,7 @@ function updateRanksHTML() {
 			tmp.el["ranks_amt_"+x].setTxt(format(player.ranks[rn],0))
 			tmp.el["ranks_"+x].setClasses({btn: true, reset: true, locked: !tmp.ranks[rn].can})
 			tmp.el["ranks_desc_"+x].setTxt(desc)
-			tmp.el["ranks_req_"+x].setTxt(x==0?formatMass(tmp.ranks[rn].req):RANKS.fullNames[x-1]+" "+format(tmp.ranks[rn].req,0))
+			tmp.el["ranks_req_"+x].setTxt(x==0?formatMass(tmp.ranks[rn].req):"第 "+format(tmp.ranks[rn].req,0)+" "+RANKS.fullNames[x-1])
 			tmp.el["ranks_auto_"+x].setDisplay(RANKS.autoUnl[rn]())
 			tmp.el["ranks_auto_"+x].setTxt(player.auto_ranks[rn]?"開啟":"關閉")
 		}
@@ -291,7 +294,7 @@ function updateMainUpgradesHTML() {
 }
 
 function updateBlackHoleHTML() {
-	tmp.el.bhMass2.setHTML(formatMass(player.bh.mass)+" "+formatGain(player.bh.mass, tmp.bh.mass_gain, true))
+	tmp.el.bhMass2.setHTML(formatMass(player.bh.mass)+" "+formatGain(player.bh.mass, tmp.bh.mass_gain.mul(tmp.preQUGlobalSpeed), true))
 	tmp.el.bhMassPower.setTxt(format(tmp.bh.massPowerGain))
 	tmp.el.bhFSoft1.setDisplay(tmp.bh.f.gte(tmp.bh.fSoftStart))
 	tmp.el.bhFSoftStart1.setTxt(format(tmp.bh.fSoftStart))
@@ -313,22 +316,32 @@ function updateBlackHoleHTML() {
 
 function updateOptionsHTML() {
 	for (let x = 0; x < CONFIRMS.length; x++) {
-		tmp.el["confirm_div_"+x].setDisplay(CONFIRMS[x] == "sn"?player.supernova.times.gte(1):player[CONFIRMS[x]].unl)
+		let unl = 
+		CONFIRMS[x] == "sn"
+		?player.supernova.times.gte(1)
+		:CONFIRMS[x] == "qu"
+		?player.qu.times.gte(1)
+		:player[CONFIRMS[x]].unl
+
+		tmp.el["confirm_div_"+x].setDisplay(unl)
 		tmp.el["confirm_btn_"+x].setTxt(player.confirms[CONFIRMS[x]] ? "開啟":"關閉")
 	}
 	tmp.el.total_time.setTxt(formatTime(player.time))
 	tmp.el.offline_active.setTxt(player.offline.active?"開啟":"關閉")
+	tmp.el.tree_anim_btn.setDisplay(player.supernova.times.gte(1) || quUnl())
+	tmp.el.tree_anim.setTxt(TREE_ANIM[player.options.tree_animation])
 }
 
 function updateHTML() {
 	document.documentElement.style.setProperty('--font', player.options.font)
 	tmp.el.offlineSpeed.setTxt(format(tmp.offlineMult))
 	tmp.el.loading.setDisplay(tmp.offlineActive)
-    tmp.el.app.setDisplay(tmp.offlineActive ? false : ((player.supernova.times.lte(0) ? !tmp.supernova.reached : true) && tmp.tab != 5))
+    tmp.el.app.setDisplay(tmp.offlineActive ? false : ((player.supernova.times.lte(0) && !player.supernova.post_10 ? !tmp.supernova.reached : true) && tmp.tab != 5))
 	updateSupernovaEndingHTML()
 	updateTabsHTML()
 	if ((!tmp.supernova.reached || player.supernova.post_10) && tmp.tab != 5) {
 		updateUpperHTML()
+		updateQuantumHTML()
 		if (tmp.tab == 0) {
 			if (tmp.stab[0] == 0) {
 				updateRanksHTML()
@@ -369,7 +382,7 @@ function updateHTML() {
 			if (tmp.stab[4] == 1) updateElementsHTML()
 			if (tmp.stab[4] == 2) updateMDHTML()
 		}
-		if (tmp.tab == 6) {
+		if (tmp.tab == 7) {
 			updateOptionsHTML()
 		}
 	}
