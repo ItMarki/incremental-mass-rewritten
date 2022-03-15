@@ -57,14 +57,14 @@ const PRIM = {
             },
         ],
         effDesc: [
-            x=>{ return `Boost Stronger Power by ${format(x)}x` },
-            x=>{ return `Boost Rage Powers gain by ^${format(x[0])} /<br> Boost Non-Bonus Tickspeed by ${format(x[1])}x` },
-            x=>{ return `Boost Dark Matters gain by ^${format(x[0])} /<br> Boost BH Condenser Power by ${format(x[1])}x` },
-            x=>{ return `Boost Atoms gain by ^${format(x[0])} /<br> Boost Cosmic Ray Power by ${format(x[1])}x` },
-            x=>{ return `Boost Higgs Boson's effect by ${format(x)}x` },
-            x=>{ return `Add ${format(x)} to base from Fermions gain ` },
-            x=>{ return `Boost all Radiations gains by ${format(x[0])}x` + (hasTree("prim2") ? ` /<br> Make all Radiations effects ${format(x[1])}x stronger` : "") },
-            x=>{ return `Make Meta-Supernova starts ${format(x)} later` },
+            x=>{ return `將增强器力量提升 ${format(x)}x` },
+            x=>{ return `給予怒氣值獲得量 ${format(x[0])} 次方的加成；<br>將非獎勵時間速度加强 ${format(x[1])}x` },
+            x=>{ return `給予暗物質獲得量 ^${format(x[0])} 次方的加成；<br>將黑洞壓縮器力量提升 ${format(x[1])}x` },
+            x=>{ return `給予原子獲得量 ^${format(x[0])} 次方的加成；<br>將宇宙射線力量提升 ${format(x[1])}x` },
+            x=>{ return `將希格斯玻色子的效果加强 ${format(x)}x` },
+            x=>{ return `將費米子獲得量的底數增加 ${format(x)}` },
+            x=>{ return `將所有輻射的獲得量提升 ${format(x[0])}x` + (hasTree("prim2") ? `；<br>將所有輻射的效果加强 ${format(x[1])}x` : "") },
+            x=>{ return `將元級超新星延遲 ${format(x)} 個` },
         ],
     },
 }
@@ -90,7 +90,7 @@ function giveRandomPParticles(v, max=false) {
 }
 
 function respecPParticles() {
-    if (confirm("Are you sure you want to respec all Particles?")) {
+    if (confirm("你確定要重置所有粒子嗎？")) {
         for (let i =0; i < 8; i++) player.qu.prim.particles[i] = E(0)
         QUANTUM.doReset()
     }

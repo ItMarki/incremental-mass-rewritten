@@ -10,7 +10,7 @@ const QUANTUM = {
     },
     enter() {
         if (tmp.qu.gain.gte(1)) {
-            if (player.confirms.qu) if (confirm("你確定要量子化嗎？量子化會重置生活質素以外的所有功能。")?!confirm("你確定嗎？"):true) return
+            if (player.confirms.qu) if (confirm("你確定要量子化嗎？量子化會重置生活質素升級以外的所有功能。")?!confirm("你確定嗎？"):true) return
             if (player.qu.times.gte(10)) {
                 player.qu.points = player.qu.points.add(tmp.qu.gain)
                 player.qu.times = player.qu.times.add(1)
@@ -109,10 +109,10 @@ const QUANTUM = {
         },
     },
     mils: [
-        [E(1), `你開始時解鎖生活質素功能（qol1-6）、玻色子和費米子。`],
+        [E(1), `你開始時解鎖生活質素升級（qol1-6）、玻色子和費米子。`],
         [E(2), `中子樹的量子前部分的所有升級都移除需求。量子前部分的運行速度增至 10x。`],
-        [E(3), `你開始時解鎖中子樹的量子前挑戰部分以及升級“c”和“qol7”。`],
-        [E(5), `你開始時解鎖生活質素功能（qol8-9 和 unl1）和輻射。`],
+        [E(3), `你開始時解鎖中子樹的量子前挑戰部分以及升級 [c] 和 [qol7]。`],
+        [E(5), `你開始時解鎖生活質素升級（qol8-9 和 unl1）和輻射。`],
         [E(6), `量子泡沫獲得量翻倍。`],
         [E(8), `量子前部分的運行速度稍微加強藍圖粒子和賦色子的獲得量。`],
         [E(10), `超新星恆星獲得量乘以量子化次數（最高 1e10）。`],
@@ -226,7 +226,7 @@ function setupQuantumHTML() {
             <img src="images/chroma${x}.png">
             <div style="width: 100%; color: #${n[2]}; background: linear-gradient(90deg, #${n[2]}0 0%, #${n[2]}2 10%, #${n[2]}2 90%, #${n[2]}0 100%); padding: 8px 0px; margin: 8px 0;">
                 <h2>${n[1]}</h2><br><br>
-                你有 <span id="${id}_amt">0</span> ${n[0]}賦色子，<br>
+                你有 <span id="${id}_amt">0</span> 個${n[0]}賦色子，<br>
                 <span id="${id}_eff"></span>
             </div>
         </div>
@@ -252,7 +252,7 @@ function setupQuantumHTML() {
         html += `
         <div class="primordium table_center">
             <div style="width: 350px; height: 60px;">
-                <h2>${PRIM.particle.names[x]} Particles</h2><br>
+                <h2>${PRIM.particle.names[x]} 粒子</h2><br>
                  - [<span id="prim_part${x}">0</span>]
             </div><div style="width: 700px;" id="prim_part_eff${x}"></div>
         </div>

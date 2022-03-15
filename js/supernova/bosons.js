@@ -150,7 +150,7 @@ function setupBosonsHTML() {
             table += `
             <button class="btn b_btn full" id="${id2}_div" onclick="BOSONS.upgs.buy('${id}',${y})">
                 <div style="min-height: 80px">
-                    [第 <span id="${id2}_lvl">X</span> 級]<br>
+                    [第 <span id="${id2}_lvl">X</span> 等級]<br>
                     ${BOSONS.upgs[id][y].desc}<br>
                     目前：<span id="${id2}_eff">X</span><br>
                 </div>

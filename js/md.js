@@ -59,7 +59,7 @@ const MASS_DILATION = {
         },
         ids: [
             {
-                desc: `翻倍膨脹質量獲得量。`,
+                desc: `膨脹質量獲得量翻倍。`,
                 cost(x) { return E(10).pow(x).mul(10) },
                 bulk() { return player.md.mass.gte(10)?player.md.mass.div(10).max(1).log10().add(1).floor():E(0) },
                 effect(x) {
@@ -77,7 +77,7 @@ const MASS_DILATION = {
                 },
                 effDesc(x) { return "加强 "+(x.gte(10)?format(x)+"x":format(x.sub(1).mul(100))+"%")},
             },{
-                desc: `翻倍相對粒子獲得量。`,
+                desc: `相對粒子獲得量翻倍。`,
                 cost(x) { return E(10).pow(x.pow(E(1.25).pow(tmp.md.upgs[4].eff||1))).mul(1000) },
                 bulk() { return player.md.mass.gte(1000)?player.md.mass.div(1000).max(1).log10().root(E(1.25).pow(tmp.md.upgs[4].eff||1)).add(1).floor():E(0) },
                 effect(x) { return E(2).pow(x.mul(tmp.md.upgs[11].eff||1)).softcap(1e25,0.75,0) },
@@ -97,7 +97,7 @@ const MASS_DILATION = {
                 effect(x) { return E(1).sub(x.mul(0.1)) },
                 effDesc(x) { return "弱 "+format(E(1).sub(x).mul(100))+"%" },
             },{
-                desc: `增加相對粒子公式的次方。`,
+                desc: `增加相對粒子公式的指數。`,
                 cost(x) { return E(1e3).pow(x.pow(1.5)).mul(1.5e73) },
                 bulk() { return player.md.mass.gte(1.5e73)?player.md.mass.div(1.5e73).max(1).log(1e3).max(0).root(1.5).add(1).floor():E(0) },
                 effect(i) {
@@ -115,7 +115,7 @@ const MASS_DILATION = {
                 effect(x) { return E(5).pow(player.md.mass.max(1).log10().root(2)) },
                 effDesc(x) { return format(x)+"x" },
             },{
-                desc: `質量膨脹升級 2 效果的公式更好。`,
+                desc: `改善質量膨脹升級 2 效果的公式。`,
                 maxLvl: 1,
                 cost(x) { return E(1.5e246) },
                 bulk() { return player.md.mass.gte(1.5e246)?E(1):E(0) },
@@ -129,7 +129,7 @@ const MASS_DILATION = {
                 effDesc(x) { return format(x)+"x" },
             },{
                 unl() { return STARS.unlocked() || player.supernova.times.gte(1) },
-                desc: `翻倍夸克獲得量。`,
+                desc: `夸克獲得量翻倍。`,
                 cost(x) { return E(5).pow(x).mul('1.50001e536') },
                 bulk() { return player.md.mass.gte('1.50001e536')?player.md.mass.div('1.50001e536').max(1).log(5).add(1).floor():E(0) },
                 effect(x) {
@@ -138,7 +138,7 @@ const MASS_DILATION = {
                 effDesc(x) { return format(x)+"x"+(x.gte(1e25)?"<span class='soft'>（軟限制）</span>":"") },
             },{
                 unl() { return player.supernova.times.gte(1) },
-                desc: `對質量膨脹升級 6 的底數增加 0.015。`,
+                desc: `將質量膨脹升級 6 的底數增加 0.015。`,
                 cost(x) { return E(1e50).pow(x.pow(1.5)).mul('1.50001e1556') },
                 bulk() { return player.md.mass.gte('1.50001e1556')?player.md.mass.div('1.50001e1556').max(1).log(1e50).max(0).root(1.5).add(1).floor():E(0) },
                 effect(x) {
@@ -147,7 +147,7 @@ const MASS_DILATION = {
                 effDesc(x) { return "+"+format(x)+(x.gte(0.2)?"<span class='soft'>（軟限制）</span>":"") },
             },{
                 unl() { return player.supernova.post_10 },
-                desc: `加强首 3 個質量膨脹升級。`,
+                desc: `加强頭 3 個質量膨脹升級。`,
                 cost(x) { return E(1e100).pow(x.pow(2)).mul('1.5e8056') },
                 bulk() { return player.md.mass.gte('1.5e8056')?player.md.mass.div('1.5e8056').max(1).log(1e100).max(0).root(2).add(1).floor():E(0) },
                 effect(x) {
@@ -167,7 +167,7 @@ function setupMDHTML() {
         table += `
         <button onclick="MASS_DILATION.upgs.buy(${i})" class="btn full md" id="md_upg${i}_div" style="font-size: 11px;">
         <div style="min-height: 80px">
-            [Level <span id="md_upg${i}_lvl"></span>]<br>
+            [第 <span id="md_upg${i}_lvl"></span> 等級]<br>
             ${upg.desc}<br>
             ${upg.effDesc?`目前：<span id="md_upg${i}_eff"></span>`:""}
         </div>

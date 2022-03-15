@@ -80,7 +80,7 @@ const TREE_UPGS = {
         },
         sn4: {
             branch: ["sn3"],
-            desc: `超新星提升升級“sn2”的效果。`,
+            desc: `超新星提升升級 [sn2] 的效果。`,
             unl() { return player.supernova.post_10 },
             req() { return player.supernova.times.gte(13) },
             reqDesc: `13 個超新星。`,
@@ -114,7 +114,7 @@ const TREE_UPGS = {
         },
         m2: {
             branch: ["m1"],
-            desc: `質量軟限制^2 得到 ^1.5 的延遲。`,
+            desc: `質量軟限制^2 得到 1.5 次方的延遲。`,
             cost: E(800),
         },
         m3: {
@@ -447,7 +447,7 @@ const TREE_UPGS = {
         },
         rad1: {
             unl() { return tmp.radiation.unl },
-            desc: `基於超新星獲得更多頻率。如果已解鎖下一個輻射則以此加成提升該輻射<sup>[?]</sup>。`,
+            desc: `基於超新星獲得更多頻率。如果已解鎖下一個輻射則以此加成提升該輻射。<sup>[?]</sup>`,
             cost: E(1e54),
             effect() {
                 let x = player.supernova.times.add(1)
@@ -483,13 +483,13 @@ const TREE_UPGS = {
         rad6: {
             unl() { return PRIM.unl() },
             branch: ["rad4"],
-            desc: `Bonus radiation boosts are stronger for every radiation index.`,
+            desc: `輻射長度加強獎勵輻射加成。<sup>[?]</sup>`,
             cost: E('e490'),
         },
 
         qf1: {
             unl() { return quUnl() },
-            desc: `Gain more Quantum Foams based on Supernovas`,
+            desc: `超新星提升量子泡沫獲得量。`,
             cost: E(1e290),
             effect() {
                 let x = player.supernova.times.root(2).div(10).add(1)
@@ -527,14 +527,14 @@ const TREE_UPGS = {
         qu4: {
             qf: true,
             branch: ["qu1", 'qu2', 'qu3'],
-            desc: `Remove effect's softcaps from [sn2].`,
+            desc: `移除 [sn2] 效果的軟限制。`,
             cost: E(35),
         },
         qu5: {
             qf: true,
             unl() { return PRIM.unl() },
             branch: ['qu4'],
-            desc: `Blueprint Particles & Chromas are affected by Tickspeed Effect at a reduced rate.`,
+            desc: `時間速度效果稍微提升藍圖粒子和賦色子的獲得量。`,
             cost: E(100),
             effect() {
                 let x = tmp.tickspeedEffect?tmp.tickspeedEffect.eff.add(1).log10().add(1).log10().add(1).pow(3):E(1)
@@ -557,8 +557,8 @@ const TREE_UPGS = {
                 for (let x = 0; x < 6; x++) if (player.supernova.fermions.tiers[0][x].gte(1)) return false
                 return player.supernova.times.gte(81)
             },
-            reqDesc: `Become 81 Supernovas without getting tiers from U-Quark per Quantum run.`,
-            desc: `Keep U-Quark Tiers on going Quantum.`,
+            reqDesc: `量子化後在不獲得 U-夸克階的情況下成為 81 次超新星。`,
+            desc: `量子化時保留 U-夸克階。`,
             cost: E(4),
         },
         qu_qol3: {
@@ -568,14 +568,14 @@ const TREE_UPGS = {
                 for (let x = 1; x <= 4; x++) if (player.chal.comps[x].gte(1)) return false
                 return player.mass.gte(mlt(1e4))
             },
-            reqDesc() { return `Reach ${formatMass(mlt(1e4))} of mass without completing Challenges 1-4 per Quantum run.` },
-            desc: `You can now automatically complete Challenges 1-4 any Challenge.`,
+            reqDesc() { return `量子化後在不完成挑戰 1-4 的情況下到達 ${formatMass(mlt(1e4))} 的質量。` },
+            desc: `你可以自動完成挑戰 1-4。`,
             cost: E(4),
         },
         qu_qol4: {
             qf: true,
             branch: ["qu_qol1"],
-            desc: `You can now automatically become a supernova, it no longer resets anything.`,
+            desc: `你可以自動成為超新星；它不重置任何東西。`,
             cost: E(4),
         },
         qu_qol5: {
@@ -585,8 +585,8 @@ const TREE_UPGS = {
                 for (let x = 5; x <= 8; x++) if (player.chal.comps[x].gte(1) && x != 7) return false
                 return player.mass.gte(mlt(1.35e4))
             },
-            reqDesc() { return `Reach ${formatMass(mlt(1.35e4))} of mass without completing Challenges 5, 6 & 8 per Quantum run.` },
-            desc: `You can now automatically complete Challenges 5-8 any Challenge.`,
+            reqDesc() { return `量子化後在不完成挑戰 5、6 和 8 的情況下到達 ${formatMass(mlt(1.35e4))} 的質量。` },
+            desc: `你可以自動完成挑戰 5-8。`,
             cost: E(4),
         },
         qu_qol6: {
@@ -596,8 +596,8 @@ const TREE_UPGS = {
                 for (let x = 0; x < 6; x++) if (player.supernova.fermions.tiers[1][x].gte(1)) return false
                 return player.supernova.times.gte(42)
             },
-            reqDesc: `Become 42 Supernovas without getting tiers from U-Lepton per Quantum run.`,
-            desc: `Keep U-Lepton Tiers on going Quantum.`,
+            reqDesc: `量子化後在不獲得 U-輕子階的情況下成為 42 次超新星。`,
+            desc: `量子化時保留 U-輕子階。`,
             cost: E(4),
         },
         qu_qol7: {
@@ -607,20 +607,20 @@ const TREE_UPGS = {
                 for (let x = 9; x <= 12; x++) if (player.chal.comps[x].gte(1)) return false
                 return player.mass.gte(mlt(5e3)) && FERMIONS.onActive("05")
             },
-            reqDesc() { return `Reach ${formatMass(mlt(5e3))} of mass without completing Challenges 9-12 per Quantum run, while in [Bottom].` },
-            desc: `Keep challenge 9-12 completions on going Quantum.`,
+            reqDesc() { return `量子化後在 [底] 中在不完成挑戰 9-12 的情況下到達 ${formatMass(mlt(5e3))} 的質量。` },
+            desc: `量子化時保留挑戰 9-12 的完成次數。`,
             cost: E(25),
         },
         prim1: {
             qf: true,
             branch: ["qu5"],
-            desc: `Primordium Theorem’s base requirement is reduced by 1.`,
+            desc: `原始素定理的需求底數減少 1。`,
             cost: E(200),
         },
         prim2: {
             qf: true,
             branch: ["qu5"],
-            desc: `Theta Particle’s second effect is now added.`,
+            desc: `Theta 粒子增加第二個效果。`,
             cost: E(500),
         },
 
@@ -631,15 +631,15 @@ const TREE_UPGS = {
             unl() { return hasTree("fn6") },
             req() { return player.supernova.times.gte(44) },
             reqDesc: `44 個超新星。`,
-            desc: `Unlock Radiation.`,
+            desc: `解鎖輻射。`,
             cost: E(5e52),
         },
         unl2: {
             qf: true,
             branch: ["qu_qol7"],
             req() { return player.qu.times.gte(20) },
-            reqDesc: `Quantize 20 times.`,
-            desc: `Unlock Primordium.`,
+            reqDesc: `量子化 20 次。`,
+            desc: `解鎖原始素。`,
             cost: E(50),
         },
         /*

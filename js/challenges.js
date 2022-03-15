@@ -368,7 +368,7 @@ const CHALS = {
     10: {
         unl() { return player.supernova.tree.includes("chal5") },
         title: "現實·一",
-        desc: "挑戰 1-8 的效果全部應用；你困在質量膨脹裏。",
+        desc: "挑戰 1-8 的懲罰全部生效，而且你困在質量膨脹裏。",
         reward: `相對粒子公式的指數根據完成次數獲得加成。（該效果不適用於此挑戰中）<br><span class="yellow">首次完成時，解鎖費米子。</span>`,
         max: E(100),
         inc: E('e2000'),

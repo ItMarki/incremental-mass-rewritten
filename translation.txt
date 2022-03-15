@@ -98,6 +98,8 @@ x-ray - X 射線
 gamma-ray - 伽馬射線
 
 6. QUANTUM
+quantum - 量子
+go quantum/quantumize/quantize - 量子化
 quantum foam - 量子泡沫
 quantum theory - 量子理論
 quantum milestone - 量子里程碑
@@ -116,14 +118,19 @@ red - 紅
 green - 綠
 blue - 藍
 
+6.3. PRIMORIUM
+primorium - 原始素
+primorium theorem - 原始素定理
+particle - 粒子
+
 7. TERMS IN INCREMENTAL GAMES
 cost - 價格
 upgrade - 升級
 scale/scaling - 增幅
 
-8. OTHER
+8. OTHERS
 a. the general rule is to put a space beetwen a number and surrounding text (except for punctuation)
 b. use "[number]x" instead of "[number]倍"
-c. use 到達 not 達到
+c. use 到達 instead of 達到
 d. use 質量軟限制 as an abbreviation of 質量獲得量軟限制
-e. use 强 not 強; this is a result of using the Mainland standard
+e. use 强 instead of 強; this is a result of using the Mainland standard

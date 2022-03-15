@@ -303,7 +303,7 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `時間速度便宜 ${format(x)}x（元級價格增幅應用之前）`
+                    return `時間速度便宜 ${format(x)}x（在元級價格增幅生效之前）`
                 },
                 inc: "暗物質",
                 cons: "你困在挑戰 8-9 裏",
@@ -412,7 +412,7 @@ function setupFermionsHTML() {
                 <b>[${FERMIONS.sub_names[i][x]}]</b><br>[第 <span id="${id}_tier">0</span> <span id="${id}_tier_scale"></span>階]<br>
                 <span id="${id}_cur">目前：X</span><br>
                 下一階：<span id="${id}_nextTier">X</span><br>
-                （由${f.inc}加强）<br><br>
+                （基於${f.inc}）<br><br>
                 效果：<span id="${id}_desc">X</span><br>
                 啟動時：${f.cons}
             </button>
