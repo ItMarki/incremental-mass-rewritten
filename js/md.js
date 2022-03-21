@@ -147,7 +147,7 @@ const MASS_DILATION = {
                 effDesc(x) { return "+"+format(x)+(x.gte(0.2)?"<span class='soft'>（軟限制）</span>":"") },
             },{
                 unl() { return player.supernova.post_10 },
-                desc: `加强頭 3 個質量膨脹升級。`,
+                desc: `加强首 3 個質量膨脹升級。`,
                 cost(x) { return E(1e100).pow(x.pow(2)).mul('1.5e8056') },
                 bulk() { return player.md.mass.gte('1.5e8056')?player.md.mass.div('1.5e8056').max(1).log(1e100).max(0).root(2).add(1).floor():E(0) },
                 effect(x) {

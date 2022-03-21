@@ -58,7 +58,7 @@ const PRIM = {
         ],
         effDesc: [
             x=>{ return `將增强器力量提升 ${format(x)}x` },
-            x=>{ return `給予怒氣值獲得量 ${format(x[0])} 次方的加成；<br>將非獎勵時間速度加强 ${format(x[1])}x` },
+            x=>{ return `給予怒氣點獲得量 ${format(x[0])} 次方的加成；<br>將非獎勵時間速度加强 ${format(x[1])}x` },
             x=>{ return `給予暗物質獲得量 ^${format(x[0])} 次方的加成；<br>將黑洞壓縮器力量提升 ${format(x[1])}x` },
             x=>{ return `給予原子獲得量 ^${format(x[0])} 次方的加成；<br>將宇宙射線力量提升 ${format(x[1])}x` },
             x=>{ return `將希格斯玻色子的效果加强 ${format(x)}x` },

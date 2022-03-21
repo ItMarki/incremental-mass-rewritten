@@ -193,7 +193,7 @@ const FERMIONS = {
                 desc(x) {
                     return `第 4 個光子和膠子升級强 ${format(x)}x`+(x.gte(1.5)?"<span class='soft'>（軟限制）</span>":"")
                 },
-                inc: "怒氣值",
+                inc: "怒氣點",
                 cons: "你困在質量膨脹和挑戰 3-5 裏",
             },{
                 maxTier: 30,

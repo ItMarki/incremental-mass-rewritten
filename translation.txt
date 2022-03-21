@@ -19,7 +19,7 @@ ultra - 極高級
 meta - 元級
 
 2. RAGE
-rage point - 怒氣值
+rage point - 怒氣點
 tickspeed - 時間速度
 
 3. BLACK HOLE

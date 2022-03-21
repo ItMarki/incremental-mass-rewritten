@@ -137,7 +137,7 @@ const TREE_UPGS = {
         },
         rp1: {
             branch: ["c"],
-            desc: `中子星提升怒氣值獲得量。`,
+            desc: `中子星提升怒氣點獲得量。`,
             cost: E(200),
             effect() {
                 let x = E(1e50).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))

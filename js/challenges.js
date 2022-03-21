@@ -275,8 +275,8 @@ const CHALS = {
     4: {
         unl() { return player.chal.comps[3].gte(1) || player.atom.unl },
         title: "弱化狂怒",
-        desc: "怒氣值獲得量開十次方根；質量獲得量軟限制提早 1e100 開始。",
-        reward: `基於完成次數，怒氣值獲得量獲得次方加成。`,
+        desc: "怒氣點獲得量開十次方根；質量獲得量軟限制提早 1e100 開始。",
+        reward: `基於完成次數，怒氣點獲得量獲得次方加成。`,
         max: E(100),
         inc: E(30),
         pow: E(1.25),
@@ -320,8 +320,8 @@ const CHALS = {
     },
     7: {
         unl() { return player.chal.comps[6].gte(1) || player.supernova.times.gte(1) },
-        title: "無怒氣值",
-        desc: "不能獲得怒氣值，但你會根據質量獲得暗物質；<br>質量獲得量軟限制更强。",
+        title: "無怒氣點",
+        desc: "不能獲得怒氣點，但你會根據質量獲得暗物質；<br>質量獲得量軟限制更强。",
         reward: `每完成一次，挑戰 1 - 4 的完成上限增加 2 次。<br><span class="yellow">完成 16 次時，解鎖元素</span>`,
         max: E(50),
         inc: E(64),
