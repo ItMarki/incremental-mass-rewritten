@@ -424,6 +424,12 @@ h2 {
     flex-flow: row wrap;
 }
 
+.table_left {
+    display: flex;
+    justify-content: start;
+    flex-flow: row wrap;
+}
+
 .md {
 	border-color: darkgreen;
 	background-color: #171717;
@@ -568,6 +574,15 @@ h2 {
 
 .primordium > div {
 	text-align: left;
+}
+
+#omega_badge {
+    transition-duration: 0.25s;
+    cursor: pointer;
+}
+
+#omega_badge:hover {
+    transform: rotate(20deg) scale(1.3);
 }
 
 @keyframes f_spin {

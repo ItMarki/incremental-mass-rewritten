@@ -332,6 +332,8 @@ function updateOptionsHTML() {
 	tmp.el.tree_anim.setTxt(TREE_ANIM[player.options.tree_animation])
 }
 
+	tmp.el.omega_badge.setDisplay(localStorage.getItem("imr_secret_badge1") == "1")
+
 function updateHTML() {
 	document.documentElement.style.setProperty('--font', player.options.font)
 	tmp.el.offlineSpeed.setTxt(format(tmp.offlineMult))

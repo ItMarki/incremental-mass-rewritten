@@ -21,6 +21,10 @@ Decimal.prototype.softcap = function (start, power, mode) {
     return x
 }
 
+Decimal.prototype.format = function (acc=4, max=12) { return format(this.clone(), acc, max) }
+
+Decimal.prototype.formatGain = function (gain, mass=false) { return formatGain(this.clone(), gain, mass) }
+
 function calc(dt, dt_offline) {
     let du_gs = tmp.preQUGlobalSpeed.mul(dt)
 
@@ -248,7 +252,7 @@ function deepNaN(obj, data) {
     for (let x = 0; x < Object.keys(obj).length; x++) {
         let k = Object.keys(obj)[x]
         if (typeof obj[k] == 'string') {
-            if ((obj[k] == "NaNeNaN" || obj[k] == null) && Object.getPrototypeOf(data[k]).constructor.name == "Decimal") obj[k] = data[k]
+            if (data[k] == null || data[k] == undefined ? false : Object.getPrototypeOf(data[k]).constructor.name == "Decimal") if (isNaN(E(obj[k]).mag)) obj[k] = data[k]
         } else {
             if (typeof obj[k] != 'object' && isNaN(obj[k])) obj[k] = data[k]
             if (typeof obj[k] == 'object' && data[k] && obj[k] != null) obj[k] = deepNaN(obj[k], data[k])
@@ -281,9 +285,11 @@ function convertStringToDecimal() {
 function cannotSave() { return tmp.supernova.reached && player.supernova.times.lt(1) && !quUnl() }
 
 function save(){
-    if (cannotSave()) return
+    let str = btoa(JSON.stringify(player))
+    if (cannotSave() || findNaN(str, true)) return
     if (localStorage.getItem("testSave") == '') wipe()
-    localStorage.setItem("testSave",btoa(JSON.stringify(player)))
+    localStorage.setItem("testSave",str)
+    tmp.prevSave = localStorage.getItem("testSave")
     if (tmp.saving < 1) {addNotify("已保存遊戲", 3); tmp.saving++}
 }
 
@@ -296,8 +302,13 @@ function load(x){
 }
 
 function exporty() {
+    let str = btoa(JSON.stringify(player))
+    if (findNaN(str, true)) {
+        addNotify("由於發生NaN錯誤，遊戲不能導出")
+        return
+    }
     save();
-    let file = new Blob([btoa(JSON.stringify(player))], {type: "text/plain"})
+    let file = new Blob([str], {type: "text/plain"})
     window.URL = window.URL || window.webkitURL;
     let a = document.createElement("a")
     a.href = window.URL.createObjectURL(file)
@@ -306,8 +317,14 @@ function exporty() {
 }
 
 function export_copy() {
+    let str = btoa(JSON.stringify(player))
+    if (findNaN(str, true)) {
+        addNotify("由於發生NaN錯誤，遊戲不能導出")
+        return
+    }
+	
     let copyText = document.getElementById('copy')
-    copyText.value = btoa(JSON.stringify(player))
+    copyText.value = str
     copyText.style.visibility = "visible"
     copyText.select();
     document.execCommand("copy");
@@ -317,6 +334,7 @@ function export_copy() {
 
 function importy() {
     let loadgame = prompt("請在此粘貼你的存檔。警告：這樣做會覆蓋你目前的存檔")
+    if (ssf[2](loadgame)) return
     if (loadgame == 'monke') {
         addNotify('monke<br><img style="width: 100%; height: 100%" src="https://i.kym-cdn.com/photos/images/original/001/132/314/cbc.jpg">')
         return
@@ -333,6 +351,10 @@ function importy() {
         let keep = player
         try {
             setTimeout(_=>{
+                if (findNaN(loadgame, true)) {
+                    addNotify("由於發生NaN錯誤，遊戲不能導出")
+                    return
+                }
                 load(loadgame)
                 save()
                 resetTemp()
@@ -345,9 +367,10 @@ function importy() {
     }
 }
 
-function loadGame(start=true) {
+function loadGame(start=true, gotNaN=false) {
+    if (!gotNaN) tmp.prevSave = localStorage.getItem("testSave")
     wipe()
-    load(localStorage.getItem("testSave"))
+    load(tmp.prevSave)
     setupHTML()
     
     if (start) {
@@ -372,5 +395,30 @@ function loadGame(start=true) {
         setInterval(updateStarsScreenHTML, 50)
         treeCanvas()
         setInterval(drawTreeHTML, 10)
+        setInterval(checkNaN,1000)
     }
 }
+
+function checkNaN() {
+    if (findNaN(player)) {
+        addNotify("遊戲資料發生NaN錯誤")
+
+        resetTemp()
+        loadGame(false, true)
+    }
+}
+
+function findNaN(obj, str=false, data=getPlayerData()) {
+    if (str ? typeof obj == "string" : false) obj = JSON.parse(atob(obj))
+    for (let x = 0; x < Object.keys(obj).length; x++) {
+        let k = Object.keys(obj)[x]
+        if (typeof obj[k] == "number") if (isNaN(obj[k])) return true
+        if (str) {
+            if (typeof obj[k] == "string") if (data[k] == null || data[k] == undefined ? false : Object.getPrototypeOf(data[k]).constructor.name == "Decimal") if (isNaN(E(obj[k]).mag)) return true
+        } else {
+            if (obj[k] == null || obj[k] == undefined ? false : Object.getPrototypeOf(obj[k]).constructor.name == "Decimal") if (isNaN(E(obj[k]).mag)) return true
+        }
+        if (typeof obj[k] == "object") return findNaN(obj[k], str, data[k])
+    }
+    return false
+} 
