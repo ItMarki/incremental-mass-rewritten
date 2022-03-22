@@ -11,7 +11,7 @@ const ELEMENTS = {
         'Sb','Te','I','Xe','Cs','Ba','La','Ce','Pr','Nd',
         'Pm','Sm','Eu','Gd','Tb','Dy','Ho','Er','Tm','Yb',
         'Lu','Hf','Ta','W','Re','Os','Ir','Pt','At','Hg',
-        'Ti','Pb','Bi','Po','At','Rn','Fr','Ra','Ac','Th',
+        'Tl','Pb','Bi','Po','At','Rn','Fr','Ra','Ac','Th',
         'Pa','U','Np','Pu','Am','Cm','Bk','Cf','Es','Fm',
         'Md','No','Lr','Rf','Db','Sg','Bh','Hs','Mt','Ds',
         'Rg','Cn','Nh','Fl','Mc','Lv','Ts','Og'
@@ -268,6 +268,7 @@ const ELEMENTS = {
             cost: E(1e260),
             effect() {
                 let x = tmp.atom?tmp.atom.atomicEff:E(0)
+                if (hasElement(81)) x = x.mul(3)
                 return x.div(6).floor()
             },
             effDesc(x) { return "怒氣升級 7 +"+format(x,0)+"" },
@@ -507,6 +508,10 @@ const ELEMENTS = {
             desc: `增强器和時間速度强 10x。`,
             cost: E('e1.4e13'),
         },
+        {
+            desc: `鍶-38 强 3x。`,
+            cost: E('e3.6e13'),
+        },
     ],
     /*
     {
@@ -521,6 +526,7 @@ const ELEMENTS = {
     */
     getUnlLength() {
         let u = 4
+
         if (quUnl()) u = 77+3
         else {
             if (player.supernova.times.gte(1)) u = 49+5
@@ -534,6 +540,8 @@ const ELEMENTS = {
             if (player.supernova.fermions.unl) u += 10
             if (tmp.radiation.unl) u += 10
         }
+        if (PRIM.unl()) u += 1
+
         return u
     },
 }

@@ -17,7 +17,7 @@ const PRIM = {
         return x
     },
     particle: {
-        names: ["Delta [Δ]","Alpha [Α]","Omega [Ω]","Sigma [Σ]","Phi [Φ]","Epsilon [Ε]","Theta [Θ]","Beta [Β]"],
+        names: ["德爾塔 [Δ]","阿爾法 [Α]","奧米伽 [Ω]","西格馬 [Σ]","法伊 [Φ]","艾普塞朗 [Ε]","西塔 [Θ]","貝塔 [Β]"],
         weight: [6,6,6,6,2,2,2,1],
         total_w: 31,
         chance: [],
@@ -59,8 +59,8 @@ const PRIM = {
         effDesc: [
             x=>{ return `將增强器力量提升 ${format(x)}x` },
             x=>{ return `給予怒氣點獲得量 ${format(x[0])} 次方的加成；<br>將非獎勵時間速度加强 ${format(x[1])}x` },
-            x=>{ return `給予暗物質獲得量 ^${format(x[0])} 次方的加成；<br>將黑洞壓縮器力量提升 ${format(x[1])}x` },
-            x=>{ return `給予原子獲得量 ^${format(x[0])} 次方的加成；<br>將宇宙射線力量提升 ${format(x[1])}x` },
+            x=>{ return `給予暗物質獲得量 ${format(x[0])} 次方的加成；<br>將黑洞壓縮器力量提升 ${format(x[1])}x` },
+            x=>{ return `給予原子獲得量 ${format(x[0])} 次方的加成；<br>將宇宙射線力量提升 ${format(x[1])}x` },
             x=>{ return `將希格斯玻色子的效果加强 ${format(x)}x` },
             x=>{ return `將費米子獲得量的底數增加 ${format(x)}` },
             x=>{ return `將所有輻射的獲得量提升 ${format(x[0])}x` + (hasTree("prim2") ? `；<br>將所有輻射的效果加强 ${format(x[1])}x` : "") },

@@ -11,6 +11,7 @@ pent - 五級階
 muscler - 提重器
 booster - 提升器
 stronger - 增强器
+exponent - 指數提升
 
 1.2. SCALING
 super - 超級
