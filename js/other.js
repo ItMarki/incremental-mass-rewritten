@@ -45,6 +45,7 @@ const POPUP_GROUPS = {
             <button class="btn" style="font-family: 'Andy Bold';" onclick="player.options.font = 'Andy Bold'">Andy Bold</button>
             <button class="btn" style="font-family: Arial, Helvetica, sans-ser;" onclick="player.options.font = 'Arial, Helvetica, sans-ser'">Arial</button>
             <button class="btn" style="font-family: Bahnschrift;" onclick="player.options.font = 'Bahnschrift'">Bahnschrift</button>
+            <button class="btn" style="font-family: Chiron Hei HK;" onclick="player.options.font = 'Chiron Hei HK'">Chiron Hei HK/昭源黑體</button>
             <button class="btn" style="font-family: Comic Sans MS;" onclick="player.options.font = 'Comic Sans MS'">Comic Sans MS</button>
             <button class="btn" style="font-family: Courier;" onclick="player.options.font = 'Courier'">Courier</button>
             <button class="btn" style="font-family: Cousine;" onclick="player.options.font = 'Cousine'">Cousine</button>
@@ -53,9 +54,12 @@ const POPUP_GROUPS = {
             <button class="btn" style="font-family: 'Lucida Handwriting';" onclick="player.options.font = 'Lucida Handwriting'">Lucida Handwriting</button>
             <button class="btn" style="font-family: Monospace-Typewritter;" onclick="player.options.font = 'Monospace-Typewritter'">Monospace Typewritter</button>
 			<button class="btn" style="font-family: 'MS Sans Serif';" onclick="player.options.font = 'MS Sans Serif'">MS Sans Serif</button>
+            <button class="btn" style="font-family: 'Noto Sans SC';" onclick="player.options.font = 'Noto Sans SC'">Noto Sans SC</button>
+            <button class="btn" style="font-family: 'Noto Sans TC';" onclick="player.options.font = 'Noto Sans TC'">Noto Sans TC</button>
             <button class="btn" style="font-family: 'Nova Mono';" onclick="player.options.font = 'Nova Mono'">Nova Mono</button>
             <button class="btn" style="font-family: 'Retron2000';" onclick="player.options.font = 'Retron2000'">Retron 2000</button>
             <button class="btn" style="font-family: 'Roboto Mono';" onclick="player.options.font = 'Roboto Mono'">Roboto Mono</button>
+            <button class="btn" style="font-family: 'Unifont';" onclick="player.options.font = 'Unifont'">Unifont</button>
             <button class="btn" style="font-family: Verdana, Geneva, Tahoma, sans-serif;" onclick="player.options.font = 'Verdana, Geneva, Tahoma, sans-serif'">Verdana</button>
         `,
     },
