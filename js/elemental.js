@@ -49,7 +49,7 @@ const ELEMENTS = {
             cost: E(2.5e12),
         },
         {
-            desc: `電子力加强原子力量獲得量。`,
+            desc: `電子力加強原子力量獲得量。`,
             cost: E(1e15),
             effect() {
                 let x = player.atom?player.atom.powers[2].add(1).root(2):E(1)
@@ -59,13 +59,13 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x"+(x.gte('e1e4')?"<span class='soft'>（軟限制）</span>":"") },
         },
         {
-            desc: `質子力加强增强器力量。`,
+            desc: `質子力加強增強器力量。`,
             cost: E(2.5e16),
             effect() {
                 let x = player.atom?player.atom.powers[0].max(1).log10().pow(0.8).div(50).add(1):E(1)
                 return x
             },
-            effDesc(x) { return "加强 "+format(x)+"x" },
+            effDesc(x) { return "加強 "+format(x)+"x" },
         },
         {
             desc: `第 7 挑戰的效果翻倍。`,
@@ -144,7 +144,7 @@ const ELEMENTS = {
             cost: E(1e40),
         },
         {
-            desc: `你可以自動購買宇宙射線。宇宙射線極稍微加强時間速度效果。`,
+            desc: `你可以自動購買宇宙射線。宇宙射線極稍微加強時間速度效果。`,
             cost: E(1e44),
             effect() {
                 let x = player.atom.gamma_ray.pow(0.35).mul(0.01).add(1)
@@ -208,11 +208,11 @@ const ELEMENTS = {
             cost: E(1e97),
         },
         {
-            desc: `質子力的效果更强。`,
+            desc: `質子力的效果更強。`,
             cost: E(1e100),
         },
         {
-            desc: `電子力的效果更强。每種粒子每秒獲得夸克數量的 10%。`,
+            desc: `電子力的效果更強。每種粒子每秒獲得夸克數量的 10%。`,
             cost: E(1e107),
         },
         {
@@ -268,7 +268,7 @@ const ELEMENTS = {
             cost: E(1e260),
             effect() {
                 let x = tmp.atom?tmp.atom.atomicEff:E(0)
-                if (hasElement(81)) x = x.mul(3)
+                if (hasElement(82)) x = x.mul(3)
                 return x.div(6).floor()
             },
             effDesc(x) { return "怒氣升級 7 +"+format(x,0)+"" },
@@ -317,7 +317,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `塌縮恆星的效果稍微加强黑洞的質量加成。`,
+            desc: `塌縮恆星的效果稍微加強黑洞的質量加成。`,
             cost: E('e510'),
             effect() {
                 let x = tmp.stars?tmp.stars.effect.add(1).pow(0.02):E(1)
@@ -330,11 +330,11 @@ const ELEMENTS = {
             cost: E('e610'),
         },
         {
-            desc: `塌縮恆星的效果强 10%。`,
+            desc: `塌縮恆星的效果強 10%。`,
             cost: E('e800'),
         },
         {
-            desc: `塌縮恆星加强最後一類恆星。`,
+            desc: `塌縮恆星加強最後一類恆星。`,
             cost: E('e1000'),
             effect() {
                 let x = player.stars.points.add(1).log10().add(1).pow(1.1)
@@ -360,7 +360,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `質量膨脹升級 6 强 75%。`,
+            desc: `質量膨脹升級 6 強 75%。`,
             cost: E('e4600'),
         },
         {
@@ -381,7 +381,7 @@ const ELEMENTS = {
             cost: E('e2.2e4'),
         },
         {
-            desc: `時間速度力量稍微加强恆星提升器的底數。`,
+            desc: `時間速度力量稍微加強恆星提升器的底數。`,
             cost: E('e3.6e4'),
             effect() {
                 let x = tmp.tickspeedEffect?tmp.tickspeedEffect.step.max(1).log10().div(10).max(1):E(1)
@@ -421,11 +421,11 @@ const ELEMENTS = {
             effDesc(x) { return format(x,0)+" later" },
         },
         {
-            desc: `非獎勵時間速度强 25x。`,
+            desc: `非獎勵時間速度強 25x。`,
             cost: E('e3e5'),
         },
 		{
-            desc: `挑戰 3 - 4 和 8 的獎勵强 50%。`,
+            desc: `挑戰 3 - 4 和 8 的獎勵強 50%。`,
             cost: E('e5e5'),
         },
         {
@@ -433,7 +433,7 @@ const ELEMENTS = {
             cost: E('e8e5'),
         },
         {
-            desc: `鑭的效果强一倍。`,
+            desc: `鑭的效果強一倍。`,
             cost: E('e1.1e6'),
         },
         {
@@ -489,7 +489,7 @@ const ELEMENTS = {
             cost: E('e3.9e9'),
         },
         {
-            desc: `塌縮恆星的效果强 25%。`,
+            desc: `塌縮恆星的效果強 25%。`,
             cost: E('e3.75e10'),
         },
         {
@@ -505,12 +505,16 @@ const ELEMENTS = {
             cost: E('e4.8e12'),
         },
         {
-            desc: `增强器和時間速度强 10x。`,
+            desc: `增強器和時間速度強 10x。`,
             cost: E('e1.4e13'),
         },
         {
-            desc: `鍶-38 强 3x。`,
-            cost: E('e3.6e13'),
+            desc: `增強器獲得 1.1 次方的加成。`,
+            cost: E('e2.8e13'),
+        },
+        {
+            desc: `鍶-38 強 3x。`,
+            cost: E('e4e13'),
         },
     ],
     /*
@@ -540,7 +544,7 @@ const ELEMENTS = {
             if (player.supernova.fermions.unl) u += 10
             if (tmp.radiation.unl) u += 10
         }
-        if (PRIM.unl()) u += 1
+        if (PRIM.unl()) u += 2
 
         return u
     },

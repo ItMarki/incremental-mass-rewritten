@@ -324,7 +324,7 @@ const FORMS = {
 
 const UPGS = {
     mass: {
-        cols: 4,
+        cols: 3,
         temp() {
             if (!tmp.upgs.mass) tmp.upgs.mass = {}
             for (let x = this.cols; x >= 1; x--) {
@@ -473,11 +473,12 @@ const UPGS = {
         },
         3: {
             unl() { return player.ranks.rank.gte(3) || player.mainUpg.atom.includes(1) },
-            title: "增强器",
+            title: "增強器",
             start: E(1000),
             inc: E(9),
             effect(x) {
-                let xx = x.add(tmp.upgs.mass[3].bonus).pow(tmp.upgs.mass[4].eff.eff)
+                let xx = x.add(tmp.upgs.mass[3].bonus)
+                if (hasElement(81)) xx = xx.pow(1.1)
                 let ss = E(10)
                 if (player.ranks.rank.gte(34)) ss = ss.add(2)
                 if (player.mainUpg.bh.includes(9)) ss = ss.add(tmp.upgs.main?tmp.upgs.main[2][9].effect:E(0))
@@ -502,29 +503,6 @@ const UPGS = {
             bonus() {
                 let x = E(0)
                 if (player.mainUpg.rp.includes(7)) x = x.add(tmp.upgs.main?tmp.upgs.main[1][7].effect:0)
-                return x
-            },
-        },
-        4: {
-            unl() { return player.ranks.rank.gte(3) && PRIM.unl() },
-            title: "指數提升",
-            start: E(1e5),
-            inc: E(1.1),
-            effect(x) {
-                let step = E(0.01)
-                let ret = step.mul(x).add(1)
-
-                ret = ret.softcap(1.1,0.5,0)
-                return {step: step, eff: ret}
-            },
-            effDesc(eff) {
-                return {
-                    step: "+^"+format(eff.step),
-                    eff: "增强器 ^"+format(eff.eff)+eff.eff.softcapHTML(1.1)
-                }
-            },
-            bonus() {
-                let x = E(0)
                 return x
             },
         },
@@ -566,7 +544,7 @@ const UPGS = {
                 },
             },
             2: {
-                desc: "增强器增加提升器。",
+                desc: "增強器增加提升器。",
                 cost: E(10),
                 effect() {
                     let ret = E(player.massUpg[3]||0)
@@ -593,14 +571,14 @@ const UPGS = {
                 cost: E(1e5),
             },
             7: {
-                desc: "每擁有 3 個時間速度，增加 1 個增强器。",
+                desc: "每擁有 3 個時間速度，增加 1 個增強器。",
                 cost: E(1e7),
                 effect() {
                     let ret = player.tickspeed.div(3).add(hasElement(38)?tmp.elements.effect[38]:0).floor()
                     return ret
                 },
                 effDesc(x=this.effect()) {
-                    return "+"+format(x,0)+" 增强器"
+                    return "+"+format(x,0)+" 增強器"
                 },
             },
             8: {
@@ -616,7 +594,7 @@ const UPGS = {
             },
             9: {
                 unl() { return player.bh.unl },
-                desc: "增强器力量增加 ^0.25。",
+                desc: "增強器力量增加 ^0.25。",
                 cost: E(1e31),
             },
             10: {
@@ -626,7 +604,7 @@ const UPGS = {
             },
             11: {
                 unl() { return player.chal.unl },
-                desc: "怒氣點加强黑洞質量獲得量。",
+                desc: "怒氣點加強黑洞質量獲得量。",
                 cost: E(1e72),
                 effect() {
                     let ret = player.rp.points.add(1).root(10).softcap('e4000',0.1,0)
@@ -638,7 +616,7 @@ const UPGS = {
             },
             12: {
                 unl() { return player.chal.unl },
-                desc: "怒氣點的數量級稍微加强增强器力量。",
+                desc: "怒氣點的數量級稍微加強增強器力量。",
                 cost: E(1e120),
                 effect() {
                     let ret = player.rp.points.max(1).log10().softcap(200,0.75,0).div(1000)
@@ -667,7 +645,7 @@ const UPGS = {
             },
             15: {
                 unl() { return player.atom.unl },
-                desc: "質量加强原子獲得量。",
+                desc: "質量加強原子獲得量。",
                 cost: E('e480'),
                 effect() {
                     let ret = player.mass.max(1).log10().pow(1.25)
@@ -696,7 +674,7 @@ const UPGS = {
                 cost: E(1),
             },
             2: {
-                desc: "時間速度加强黑洞壓縮器力量。",
+                desc: "時間速度加強黑洞壓縮器力量。",
                 cost: E(10),
                 effect() {
                     let ret = player.tickspeed.add(1).root(8)
@@ -726,7 +704,7 @@ const UPGS = {
                 cost: E(5e5),
             },
             6: {
-                desc: "每秒獲得重置時獲得的怒氣點的 100%。黑洞質量加强怒氣點獲得量。",
+                desc: "每秒獲得重置時獲得的怒氣點的 100%。黑洞質量加強怒氣點獲得量。",
                 cost: E(2e6),
                 effect() {
                     let ret = player.bh.mass.max(1).log10().add(1).pow(2)
@@ -755,7 +733,7 @@ const UPGS = {
             },
             9: {
                 unl() { return player.chal.unl },
-                desc: "未花費暗物質延遲增强器效果的軟限制。",
+                desc: "未花費暗物質延遲增強器效果的軟限制。",
                 cost: E(1e27),
                 effect() {
                     let ret = player.bh.dm.max(1).log10().pow(0.5)
@@ -767,7 +745,7 @@ const UPGS = {
             },
             10: {
                 unl() { return player.chal.unl },
-                desc: "暗物質的數量級加强質量獲得量。",
+                desc: "暗物質的數量級加強質量獲得量。",
                 cost: E(1e33),
                 effect() {
                     let ret = E(2).pow(player.bh.dm.add(1).log10().softcap(11600,0.5,0))
@@ -794,7 +772,7 @@ const UPGS = {
             },
             14: {
                 unl() { return player.atom.unl },
-                desc: "中子力加强黑洞質量獲得量。",
+                desc: "中子力加強黑洞質量獲得量。",
                 cost: E(1e210),
                 effect() {
                     let ret = player.atom.powers[1].add(1).pow(2)
@@ -843,7 +821,7 @@ const UPGS = {
                 cost: E(25000),
             },
             4: {
-                desc: "重置時保留挑戰 1-4。黑洞壓縮器稍微加强宇宙射線力量。",
+                desc: "重置時保留挑戰 1-4。黑洞壓縮器稍微加強宇宙射線力量。",
                 cost: E(1e10),
                 effect() {
                     let ret = player.bh.condenser.pow(0.8).mul(0.01)
@@ -869,7 +847,7 @@ const UPGS = {
                 },
             },
             7: {
-                desc: "時間速度加强每個粒子力的獲得量。",
+                desc: "時間速度加強每個粒子力的獲得量。",
                 cost: E(1e25),
                 effect() {
                     let ret = E(1.025).pow(player.tickspeed)
@@ -880,7 +858,7 @@ const UPGS = {
                 },
             },
             8: {
-                desc: "原子力量加强夸克獲得量。",
+                desc: "原子力量加強夸克獲得量。",
                 cost: E(1e35),
                 effect() {
                     let ret = player.atom.atomic.max(1).log10().add(1)
@@ -891,7 +869,7 @@ const UPGS = {
                 },
             },
             9: {
-                desc: "增强器效果軟限制減弱 15%。",
+                desc: "增強器效果軟限制減弱 15%。",
                 cost: E(2e44),
             },
             10: {
@@ -907,7 +885,7 @@ const UPGS = {
             },
             11: {
                 unl() { return MASS_DILATION.unlocked() },
-                desc: "膨脹質量稍微加强黑洞壓縮器和宇宙射線力量。",
+                desc: "膨脹質量稍微加強黑洞壓縮器和宇宙射線力量。",
                 cost: E('e1640'),
                 effect() {
                     let ret = player.md.mass.max(1).log10().add(1).pow(0.1)
@@ -919,7 +897,7 @@ const UPGS = {
             },
             12: {
                 unl() { return MASS_DILATION.unlocked() },
-                desc: "黑洞質量效果更强。",
+                desc: "黑洞質量效果更強。",
                 cost: E('e2015'),
                 effect() {
                     let ret = E(1)

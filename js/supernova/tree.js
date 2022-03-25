@@ -4,10 +4,10 @@ const TREE_IDS = [
     ["","qu_qol7","","qol5","qol6","qol7","","m2","t1","","bh2","gr1","sn5","chal4b","chal4","","","qu4",""],
     ["","unl2","","","unl1","","m3","","","d1","","","gr2","chal5","chal6","chal7","prim1","qu5","prim2"],
     ["","","","qol9","qol8","","","bs4","bs2","bs1","bs3","","","","","","","qu6",""],
-    ["","","","","","","fn8","","fn9","fn1","fn5","fn10","","","","","","",""],
+    ["","","","","","","fn8","fn11","fn9","fn1","fn5","fn10","","","","","","",""],
     ["","","","","","","fn7","fn6","fn2","fn3","fn4","","","","","","","",""],
     ["","","","","","","rad6","rad4","rad2","rad1","rad3","rad5","","","","","","",""],
-    ["","","","","","","","","","qf1","","","","","","","","",""],
+    ["","","","","","","","","qf2","qf1","","","","","","","","",""],
     ["","","","","","","","","","","","","","","","","","",""],
     ["","","","","","","","","","","","","","","","","","",""],
     ["","","","","","","","","","","","","","","","","","",""],
@@ -46,7 +46,7 @@ const TREE_UPGS = {
         },
         sn1: {
             branch: ["c"],
-            desc: `時間速度稍微加强中子星獲得量。`,
+            desc: `時間速度稍微加強中子星獲得量。`,
             cost: E(10),
             effect() {
                 let x = player.tickspeed.add(1).pow(0.25)
@@ -56,7 +56,7 @@ const TREE_UPGS = {
         },
         sn2: {
             branch: ["sn1"],
-            desc: `超新星加强中子星獲得量。`,
+            desc: `超新星加強中子星獲得量。`,
             cost: E(350),
             effect() {
                 let sn = player.supernova.times
@@ -68,7 +68,7 @@ const TREE_UPGS = {
         },
         sn3: {
             branch: ["sn2"],
-            desc: `藍星稍微加强中子星獲得量。`,
+            desc: `藍星稍微加強中子星獲得量。`,
             req() { return player.supernova.times.gte(6) },
             reqDesc: `6 個超新星。`,
             cost: E(50000),
@@ -183,7 +183,7 @@ const TREE_UPGS = {
             branch: ["s2"],
             req() { return player.supernova.times.gte(4) },
             reqDesc: `4 個超新星。`,
-            desc: `超新星加强恆星生產器。`,
+            desc: `超新星加強恆星生產器。`,
             cost: E(10000),
             effect() {
                 let x = player.supernova.times.max(0).root(10).mul(0.1).add(1)
@@ -343,7 +343,7 @@ const TREE_UPGS = {
             unl() { return player.supernova.post_10 },
             req() { return player.supernova.times.gte(15) },
             reqDesc: `15 個超新星。`,
-            desc: `時間速度稍微加强希格斯玻色子獲得量。`,
+            desc: `時間速度稍微加強希格斯玻色子獲得量。`,
             cost: E(1e13),
             effect() {
                 let x = player.tickspeed.add(1).pow(0.6)
@@ -353,7 +353,7 @@ const TREE_UPGS = {
         },
         bs2: {
             branch: ["bs1"],
-            desc: `光子和膠子互相加强。`,
+            desc: `光子和膠子互相加強。`,
             cost: E(1e14),
             effect() {
                 let x = expMult(player.supernova.bosons.photon,1/2,2)
@@ -406,7 +406,7 @@ const TREE_UPGS = {
         fn4: {
             unl() { return hasTree("fn2") },
             branch: ["fn1"],
-            desc: `第 2 光子和膠子升級稍微更强。`,
+            desc: `第 2 光子和膠子升級稍微更強。`,
             cost: E(1e39),
         },
         fn5: {
@@ -447,10 +447,16 @@ const TREE_UPGS = {
             desc: `[電子] 不再有最高階，而且大幅增強它的效果。`,
             cost: E('e600'),
         },
+        fn11: {
+            unl() { return PRIM.unl() },
+            branch: ["fn9"],
+            desc: `[奇]、[頂]、[底]、[中子] 和 [μ中微子] 的最高階增加 5。`,
+            cost: E('e680'),
+        },
         d1: {
             unl() { return hasTree("fn6") },
             branch: ["rp1"],
-            desc: `在質量膨脹外生產相對粒子强 25%。`,
+            desc: `在質量膨脹外生產相對粒子強 25%。`,
             cost: E(1e51),
         },
         rad1: {
@@ -491,7 +497,7 @@ const TREE_UPGS = {
         rad6: {
             unl() { return PRIM.unl() },
             branch: ["rad4"],
-            desc: `輻射長度加強獎勵輻射加成。<sup>[?]</sup>`,
+            desc: `輻射種類加強獎勵輻射加成。`,
             cost: E('e490'),
         },
 
@@ -501,6 +507,17 @@ const TREE_UPGS = {
             cost: E(1e290),
             effect() {
                 let x = player.supernova.times.root(2).div(10).add(1)
+                return x
+            },
+            effDesc(x) { return format(x)+"x" },
+        },
+        qf2: {
+            unl() { return PRIM.unl() },
+            branch: ["qf1"],
+            desc: `中子星提升量子泡沫獲得量。`,
+            cost: E('e735'),
+            effect() {
+                let x = player.supernova.stars.add(1).log10().add(1).root(3)
                 return x
             },
             effDesc(x) { return format(x)+"x" },

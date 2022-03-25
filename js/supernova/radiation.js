@@ -92,7 +92,7 @@ const RADIATION = {
                 let x = b.add(1).root(2)
                 return x
             },
-            desc(x) { return `非獎勵時間速度加强 ${format(x)}x` },
+            desc(x) { return `非獎勵時間速度加強 ${format(x)}x` },
         },{
             title: `質量軟限制加成`,
             eff(b) {
@@ -120,7 +120,7 @@ const RADIATION = {
                 let x = b.add(1).pow(2)
                 return x.softcap(100,0.5,0)
             },
-            desc(x) { return `非獎勵黑洞壓縮器强 ${format(x)}x` },
+            desc(x) { return `非獎勵黑洞壓縮器強 ${format(x)}x` },
         },{
             title: `紅外線加成`,
             eff(b) {
@@ -134,7 +134,7 @@ const RADIATION = {
                 let x = b.add(1).root(3)
                 return x
             },
-            desc(x) { return `第 1 個光子和膠子升級强 ${format(x)}x` },
+            desc(x) { return `第 1 個光子和膠子升級強 ${format(x)}x` },
         },{
             title: `元加成 I`,
             eff(b) {
@@ -156,7 +156,7 @@ const RADIATION = {
                 let x = b.add(1).root(3)
                 return x
             },
-            desc(x) { return `宇宙射線力量加强 ${format(x)}x` },
+            desc(x) { return `宇宙射線力量加強 ${format(x)}x` },
         },{
             title: `中子星加成`,
             eff(b) {
@@ -198,7 +198,7 @@ const RADIATION = {
                 let x = b.add(1).root(4)
                 return x
             },
-            desc(x) { return `U-輕子强 ${format(x)}x` },
+            desc(x) { return `U-輕子強 ${format(x)}x` },
         },{
             title: `元加成 II`,
             eff(b) {
@@ -220,7 +220,7 @@ const RADIATION = {
                 let x = b.add(1).root(5)
                 return x
             },
-            desc(x) { return `U-夸克强 ${format(x)}x` },
+            desc(x) { return `U-夸克強 ${format(x)}x` },
         },{
             title: `黑洞指數加成 II`,
             eff(b) {

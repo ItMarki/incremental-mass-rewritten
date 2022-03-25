@@ -38,7 +38,7 @@ const CHROMA = {
             return `將五級層前的需求減少 ${format(x)}x`
         },
         x => {
-            return `將挑戰 1-8 的獎勵加强 ${format(x)}x`
+            return `將挑戰 1-8 的獎勵加強 ${format(x)}x`
         },
     ],
 }

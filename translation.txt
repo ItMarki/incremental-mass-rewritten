@@ -1,4 +1,4 @@
-the translation of this game will use the Mainland standard in Traditional Chinese characters
+the translation will use Mainland terminology in the Hong Kong character standard.
 
 1. EARLY GAME
 mass - 質量
@@ -10,7 +10,7 @@ pent - 五級階
 1.1. GENERATORS
 muscler - 提重器
 booster - 提升器
-stronger - 增强器
+stronger - 增強器
 exponent - 指數提升
 
 1.2. SCALING
@@ -134,4 +134,3 @@ a. the general rule is to put a space beetwen a number and surrounding text (exc
 b. use "[number]x" instead of "[number]倍"
 c. use 到達 instead of 達到
 d. use 質量軟限制 as an abbreviation of 質量獲得量軟限制
-e. use 强 instead of 強; this is a result of using the Mainland standard

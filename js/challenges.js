@@ -102,7 +102,7 @@ const CHALS = {
     getReset(x) {
         if (x < 5) return "進入挑戰會執行一次暗物質重置！"
         if (x < 9) return "進入挑戰會執行一次原子重置，但不會重置以往的挑戰！"
-        return "進入挑戰會强制執行重置，但不會變成超新星！"
+        return "進入挑戰會強制執行重置，但不會變成超新星！"
     },
     getMax(i) {
         let x = this[i].max
@@ -259,7 +259,7 @@ const CHALS = {
     3: {
         unl() { return player.chal.comps[2].gte(1) || player.atom.unl },
         title: "融化質量",
-        desc: "質量獲得量軟限制提早 1e150 開始，而且效果更强。",
+        desc: "質量獲得量軟限制提早 1e150 開始，而且效果更強。",
         reward: `基於完成次數，質量獲得量獲得次方加成，但該加成不適用於此挑戰中！`,
         max: E(100),
         inc: E(25),
@@ -321,7 +321,7 @@ const CHALS = {
     7: {
         unl() { return player.chal.comps[6].gte(1) || player.supernova.times.gte(1) },
         title: "無怒氣點",
-        desc: "不能獲得怒氣點，但你會根據質量獲得暗物質；<br>質量獲得量軟限制更强。",
+        desc: "不能獲得怒氣點，但你會根據質量獲得暗物質；<br>質量獲得量軟限制更強。",
         reward: `每完成一次，挑戰 1 - 4 的完成上限增加 2 次。<br><span class="yellow">完成 16 次時，解鎖元素</span>`,
         max: E(50),
         inc: E(64),
@@ -354,7 +354,7 @@ const CHALS = {
         unl() { return player.supernova.tree.includes("chal4") },
         title: "無粒子",
         desc: "不能分配夸克；質量獲得量的指數得到 0.9 次方的懲罰。",
-        reward: `加强鎂-12 的效果。`,
+        reward: `加強鎂-12 的效果。`,
         max: E(100),
         inc: E('e500'),
         pow: E(2),
@@ -384,7 +384,7 @@ const CHALS = {
         unl() { return player.supernova.tree.includes("chal6") },
         title: "絕對主義",
         desc: "不能獲得相對粒子和膨脹質量。你困在質量膨脹裏。",
-        reward: `完成次數加强恆星提升器。`,
+        reward: `完成次數加強恆星提升器。`,
         max: E(100),
         inc: E("ee6"),
         pow: E(2),

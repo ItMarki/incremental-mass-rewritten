@@ -69,13 +69,13 @@ const MASS_DILATION = {
                 },
                 effDesc(x) { return format(x,0)+"x"+(x.gte('e1.2e4')?`<span class='soft'>（軟限制${x.gte('e2e400')?"^2":""}）</span>`:"")},
             },{
-                desc: `加强膨脹質量效果。`,
+                desc: `加強膨脹質量效果。`,
                 cost(x) { return E(10).pow(x).mul(100) },
                 bulk() { return player.md.mass.gte(100)?player.md.mass.div(100).max(1).log10().add(1).floor():E(0) },
                 effect(x) {
                     return player.md.upgs[7].gte(1)?x.mul(tmp.md.upgs[11].eff||1).root(1.5).mul(0.25).add(1):x.mul(tmp.md.upgs[11].eff||1).root(2).mul(0.15).add(1)
                 },
-                effDesc(x) { return "加强 "+(x.gte(10)?format(x)+"x":format(x.sub(1).mul(100))+"%")},
+                effDesc(x) { return "加強 "+(x.gte(10)?format(x)+"x":format(x.sub(1).mul(100))+"%")},
             },{
                 desc: `相對粒子獲得量翻倍。`,
                 cost(x) { return E(10).pow(x.pow(E(1.25).pow(tmp.md.upgs[4].eff||1))).mul(1000) },
@@ -83,7 +83,7 @@ const MASS_DILATION = {
                 effect(x) { return E(2).pow(x.mul(tmp.md.upgs[11].eff||1)).softcap(1e25,0.75,0) },
                 effDesc(x) { return format(x,0)+"x"+(x.gte(1e25)?"<span class='soft'>（軟限制）</span>":"") },
             },{
-                desc: `膨脹質量加强增强器力量。`,
+                desc: `膨脹質量加強增強器力量。`,
                 maxLvl: 1,
                 cost(x) { return E(1.619e20).mul(25) },
                 bulk() { return player.md.mass.gte(E(1.619e20).mul(25))?E(1):E(0) },
@@ -108,7 +108,7 @@ const MASS_DILATION = {
                 },
                 effDesc(x) { return "+^"+format(x)+(x.gte(1e3)?"<span class='soft'>（軟限制）</span>":"") },
             },{
-                desc: `膨脹質量加强夸克獲得量。`,
+                desc: `膨脹質量加強夸克獲得量。`,
                 maxLvl: 1,
                 cost(x) { return E(1.5e191) },
                 bulk() { return player.md.mass.gte(1.5e191)?E(1):E(0) },
@@ -121,7 +121,7 @@ const MASS_DILATION = {
                 bulk() { return player.md.mass.gte(1.5e246)?E(1):E(0) },
             },{
                 unl() { return STARS.unlocked() || player.supernova.times.gte(1) },
-                desc: `時間速度稍微加强所有恆星資源。`,
+                desc: `時間速度稍微加強所有恆星資源。`,
                 maxLvl: 1,
                 cost(x) { return E(1.5e296) },
                 bulk() { return player.md.mass.gte(1.5e296)?E(1):E(0) },
@@ -147,13 +147,13 @@ const MASS_DILATION = {
                 effDesc(x) { return "+"+format(x)+(x.gte(0.2)?"<span class='soft'>（軟限制）</span>":"") },
             },{
                 unl() { return player.supernova.post_10 },
-                desc: `加强首 3 個質量膨脹升級。`,
+                desc: `加強首 3 個質量膨脹升級。`,
                 cost(x) { return E(1e100).pow(x.pow(2)).mul('1.5e8056') },
                 bulk() { return player.md.mass.gte('1.5e8056')?player.md.mass.div('1.5e8056').max(1).log(1e100).max(0).root(2).add(1).floor():E(0) },
                 effect(x) {
                     return x.pow(0.5).softcap(3.5,0.5,0).div(100).add(1)
                 },
-                effDesc(x) { return "加强 +"+format(x.sub(1).mul(100))+"%" },
+                effDesc(x) { return "加強 +"+format(x.sub(1).mul(100))+"%" },
             },
         ],
     },

@@ -165,7 +165,7 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `Z<sup>0</sup> 玻色子的第一個效果强 ${format(x.sub(1).mul(100))}%`+(x.gte(5)?"<span class='soft'>（軟限制）</span>":"")
+                    return `Z<sup>0</sup> 玻色子的第一個效果強 ${format(x.sub(1).mul(100))}%`+(x.gte(5)?"<span class='soft'>（軟限制）</span>":"")
                 },
                 inc: "質量",
                 cons: "你困在效果翻倍的質量膨脹裏",
@@ -174,6 +174,7 @@ const FERMIONS = {
                 maxTier() {
                     let x = 15
                     if (hasTree("fn9")) x += 2
+                    if (hasTree("fn11")) x += 5
                     return x
                 },
                 nextTierAt(x) {
@@ -191,12 +192,16 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `第 4 個光子和膠子升級强 ${format(x)}x`+(x.gte(1.5)?"<span class='soft'>（軟限制）</span>":"")
+                    return `第 4 個光子和膠子升級強 ${format(x)}x`+(x.gte(1.5)?"<span class='soft'>（軟限制）</span>":"")
                 },
                 inc: "怒氣點",
                 cons: "你困在質量膨脹和挑戰 3-5 裏",
             },{
-                maxTier: 30,
+                maxTier() {
+                    let x = 30
+                    if (hasTree("fn11")) x += 5
+                    return x
+                },
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
                     return E('ee4').pow(t.pow(1.5)).mul(uni('e5.75e5'))
@@ -218,7 +223,11 @@ const FERMIONS = {
                 cons: "U-夸克、光子和膠子無效",
                 isMass: true,
             },{
-                maxTier: 10,
+                maxTier() {
+                    let x = 10
+                    if (hasTree("fn11")) x += 5
+                    return x
+                },
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
                     return E('e5e8').pow(t.pow(2)).mul('e6e9')
@@ -313,6 +322,7 @@ const FERMIONS = {
                 maxTier() {
                     let x = 15
                     if (hasTree("fn9")) x += 2
+                    if (hasTree("fn11")) x += 5
                     return x
                 },
                 nextTierAt(x) {
@@ -335,7 +345,11 @@ const FERMIONS = {
                 inc: "塌縮恆星",
                 cons: "恆星生產器得到 0.5 次方的懲罰",
             },{
-                maxTier: 25,
+                maxTier() {
+                    let x = 25
+                    if (hasTree("fn11")) x += 5
+                    return x
+                },
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
                     return E('e1.5e7').pow(t.pow(2)).mul("e3.5e8")

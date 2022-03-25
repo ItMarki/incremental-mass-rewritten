@@ -78,7 +78,7 @@ const BOSONS = {
                 effect(x) { return player.supernova.bosons.photon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100)) },
                 effDesc(x) { return format(x)+"x" },
             },{
-                desc: "加强黑洞壓縮器的力量。",
+                desc: "加強黑洞壓縮器的力量。",
                 cost(x) { return E(2).pow(x.pow(1.25)).mul(100) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(100) ? x.div(100).max(1).log(2).root(1.25).add(1).floor() : E(0) },
                 effect(x) {
@@ -109,7 +109,7 @@ const BOSONS = {
                 effect(x) { return player.supernova.bosons.gluon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100)) },
                 effDesc(x) { return format(x)+"x" },
             },{
-                desc: "加强宇宙射線力量。",
+                desc: "加強宇宙射線力量。",
                 cost(x) { return E(2).pow(x.pow(1.25)).mul(100) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(100) ? x.div(100).max(1).log(2).root(1.25).add(1).floor() : E(0) },
                 effect(x) {
