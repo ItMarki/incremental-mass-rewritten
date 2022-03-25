@@ -202,7 +202,7 @@ function updateQuantumTemp() {
 
 function updateQuantumHTML() {
     tmp.el.qu_div.setDisplay(quUnl() || player.chal.comps[12].gte(1))
-    tmp.el.quAmt.setHTML(format(player.qu.points,0)+"<br>(+"+format(tmp.qu.gain,0)+")")
+    tmp.el.quAmt.setHTML(format(player.qu.points,0)+"<br>（+"+format(tmp.qu.gain,0)+"）")
 
     if (tmp.tab == 0 && tmp.stab[0] == 4) {
         tmp.el.bpAmt.setTxt(format(player.qu.bp,1)+" "+formatGain(player.qu.bp,tmp.qu.bpGain))
