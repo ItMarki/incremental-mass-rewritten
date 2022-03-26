@@ -11,7 +11,6 @@ pent - 五級階
 muscler - 提重器
 booster - 提升器
 stronger - 增強器
-exponent - 指數提升
 
 1.2. SCALING
 super - 超級
@@ -128,8 +127,9 @@ particle - 粒子
 cost - 價格
 upgrade - 升級
 scale/scaling - 增幅
+challenge - 挑戰
 
-8. OTHERS
+A. OTHERS
 a. the general rule is to put a space beetwen a number and surrounding text (except for punctuation)
 b. use "[number]x" instead of "[number]倍"
 c. use 到達 instead of 達到
