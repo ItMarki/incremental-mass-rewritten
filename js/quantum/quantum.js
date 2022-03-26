@@ -9,9 +9,9 @@ const QUANTUM = {
         if (hasTree("qf2")) x = x.mul(treeEff("qf2"))
         return x.floor()
     },
-    enter() {
+    enter(auto=false) {
         if (tmp.qu.gain.gte(1)) {
-            if (player.confirms.qu) if (confirm("你確定要量子化嗎？量子化會重置生活質素升級以外的所有功能。")?!confirm("你確定嗎？"):true) return
+            if (player.confirms.qu&&!auto) if (confirm("你確定要量子化嗎？量子化會重置生活質素升級以外的所有功能。")?!confirm("你確定嗎？？？"):true) return
             if (player.qu.times.gte(10)) {
                 player.qu.points = player.qu.points.add(tmp.qu.gain)
                 player.qu.times = player.qu.times.add(1)
@@ -36,6 +36,7 @@ const QUANTUM = {
                     document.body.style.animation = ""
                 },2000)
             }
+            player.qu.auto.time = 0
         }
     },
     doReset() {
@@ -112,13 +113,30 @@ const QUANTUM = {
     },
     mils: [
         [E(1), `你開始時解鎖生活質素升級（qol1-6）、玻色子和費米子。`],
-        [E(2), `中子樹的量子前部分的所有升級都移除需求。量子前部分的運行速度增至 10x。`],
+        [E(2), `中子樹的量子前部分的所有升級都移除需求；量子前部分的運行速度增至 10x。`],
         [E(3), `你開始時解鎖中子樹的量子前挑戰部分以及升級 [c] 和 [qol7]。`],
         [E(5), `你開始時解鎖生活質素升級（qol8-9 和 unl1）和輻射。`],
         [E(6), `量子泡沫獲得量翻倍。`],
         [E(8), `量子前部分的運行速度稍微加強藍圖粒子和賦色子的獲得量。`],
-        [E(10), `超新星恆星獲得量乘以量子化次數（最高 1e10）。`],
+        [E(10), `超新星恆星獲得量乘以量子化次數（最高 1e10）；解鎖量子自動化。`],
     ],
+    auto: {
+        mode: ["數量","時間"],
+        switch() { player.qu.auto.enabled = !player.qu.auto.enabled; player.qu.auto.time = 0 },
+        switchMode() { player.qu.auto.mode = (player.qu.auto.mode+1)%this.mode.length; player.qu.auto.time = 0 },
+        temp() {
+            let n, i = player.qu.auto.input
+            if (player.qu.auto.mode==0) {
+                n = E(i)
+                if (isNaN(n.mag) || n.lt(0)) n = E(1)
+                n = n.floor()
+            } else if (player.qu.auto.mode==1) {
+                n = Number(i)
+                if (isNaN(n) || n < 0 || !isFinite(n)) n = 1
+            }
+            return n
+        }
+    },
 }
 
 function quUnl() { return player.qu.times.gte(1) }
@@ -126,6 +144,12 @@ function quUnl() { return player.qu.times.gte(1) }
 function getQUSave() {
     return {
         reached: false,
+        auto: {
+            enabled: false,
+            time: 0,
+            mode: 0,
+            input: "1",
+        },
         points: E(0),
         times: E(0),
         bp: E(0),
@@ -153,6 +177,15 @@ function calcQuantum(dt, dt_offline) {
 
         if (PRIM.unl()) {
             player.qu.prim.theorems = player.qu.prim.theorems.max(tmp.prim.theorems)
+        }
+        
+        if (player.qu.auto.enabled) {
+            player.qu.auto.time += dt_offline
+
+            let can = false
+            if (player.qu.auto.mode == 0) can = tmp.qu.gain.gte(tmp.qu.auto_input)
+            else if (player.qu.auto.mode == 1) can = player.qu.auto.time >= tmp.qu.auto_input
+            if (can) QUANTUM.enter(true)
         }
     }
 
@@ -198,6 +231,8 @@ function updateQuantumTemp() {
     tmp.qu.bpEff = QUANTUM.bpEff()
 
     for (let x = 0; x < QUANTUM.mils.length; x++) tmp.qu.mil_reached[x] = player.qu.times.gte(QUANTUM.mils[x][0])
+    
+    tmp.qu.auto_input = QUANTUM.auto.temp()
 }
 
 function updateQuantumHTML() {
@@ -226,7 +261,12 @@ function updateQuantumHTML() {
                 tmp.el['qu_mil_goal'+x].setTxt(format(QUANTUM.mils[x][0],0))
             }
         }
-        if (tmp.stab[6] == 2) updatePrimordiumHTML()
+        if (tmp.stab[6] == 2) {
+            tmp.el.auto_qu.setTxt(player.qu.auto.enabled?"開啟":"關閉")
+            tmp.el.auto_qu_mode.setTxt(QUANTUM.auto.mode[player.qu.auto.mode])
+            tmp.el.auto_qu_res.setTxt(player.qu.auto.mode==0?format(tmp.qu.auto_input,0):formatTime(tmp.qu.auto_input,1)+"s")
+        }
+        if (tmp.stab[6] == 3) updatePrimordiumHTML()
     }
 
     if (hasTree("qu_qol4")) SUPERNOVA.reset(false,false,true)

@@ -338,6 +338,11 @@
                 你量子化了 <span id="qu_times">0</span> 次<br><br>
                 <div id="qu_milestones_table"></div>
             </div><div id="stab_frame6_2">
+                <button class="btn" onclick="QUANTUM.auto.switch()">自動量子化：<span id="auto_qu">OFF</span></button>
+                <button class="btn" onclick="QUANTUM.auto.switchMode()">自動量子化模式：<span id="auto_qu_mode">Amount</span></button><br><br>
+                <input type="text" id="auto_qu_input"><br>
+                = <span id="auto_qu_res"></span>
+            </div><div id="stab_frame6_3">
                 你有 <span id="prim_theorem">0</span> 個原始素定理（基於藍圖粒子的數量）<br>
                 （獲得 1 個的進度：<span id="prim_next_theorem">X</span>）<br><br>
                 <button class="btn" onclick="giveRandomPParticles(1)">隨機給予 1 個粒子</button>
@@ -362,7 +367,7 @@
             <h2>確認設定</h2><br>
             <div id="confirm_table" class="table_center"></div>
             <br><br>
-            增量質量（重寫版）v0.5.0.5——量子更新——MrRedShark77製造，ItMarki翻譯<br>
+            增量質量（重寫版）v0.5.0.6——量子更新——MrRedShark77製造，ItMarki翻譯<br>
             本遊戲受到<ruby>Distance Incremental<rt>距離增量</rt></ruby>和<ruby>Synergism<rt>協同放置</rt></ruby>的啟發製作<br><br><br>
             提示 1：把光標放在標籤上方的圖片上，即可查看描述……<br><br>
             總遊玩時間：<span id="total_time">X</span>

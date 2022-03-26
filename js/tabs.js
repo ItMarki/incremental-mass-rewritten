@@ -46,6 +46,7 @@ const TABS = {
         6: [
             { id: "賦色子" },
             { id: "量子里程碑" },
+            { id: "自動量子化", unl() { return tmp.qu.mil_reached[6] } },
             { id: "原始素", unl() { return PRIM.unl() } },
         ],
     },
