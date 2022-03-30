@@ -179,7 +179,7 @@ function updateUpperHTML() {
 	tmp.el.chal_upper.setVisible(unl)
 	if (unl) {
 		let data = CHALS.getChalData(player.chal.active, tmp.chal.bulk[player.chal.active].max(player.chal.comps[player.chal.active]))
-		tmp.el.chal_upper.setHTML(`你目前在進行 [${CHALS[player.chal.active].title}] 挑戰！超過 ${tmp.chal.format(tmp.chal.goal[player.chal.active])+CHALS.getResName(player.chal.active)} 以完成。
+		tmp.el.chal_upper.setHTML(`你目前在進行 [${CHALS[player.chal.active].title}] 挑戰！到達 ${tmp.chal.format(tmp.chal.goal[player.chal.active])+CHALS.getResName(player.chal.active)} 以完成。
 		<br>+${tmp.chal.gain} 完成次數（${tmp.chal.format(data.goal)+CHALS.getResName(player.chal.active)} 時完成次數 +1）`)
 	}
 	unl = player.atom.unl
@@ -203,7 +203,7 @@ function updateRanksHTML() {
 			let desc = ""
 			for (let i = 0; i < keys.length; i++) {
 				if (player.ranks[rn].lt(keys[i])) {
-					desc = `在第 ${format(keys[i],0)} ${RANKS.fullNames[x]}，${RANKS.desc[rn][keys[i]]}`
+					desc = `在第 ${format(keys[i],0)} ${RANKS.fullNames[x]}中，${RANKS.desc[rn][keys[i]]}`
 					break
 				}
 			}
