@@ -9,11 +9,6 @@
 }
 
 @font-face {
-	font-family: 'Chiron Hei HK';
-	src: url('fonts/ChironHeiHK-R.ttf');
-}
-
-@font-face {
 	font-family: 'Cousine';
 	src: url('fonts/Cousine-Regular.ttf');
 }
@@ -24,6 +19,16 @@
 }
 
 @font-face {
+	font-family: 'GenYoGothic TW';
+	src: url('fonts/GenYoGothic-R_0.ttf');
+}
+
+@font-face {
+	font-family: 'GenYoGothic JP';
+	src: url('fonts/GenYoGothic-R_1.ttf');
+}
+
+@font-face {
 	font-family: 'Inconsolata';
 	src: url('fonts/Inconsolata-VariableFont_wdth\,wght.ttf');
 }
@@ -31,6 +36,11 @@
 @font-face {
 	font-family: 'Lucida Handwriting';
 	src: url('fonts/qkmarisa.ttf');
+}
+
+@font-face {
+	font-family: 'LXGWWenKai';
+	src: url('fonts/LXGWWenKai-Regular.ttf');
 }
 
 @font-face {
