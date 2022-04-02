@@ -3,36 +3,43 @@ const BOSONS = {
     gain: {
         pos_w() {
             let x = E(0.01).mul(tmp.bosons.effect.neg_w?tmp.bosons.effect.neg_w[1]:1).mul(tmp.bosons.effect.z_boson?tmp.bosons.effect.z_boson[1]:1).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
+            if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
             return x
         },
         neg_w() {
             let x = E(0.01).mul(tmp.bosons.effect.pos_w?tmp.bosons.effect.pos_w[1]:1).mul(tmp.bosons.effect.z_boson?tmp.bosons.effect.z_boson[1]:1).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
+            if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
             return x
         },
         z_boson() {
             let x = E(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
             if (hasTree("sn4")) x = x.pow(1.5)
+            if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
             return x
         },
         photon() {
             let x = E(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
             x = x.mul(tmp.bosons.upgs.photon[2]?tmp.bosons.upgs.photon[2].effect:1)
             if (hasTree("bs2") && tmp.supernova.tree_eff.bs2) x = x.mul(tmp.supernova.tree_eff.bs2[1])
+            if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
             return x
         },
         gluon() {
             let x = E(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
             x = x.mul(tmp.bosons.upgs.gluon[2]?tmp.bosons.upgs.gluon[2].effect:1)
             if (hasTree("bs2") && tmp.supernova.tree_eff.bs2) x = x.mul(tmp.supernova.tree_eff.bs2[0])
+            if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
             return x
         },
         graviton() {
             let x = E(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1).mul(tmp.fermions.effs[1][1])
+            if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
             return x
         },
         hb() {
             let x = E(0.01).mul(tmp.fermions.effs[1][1])
             if (hasTree("bs1")) x = x.mul(tmp.supernova?tmp.supernova.tree_eff.bs1:1)
+            if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
             return x
         },
     },
@@ -125,7 +132,7 @@ const BOSONS = {
                 effect(x) { return player.atom.quarks.add(1).log10().add(1).pow(x.mul(0.125)).softcap(1e15,0.6,0) },
                 effDesc(x) { return format(x)+"x"+(x.gte(1e15)?"<span class='soft'>（軟限制）</span>":"") },
             },{
-                desc: "膠子減少超新星需求。",
+                desc: "膠子減少超新星要求。",
                 cost(x) { return E(10).pow(x.pow(1.25)).mul(1e5) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(1e5) ? x.div(1e5).max(1).log(10).root(1.25).add(1).floor() : E(0) },
                 effect(x) { return player.supernova.bosons.gluon.add(1).log10().add(1).log10().mul(x.pow(tmp.fermions.effs[0][3]).root(3)).div(10).add(1).softcap(5.5,0.25,0).softcap(10,0.25,0) },

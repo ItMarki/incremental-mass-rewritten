@@ -52,19 +52,19 @@ const PRIM = {
                 return x
             },
             p=>{
-                let x = p.pow(0.9).mul(1.5)
+                let x = p.pow(0.9).mul(2)
                 return x
             },
         ],
         effDesc: [
             x=>{ return `將增強器力量提升 ${format(x)}x` },
-            x=>{ return `給予怒氣點獲得量 ${format(x[0])} 次方的加成；<br>將非獎勵時間速度加強 ${format(x[1])}x` },
-            x=>{ return `給予暗物質獲得量 ${format(x[0])} 次方的加成；<br>將黑洞壓縮器力量提升 ${format(x[1])}x` },
-            x=>{ return `給予原子獲得量 ${format(x[0])} 次方的加成；<br>將宇宙射線力量提升 ${format(x[1])}x` },
+            x=>{ return `將怒氣點獲得量提升 ^${format(x[0])}；<br>將非獎勵時間速度加強 ${format(x[1])}x` },
+            x=>{ return `將暗物質獲得量提升 ^${format(x[0])}；<br>將黑洞壓縮器力量提升 ${format(x[1])}x` },
+            x=>{ return `將原子獲得量提升 ^${format(x[0])}；<br>將宇宙射線力量提升 ${format(x[1])}x` },
             x=>{ return `將希格斯玻色子的效果加強 ${format(x)}x` },
             x=>{ return `將費米子獲得量的底數增加 ${format(x)}` },
             x=>{ return `將所有輻射的獲得量提升 ${format(x[0])}x` + (hasTree("prim2") ? `；<br>將所有輻射的效果加強 ${format(x[1])}x` : "") },
-            x=>{ return `將元級超新星延遲 ${format(x)} 個` },
+            x=>{ return `將所有超新星增幅延遲 ${format(x)} 個` },
         ],
     },
 }

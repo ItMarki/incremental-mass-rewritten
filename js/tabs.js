@@ -32,6 +32,10 @@ const TABS = {
             { id: "等級獎勵" },
             { id: "價格增幅", unl() { return tmp.scaling ? tmp.scaling.super.length>0 : false } },
         ],
+        3: [
+            { id: "挑戰" },
+            { id: "量子挑戰", unl() { return hasTree("unl3") } },
+        ],
         4: [
             { id: "粒子" },
             { id: "元素", unl() { return player.chal.comps[7].gte(16) || player.supernova.times.gte(1) } },

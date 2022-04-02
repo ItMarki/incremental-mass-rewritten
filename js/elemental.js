@@ -97,7 +97,7 @@ const ELEMENTS = {
             cost: E(1e21),
         },
         {
-            desc: `層需求減弱 15%。`,
+            desc: `層要求減弱 15%。`,
             cost: E(6.5e21),
         },
         {
@@ -140,7 +140,7 @@ const ELEMENTS = {
             effDesc(x) { return "+"+format(x*100)+"%" },
         },
         {
-            desc: `原子獲得量獲得 1.1 次方的加成。`,
+            desc: `原子獲得量 ^1.1。`,
             cost: E(1e40),
         },
         {
@@ -204,7 +204,7 @@ const ELEMENTS = {
             cost: E(1e90),
         },
         {
-            desc: `膨脹質量時，質量獲得量獲得 1.5 次方的加成。`,
+            desc: `膨脹質量時，質量獲得量 ^1.5。`,
             cost: E(1e97),
         },
         {
@@ -304,7 +304,7 @@ const ELEMENTS = {
             cost: E('e360'),
         },
         {
-            desc: `大幅減弱層的需求。`,
+            desc: `大幅減弱層的要求。`,
             cost: E('e380'),
         },
         {
@@ -326,7 +326,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `夸克獲得量獲得 1.05 次方的加成。`,
+            desc: `夸克獲得量 ^1.05。`,
             cost: E('e610'),
         },
         {
@@ -343,7 +343,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `恆星生產器獲得 1.05 次方的加成。`,
+            desc: `恆星生產器 ^1.05。`,
             cost: E('e1750'),
         },
         {
@@ -509,12 +509,16 @@ const ELEMENTS = {
             cost: E('e1.4e13'),
         },
         {
-            desc: `增強器獲得 1.1 次方的加成。`,
+            desc: `增強器 ^1.1。`,
             cost: E('e2.8e13'),
         },
         {
             desc: `鍶-38 強 3x。`,
             cost: E('e4e13'),
+        },
+        {
+            desc: `大幅增強質量膨脹升級 2。`,
+            cost: E('e3e14'),
         },
     ],
     /*
@@ -544,7 +548,7 @@ const ELEMENTS = {
             if (player.supernova.fermions.unl) u += 10
             if (tmp.radiation.unl) u += 10
         }
-        if (PRIM.unl()) u += 2
+        if (PRIM.unl()) u += 3
 
         return u
     },

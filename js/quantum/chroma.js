@@ -32,10 +32,10 @@ const CHROMA = {
     ],
     effDesc: [
         x => {
-            return `給予時間速度力量 ${format(x)} 次方的加成`
+            return `將時間速度力量提升 ^${format(x)}`
         },
         x => {
-            return `將五級層前的需求減少 ${format(x)}x`
+            return `將五級層前的要求減少 ${format(x)}x`
         },
         x => {
             return `將挑戰 1-8 的獎勵加強 ${format(x)}x`

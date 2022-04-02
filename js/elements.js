@@ -34,7 +34,7 @@ function setupHTML() {
 			第 <span id="ranks_amt_${x}">X</span> <span id="ranks_scale_${x}""></span>${RANKS.fullNames[x]}<br><br>
 			<button onclick="RANKS.reset('${rn}')" class="btn reset" id="ranks_${x}">
 				重置${x>0?RANKS.fullNames[x-1]:'質量和升級'}，但是升${RANKS.fullNames[x]}。<span id="ranks_desc_${x}"></span><br>
-				需求：<span id="ranks_req_${x}">X</span>
+				要求：<span id="ranks_req_${x}">X</span>
 			</button>
 		</div>`
 	}
@@ -318,7 +318,7 @@ function updateOptionsHTML() {
 	for (let x = 0; x < CONFIRMS.length; x++) {
 		let unl = 
 		CONFIRMS[x] == "sn"
-		?player.supernova.times.gte(1)
+		?(player.supernova.times.gte(1) || player.qu.times.gte(1))
 		:CONFIRMS[x] == "qu"
 		?player.qu.times.gte(1)
 		:player[CONFIRMS[x]].unl
