@@ -356,8 +356,8 @@ const TREE_UPGS = {
             desc: `光子和膠子互相加強。`,
             cost: E(1e14),
             effect() {
-                let x = expMult(player.supernova.bosons.photon,1/2,2)
-                let y = expMult(player.supernova.bosons.gluon,1/2,2)
+                let x = expMult(player.supernova.bosons.photon,1/2,2).max(1)
+                let y = expMult(player.supernova.bosons.gluon,1/2,2).max(1)
                 return [x,y]
             },
             effDesc(x) { return "光子 "+format(x[1])+"x；膠子 "+format(x[0])+"x" },
