@@ -131,7 +131,7 @@ const FERMIONS = {
                     return `免費給予 ${format(x,0)} 個宇宙射線`
                 },
                 inc: "原子力量",
-                cons: "原子力量獲得量得到 0.6 次方的懲罰",
+                cons: "原子力量獲得量 ^0.6",
             },{
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
@@ -279,7 +279,7 @@ const FERMIONS = {
                     return `塌縮恆星獲得量的軟限制得到 ^${format(x)} 的延遲`+(x.gte(1.5)?"<span class='soft'>（軟限制）</span>":"")
                 },
                 inc: "夸克",
-                cons: "原子獲得量的指數得到 0.625 次方的懲罰",
+                cons: "原子獲得量的指數 ^0.625",
             },{
                 nextTierAt(x) {
                     let t = FERMIONS.getTierScaling(x)
@@ -346,7 +346,7 @@ const FERMIONS = {
                     return `階的要求便宜 ${format(x)}x`+(x.gte(1.5)?"<span class='soft'>（軟限制）</span>":"")
                 },
                 inc: "塌縮恆星",
-                cons: "恆星生產器得到 0.5 次方的懲罰",
+                cons: "恆星生產器 ^0.5",
             },{
                 maxTier() {
                     let x = 25

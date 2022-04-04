@@ -101,7 +101,7 @@ const RADIATION = {
                 let x = b.add(1).root(4)
                 return x
             },
-            desc(x) { return `質量軟限制^3 得到 ${format(x)} 次方的延遲` },
+            desc(x) { return `質量軟限制^3 延遲 ^${format(x)}` },
         },{
             title: `微波加成`,
             eff(b) {

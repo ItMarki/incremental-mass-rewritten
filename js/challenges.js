@@ -282,7 +282,7 @@ const CHALS = {
     4: {
         unl() { return player.chal.comps[3].gte(1) || player.atom.unl },
         title: "弱化狂怒",
-        desc: "怒氣點獲得量開十次方根。質量獲得量軟限制提早 1e100 開始。",
+        desc: "怒氣點獲得量開 10 次方根。質量獲得量軟限制提早 1e100 開始。",
         reward: `基於完成次數，怒氣點獲得量獲得次方加成。`,
         max: E(100),
         inc: E(30),
@@ -344,7 +344,7 @@ const CHALS = {
     8: {
         unl() { return player.chal.comps[7].gte(1) || player.supernova.times.gte(1) },
         title: "白洞",
-        desc: "暗物質和黑洞的質量加成開八次方根。",
+        desc: "暗物質和黑洞的質量加成開 8 次方根。",
         reward: `基於完成次數，暗物質和黑洞的質量加成獲得次方加成。<br><span class="yellow">首次完成時，解鎖 3 行元素</span>`,
         max: E(50),
         inc: E(80),

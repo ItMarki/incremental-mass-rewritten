@@ -114,7 +114,7 @@ const TREE_UPGS = {
         },
         m2: {
             branch: ["m1"],
-            desc: `質量軟限制^2 得到 1.5 次方的延遲。`,
+            desc: `質量軟限制^2 延遲 ^1.5。`,
             cost: E(800),
         },
         m3: {
@@ -132,7 +132,7 @@ const TREE_UPGS = {
             branch: ["m1", 'rp1'],
             req() { return player.supernova.chal.noTick && player.mass.gte(E("1.5e1.650056e6").pow(hasTree('bh2')?1.46:1)) },
             reqDesc() {return `執行一次超新星重置後在不購買時間速度的情況下到達 ${formatMass(E("1.5e1.650056e6").pow(hasTree('bh2')?1.46:1))}。你仍可以從宇宙射線獲得時間速度。`},
-            desc: `時間速度力量獲得 1.15 次方的加成。`,
+            desc: `時間速度力量 ^1.15。`,
             cost: E(1500),
         },
         rp1: {
@@ -159,7 +159,7 @@ const TREE_UPGS = {
             branch: ['bh1'],
             req() { return player.supernova.chal.noBHC && player.bh.mass.gte("1.5e1.7556e4") },
             reqDesc() {return `執行一次超新星重置後在不購買黑洞壓縮器的情況下到達 ${format("e1.75e4")} uni 的黑洞質量。`},
-            desc: `黑洞壓縮器力量獲得 1.15 次方的加成。`,
+            desc: `黑洞壓縮器力量 ^1.15。`,
             cost: E(1500),
         },
         s1: {
@@ -336,7 +336,7 @@ const TREE_UPGS = {
         gr2: {
             unl() { return player.supernova.fermions.unl },
             branch: ["gr1"],
-            desc: `宇宙射線力量獲得 1.25 次方的加成。`,
+            desc: `宇宙射線力量 ^1.25。`,
             cost: E(1e20),
         },
         bs1: {
@@ -375,7 +375,7 @@ const TREE_UPGS = {
         bs4: {
             unl() { return player.supernova.fermions.unl },
             branch: ["bs2"],
-            desc: `Z 玻色子獲得量獲得 1.5 次方的加成。`,
+            desc: `Z 玻色子獲得量 ^1.5。`,
             cost: E(1e24),
         },
         fn1: {
