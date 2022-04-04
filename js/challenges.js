@@ -126,8 +126,8 @@ const CHALS = {
         return x.floor()
     },
     getScaleName(i) {
-        if (player.chal.comps[i].gte(1000)) return " 極難"
-        if (player.chal.comps[i].gte(i==8?200:i>8?50:300)) return " 超難"
+        if (player.chal.comps[i].gte(1000)) return " 魔王"
+        if (player.chal.comps[i].gte(i==8?200:i>8?50:300)) return " 極難"
         if (player.chal.comps[i].gte(i>8?10:75)) return " 困難"
         return ""
     },
@@ -233,7 +233,7 @@ const CHALS = {
     1: {
         title: "即時增幅",
         desc: "超級等級和超級質量升級在 25 個開始，超級時間速度在 50 個開始。",
-        reward: `超級等級延遲開始；基於完成次數，超級時間速度增幅更慢。`,
+        reward: `超級等級延遲開始。基於完成次數，超級時間速度增幅更慢。`,
         max: E(100),
         inc: E(5),
         pow: E(1.3),
@@ -265,7 +265,7 @@ const CHALS = {
     },
     3: {
         unl() { return player.chal.comps[2].gte(1) || player.atom.unl },
-        title: "融化質量",
+        title: "熔融質量",
         desc: "質量獲得量軟限制提早 1e150 開始，而且效果更強。",
         reward: `基於完成次數，質量獲得量獲得次方加成，但該加成不適用於此挑戰中！`,
         max: E(100),
@@ -282,7 +282,7 @@ const CHALS = {
     4: {
         unl() { return player.chal.comps[3].gte(1) || player.atom.unl },
         title: "弱化狂怒",
-        desc: "怒氣點獲得量開十次方根；質量獲得量軟限制提早 1e100 開始。",
+        desc: "怒氣點獲得量開十次方根。質量獲得量軟限制提早 1e100 開始。",
         reward: `基於完成次數，怒氣點獲得量獲得次方加成。`,
         max: E(100),
         inc: E(30),
@@ -312,7 +312,7 @@ const CHALS = {
     },
     6: {
         unl() { return player.chal.comps[5].gte(1) || player.supernova.times.gte(1) },
-        title: "無時間速度和壓縮器",
+        title: "無時間速度與壓縮器",
         desc: "不能購買時間速度和黑洞壓縮器。",
         reward: `每完成一次，時間速度和黑洞壓縮器增加 10%。`,
         max: E(50),
@@ -328,7 +328,7 @@ const CHALS = {
     7: {
         unl() { return player.chal.comps[6].gte(1) || player.supernova.times.gte(1) },
         title: "無怒氣點",
-        desc: "不能獲得怒氣點，但你會根據質量獲得暗物質；<br>質量獲得量軟限制更強。",
+        desc: "不能獲得怒氣點，但你會根據質量獲得暗物質。<br>質量獲得量軟限制更強。",
         reward: `每完成一次，挑戰 1 - 4 的完成上限增加 2 次。<br><span class="yellow">完成 16 次時，解鎖元素</span>`,
         max: E(50),
         inc: E(64),
@@ -360,7 +360,7 @@ const CHALS = {
     9: {
         unl() { return player.supernova.tree.includes("chal4") },
         title: "無粒子",
-        desc: "不能分配夸克；質量獲得量的指數 ^0.9。",
+        desc: "不能分配夸克。質量獲得量的指數 ^0.9。",
         reward: `加強鎂-12 的效果。`,
         max: E(100),
         inc: E('e500'),
@@ -404,7 +404,7 @@ const CHALS = {
     },
     12: {
         unl() { return player.supernova.tree.includes("chal7") },
-        title: "原子的衰變",
+        title: "原子衰變",
         desc: "不能獲得原子和夸克。",
         reward: `完成次數免費給予輻射加成。<br><span class="yellow">首次完成時，解鎖新的重置層次！</span>`,
         max: E(100),

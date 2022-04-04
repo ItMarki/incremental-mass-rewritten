@@ -123,6 +123,10 @@ primorium - 原始素
 primorium theorem - 原始素定理
 particle - 粒子
 
+6.4. QUANTUM CHALLENGES
+quantum challenge - 量子挑戰
+quantum shard - 量子碎片
+
 7. TERMS IN INCREMENTAL GAMES
 cost - 價格
 upgrade - 升級
