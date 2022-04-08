@@ -39,6 +39,21 @@ const SCALE_START = {
 	},
 }
 
+const SCALE_POWER= {
+    super: {
+		fTier: 2.5,
+    },
+	hyper: {
+		fTier: 4,
+	},
+	ultra: {
+		fTier: 6,
+	},
+	meta: {
+
+	},
+}
+
 const QCM8_SCALES = ['rank','tier','tetr','massUpg','tickspeed','bh_condenser','gamma_ray','supernova','fTier']
 const SCALE_TYPE = ['super', 'hyper', 'ultra', 'meta'] // super, hyper, ultra, meta
 const FULL_SCALE_NAME = ['超級', '高級', '極高級', '元級']
@@ -114,13 +129,7 @@ function getScalingName(name, x=0, y=0) {
 	let amt = SCALING_RES[name](x,y);
 	for (let n = cap - 1; n >= 0; n--) {
 		if (scalingActive(name, amt, Object.keys(SCALE_START)[n]))
-			if (Object.keys(SCALE_START)[n] == "super"
-				)return "超級";
-			else if (Object.keys(SCALE_START)[n] == "hyper"
-				)return "高級";
-			else if (Object.keys(SCALE_START)[n] == "ultra"
-				)return "極高級";
-			else return "元級"; // improvised code for the purpose of translation; do not delete
+			return (n==0?"超級":n==1?"高級":n==2?"極高級":"元級")// improvised code for the purpose of translation; do not delete
 	}
 	return current;
 }
