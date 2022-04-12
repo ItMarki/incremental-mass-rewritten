@@ -520,6 +520,15 @@ const ELEMENTS = {
             desc: `大幅增強質量膨脹升級 2。`,
             cost: E('e3e14'),
         },
+        {
+            desc: `基於宇宙射線的免費時間速度，減弱極高級前質量升級的價格增幅。`,
+            cost: E('e7e14'),
+            effect() {
+                let x = tmp.atom?E(0.9).pow(tmp.atom.atomicEff.add(1).log10().pow(2/3)):E(1)
+                return x
+            },
+            effDesc(x) { return "弱 "+formatReduction(x)},
+        },
     ],
     /*
     {
@@ -549,6 +558,7 @@ const ELEMENTS = {
             if (tmp.radiation.unl) u += 10
         }
         if (PRIM.unl()) u += 3
+        if (hasTree('unl3')) u += 1
 
         return u
     },

@@ -1,13 +1,13 @@
 const TREE_IDS = [
     ["qu_qol2","qu_qol1","qu_qol6","","qol1","","s3","s2","s1","c","sn1","sn2","sn3","","chal1","","","qu0",""],
     ["qu_qol3","qu_qol4","qu_qol5","qol2","qol3","qol4","s4","","m1","rp1","bh1","","sn4","chal2","chal4a","chal3","qu1","qu2","qu3"],
-    ["","qu_qol7","","qol5","qol6","qol7","","m2","t1","","bh2","gr1","sn5","chal4b","chal4","","","qu4",""],
-    ["unl2","","unl3","","unl1","","m3","","","d1","","","gr2","chal5","chal6","chal7","prim1","qu5","prim2"],
-    ["","","","qol9","qol8","","","bs4","bs2","bs1","bs3","","","","","","","qu6",""],
+    ["","qu_qol7","","qol5","qol6","qol7","","m2","t1","","bh2","gr1","sn5","chal4b","chal4","","prim1","qu4","prim2"],
+    ["unl2","unl3","qu_qol8","","unl1","","m3","","","d1","","","gr2","chal5","chal6","chal7","qu6","qu5","qu7"],
+    ["","","","qol9","qol8","","","bs4","bs2","bs1","bs3","","","","","","","qc1",""],
     ["","","","","","","fn8","fn11","fn9","fn1","fn5","fn10","","","","","","",""],
     ["","","","","","","fn7","fn6","fn2","fn3","fn4","","","","","","","",""],
     ["","","","","","","rad6","rad4","rad2","rad1","rad3","rad5","","","","","","",""],
-    ["","","","","","","","","qf2","qf1","","","","","","","","",""],
+    ["","","","","","","","","qf2","qf1","qf3","","","","","","","",""],
     ["","","","","","","","","","","","","","","","","","",""],
     ["","","","","","","","","","","","","","","","","","",""],
     ["","","","","","","","","","","","","","","","","","",""],
@@ -522,6 +522,17 @@ const TREE_UPGS = {
             },
             effDesc(x) { return format(x)+"x" },
         },
+        qf3: {
+            unl() { return hasTree('unl3') },
+            branch: ["qf1"],
+            desc: `藍圖粒子提升量子泡沫獲得量。`,
+            cost: E('e850'),
+            effect() {
+                let x = player.qu.bp.add(1).log10().add(1).pow(2)
+                return x
+            },
+            effDesc(x) { return format(x)+"x" },
+        },
 
         // Quatnum
 
@@ -577,6 +588,17 @@ const TREE_UPGS = {
                 return x
             },
             effDesc(x) { return format(x)+"x" },
+        },
+        qu7: {
+            qf: true,
+            branch: ['qc1'],
+            desc: `基於量子碎片，獲得更多量子化次數。`,
+            cost: E(1e15),
+            effect() {
+                let x = player.qu.qc.shard+1
+                return x
+            },
+            effDesc(x) { return format(x,0)+"x" },
         },
         qu_qol1: {
             qf: true,
@@ -647,6 +669,14 @@ const TREE_UPGS = {
             desc: `量子化時保留挑戰 9-12 的完成次數。`,
             cost: E(25),
         },
+        qu_qol8: {
+            qf: true,
+            branch: ["unl3"],
+            req() { return player.qu.qc.shard >= 15 },
+            reqDesc() { return `Get 15 Quantum Shards.` },
+            desc: `除了在量子挑戰中，你可以在任何費米子外自動獲得所有費米子階。`,
+            cost: E(1e11),
+        },
         prim1: {
             qf: true,
             branch: ["qu5"],
@@ -658,6 +688,18 @@ const TREE_UPGS = {
             branch: ["qu5"],
             desc: `Theta 粒子增加第二個效果。`,
             cost: E(500),
+        },
+        qc1: {
+            qf: true,
+            unl() { return hasTree("unl3") },
+            branch: ['qu5'],
+            desc: `量子碎片延遲質量軟限制^4。`,
+            cost: E(1e10),
+            effect() {
+                let x = (player.qu.qc.shard+1)**0.75
+                return x
+            },
+            effDesc(x) { return "延遲 ^"+format(x)},
         },
 
         // Other
