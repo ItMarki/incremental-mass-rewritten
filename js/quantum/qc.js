@@ -145,7 +145,7 @@ function updateQCModPresets() {
         }
         table += `</div>
         <div style="margin: 5px">
-        <button class="btn" onclick="saveQCPreset(${x})">保持</button>
+        <button class="btn" onclick="saveQCPreset(${x})">保存</button>
         <button class="btn" onclick="loadQCPreset(${x})">加載</button>
         <button class="btn" onclick="renameQCPreset(${x})">重命名</button>
         <button class="btn" onclick="deleteQCPreset(${x})">刪除</button>

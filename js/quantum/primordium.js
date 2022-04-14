@@ -44,7 +44,7 @@ const PRIM = {
                 return x
             },
             p=>{
-                let x = p.root(3).div(10)
+                let x = [p.root(3).div(10), p.root(3).pow(QCs.active()?2:1)]
                 return x
             },
             p=>{
@@ -62,7 +62,7 @@ const PRIM = {
             x=>{ return `將暗物質獲得量提升 ^${format(x[0])}；<br>將黑洞壓縮器力量提升 ${format(x[1])}x` },
             x=>{ return `將原子獲得量提升 ^${format(x[0])}；<br>將宇宙射線力量提升 ${format(x[1])}x` },
             x=>{ return `將希格斯玻色子的效果加強 ${format(x)}x` },
-            x=>{ return `將費米子獲得量的底數增加 ${format(x)}` },
+            x=>{ return `將費米子獲得量的底數增加 ${format(x[0])}` + (hasTree("prim3") ? `；<br>免費給予 ${format(x[1])} 個費米子階` : "") },
             x=>{ return `將所有輻射的獲得量提升 ${format(x[0])}x` + (hasTree("prim2") ? `；<br>將所有輻射的效果加強 ${format(x[1])}x` : "") },
             x=>{ return `將所有超新星增幅延遲 ${format(x)} 個` },
         ],
