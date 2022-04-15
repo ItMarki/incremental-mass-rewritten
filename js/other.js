@@ -116,7 +116,7 @@ const POPUP_GROUPS = {
     qus1: {
         html() { return `
             <img src="images/qu_story1.png"><br><br>
-            質量在量子化的過程中塌縮了！看來是蒸發了！但代價是什麼呢？
+            質量在量子化的過程中塌縮了！看來是蒸發了！可是代價是甚麼呢？
         `},
         button: "我去",
         otherStyle: {
