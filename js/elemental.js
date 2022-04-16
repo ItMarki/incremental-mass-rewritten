@@ -529,6 +529,10 @@ const ELEMENTS = {
             },
             effDesc(x) { return "弱 "+formatReduction(x)},
         },
+        {
+            desc: `增強器的軟限制延遲 3x，弱 10%。`,
+            cost: E('e7.5e15'),
+        },
     ],
     /*
     {
@@ -558,7 +562,7 @@ const ELEMENTS = {
             if (tmp.radiation.unl) u += 10
         }
         if (PRIM.unl()) u += 3
-        if (hasTree('unl3')) u += 1
+        if (hasTree('unl3')) u += 2
 
         return u
     },
