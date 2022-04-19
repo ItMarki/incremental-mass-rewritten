@@ -233,7 +233,7 @@ const ELEMENTS = {
             cost: E(1e155),
         },
         {
-            desc: `怒氣點提升相對粒子獲得量。`,
+            desc: `暴怒點數提升相對粒子獲得量。`,
             cost: E(1e175),
             effect() {
                 let x = player.rp.points.max(1).log10().add(1).pow(0.75)

@@ -154,8 +154,8 @@ const ATOM = {
                 時間速度力量增加 ${format(x.eff2.mul(100))}%
             ` },
             x=>{ return `
-                將怒氣點獲得量乘以 ${format(x.eff1)}<br><br>
-                怒氣點將質量獲得量提升 ${format(x.eff2)}x<br><br>
+                將暴怒點數獲得量乘以 ${format(x.eff1)}<br><br>
+                暴怒點數將質量獲得量提升 ${format(x.eff2)}x<br><br>
             ` },
             x=>{ return `
                 將暗物質獲得量乘以 ${format(x.eff1)}<br><br>
