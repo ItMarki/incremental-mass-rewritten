@@ -3,7 +3,7 @@ const TREE_TAB = [
     {title: "生活質素"},
     {title: "挑戰"},
     {title: "超新星後", unl() { return player.supernova.post_10 } },
-    {title: "量子", unl() { return player.qu.times.gte(1) } },
+    {title: "量子", unl() { return quUnl() } },
 ]
 
 const TREE_IDS = [
@@ -42,7 +42,7 @@ const TREE_IDS = [
         [],
         [],
         [],
-        ['prim3'],
+        ['prim3','qu8'],
     ],
 ]
 
@@ -523,7 +523,7 @@ const TREE_UPGS = {
         },
         rad5: {
             branch: ["rad3"],
-            desc: `每成為一次超新星，所有輻射獲得量增加 10%。`,
+            desc: `每變成一次超新星，所有輻射獲得量增加 10%。`,
             cost: E(1e170),
             effect() {
                 let x = E(1.1).pow(player.supernova.times)
@@ -642,6 +642,17 @@ const TREE_UPGS = {
             },
             effDesc(x) { return format(x,0)+"x" },
         },
+        qu8: {
+            qf: true,
+            branch: ['qc1'],
+            desc: `量子碎片的效果影響賦色子。`,
+            cost: E(1e15),
+            effect() {
+                let x = tmp.qu.qc_s_eff.max(1)
+                return x
+            },
+            effDesc(x) { return format(x,1)+"x" },
+        },
         qu_qol1: {
             qf: true,
             unl() { return quUnl() },
@@ -657,7 +668,7 @@ const TREE_UPGS = {
                 for (let x = 0; x < 6; x++) if (player.supernova.fermions.tiers[0][x].gte(1)) return false
                 return player.supernova.times.gte(81)
             },
-            reqDesc: `量子化後在不獲得 U-夸克階的情況下成為 81 次超新星。`,
+            reqDesc: `量子化後在不獲得 U-夸克階的情況下變成 81 次超新星。`,
             desc: `量子化時保留 U-夸克階。`,
             cost: E(4),
         },
@@ -675,7 +686,7 @@ const TREE_UPGS = {
         qu_qol4: {
             qf: true,
             branch: ["qu_qol1"],
-            desc: `你可以自動成為超新星；它不重置任何東西。`,
+            desc: `你可以自動變成超新星；它不重置任何東西。`,
             cost: E(4),
         },
         qu_qol5: {
@@ -696,7 +707,7 @@ const TREE_UPGS = {
                 for (let x = 0; x < 6; x++) if (player.supernova.fermions.tiers[1][x].gte(1)) return false
                 return player.supernova.times.gte(42)
             },
-            reqDesc: `量子化後在不獲得 U-輕子階的情況下成為 42 次超新星。`,
+            reqDesc: `量子化後在不獲得 U-輕子階的情況下變成 42 次超新星。`,
             desc: `量子化時保留 U-輕子階。`,
             cost: E(4),
         },

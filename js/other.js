@@ -126,9 +126,20 @@ const POPUP_GROUPS = {
     qus2: {
         html() { return `
             <img src="images/qu_story2.png"><br><br>
-            不用擔心，新的功能會很快到達！
+            不用擔心，新的功能會很快解鎖！
         `},
         button: "好",
+        otherStyle: {
+            'font-size': "14px",
+        },
+    },
+    en: {
+        html() { return `
+            恭喜！<br><br>你的質量到達了 ${formatMass(mlt(7.5e6))} ！<br><br>
+            <b>量子標籤中解鎖了熵！</b>
+        `},
+        width: 400,
+        height: 150,
         otherStyle: {
             'font-size': "14px",
         },

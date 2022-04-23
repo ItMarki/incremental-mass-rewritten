@@ -22,6 +22,7 @@
     <script src="js/saves.js"></script>
     <script src="js/challenges.js"></script>
 
+    <script src="js/quantum/entropy.js"></script>
     <script src="js/quantum/qc.js"></script>
     <script src="js/quantum/primordium.js"></script>
     <script src="js/quantum/chroma.js"></script>
@@ -215,7 +216,7 @@
 					<span id="massSoft5" style="color: rgb(255, 94, 0)">質量獲得量到達 <b id="massSoftStart5">X</b> 後會被軟限制^4！</span>
                 </div>
             </div><div id="stab_frame0_1">
-                你的黑洞質量為 <span id="bhMass2">X</span><br>
+                你的黑洞質量是 <span id="bhMass2">X</span><br>
                 <span class="green">將質量獲得量乘以 <span id="bhEffect">X</span></span><br><br>
                 黑洞對質量獲得量的加成公式：(x + 1)<sup id="bhMassPower">0.33</sup> * <span id="bhCondenserEffect">X</span><br><br>
                 <div style="width: 100%; margin-bottom: 5px;" class="table_center">
@@ -371,9 +372,24 @@
                 （獲得 1 個的進度：<span id="prim_next_theorem">X</span>）<br><br>
                 <button class="btn" onclick="giveRandomPParticles(1)">隨機給予 1 個粒子</button>
                 <button class="btn" onclick="giveRandomPParticles(10)">隨機給予 10 個粒子</button>
-                <button class="btn" onclick="giveRandomPParticles(1,true)">隨機給給予所有粒子</button>
+                <button class="btn" onclick="giveRandomPParticles(1,true)">隨機給予所有粒子</button>
                 <button class="btn" onclick="respecPParticles()">重置所有粒子</button><br><br>
                 <div id="primordium_table"></div>
+            </div><div id="stab_frame6_4">
+                <div class="table_center" style="min-height: 250px">
+                    <div style="width: 33.3%; min-width: 300px;">
+                        你的頻率是 <span id="enEva1">0</span> Hz<br><br>
+                        <button id="evaBtn1" class="btn half_full" onclick="ENTROPY.switch(0)">將你的頻率蒸發以獲得焓</button><br><br>
+                        你有 <span id="enAmt1">0</span> 焓，將熵的每秒獲得量增加到 <span id="enEff1">0</span>
+                    </div><div style="width: 33.3%; min-width: 300px;">
+                        你有 <span id="enAmt2">0</span> 熵<br><span id="enGain"></span>
+                    </div><div style="width: 33.3%; min-width: 300px;">
+                        你的黑洞質量是 <span id="enEva2">0 g</span><br><br>
+                        <button id="evaBtn2" class="btn half_full" onclick="ENTROPY.switch(1)">將你的黑洞蒸發以獲得霍金輻射</button><br><br>
+                        你有 <span id="enAmt3">0</span> 霍金輻射，將熵的上限增加到 <span id="enEff2">0</span>
+                    </div>
+                </div><br>
+                <div id="en_table" class="table_center"></div>
             </div>
 		</div><div id="tab_frame7">
             <button class="btn" onclick="save()">保存</button>
@@ -391,7 +407,7 @@
             <h2>確認設定</h2><br>
             <div id="confirm_table" class="table_center"></div>
             <br><br>
-            增量質量（重寫版）v0.5.1.3——MrRedShark77製作，ItMarki翻譯<br>
+            增量質量（重寫版）v0.5.2——由MrRedShark77製作，ItMarki翻譯<br>
             本遊戲受到<ruby>Distance Incremental<rt>距離增量</rt></ruby>和<ruby>Synergism<rt>協同放置</rt></ruby>的啟發製作<br><br><br>
             提示 1：把光標放在標籤上方的圖片上，即可查看描述……<br><br>
             總遊玩時間：<span id="total_time">X</span>

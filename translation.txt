@@ -105,7 +105,6 @@ quantum theory - 量子理論
 quantum milestone - 量子里程碑
 
 6.1. INDESCRIBABLE MATTER
-indescribable matter - 不可描述的物質
 blueprint particle - 藍圖粒子
 cosmic string - 宇宙弦
 
@@ -126,6 +125,11 @@ particle - 粒子
 6.4. QUANTUM CHALLENGES
 quantum challenge - 量子挑戰
 quantum shard - 量子碎片
+
+6.5. ENTROPY
+entropy - 熵
+enthalpy - 焓
+hawking radiation - 霍金輻射
 
 7. TERMS IN INCREMENTAL GAMES
 cost - 價格
