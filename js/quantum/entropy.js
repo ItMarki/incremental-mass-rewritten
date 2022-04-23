@@ -42,7 +42,7 @@ const ENTROPY = {
                 let x = i.div(2).add(1).root(3)
                 return x
             },
-            desc(x) { return `元級時間速度、黑洞壓縮器和宇宙射線延遲 <b>${x.format()}x</b>。` },
+            desc(x) { return `元級時間速度、黑洞壓縮器和宇宙射線推遲 <b>${x.format()}x</b>。` },
         },{
             title: "熵加速",
 
@@ -53,7 +53,7 @@ const ENTROPY = {
                 let x = i.pow(0.5).div(5).add(1)
                 return x
             },
-            desc(x) { return `原子力效果的指數強 <b>${formatPercent(x.sub(1))}</b>。` },
+            desc(x) { return `原子力量效果的指數強 <b>${formatPercent(x.sub(1))}</b>。` },
         },{
             title: "熵蒸發",
 
@@ -72,11 +72,11 @@ const ENTROPY = {
             inc: E(2),
 
             eff(i) {
-                let x = i.div(5).softcap(2,0.5,0)
+                let x = i.div(QCs.active()?100:5).softcap(2,0.5,0)
                 let y = tmp.tickspeedEffect?tmp.tickspeedEffect.step.pow(x):E(1)
                 return [x,y]
             },
-            desc(x) { return `時間速度對黑洞壓縮器和宇宙射線力量給予 <b>^${x[0].format(1)}</b> 的加成。<br>目前：<b>${x[1].format()}x</b>` },
+            desc(x) { return `時間速度對黑洞壓縮器和宇宙射線力量給予 <b>^${x[0].format(2)}</b> 的加成。<br>目前：<b>${x[1].format()}x</b>` },
         },
 
         /*
@@ -191,7 +191,7 @@ function setupEntropyHTML() {
         <div class="en_reward_div">
             <div style="text-align: left; width: 312px;">
                 <b class="en_sub_reward">${rc.title}：</b><span id="en_reward${x}">0</span><br>
-                <b class="en_sub_reward">下一個：</b><span id="en_reward_next${x}">0</span>
+                <b class="en_sub_reward">下一個在：</b><span id="en_reward_next${x}">0</span>
             </div>
             <div class="en_reward">
                 <span id="en_reward_eff${x}"></span>

@@ -69,7 +69,7 @@ Z0 boson - Z0 玻色子
 5.2. FERMIONS
 fermion - 費米子
 
-5.2.1 U-QUARKS
+5.2.1. U-QUARKS
 U-quark - U-夸克
 up - 上
 down - 下
@@ -135,6 +135,7 @@ hawking radiation - 霍金輻射
 cost - 價格
 upgrade - 升級
 scale/scaling - 增幅
+later - 推遲
 challenge - 挑戰
 
 A. OTHERS

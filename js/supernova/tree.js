@@ -140,19 +140,19 @@ const TREE_UPGS = {
         },
         m2: {
             branch: ["m1"],
-            desc: `質量軟限制^2 延遲 ^1.5。`,
+            desc: `質量軟限制^2 推遲 ^1.5。`,
             cost: E(800),
         },
         m3: {
             branch: ["m2"],
             unl() { return player.supernova.fermions.unl && hasTree("fn1") },
-            desc: `超新星延遲質量軟限制^2-3。`,
+            desc: `超新星推遲質量軟限制^2-3。`,
             cost: E(1e46),
             effect() {
                 let x = player.supernova.times.mul(0.0125).add(1)
                 return x
             },
-            effDesc(x) { return "延遲 ^"+format(x) },
+            effDesc(x) { return "推遲 ^"+format(x) },
         },
         t1: {
             branch: ["m1", 'rp1'],
@@ -646,7 +646,7 @@ const TREE_UPGS = {
             qf: true,
             branch: ['qc1'],
             desc: `量子碎片的效果影響賦色子。`,
-            cost: E(1e15),
+            cost: E(1e21),
             effect() {
                 let x = tmp.qu.qc_s_eff.max(1)
                 return x
@@ -760,13 +760,13 @@ const TREE_UPGS = {
             qf: true,
             unl() { return hasTree("unl3") },
             branch: ['qu5'],
-            desc: `量子碎片延遲質量軟限制^4。`,
+            desc: `量子碎片推遲質量軟限制^4。`,
             cost: E(1e10),
             effect() {
                 let x = (player.qu.qc.shard+1)**0.75
                 return x
             },
-            effDesc(x) { return "延遲 ^"+format(x)},
+            effDesc(x) { return "推遲 ^"+format(x)},
         },
 
         // Other

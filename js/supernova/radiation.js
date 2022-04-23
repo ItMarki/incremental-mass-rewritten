@@ -101,7 +101,7 @@ const RADIATION = {
                 let x = b.add(1).root(4)
                 return x
             },
-            desc(x) { return `質量軟限制^3 延遲 ^${format(x)}` },
+            desc(x) { return `質量軟限制^3 推遲 ^${format(x)}` },
         },{
             title: `微波加成`,
             eff(b) {
@@ -179,14 +179,14 @@ const RADIATION = {
                 let x = E(1e3).pow(b.pow(0.9))
                 return x
             },
-            desc(x) { return `時間速度軟限制延遲 ${format(x)}x` },
+            desc(x) { return `時間速度軟限制推遲 ${format(x)}x` },
         },{
             title: `元級等級加成`,
             eff(b) {
                 let x = E(1.025).pow(b)
                 return x
             },
-            desc(x) { return `元級等級延遲 ${format(x)}x` },
+            desc(x) { return `元級等級推遲 ${format(x)}x` },
         },{
             title: `X 射線加成`,
             eff(b) {
@@ -229,7 +229,7 @@ const RADIATION = {
                 let x = b.div(2).add(1).root(3)
                 return x
             },
-            desc(x) { return `黑洞公式軟限制延遲 ^${format(x)}` },
+            desc(x) { return `黑洞公式軟限制推遲 ^${format(x)}` },
         },
 
         /*

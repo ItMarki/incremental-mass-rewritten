@@ -127,7 +127,7 @@ const CHALS = {
     },
     getScaleName(i) {
         if (player.chal.comps[i].gte(1000)) return " 魔王"
-        if (player.chal.comps[i].gte(i==8?200:i>8?50:300)) return " 極難"
+        if (player.chal.comps[i].gte(i==8?200:i>8?50:300)) return " 超難"
         if (player.chal.comps[i].gte(i>8?10:75)) return " 困難"
         return ""
     },
@@ -233,7 +233,7 @@ const CHALS = {
     1: {
         title: "即時增幅",
         desc: "超級等級和超級質量升級在 25 個開始，超級時間速度在 50 個開始。",
-        reward: `超級等級延遲開始。基於完成次數，超級時間速度增幅更慢。`,
+        reward: `推遲超級等級。基於完成次數，超級時間速度增幅更慢。`,
         max: E(100),
         inc: E(5),
         pow: E(1.3),
@@ -243,7 +243,7 @@ const CHALS = {
             let tick = E(0.96).pow(x.root(2))
             return {rank: rank, tick: tick}
         },
-        effDesc(x) { return "超級等級延遲 "+format(x.rank,0)+" 個，超級時間速度的增幅弱 "+format(E(1).sub(x.tick).mul(100))+"%" },
+        effDesc(x) { return "超級等級推遲 "+format(x.rank,0)+" 個，超級時間速度的增幅弱 "+format(E(1).sub(x.tick).mul(100))+"%" },
     },
     2: {
         unl() { return player.chal.comps[1].gte(1) || player.atom.unl },
@@ -404,7 +404,7 @@ const CHALS = {
     },
     12: {
         unl() { return player.supernova.tree.includes("chal7") },
-        title: "原子衰變",
+        title: "原子的衰變",
         desc: "不能獲得原子和夸克。",
         reward: `完成次數免費給予輻射加成。<br><span class="yellow">首次完成時，解鎖新的重置層次！</span>`,
         max: E(100),

@@ -75,7 +75,7 @@ function addQCPresetAs() {
     let copied_mods = []
     for (let x = 0; x < QCs_len; x++) copied_mods.push(player.qu.qc.mods[x])
     player.qu.qc.presets.push({
-        p_name: "新預設模組",
+        p_name: "新預設組合",
         mods: copied_mods,
     })
     updateQCModPresets()
@@ -85,30 +85,30 @@ function saveQCPreset(x) {
     let copied_mods = []
     for (let x = 0; x < QCs_len; x++) copied_mods.push(player.qu.qc.mods[x])
     player.qu.qc.presets[x].mods = copied_mods
-    addNotify("已保存預設模組")
+    addNotify("已保存預設組合")
     updateQCModPresets()
 }
 
 function loadQCPreset(x) {
     player.qu.qc.mods = player.qu.qc.presets[x].mods
-    addNotify("已加載預設模組")
+    addNotify("已加載預設組合")
     updateQCModPresets()
 }
 
 function renameQCPreset(x) {
-    let renamed = prompt("輸入預設模組名稱")
+    let renamed = prompt("輸入預設組合名稱")
     player.qu.qc.presets[x].p_name = renamed
-    addNotify("已重命名預設模組")
+    addNotify("已重命名預設組合")
     updateQCModPresets()
 }
 
 function deleteQCPreset(x) {
-    if (confirm("你確定要刪除預設模組嗎？")) {
+    if (confirm("你確定要刪除預設組合嗎？")) {
         let represets = []
         for (let y = 0; y < player.qu.qc.presets.length; y++) if (x != y) represets.push(player.qu.qc.presets[y])
         player.qu.qc.presets = represets
     }
-    addNotify("已刪除預設模組")
+    addNotify("已刪除預設組合")
     updateQCModPresets()
 }
 

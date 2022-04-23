@@ -49,7 +49,7 @@ const ELEMENTS = {
             cost: E(2.5e12),
         },
         {
-            desc: `電子力加強原子力量獲得量。`,
+            desc: `電子力量加強原子力量獲得量。`,
             cost: E(1e15),
             effect() {
                 let x = player.atom?player.atom.powers[2].add(1).root(2):E(1)
@@ -59,7 +59,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x"+(x.gte('e1e4')?"<span class='soft'>（軟限制）</span>":"") },
         },
         {
-            desc: `質子力加強增強器力量。`,
+            desc: `質子力量加強增強器力量。`,
             cost: E(2.5e16),
             effect() {
                 let x = player.atom?player.atom.powers[0].max(1).log10().pow(0.8).div(50).add(1):E(1)
@@ -208,11 +208,11 @@ const ELEMENTS = {
             cost: E(1e97),
         },
         {
-            desc: `質子力的效果更強。`,
+            desc: `質子力量的效果更強。`,
             cost: E(1e100),
         },
         {
-            desc: `電子力的效果更強。每種粒子每秒獲得夸克數量的 10%。`,
+            desc: `電子力量的效果更強。每種粒子每秒獲得夸克數量的 10%。`,
             cost: E(1e107),
         },
         {
@@ -264,14 +264,14 @@ const ELEMENTS = {
             effDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
         },
         {
-            desc: `宇宙射線的免費時間速度適用於怒氣升級 7。`,
+            desc: `宇宙射線的免費時間速度適用於暴怒升級 7。`,
             cost: E(1e260),
             effect() {
                 let x = tmp.atom?tmp.atom.atomicEff:E(0)
                 if (hasElement(82)) x = x.mul(3)
                 return x.div(6).floor()
             },
-            effDesc(x) { return "怒氣升級 7 +"+format(x,0)+"" },
+            effDesc(x) { return "暴怒升級 7 +"+format(x,0)+"" },
         },
         {
             desc: `移除挑戰 2 和 6 的效果的軟限制。`,
@@ -412,7 +412,7 @@ const ELEMENTS = {
             cost: E('e1.5e5'),
         },
         {
-            desc: `每擁有一個超新星，極高級階延遲 3 階。`,
+            desc: `每擁有一個超新星，極高級階推遲 3 階。`,
             cost: E('e2.5e5'),
             effect() {
                 let x = player.supernova.times.mul(3)
@@ -446,7 +446,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `元級時間速度延遲 2x。`,
+            desc: `元級時間速度推遲 2x。`,
             cost: E('e4.8e6'),
         },
         {
@@ -458,13 +458,13 @@ const ELEMENTS = {
             cost: E('e6.9e7'),
         },
         {
-            desc: `超新星延遲黑洞公式的軟限制。`,
+            desc: `超新星推遲黑洞公式的軟限制。`,
             cost: E('e1.6e8'),
             effect() {
                 let x = player.supernova.times.add(1).root(4)
                 return x
             },
-            effDesc(x) { return "延遲 ^"+format(x) },
+            effDesc(x) { return "推遲 ^"+format(x) },
         },
         {
             desc: `層便宜 15%。`,
@@ -530,7 +530,7 @@ const ELEMENTS = {
             effDesc(x) { return "弱 "+formatReduction(x)},
         },
         {
-            desc: `增強器的軟限制延遲 3x，弱 10%。`,
+            desc: `增強器的軟限制推遲 3x，弱 10%。`,
             cost: E('e7.5e15'),
         },
     ],

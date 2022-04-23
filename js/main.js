@@ -494,7 +494,7 @@ const UPGS = {
         over(x,y) { player.main_upg_msg = [x,y] },
         reset() { player.main_upg_msg = [0,0] },
         1: {
-            title: "怒氣升級",
+            title: "暴怒升級",
             res: "暴怒點數",
             unl() { return player.rp.unl },
             can(x) { return player.rp.points.gte(this[x].cost) && !player.mainUpg.rp.includes(x) },
@@ -602,7 +602,7 @@ const UPGS = {
             },
             13: {
                 unl() { return player.chal.unl },
-                desc: "每擁有一個等級，質量軟限制延遲 3x。",
+                desc: "每擁有一個等級，質量軟限制推遲 3x。",
                 cost: E(1e180),
                 effect() {
                     let ret = E(3).pow(player.ranks.rank)
@@ -614,7 +614,7 @@ const UPGS = {
             },
             14: {
                 unl() { return player.atom.unl },
-                desc: "高級時間速度價格增幅延遲 50 個。",
+                desc: "高級時間速度價格增幅推遲 50 個。",
                 cost: E('e320'),
             },
             15: {
@@ -659,14 +659,14 @@ const UPGS = {
                 },
             },
             3: {
-                desc: "黑洞的質量延遲超級質量升級價格增幅。",
+                desc: "黑洞的質量推遲超級質量升級價格增幅。",
                 cost: E(100),
                 effect() {
                     let ret = player.bh.mass.max(1).log10().pow(1.5).softcap(100,1/3,0).floor()
                     return ret.min(400)
                 },
                 effDesc(x=this.effect()) {
-                    return "延遲 +"+format(x,0)+(x.gte(100)?"<span class='soft'>（軟限制）</span>":"")
+                    return "推遲 +"+format(x,0)+(x.gte(100)?"<span class='soft'>（軟限制）</span>":"")
                 },
             },
             4: {
@@ -690,14 +690,14 @@ const UPGS = {
             },
             7: {
                 unl() { return player.chal.unl },
-                desc: "黑洞質量延遲質量軟限制。",
+                desc: "黑洞質量推遲質量軟限制。",
                 cost: E(1e13),
                 effect() {
                     let ret = player.bh.mass.add(1).root(3)
                     return ret
                 },
                 effDesc(x=this.effect()) {
-                    return "延遲 "+format(x)+"x"
+                    return "推遲 "+format(x)+"x"
                 },
             },
             8: {
@@ -707,7 +707,7 @@ const UPGS = {
             },
             9: {
                 unl() { return player.chal.unl },
-                desc: "未花費暗物質延遲增強器效果的軟限制。",
+                desc: "未花費暗物質推遲增強器效果的軟限制。",
                 cost: E(1e27),
                 effect() {
                     let ret = player.bh.dm.max(1).log10().pow(0.5)
@@ -806,18 +806,18 @@ const UPGS = {
                 },
             },
             5: {
-                desc: "你可以自動升層。超級階延遲 10 個。",
+                desc: "你可以自動升層。超級階推遲 10 個。",
                 cost: E(1e16),
             },
             6: {
-                desc: "每秒獲得重置時獲得的暗物質的 100%。原子力量延遲黑洞質量軟限制。",
+                desc: "每秒獲得重置時獲得的暗物質的 100%。原子力量推遲黑洞質量軟限制。",
                 cost: E(1e18),
                 effect() {
                     let ret = player.atom.atomic.add(1).pow(0.5)
                     return ret
                 },
                 effDesc(x=this.effect()) {
-                    return "延遲 "+format(x)+"x"
+                    return "推遲 "+format(x)+"x"
                 },
             },
             7: {
@@ -847,14 +847,14 @@ const UPGS = {
                 cost: E(2e44),
             },
             10: {
-                desc: "階要求減半。階數延遲高級等級價格增幅。",
+                desc: "階要求減半。階數推遲高級等級價格增幅。",
                 cost: E(5e47),
                 effect() {
                     let ret = player.ranks.tier.mul(2).floor()
                     return ret
                 },
                 effDesc(x=this.effect()) {
-                    return "延遲 +"+format(x,0)
+                    return "推遲 +"+format(x,0)
                 },
             },
             11: {

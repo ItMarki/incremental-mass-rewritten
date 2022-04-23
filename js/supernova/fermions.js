@@ -190,7 +190,7 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `元級時間速度延遲 ${format(x)}x`
+                    return `元級時間速度推遲 ${format(x)}x`
                 },
                 inc: "時間速度效果",
                 cons: "禁用挑戰",
@@ -220,7 +220,7 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `塌縮恆星獲得量的軟限制得到 ^${format(x)} 的延遲`+(x.gte(1.5)?"<span class='soft'>（軟限制）</span>":"")
+                    return `塌縮恆星獲得量的軟限制推遲 ^${format(x)}`+(x.gte(1.5)?"<span class='soft'>（軟限制）</span>":"")
                 },
                 inc: "夸克",
                 cons: "原子獲得量的指數 ^0.625",
