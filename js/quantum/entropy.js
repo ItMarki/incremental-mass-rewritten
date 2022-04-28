@@ -33,7 +33,7 @@ const ENTROPY = {
     },
     rewards: [
         {
-            title: "熵加成",
+            title: "熵倍數",
 
             start: E(100),
             inc: E(10),
@@ -77,6 +77,17 @@ const ENTROPY = {
                 return [x,y]
             },
             desc(x) { return `時間速度對黑洞壓縮器和宇宙射線力量給予 <b>^${x[0].format(2)}</b> 的加成。<br>目前：<b>${x[1].format()}x</b>` },
+        },{
+            title: "熵加成",
+
+            start: E(250000),
+            inc: E(2),
+
+            eff(i) {
+                let x = i.div(20).add(1)
+                return x
+            },
+            desc(x) { return `額外質量升級、時間速度、黑洞壓縮器和宇宙射線 <b>x${x.format(2)}</b>。` },
         },
 
         /*

@@ -90,6 +90,7 @@ function saveQCPreset(x) {
 }
 
 function loadQCPreset(x) {
+    if (QCs.active()) return
     player.qu.qc.mods = player.qu.qc.presets[x].mods
     addNotify("已加載預設組合")
     updateQCModPresets()
