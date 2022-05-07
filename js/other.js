@@ -37,7 +37,7 @@ const POPUP_GROUPS = {
         M☉（太陽質量）：333,054 M⊕ = 1.989e33 g<br>
         MMWG（銀河系質量）：1.5e12 M☉ = 2.9835e45 g<br>
         uni（宇宙質量）：50,276,520,864 MMWG = 1.5e56 g<br>
-        mlt（多元宙質量）：1e1e9 uni<br>
+        mlt（多元宇宙質量）：1e1e9 uni<br>
         `,
     },
     fonts: {

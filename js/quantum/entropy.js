@@ -88,6 +88,17 @@ const ENTROPY = {
                 return x
             },
             desc(x) { return `額外質量升級、時間速度、黑洞壓縮器和宇宙射線 <b>x${x.format(2)}</b>。` },
+        },{
+            title: "熵增幅",
+
+            start: E(1e7),
+            inc: E(10),
+
+            eff(i) {
+                let x = i.root(2).div(10).add(1).pow(-1)
+                return x
+            },
+            desc(x) { return `在元級增幅前，所有超新星前增幅弱 ${formatReduction(x)}（五級層除外）。` },
         },
 
         /*

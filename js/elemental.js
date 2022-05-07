@@ -533,6 +533,10 @@ const ELEMENTS = {
             desc: `增強器的軟限制推遲 3x，弱 10%。`,
             cost: E('e7.5e15'),
         },
+        {
+            desc: `時間速度力量軟限制推遲^2，增幅弱 50%。`,
+            cost: E('e2e16'),
+        },
     ],
     /*
     {
@@ -562,7 +566,7 @@ const ELEMENTS = {
             if (tmp.radiation.unl) u += 10
         }
         if (PRIM.unl()) u += 3
-        if (hasTree('unl3')) u += 2
+        if (hasTree('unl3')) u += 3
 
         return u
     },
