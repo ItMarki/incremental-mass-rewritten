@@ -11,26 +11,26 @@ const TREE_IDS = [
         ['c'],
         ['qol1','','','','qu_qol1',''],
         ['chal1'],
-        ['','bs1','','qf1','','rad1'],
+        ['bs4','bs1','','qf1','','rad1'],
         ['qu0'],
     ],[
         ['s1','m1','rp1','bh1','sn1'],
         ['qol2','qol3','qol4','qu_qol2','qu_qol3','qu_qol4','qu_qol5','qu_qol6'],
         ['chal2','chal4a','chal4b','chal3'],
-        ['bs4','bs2','fn1','bs3','qf2','qf3','rad2','rad3'],
+        ['bs5','bs2','fn1','bs3','qf2','qf3','rad2','rad3'],
         ['qu1','qu2','qu3'],
     ],[
         ['s2','m2','t1','d1','bh2','gr1','sn2'],
         ['qol5','qol6','qol7','','','qu_qol7','',''],
         ['chal4','chal7a'],
         ['fn4','fn3','fn9','fn2','fn5','qf4','rad4','rad5'],
-        ['qu4'],
+        ['prim1','qu4','prim2'],
     ],[
         ['s3','m3','gr2','sn3'],
         ['qol9','unl1','qol8','unl2','unl3','qu_qol8','qu_qol9'],
         ['chal5','chal6','chal7'],
         ['fn12','fn11','fn6','fn10','rad6',""],
-        ['prim1','qu5','prim2'],
+        ['qu5','qc2'],
     ],[
         ['s4','sn5','sn4'],
         [],
@@ -42,7 +42,7 @@ const TREE_IDS = [
         [],
         [],
         [],
-        ['prim3','qu8'],
+        ['prim3','qu9','qu8'],
     ],
 ]
 
@@ -410,6 +410,12 @@ const TREE_UPGS = {
             desc: `Z 玻色子獲得量 ^1.5。`,
             cost: E(1e24),
         },
+        bs5: {
+            unl() { return player.qu.en.unl },
+            branch: ["bs4"],
+            desc: `Z 玻色子也加強黑洞壓縮器和宇宙射線力量。`,
+            cost: E('e1100'),
+        },
         fn1: {
             unl() { return player.supernova.fermions.unl },
             branch: ["bs1"],
@@ -653,6 +659,18 @@ const TREE_UPGS = {
             },
             effDesc(x) { return format(x,1)+"x" },
         },
+        qu9: {
+            unl() { return player.qu.en.unl },
+            qf: true,
+            branch: ['qc1'],
+            desc: `原始素粒子總數提升量子化次數。`,
+            cost: E(1e24),
+            effect() {
+                let x = player.qu.prim.theorems.add(1)
+                return x
+            },
+            effDesc(x) { return format(x,0)+"x" },
+        },
         qu_qol1: {
             qf: true,
             unl() { return quUnl() },
@@ -767,6 +785,15 @@ const TREE_UPGS = {
                 return x
             },
             effDesc(x) { return "推遲 ^"+format(x)},
+        },
+        qc2: {
+            unl() { return player.qu.en.unl },
+            qf: true,
+            branch: ['qc1'],
+            req() { return tmp.qu.qc_s >= 70 && player.mass.gte(uni('ee5')) && QCs.active() },
+            reqDesc() { return `在 70 個量子碎片的模組組合中到達 ${formatMass(uni('ee5'))} 質量。` },
+            desc: `某種挑戰到達 10 個時，額外獲得 1 個碎片。`,
+            cost: E(1e27),
         },
 
         // Other

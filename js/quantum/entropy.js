@@ -85,9 +85,9 @@ const ENTROPY = {
 
             eff(i) {
                 let x = i.div(20).add(1)
-                return x
+                return x.softcap(2,0.5,0)
             },
-            desc(x) { return `額外質量升級、時間速度、黑洞壓縮器和宇宙射線 <b>x${x.format(2)}</b>。` },
+            desc(x) { return `額外質量升級、時間速度、黑洞壓縮器和宇宙射線 <b>x${x.format(2)}</b>。${x.softcapHTML(2)}` },
         },{
             title: "熵增幅",
 
@@ -98,7 +98,7 @@ const ENTROPY = {
                 let x = i.root(2).div(10).add(1).pow(-1)
                 return x
             },
-            desc(x) { return `在元級增幅前，所有超新星前增幅弱 ${formatReduction(x)}（五級層除外）。` },
+            desc(x) { return `在元級增幅前，所有超新星前增幅弱 <b>${formatReduction(x)}</b>（五級層除外）。` },
         },
 
         /*

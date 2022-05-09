@@ -130,7 +130,7 @@ function updateStarsHTML() {
     tmp.el.star_btn.setDisplay(hasTree("s4") || player.stars.unls < 5)
     tmp.el.star_btn.setHTML((player.stars.unls < 5 || !hasTree("s4"))
     ? `解鎖一類新的恆星，需要 ${format(tmp.stars.generator_req)} 夸克`
-    : `提升所有恆星資源的獲得量，需要 ${format(tmp.stars.generator_boost_req)} 夸克<br>目前：${format(tmp.stars.generator_boost_eff)}x`)
+    : `提升所有恆星資源的獲得量，需要 ${format(tmp.stars.generator_boost_req)} 夸克<br>底數：${format(tmp.stars.generator_boost_base)}x<br>目前：${format(tmp.stars.generator_boost_eff)}x`)
 
     tmp.el.star_btn.setClasses({btn: true, locked: !player.atom.quarks.gte(!hasTree("s4")||player.stars.unls < 5?tmp.stars.generator_req:tmp.stars.generator_boost_req)})
 

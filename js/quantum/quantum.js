@@ -14,13 +14,14 @@ const QUANTUM = {
     gainTimes() {
         let x = E(1)
         if (hasTree("qu7")) x = x.mul(treeEff("qu7"))
+        if (hasTree("qu9")) x = x.mul(treeEff("qu9"))
         return x
     },
     enter(auto=false,force=false) {
         if (tmp.qu.gain.gte(1) || force) {
             if (player.confirms.qu&&!auto&&!force) if (confirm("你確定要量子化嗎？量子化會重置生活質素升級以外的所有功能。")?!confirm("你確定嗎？？？"):true) return
             if (QCs.active()) {
-                player.qu.qc.shard = tmp.qu.qc_s
+                player.qu.qc.shard = tmp.qu.qc_s+tmp.qu.qc_s_bouns
                 player.qu.qc.active = false
             }
             if (player.qu.times.gte(10) || force) {
@@ -129,11 +130,11 @@ const QUANTUM = {
     },
     mils: [
         [E(1), `你開始時解鎖生活質素升級（qol1-6）、玻色子和費米子。`],
-        [E(2), `中子樹的量子前部分的所有升級都移除要求；量子前部分的運行速度增至 10x。`],
+        [E(2), `中子樹的量子前部分的所有升級都移除要求；量子前全局運行速度增至 10x。`],
         [E(3), `你開始時解鎖中子樹的量子前挑戰部分以及升級 [c] 和 [qol7]。`],
         [E(5), `你開始時解鎖生活質素升級（qol8-9 和 unl1）和輻射。`],
         [E(6), `量子泡沫獲得量翻倍。`],
-        [E(8), `量子前部分的運行速度稍微加強藍圖粒子和賦色子的獲得量。`],
+        [E(8), `量子前全局運行速度稍微加強藍圖粒子和賦色子的獲得量。`],
         [E(10), `超新星恆星獲得量乘以量子化次數（最高 1e10）；解鎖量子自動化。`],
     ],
     auto: {
@@ -259,8 +260,13 @@ function updateQuantumTemp() {
 }
 
 function updateQuantumHTML() {
-    tmp.el.qu_div.setDisplay(quUnl() || player.chal.comps[12].gte(1))
-    tmp.el.quAmt.setHTML(format(player.qu.points,0)+"<br>（+"+format(tmp.qu.gain,0)+"）")
+    let unl = quUnl() || player.chal.comps[12].gte(1)
+    tmp.el.qu_div.setDisplay(unl)
+    if (unl) tmp.el.quAmt.setHTML(format(player.qu.points,0)+"<br>（+"+format(tmp.qu.gain,0)+"）")
+
+    unl = quUnl()
+    tmp.el.gs1_div.setDisplay(unl)
+    if (unl) tmp.el.preQGSpeed.setHTML(formatMult(tmp.preQUGlobalSpeed))
 
     if (tmp.tab == 0 && tmp.stab[0] == 4) {
         tmp.el.bpAmt.setTxt(format(player.qu.bp,1)+" "+formatGain(player.qu.bp,tmp.qu.bpGain))
