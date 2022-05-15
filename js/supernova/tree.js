@@ -27,7 +27,7 @@ const TREE_IDS = [
         ['prim3','prim2','prim1','qu4','qc1','qc2',''],
     ],[
         ['s3','m3','gr2','sn3'],
-        ['qol9','unl1','qol8','unl2','unl3','qu_qol8','qu_qol9'],
+        ['qol9','unl1','qol8','unl2','unl3','qu_qol8','qu_qol9','unl4'],
         ['chal5','chal6','chal7'],
         ['fn12','fn11','fn6','fn10','rad6',""],
         ['qu5'],
@@ -679,7 +679,7 @@ const TREE_UPGS = {
             desc: `藍圖粒子每多一個數量級，希格斯玻色子的效果強 3.3%。`,
             cost: E(1e32),
             effect() {
-                let x = E(1.0333).pow(player.qu.bp.add(1).log10())
+                let x = E(1.0333).pow(player.qu.bp.add(1).log10().softcap(70,0.5,0))
                 return x
             },
             effDesc(x) { return format(x)+"x" },
@@ -836,13 +836,21 @@ const TREE_UPGS = {
             desc: `解鎖量子挑戰。`,
             cost: E(1e6),
         },
+        unl4: {
+            qf: true,
+            branch: ["qu_qol9"],
+            req() { return player.qu.qc.shard >= 66 },
+            reqDesc: `66 個量子碎片。`,
+            desc: `解鎖大撕裂。`,
+            cost: E(1e42),
+        },
         /*
         x: {
             unl() { return true },
             req() { return true },
             reqDesc: ``,
             desc: `Placeholder.`,
-            cost: E(1/0),
+            cost: EINF,
             effect() {
                 let x = E(1)
                 return x

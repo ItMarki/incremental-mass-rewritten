@@ -1,5 +1,7 @@
 function E(x){return new Decimal(x)};
 
+const EINF = Decimal.dInf
+
 function uni(x) { return E(1.5e56).mul(x) }
 function mlt(x) { return uni("ee9").pow(x) }
 
@@ -112,6 +114,7 @@ function calc(dt, dt_offline) {
 
         if (hasTree("qol6")) CHALS.exit(true)
         if (CHALS.inChal(0)) {
+
             if (hasTree("qu_qol3")) for (let x = 1; x <= 4; x++) player.chal.comps[x] = player.chal.comps[x].max(tmp.chal.bulk[x].min(tmp.chal.max[x]))
             if (hasTree("qu_qol5")) for (let x = 5; x <= 8; x++) player.chal.comps[x] = player.chal.comps[x].max(tmp.chal.bulk[x].min(tmp.chal.max[x]))
         }
@@ -344,7 +347,7 @@ function load(x){
 function exporty() {
     let str = btoa(JSON.stringify(player))
     if (findNaN(str, true)) {
-        addNotify("由於發生NaN錯誤，遊戲不能導出")
+        addNotify("由於發生 NaN 錯誤，遊戲不能導出")
         return
     }
     save();
@@ -359,7 +362,7 @@ function exporty() {
 function export_copy() {
     let str = btoa(JSON.stringify(player))
     if (findNaN(str, true)) {
-        addNotify("由於發生NaN錯誤，遊戲不能導出")
+        addNotify("由於發生 NaN 錯誤，遊戲不能導出")
         return
     }
 	
@@ -392,14 +395,15 @@ function importy() {
         try {
             setTimeout(_=>{
                 if (findNaN(loadgame, true)) {
-                    addNotify("由於發生NaN錯誤，遊戲不能導出")
+                    addNotify("由於發生 NaN 錯誤，遊戲不能導出")
                     return
                 }
                 load(loadgame)
                 save()
                 resetTemp()
                 loadGame(false)
-            }, 200)
+				location.reload()
+			}, 200)
         } catch (error) {
             addNotify("導入時發生錯誤")
             player = keep
@@ -450,7 +454,7 @@ function loadGame(start=true, gotNaN=false) {
 
 function checkNaN() {
     if (findNaN(player)) {
-        addNotify("遊戲資料發生NaN錯誤")
+        addNotify("遊戲資料發生 NaN 錯誤")
 
         resetTemp()
         loadGame(false, true)

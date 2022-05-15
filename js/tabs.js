@@ -34,12 +34,14 @@ const TABS = {
         ],
         3: [
             { id: "挑戰" },
-            { id: "量子挑戰", unl() { return hasTree("unl3") } },
+            { id: "量子挑戰", unl() { return hasTree("unl3") }, style: "qu" },
+            //{ id: "大撕裂", unl() { return hasTree("unl4") }, style: "qu" },
         ],
         4: [
             { id: "粒子" },
             { id: "元素", unl() { return player.chal.comps[7].gte(16) || player.supernova.times.gte(1) } },
             { id: "質量膨脹", unl() { return MASS_DILATION.unlocked() }, style: "dilation" },
+            { id: "打破膨脹", unl() { return player.qu.rip.first }, style: "dilation" },
         ],
         5: [
             { id: "中子樹" },

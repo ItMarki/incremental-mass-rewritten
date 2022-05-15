@@ -22,6 +22,7 @@
     <script src="js/saves.js"></script>
     <script src="js/challenges.js"></script>
 
+    <script src="js/quantum/big_rip.js"></script>
     <script src="js/quantum/entropy.js"></script>
     <script src="js/quantum/qc.js"></script>
     <script src="js/quantum/primordium.js"></script>
@@ -47,6 +48,7 @@
 
     <script src="js/secret.js"></script>
 
+    <script src="js/upgrades.js"></script>
     <script src="js/main.js"></script>
 
     <title>增量質量（重寫版）</title>
@@ -186,6 +188,9 @@
                     </div><div class="resources sml orange" id="gs1_div">
                         <div tooltip="量子前全局運行速度" t-size="medium"><img class="res_img" src="images/preQGSpeed.png"></div>
                         <span style="margin-left: 5px; text-align: left;" id="preQGSpeed">X</span>
+                    </div><div class="resources sml light_green" id="br_div">
+                        <div tooltip="死亡碎片" t-size="small"><img class="res_img" src="images/br.png" onclick="BIG_RIP.rip()" onmousemove="FORMS.reset_msg.set('br')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
+                        <span style="margin-left: 5px; text-align: left;" id="brAmt">X</span>
                     </div>
                 </div>
             </div>
@@ -357,6 +362,8 @@
                 <div class="table_center">
                     <div id="md_upg_table" class="table_center" style="width: 1000px;"></div>
                 </div>
+            </div><div id="stab_frame4_3">
+                敬請期待……
             </div>
         </div><div id="tab_frame6">
             <div id="stab_frame6_0">
@@ -400,7 +407,7 @@
             <button class="btn" onclick="exporty()">導出</button>
             <button class="btn" onclick="export_copy()">導出至剪貼板</button>
             <button class="btn" onclick="importy()">導入</button>
-            <button class="btn" onclick="window.open('https://discord.gg/Ekp8FsSwzR')">加入Discord服務器</button>
+            <button class="btn" onclick="window.open('https://discord.gg/Ekp8FsSwzR')">加入 Discord 服務器</button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.help)">幫助</button><br>
             <button class="btn" onclick="turnOffline()">離線進度：<span id="offline_active">開啟</span></button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.fonts)">字體</button>
@@ -410,10 +417,13 @@
             <h2>確認設定</h2><br>
             <div id="confirm_table" class="table_center"></div>
             <br><br>
-            增量質量（重寫版）v0.5.2.3 part 2——由 MrRedShark77 製作，ItMarki 翻譯<br>
+            增量質量（重寫版）v0.5.3——由 MrRedShark77 製作，ItMarki 翻譯<br>
             本遊戲受到 <ruby>Distance Incremental<rt>距離增量</rt></ruby> 和 <ruby>Synergism<rt>協同放置</rt></ruby> 的啟發製作<br><br><br>
             提示 1：把光標放在標籤上方的圖片上，即可查看描述……<br><br>
-            總遊玩時間：<span id="total_time">X</span>
+            總遊玩時間：<span id="total_time">X</span><br><br>
+            <a href="https://www.easycounter.com/">
+            <img src="https://www.easycounter.com/counter.php?mrredshark77"
+            border="0" alt="статистика посещения интернет"></a>
             
             <div style="position: absolute; bottom: 35px; right: 35px;">
                 <img id="omega_badge" src="images/omega.png">

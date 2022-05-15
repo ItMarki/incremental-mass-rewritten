@@ -131,6 +131,10 @@ entropy - 熵
 enthalpy - 焓
 hawking radiation - 霍金輻射
 
+6.6. BIG RIP
+big rip - 大撕裂
+death shard - 死亡碎片
+
 7. TERMS IN INCREMENTAL GAMES
 cost - 價格
 upgrade - 升級

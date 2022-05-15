@@ -31,7 +31,7 @@ const ELEMENTS = {
         '鍆','鍩','鐒','鑪','𨧀（⿰金杜）','𨭎（⿰金喜）','𨨏（⿰金波）','𨭆（⿰金黑）','䥑（⿰金麥）','鐽',
         '錀','鎶','鉨','鈇','鏌','鉝','鿬（⿰石田）','鿫（⿹气奥）'
     ],
-    canBuy(x) { return player.atom.quarks.gte(this.upgs[x].cost) && !player.atom.elements.includes(x) },
+    canBuy(x) { return player.atom.quarks.gte(this.upgs[x].cost) && !hasElement(x) && (player.qu.rip.active ? true : x <= 86) },
     buyUpg(x) {
         if (this.canBuy(x)) {
             player.atom.quarks = player.atom.quarks.sub(this.upgs[x].cost)
@@ -78,7 +78,9 @@ const ELEMENTS = {
                 let x = E(0)
                 for (let i = 1; i <= CHALS.cols; i++) x = x.add(player.chal.comps[i].mul(i>4?2:1))
                 if (player.atom.elements.includes(7)) x = x.mul(tmp.elements.effect[7])
-                return x.div(100).add(1).max(1)
+                if (hasElement(87)) x = E(1.01).pow(x).root(3)
+                else x = x.div(100).add(1).max(1)
+                return x
             },
             effDesc(x) { return format(x)+"x" },
         },
@@ -87,7 +89,7 @@ const ELEMENTS = {
             cost: E(1e20),
             effect() {
                 let x = E(player.atom.elements.length+1)
-                if (player.atom.elements.includes(11)) x = x.pow(2)
+                if (hasElement(11) && !hasElement(87)) x = x.pow(2)
                 return x
             },
             effDesc(x) { return format(x)+"x" },
@@ -537,11 +539,139 @@ const ELEMENTS = {
             desc: `時間速度力量軟限制推遲^2，增幅弱 50%。`,
             cost: E('e2e16'),
         },
+        {
+            desc: `大幅增強碳-6 的效果，但是鈉-11 失效。`,
+            cost: E('e150'),
+        },
+        {
+            desc: `所有時間速度增幅推遲 100x（在應用第 8 量子挑戰模組後）。`,
+            cost: E('e500'),
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
+        {
+            desc: `未定。`,
+            cost: EINF,
+        },
     ],
     /*
     {
-        desc: `Placeholder.`,
-        cost: E(1/0),
+        desc: `未定。`,
+        cost: EINF,
         effect() {
             let x = E(1)
             return x
@@ -567,6 +697,7 @@ const ELEMENTS = {
         }
         if (PRIM.unl()) u += 3
         if (hasTree('unl3')) u += 3
+        if (player.qu.rip.first) u += 32
 
         return u
     },
@@ -612,7 +743,7 @@ function updateElementsHTML() {
         if (upg) {
             upg.setVisible(x <= tmp.elements.unl_length)
             if (x <= tmp.elements.unl_length) {
-                upg.setClasses({elements: true, locked: !ELEMENTS.canBuy(x), bought: hasElement(x)})
+                 upg.setClasses({elements: true, locked: !ELEMENTS.canBuy(x), bought: hasElement(x), br: x > 86})
             }
         }
     }
@@ -624,7 +755,7 @@ function updateElementsTemp() {
         choosed: 0,
     }
     if (!tmp.elements.effect) tmp.elements.effect = [null]
-    for (let x = 1; x <= tmp.elements.upg_length; x++) if (ELEMENTS.upgs[x].effect) {
+    for (let x = tmp.elements.upg_length; x >= 1; x--) if (ELEMENTS.upgs[x].effect) {
         tmp.elements.effect[x] = ELEMENTS.upgs[x].effect()
     }
     tmp.elements.unl_length = ELEMENTS.getUnlLength()
