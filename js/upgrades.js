@@ -2,11 +2,9 @@ const UPGS = {
     mass: {
         cols: 3,
         temp() {
-            if (!tmp.upgs.mass) tmp.upgs.mass = {}
             for (let x = this.cols; x >= 1; x--) {
                 let d = tmp.upgs.mass
                 if (!d[x]) d[x] = {}
-                let data = this.getData(x)
                 d[x].cost = data.cost
                 d[x].bulk = data.bulk
                 
@@ -159,11 +157,9 @@ const UPGS = {
     },
     main: {
         temp() {
-            if (!tmp.upgs.main) tmp.upgs.main = {}
-            for (let x = 1; x <= UPGS.main.cols; x++) {
-                if (!tmp.upgs.main[x]) tmp.upgs.main[x] = {}
-                for (let y = 1; y <= UPGS.main[x].lens; y++) {
-                    let u = UPGS.main[x][y]
+            for (let x = 1; x <= this.cols; x++) {
+                for (let y = 1; y <= this[x].lens; y++) {
+                    let u = this[x][y]
                     if (u.effDesc) tmp.upgs.main[x][y] = { effect: u.effect(), effDesc: u.effDesc() }
                 }
             }
@@ -574,9 +570,9 @@ const UPGS = {
                 }
             },
             auto_unl() { return false },
-            lens: 3,
+            lens: 4,
             1: {
-                desc: `開始時解鎖氫-1。`,
+                desc: `開始大撕裂時解鎖氫-1。`,
                 cost: E(5),
             },
             2: {
@@ -591,6 +587,10 @@ const UPGS = {
                     return x
                 },
                 effDesc(x=this.effect()) { return "^"+format(x) },
+            },
+            4: {
+                desc: `開始大撕裂時各費米子解鎖 2 階。`,
+                cost: E(250),
             },
 		},
     },
@@ -609,3 +609,6 @@ const UPGS = {
     },
 },
 */
+
+function hasUpgrade(id,x) { return player.mainUpg[id].includes(x) }
+function hasUpgEffect(id,x,def=E(1)) { return tmp.upgs.main[id][x]||def }

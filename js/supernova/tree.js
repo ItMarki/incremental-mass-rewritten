@@ -30,13 +30,13 @@ const TREE_IDS = [
         ['qol9','unl1','qol8','unl2','unl3','qu_qol8','qu_qol9','unl4'],
         ['chal5','chal6','chal7'],
         ['fn12','fn11','fn6','fn10','rad6',""],
-        ['qu5'],
+        ['en1','qu5',''],
     ],[
         ['s4','sn5','sn4'],
         [],
         [],
         ['fn7','fn8'],
-        ['qu6','qu7','qu8','qu9','qu10'],
+        ['qu6','qu7','qu8','qu9','qu10','qu11'],
     ],[
         [],
         [],
@@ -684,6 +684,12 @@ const TREE_UPGS = {
             },
             effDesc(x) { return format(x)+"x" },
         },
+        qu11: {
+            qf: true,
+            branch: ['qu10'],
+            desc: `量子泡沫獲得量公式更好。`,
+            cost: E(1e43),
+        },
         qu_qol1: {
             qf: true,
             unl() { return quUnl() },
@@ -808,6 +814,13 @@ const TREE_UPGS = {
             reqDesc() { return `在 70 個量子碎片的模組組合中到達 ${formatMass(uni('ee5'))} 質量。` },
             desc: `某種量子挑戰到達 10 個時，額外獲得 1 個碎片。`,
             cost: E(1e27),
+        },
+        en1: {
+            unl() { return player.qu.rip.first },
+            qf: true,
+            branch: ['qu5'],
+            desc: `蒸發頻率和黑洞質量而獲得的資源快多一倍，其效果也更強。`,
+            cost: E(1e55),
         },
 
         // Other

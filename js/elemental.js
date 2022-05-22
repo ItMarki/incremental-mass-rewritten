@@ -548,8 +548,13 @@ const ELEMENTS = {
             cost: E('e500'),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `黑洞質量效果稍微加強自己。`,
+            cost: E('e1100'),
+            effect() {
+                let x = player.bh.mass.add(1).log10().add(1).log10().mul(1.25).add(1).pow(player.qu.rip.active?2:0.4)
+                return x
+            },
+            effDesc(x) { return "^"+x.format() },
         },
         {
             desc: `未定。`,
