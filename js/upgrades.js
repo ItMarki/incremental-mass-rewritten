@@ -570,7 +570,7 @@ const UPGS = {
                 }
             },
             auto_unl() { return false },
-            lens: 4,
+            lens: 8,
             1: {
                 desc: `開始大撕裂時解鎖氫-1。`,
                 cost: E(5),
@@ -592,6 +592,27 @@ const UPGS = {
                 desc: `開始大撕裂時各費米子解鎖 2 階。`,
                 cost: E(250),
             },
+            5: {
+                desc: `將恆星提升器的初始價格減少到 ^0.1。死亡碎片加強恆星提升器的底數。`,
+                cost: E(2500),
+                effect() {
+                    let x = player.qu.rip.amt.add(1).log10().add(1).pow(3)
+                    return x
+                },
+                effDesc(x=this.effect()) { return "x"+format(x) },
+            },
+            6: {
+                desc: `開始時解鎖所有輻射功能。`,
+                cost: E(15000),
+            },
+            7: {
+                desc: `大撕裂中，鈾砹混合體強一倍。`,
+                cost: E(100000),
+            },
+            8: {
+                desc: `每秒獲得重置時獲得的量子泡沫和死亡碎片的 10%`,
+                cost: E(750000),
+            },
 		},
     },
 }
@@ -611,4 +632,4 @@ const UPGS = {
 */
 
 function hasUpgrade(id,x) { return player.mainUpg[id].includes(x) }
-function hasUpgEffect(id,x,def=E(1)) { return tmp.upgs.main[id][x]||def }
+function upgEffect(id,x,def=E(1)) { return tmp.upgs.main[id][x]?tmp.upgs.main[id][x].effect:def } 

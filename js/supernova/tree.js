@@ -28,9 +28,9 @@ const TREE_IDS = [
     ],[
         ['s3','m3','gr2','sn3'],
         ['qol9','unl1','qol8','unl2','unl3','qu_qol8','qu_qol9','unl4'],
-        ['chal5','chal6','chal7'],
+        ['chal5','chal6','chal7','chal8'],
         ['fn12','fn11','fn6','fn10','rad6',""],
-        ['en1','qu5',''],
+        ['en1','qu5','br1'],
     ],[
         ['s4','sn5','sn4'],
         [],
@@ -350,8 +350,14 @@ const TREE_UPGS = {
         chal7a: {
             unl() { return hasTree("unl3") },
             branch: ["chal7"],
-            desc: `第 12 挑戰的效果更強。`,
+            desc: `第 12 個挑戰的效果更強。`,
             cost: E('e900'),
+        },
+        chal8: {
+            unl() { return player.qu.rip.first },
+            branch: ["chal7"],
+            desc: `第 9 至 12 個挑戰的完成上限增加 200 次。`,
+            cost: E('e35000'),
         },
         gr1: {
             branch: ["bh1"],
@@ -481,7 +487,7 @@ const TREE_UPGS = {
             unl() { return PRIM.unl() },
             branch: ["fn5"],
             req() { return player.atom.points.gte("e1.5e8") && FERMIONS.onActive("10") && CHALS.inChal(9) },
-            reqDesc() { return `在 [電子] 和第 9 挑戰中到達 ${format("e1.5e8")} 原子。` },
+            reqDesc() { return `在 [電子] 和第 9 個挑戰中到達 ${format("e1.5e8")} 原子。` },
             desc: `[電子] 不再有最高階，而且大幅增強它的效果。`,
             cost: E('e600'),
         },
@@ -811,7 +817,7 @@ const TREE_UPGS = {
             qf: true,
             branch: ['qc1'],
             req() { return tmp.qu.qc_s >= 70 && player.mass.gte(uni('ee5')) && QCs.active() },
-            reqDesc() { return `在 70 個量子碎片的模組組合中到達 ${formatMass(uni('ee5'))} 質量。` },
+            reqDesc() { return `在 70 個量子碎片的模組組合中到達 ${formatMass(uni('ee5'))} 質量（獎勵適用前）。` },
             desc: `某種量子挑戰到達 10 個時，額外獲得 1 個碎片。`,
             cost: E(1e27),
         },
@@ -821,6 +827,20 @@ const TREE_UPGS = {
             branch: ['qu5'],
             desc: `蒸發頻率和黑洞質量而獲得的資源快多一倍，其效果也更強。`,
             cost: E(1e55),
+        },
+        br1: {
+            unl() { return player.qu.rip.first },
+            qf: true,
+            branch: ['qu5'],
+            req() { return tmp.qu.qc_s >= 76 && player.mass.gte(uni('e7500')) && QCs.active() },
+            reqDesc() { return `在 76 個量子碎片的模組組合中得到 ${formatMass(uni('e7500'))} 質量（獎勵適用前）。` },
+            desc: `量子碎片提升死亡碎片獲得量。`,
+            cost: E(1e58),
+            effect() {
+                let x = (player.qu.qc.shard+1)**0.5
+                return x
+            },
+            effDesc(x) { return "x"+format(x) },
         },
 
         // Other

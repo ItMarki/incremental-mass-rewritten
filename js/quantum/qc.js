@@ -72,10 +72,15 @@ const QCs = {
 const QCs_len = 8
 
 function addQCPresetAs() {
+    if (player.qu.qc.presets.length >= 5) {
+        addNotify("由於預設組合已到達最大數量，你不能新建預設組合")
+        return
+    }
+
     let copied_mods = []
     for (let x = 0; x < QCs_len; x++) copied_mods.push(player.qu.qc.mods[x])
     player.qu.qc.presets.push({
-        p_name: "新預設組合",
+        p_name: "新建預設組合",
         mods: copied_mods,
     })
     updateQCModPresets()

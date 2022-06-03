@@ -31,7 +31,7 @@ const ELEMENTS = {
         '鍆','鍩','鐒','鑪','𨧀（⿰金杜）','𨭎（⿰金喜）','𨨏（⿰金波）','𨭆（⿰金黑）','䥑（⿰金麥）','鐽',
         '錀','鎶','鉨','鈇','鏌','鉝','鿬（⿰石田）','鿫（⿹气奥）'
     ],
-    canBuy(x) { return player.atom.quarks.gte(this.upgs[x].cost) && !hasElement(x) && (player.qu.rip.active ? true : x <= 86) },
+    canBuy(x) { return player.atom.quarks.gte(this.upgs[x].cost) && !hasElement(x) && (player.qu.rip.active ? true : x <= 86) && !tmp.elements.cannot.includes(x) },
     buyUpg(x) {
         if (this.canBuy(x)) {
             player.atom.quarks = player.atom.quarks.sub(this.upgs[x].cost)
@@ -68,7 +68,7 @@ const ELEMENTS = {
             effDesc(x) { return "加強 "+format(x)+"x" },
         },
         {
-            desc: `第 7 挑戰的效果翻倍。`,
+            desc: `第 7 個挑戰的效果翻倍。`,
             cost: E(1e18),
         },
         {
@@ -103,7 +103,7 @@ const ELEMENTS = {
             cost: E(6.5e21),
         },
         {
-            desc: `減弱第 3 和 4 挑戰的增幅。`,
+            desc: `減弱第 3 和 4 個挑戰的增幅。`,
             cost: E(1e24),
         },
         {
@@ -557,28 +557,43 @@ const ELEMENTS = {
             effDesc(x) { return "^"+x.format() },
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `膨脹質量提升死亡碎片獲得量。`,
+            cost: E('e1300'),
+            effect() {
+                let x = player.md.mass.add(1).log10().add(1).pow(0.5)
+                return x
+            },
+            effDesc(x) { return "x"+x.format() },
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `熵加速和加成的削弱弱 10%。`,
+            cost: E('e2700'),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `超難挑戰增幅弱 25%。`,
+            cost: E('e4800'),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `質量每到達一個數量級^2，熵獲得量增加 66.7%。`,
+            cost: E('e29500'),
+            effect() {
+                let x = E(5/3).pow(player.mass.add(1).log10().add(1).log10())
+                return x
+            },
+            effDesc(x) { return "x"+x.format() },
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `每變成一次超新星，死亡碎片獲得量增加 10%。`,
+            cost: E("e32000"),
+            effect() {
+                let x = E(1.1).pow(player.supernova.times)
+                return x
+            },
+            effDesc(x) { return "x"+x.format() },
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `艾普塞朗粒子在大撕裂中有效，但效果弱 90%。`,
+            cost: E("e34500"),
         },
         {
             desc: `未定。`,
@@ -755,11 +770,11 @@ function updateElementsHTML() {
 }
 
 function updateElementsTemp() {
-    if (!tmp.elements) tmp.elements = {
-        upg_length: ELEMENTS.upgs.length-1,
-        choosed: 0,
-    }
-    if (!tmp.elements.effect) tmp.elements.effect = [null]
+    let cannot = []
+    if (player.qu.rip.active) cannot.push(58)
+    tmp.elements.cannot = cannot
+
+    if (!tmp.elements.upg_length) tmp.elements.upg_length = ELEMENTS.upgs.length-1
     for (let x = tmp.elements.upg_length; x >= 1; x--) if (ELEMENTS.upgs[x].effect) {
         tmp.elements.effect[x] = ELEMENTS.upgs[x].effect()
     }
