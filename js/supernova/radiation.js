@@ -279,7 +279,7 @@ function setupRadiationHTML() {
         table += `
         <div id="${id}_div" class="table_center radiation">
             <div class="sub_rad" style="width: 450px">
-                你的${x==5?" X 射線":name}距離是 <span id="${id}_distance">0</span> 米，<br>將${x==0?"頻率":x==6?" X 射線距離":RADIATION.names[x-1]+"距離"}的獲得量增加 <span id="${id}_disEff">1</span>x
+                你的${x==5?" X 射線":name}距離是 <span id="${id}_distance">0</span> 米，<br>將${x==0?"頻率":x==6?" X 射線距離":RADIATION.names[x-1]+"距離"}的獲得量提升 <span id="${id}_disEff">1</span>x
             </div><div class="table_center sub_rad" style="align-items: center">
                 <button id="${b1}_btn" class="btn rad" onclick="RADIATION.buyBoost(${2*x})">
                     振幅：<span id="${b1}_lvl1">0</span><br>

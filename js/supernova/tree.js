@@ -24,7 +24,7 @@ const TREE_IDS = [
         ['qol5','qol6','qol7','','','qu_qol7','',''],
         ['chal4','chal7a'],
         ['fn4','fn3','fn9','fn2','fn5','qf4','rad4','rad5'],
-        ['prim3','prim2','prim1','qu4','qc1','qc2',''],
+        ['prim3','prim2','prim1','qu4','qc1','qc2','qc3'],
     ],[
         ['s3','m3','gr2','sn3'],
         ['qol9','unl1','qol8','unl2','unl3','qu_qol8','qu_qol9','unl4'],
@@ -33,7 +33,7 @@ const TREE_IDS = [
         ['en1','qu5','br1'],
     ],[
         ['s4','sn5','sn4'],
-        [],
+        ['','','','qu_qol8a'],
         [],
         ['fn7','fn8'],
         ['qu6','qu7','qu8','qu9','qu10','qu11'],
@@ -113,6 +113,7 @@ const TREE_UPGS = {
             cost: E(1e8),
             effect() {
                 let x = player.supernova.times.mul(0.1).softcap(1.5,0.75,0)
+                if (hasElement(112)) x = x.add(2)
                 return x
             },
             effDesc(x) { return "+"+format(x)+(x.gte(1.5)?"<span class='soft'>（軟限制）</span>":"") },
@@ -394,8 +395,8 @@ const TREE_UPGS = {
             desc: `光子和膠子互相加強。`,
             cost: E(1e14),
             effect() {
-                let x = expMult(player.supernova.bosons.photon,1/2,2).max(1)
-                let y = expMult(player.supernova.bosons.gluon,1/2,2).max(1)
+                let x = expMult(player.supernova.bosons.photon,hasElement(113) ? 0.95 : 1/2,2).max(1)
+                let y = expMult(player.supernova.bosons.gluon,hasElement(113) ? 0.95 : 1/2,2).max(1)
                 return [x,y]
             },
             effDesc(x) { return "光子 "+format(x[1])+"x；膠子 "+format(x[0])+"x" },
@@ -450,7 +451,7 @@ const TREE_UPGS = {
         fn4: {
             unl() { return hasTree("fn2") },
             branch: ["fn1"],
-            desc: `第 2 光子和膠子升級稍微更強。`,
+            desc: `第 2 個光子和膠子升級稍微更強。`,
             cost: E(1e39),
         },
         fn5: {
@@ -617,7 +618,7 @@ const TREE_UPGS = {
         qu4: {
             qf: true,
             branch: ["qu1", 'qu2', 'qu3'],
-            desc: `移除 [sn2] 效果的軟限制。`,
+            desc: `從 [sn2] 效果中移除軟限制。`,
             cost: E(35),
         },
         qu5: {
@@ -773,6 +774,13 @@ const TREE_UPGS = {
             desc: `除了在量子挑戰中，你可以在任何費米子外自動獲得所有費米子階。`,
             cost: E(1e11),
         },
+        qu_qol8a: {
+            unl() { return player.md.break.active },
+            qf: true,
+            branch: ["qu_qol8"],
+            desc: `[qu_qol8] 在量子挑戰或大撕裂中有效。`,
+            cost: E(1e75),
+        },
         qu_qol9: {
             qf: true,
             branch: ["qu_qol8"],
@@ -797,7 +805,7 @@ const TREE_UPGS = {
             qf: true,
             unl() { return hasTree("unl3") },
             branch: ["prim2"],
-            desc: `艾普塞朗粒子增加第二個效果。這個效果在量子挑戰裏更強。`,
+            desc: `艾普塞朗粒子增加第二個效果。這個效果在量子挑戰中更強。`,
             cost: E(1e16),
         },
         qc1: {
@@ -820,6 +828,20 @@ const TREE_UPGS = {
             reqDesc() { return `在 70 個量子碎片的模組組合中到達 ${formatMass(uni('ee5'))} 質量（獎勵適用前）。` },
             desc: `某種量子挑戰到達 10 個時，額外獲得 1 個碎片。`,
             cost: E(1e27),
+        },
+        qc3: {
+            unl() { return hasTree('unl4') },
+            qf: true,
+            branch: ['qc2'],
+            req() { return player.qu.qc.shard >= 88 },
+            reqDesc() { return `獲得 88 個量子碎片。` },
+            desc: `重置底數增加量子碎片的底數。`,
+            cost: E(1e78),
+            effect() {
+                let x = (tmp.prestiges.base||E(1)).add(1).log10().div(10)
+                return x
+            },
+            effDesc(x) { return "+"+format(x) },
         },
         en1: {
             unl() { return player.qu.rip.first },
@@ -1022,7 +1044,7 @@ function updateTreeHTML() {
     tmp.el.tree_desc.setHTML(
         tmp.supernova.tree_choosed == "" ? `<div style="font-size: 12px; font-weight: bold;"><span class="gray">（點擊任意升級以顯示）</span></div>`
         : `<div style="font-size: 12px; font-weight: bold;"><span class="gray">（再次點擊以購買）</span>${req}</div>
-        <span class="sky">[${tmp.supernova.tree_choosed}] ${t_ch.desc}</span><br>
+        <span class="sky"><b>[${tmp.supernova.tree_choosed}]</b> ${t_ch.desc}</span><br>
         <span>價格：${format(t_ch.cost,2)} ${t_ch.qf?'量子泡沫':'中子星'}</span><br>
         <span class="green">${t_ch.effDesc?"目前："+t_ch.effDesc(tmp.supernova.tree_eff[tmp.supernova.tree_choosed]):""}</span>
         `

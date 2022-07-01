@@ -30,14 +30,15 @@ const POPUP_GROUPS = {
         html: `
         <h1>質量</h1><br>
         g（克）：1 g<br>
-        kg（千克）：1,000 g<br>
+        kg（公斤）：1,000 g<br>
         tonne（噸）：1,000 kg = 1,000,000 g<br>
         MME（珠穆朗瑪峰質量）：1.619e14 tonne = 1.619e20 g<br>
         M⊕（地球質量）：36,886,967 MME = 5.972e27 g<br>
         M☉（太陽質量）：333,054 M⊕ = 1.989e33 g<br>
         MMWG（銀河系質量）：1.5e12 M☉ = 2.9835e45 g<br>
         uni（宇宙質量）：50,276,520,864 MMWG = 1.5e56 g<br>
-        mlt（多元宇宙質量）：1e1e9 uni<br>
+        mlt（多元宇宙質量）：1e1e9 uni（對數）<br>
+        mgv（兆宇宙質量）：1e15 mlt<br>
         `,
     },
     fonts: {
@@ -53,7 +54,7 @@ const POPUP_GROUPS = {
             <button class="btn" style="font-family: GenYoGothic JP;" onclick="player.options.font = 'GenYoGothic JP'">源樣黑體 JP</button>
             <button class="btn" style="font-family: Inconsolata;" onclick="player.options.font = 'Inconsolata'">Inconsolata</button>
             <button class="btn" style="font-family: 'Lucida Handwriting';" onclick="player.options.font = 'Lucida Handwriting'">Lucida Handwriting</button>
-            <button class="btn" style="font-family: 'LXGWWenKai';" onclick="player.options.font = 'LXGWWenKai'">LXGWWenKai/霞鶩文楷</button>
+            <button class="btn" style="font-family: 'LXGWWenKai';" onclick="player.options.font = 'LXGWWenKai'">霞鶩文楷</button>
             <button class="btn" style="font-family: Monospace-Typewritter;" onclick="player.options.font = 'Monospace-Typewritter'">Monospace Typewritter</button>
 			<button class="btn" style="font-family: 'MS Sans Serif';" onclick="player.options.font = 'MS Sans Serif'">MS Sans Serif</button>
             <button class="btn" style="font-family: 'Noto Sans SC';" onclick="player.options.font = 'Noto Sans SC'">Noto Sans SC</button>

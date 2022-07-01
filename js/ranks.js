@@ -57,16 +57,16 @@ const RANKS = {
     },
     desc: {
         rank: {
-            '1': "解鎖質量升級 1。",
-            '2': "解鎖質量升級 2；質量升級 1 的價格增幅弱 20%。",
-            '3': "解鎖質量升級 3；質量升級 2 的價格增幅弱 20%；質量升級 1 加強自己。",
-            '4': "質量升級 3 的價格增幅弱 20%。",
-            '5': "質量升級 2 加強自己。",
+            '1': "解鎖第 1 個質量升級。",
+            '2': "解鎖第 2 個質量升級；第 1 個質量升級的價格增幅弱 20%。",
+            '3': "解鎖第 3 個質量升級；第 2 個質量升級的價格增幅弱 20%；質量升級 1 加強自己。",
+            '4': "第 3 個質量升級的價格增幅弱 20%。",
+            '5': "第 2 個質量升級加強自己。",
             '6': "質量獲得量獲得 (x+1)^2 x 的加成，其中 x 是等級數。",
             '13': "質量獲得量三倍。",
             '14': "暴怒點數獲得量翻倍。",
-            '17': "等級 6 的獎勵效果更好。[(x+1)^2 -> (x+1)^x^1/3]",
-            '34': "質量升級 3 的軟限制推遲 1.2x 。",
+            '17': "第 6 等級的獎勵效果更好。[(x+1)^2 -> (x+1)^x^1/3]",
+            '34': "第 3 個質量升級的軟限制推遲 1.2x 。",
             '40': "等級提升時間速度力量。",
             '45': "等級提升暴怒點數獲得量。",
             '90': "第 40 等級的獎勵更強。",
@@ -83,14 +83,14 @@ const RANKS = {
             '4': "每擁有一個階，時間速度力量增加 5%，在 +40% 開始軟限制。",
             '6': "階提升暴怒點數獲得量。",
             '8': "暗物質加強第 6 階的獎勵效果。",
-            '12': "第 4 階的獎勵效果翻倍，並移除軟限制。",
+            '12': "第 4 階的獎勵效果翻倍，並從中移除軟限制。",
             '30': "增強器的效果軟限制弱 10%。",
             '55': "階加強第 380 等級的效果。",
             '100': "超級階推遲 5 階開始。",
         },
         tetr: {
             '1': "階的要求減少 25%；高級階的增幅弱 15%。",
-            '2': "質量升級 3 加強自己。",
+            '2': "第 3 個質量升級加強自己。",
             '3': "時間速度效果 ^1.05。",
             '4': "階減弱超級等級的增幅；超級階的增幅弱 20%。",
             '5': "層推遲高級/極高級時間速度。",
@@ -102,7 +102,7 @@ const RANKS = {
             '4': "超新星推遲元級時間速度。",
             '5': "五級層推遲元級等級。",
 			'8': "五級層推遲質量軟限制^4。",
-            '15': "移除增強器第三個軟限制。",
+            '15': "從增強器中移除第三個軟限制。",
         },
     },
     effect: {
@@ -166,6 +166,7 @@ const RANKS = {
         tetr: {
             '2'() {
                 let ret = E(player.massUpg[3]||0).div(400)
+                if (ret.gte(1) && hasPrestige(0,15)) ret = ret.pow(1.5)
                 return ret
             },
             '4'() {
@@ -242,6 +243,149 @@ const RANKS = {
     },
 }
 
+const PRESTIGES = {
+    fullNames: ["重置等級","榮耀"],
+    baseExponent() {
+        let x = 0
+        if (hasElement(100)) x += tmp.elements.effect[100]
+        if (hasPrestige(0,32)) x += prestigeEff(0,32,0)
+        return x+1
+    },
+    base() {
+        let x = E(1)
+
+        for (let i = 0; i < RANKS.names.length; i++) {
+            let r = player.ranks[RANKS.names[i]]
+            if (hasPrestige(0,18) && i == 0) r = r.mul(2)
+            x = x.mul(r.add(1))
+        }
+
+        return x.sub(1)
+    },
+    req(i) {
+        let x = EINF, y = player.prestiges[i]
+        switch (i) {
+            case 0:
+                x = Decimal.pow(1.1,y.scaleEvery('prestige0').pow(1.1)).mul(2e13)
+                break;
+            case 1:
+                x = y.scaleEvery('prestige1').pow(1.25).mul(3).add(4)
+                break;
+            default:
+                x = EINF
+                break;
+        }
+        return x.ceil()
+    },
+    bulk(i) {
+        let x = E(0), y = i==0?tmp.prestiges.base:player.prestiges[i-1]
+        switch (i) {
+            case 0:
+                if (y.gte(2e13)) x = y.div(2e13).max(1).log(1.1).max(0).root(1.1).scaleEvery('prestige0',true).add(1)
+                break;
+            case 1:
+                    if (y.gte(4)) x = y.sub(4).div(2).max(0).root(1.5).scaleEvery('prestige1',true).add(1)
+                    break
+            default:
+                x = E(0)
+                break;
+        }
+        return x.floor()
+    },
+    unl: [
+        _=>true,
+        _=>true,
+    ],
+    noReset: [
+        _=>hasUpgrade('br',11),
+        _=>false,
+    ],
+    rewards: [
+        {
+            "1": `^5 以下的所有質量軟限制推遲 ^10。`,
+            "2": `量子碎片的底數增加 0.5。`,
+            "3": `量子泡沫和死亡碎片獲得量增到四倍。`,
+            "5": `量子前全局運行速度平方（在應用除法前）。`,
+            "6": `時間速度力量軟限制推遲 ^100。`,
+            "8": `重置次數推遲質量軟限制^5。`,
+            "10": `重置次數提升相對能量獲得量。`,
+            "12": `增強器的軟限制^2 弱 7.04%。`,
+            "15": `大幅增強第 2 層的獎勵。`,
+            "18": `重置底數中的等級翻倍。`,
+            "24": `超級宇宙弦增幅弱 20%。`,
+            "28": `從第 4 個膠子升級的效果中移除所有軟限制。`,
+            "32": `重置等級提升重置底數的指數。`,
+            "40": `鉻-24 稍微更好。`,
+        },
+        {
+            "1": `所有恆星資源平方。`,
+            "2": `元級超新星推遲 100 個。`,
+            "3": `重置底數增強玻色子資源。`,
+            "4": `免費獲得各原始素粒子 5 個等級。`,
+            "5": `重置底數加強第 5 個五級層的獎勵。`,
+            "7": `榮耀提升夸克獲得量。`,
+        },
+    ],
+    rewardEff: [
+        {
+            "8": [_=>{
+                let x = player.prestiges[0].root(2).div(2).add(1)
+                return x
+            },x=>"推遲 ^"+x.format()],
+            "10": [_=>{
+                let x = Decimal.pow(2,player.prestiges[0])
+                return x
+            },x=>x.format()+"x"],
+            "32": [_=>{
+                let x = player.prestiges[0].div(1e4).toNumber()
+                return x
+            },x=>"+^"+format(x)],
+            /*
+            "1": [_=>{
+                let x = E(1)
+                return x
+            },x=>{
+                return x.format()+"x"
+            }],
+            */
+        },
+        {
+            "3": [_=>{
+                let x = tmp.prestiges.base.max(1).log10().div(10).add(1).root(2)
+                return x
+            },x=>"^"+x.format()],
+            "5": [_=>{
+                let x = tmp.prestiges.base.max(1).log10().div(10).add(1).root(3)
+                return x
+            },x=>"x"+x.format()],
+            "7": [_=>{
+                let x = player.prestiges[1].add(1).root(3)
+                return x
+            },x=>"^"+x.format()],
+        },
+    ],
+    reset(i) {
+        if (i==0?tmp.prestiges.base.gte(tmp.prestiges.req[i]):player.prestiges[i-1].gte(tmp.prestiges.req[i])) {
+            player.prestiges[i] = player.prestiges[i].add(1)
+
+            if (!this.noReset[i]()) {
+                for (let j = i-1; j >= 0; j--) {
+                    player.prestiges[j] = E(0)
+                }
+                QUANTUM.enter(false,true,false,true)
+            }
+
+            updateRanksTemp()
+        }
+    },
+}
+
+const PRES_LEN = PRESTIGES.fullNames.length
+
+function hasPrestige(x,y) { return player.prestiges[x].gte(y) }
+
+function prestigeEff(x,y,def=E(1)) { return tmp.prestiges.eff[x][y] || def }
+
 function updateRanksTemp() {
     if (!tmp.ranks) tmp.ranks = {}
     for (let x = 0; x < RANKS.names.length; x++) if (!tmp.ranks[RANKS.names[x]]) tmp.ranks[RANKS.names[x]] = {}
@@ -274,6 +418,80 @@ function updateRanksTemp() {
         let rn = RANKS.names[x]
         if (x > 0) {
             tmp.ranks[rn].can = player.ranks[RANKS.names[x-1]].gte(tmp.ranks[rn].req)
+        }
+    }
+    
+    // Prestige
+
+    tmp.prestiges.baseMul = PRESTIGES.base()
+    tmp.prestiges.baseExp = PRESTIGES.baseExponent()
+    tmp.prestiges.base = tmp.prestiges.baseMul.pow(tmp.prestiges.baseExp)
+    for (let x = 0; x < PRES_LEN; x++) {
+        tmp.prestiges.req[x] = PRESTIGES.req(x)
+        for (let y in PRESTIGES.rewardEff[x]) {
+            if (PRESTIGES.rewardEff[x][y]) tmp.prestiges.eff[x][y] = PRESTIGES.rewardEff[x][y][0]()
+        }
+    }
+}
+
+function updateRanksHTML() {
+    tmp.el.rank_tabs.setDisplay(hasUpgrade('br',9))
+    for (let x = 0; x < 2; x++) {
+        tmp.el["rank_tab"+x].setDisplay(tmp.rank_tab == x)
+    }
+
+    if (tmp.rank_tab == 0) {
+        for (let x = 0; x < RANKS.names.length; x++) {
+            let rn = RANKS.names[x]
+            let unl = RANKS.unl[rn]?RANKS.unl[rn]():true
+            tmp.el["ranks_div_"+x].setDisplay(unl)
+            if (unl) {
+                let keys = Object.keys(RANKS.desc[rn])
+                let desc = ""
+                for (let i = 0; i < keys.length; i++) {
+                    if (player.ranks[rn].lt(keys[i])) {
+                        desc = `在第 ${format(keys[i],0)} 個${RANKS.fullNames[x]}，${RANKS.desc[rn][keys[i]]}`
+                        break
+                    }
+                }
+
+                tmp.el["ranks_scale_"+x].setTxt(x==3?"個"+getScalingName(rn):getScalingName(rn)!=""?"個"+getScalingName(rn):getScalingName(rn))
+                tmp.el["ranks_amt_"+x].setTxt(format(player.ranks[rn],0))
+                tmp.el["ranks_"+x].setClasses({btn: true, reset: true, locked: !tmp.ranks[rn].can})
+                tmp.el["ranks_desc_"+x].setTxt(desc)
+                tmp.el["ranks_req_"+x].setTxt(x==0?formatMass(tmp.ranks[rn].req):"第 "+format(tmp.ranks[rn].req,0)+" "+RANKS.fullNames[x-1])
+                tmp.el["ranks_auto_"+x].setDisplay(RANKS.autoUnl[rn]())
+                tmp.el["ranks_auto_"+x].setTxt(player.auto_ranks[rn]?"開啟":"關閉")
+            }
+        }
+    }
+    if (tmp.rank_tab == 1) {
+        tmp.el.pres_base.setHTML(`${tmp.prestiges.baseMul.format(0)}<sup>${format(tmp.prestiges.baseExp)}</sup> = ${tmp.prestiges.base.format(0)}`)
+
+        for (let x = 0; x < PRES_LEN; x++) {
+            let unl = PRESTIGES.unl[x]?PRESTIGES.unl[x]():true
+
+            tmp.el["pres_div_"+x].setDisplay(unl)
+
+            if (unl) {
+                let p = player.prestiges[x] || E(0)
+                let keys = Object.keys(PRESTIGES.rewards[x])
+                let desc = ""
+                for (let i = 0; i < keys.length; i++) {
+                    if (p.lt(keys[i])) {
+                        desc = `在第 ${format(keys[i],0)} 個${PRESTIGES.fullNames[x]}，${PRESTIGES.rewards[x][keys[i]]}`
+                        break
+                    }
+                }
+
+                tmp.el["pres_scale_"+x].setTxt(getScalingName("prestige"+x))
+                tmp.el["pres_amt_"+x].setTxt(format(p,0))
+                tmp.el["pres_"+x].setClasses({btn: true, reset: true, locked: x==0?tmp.prestiges.base.lt(tmp.prestiges.req[x]):player.prestiges[x-1].lt(tmp.prestiges.req[x])})
+                tmp.el["pres_desc_"+x].setTxt(desc)
+                tmp.el["pres_req_"+x].setTxt(x==0?"重置底數到達 "+format(tmp.prestiges.req[x],0):PRESTIGES.fullNames[x-1]+" "+format(tmp.prestiges.req[x],0))
+                tmp.el["pres_auto_"+x].setDisplay(false)
+                tmp.el["pres_auto_"+x].setTxt(false?"開啟":"關閉")
+            }
         }
     }
 }

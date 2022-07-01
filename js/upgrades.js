@@ -4,7 +4,7 @@ const UPGS = {
         temp() {
             for (let x = this.cols; x >= 1; x--) {
                 let d = tmp.upgs.mass
-                if (!d[x]) d[x] = {}
+                let data = this.getData(x)
                 d[x].cost = data.cost
                 d[x].bulk = data.bulk
                 
@@ -136,7 +136,7 @@ const UPGS = {
                     sp2 **= 0.9
                     ss2 = ss2.mul(3)
                 }
-                let ret = step.mul(xx.mul(hasElement(80)?25:1)).add(1).softcap(ss,sp,0).softcap(1.8e5,0.5,0)
+                let ret = step.mul(xx.mul(hasElement(80)?25:1)).add(1).softcap(ss,sp,0).softcap(1.8e5,hasPrestige(0,12)?0.525:0.5,0)
                 ret = ret.mul(tmp.prim.eff[0])
                 if (!player.ranks.pent.gte(15)) ret = ret.softcap(ss2,sp2,0)
                 return {step: step, eff: ret, ss: ss}
@@ -144,7 +144,7 @@ const UPGS = {
             effDesc(eff) {
                 return {
                     step: "+^"+format(eff.step),
-                    eff: "提升器力量 ^"+format(eff.eff)+(eff.eff.gte(eff.ss)?`<span class='soft'>（軟限制${eff.eff.gte(1.8e5)?eff.eff.gte(5e15)?"^3":"^2":""}）</span>`:"")
+                    eff: "提升器力量 ^"+format(eff.eff)+(eff.eff.gte(eff.ss)?`<span class='soft'>（軟限制${eff.eff.gte(1.8e5)?eff.eff.gte(5e15)&&!player.ranks.pent.gte(15)?"^3":"^2":""}）</span>`:"")
                 }
             },
             bonus() {
@@ -391,7 +391,7 @@ const UPGS = {
                     return ret
                 },
                 effDesc(x=this.effect()) {
-                    return "+"+format(x)+" later"
+                    return "推遲 +"+format(x)
                 },
             },
             10: {
@@ -427,7 +427,7 @@ const UPGS = {
                 cost: E(1e210),
                 effect() {
                     let ret = player.atom.powers[1].add(1).pow(2)
-                    return ret
+                    return ret//.softcap("ee13",0.9,2)
                 },
                 effDesc(x=this.effect()) {
                     return format(x)+"x"
@@ -438,7 +438,7 @@ const UPGS = {
                 desc: "原子力量稍微增加黑洞壓縮器。",
                 cost: E('e420'),
                 effect() {
-                    let ret = player.atom.atomic.add(1).log(5)
+                    let ret = player.atom.atomic.add(1).log(5).softcap(2e9,0.25,0).softcap(1e10,0.1,0)
                     return ret.floor()
                 },
                 effDesc(x=this.effect()) {
@@ -459,7 +459,7 @@ const UPGS = {
                 }
             },
             auto_unl() { return hasTree("qol1") },
-            lens: 12,
+            lens: 15,
             1: {
                 desc: "開始時解鎖質量升級。",
                 cost: E(1),
@@ -551,10 +551,21 @@ const UPGS = {
                 unl() { return MASS_DILATION.unlocked() },
                 desc: "黑洞質量效果更強。",
                 cost: E('e2015'),
-                effect() {
-                    let ret = E(1)
-                    return ret
-                },
+            },
+            13: {
+                unl() { return player.md.break.active && player.qu.rip.active },
+                desc: "宇宙射線效果的軟限制推遲 10x 開始。",
+                cost: E('e3.2e11'),
+            },
+            14: {
+                unl() { return player.md.break.active && player.qu.rip.active },
+                desc: "時間速度、黑洞壓縮器和宇宙射線元級或以下的增幅推遲 10x 開始。",
+                cost: E('e4.3e13'),
+            },
+            15: {
+                unl() { return player.md.break.active && player.qu.rip.active },
+                desc: "宇宙射線價格增幅弱 20%。",
+                cost: E('e3.4e14'),
             },
         },
 		        4: {
@@ -570,13 +581,13 @@ const UPGS = {
                 }
             },
             auto_unl() { return false },
-            lens: 8,
+            lens: 15,
             1: {
                 desc: `開始大撕裂時解鎖氫-1。`,
                 cost: E(5),
             },
             2: {
-                desc: `質量升級和等級不再受到第 8 量子挑戰模組影響。`,
+                desc: `質量升級和等級不再受到第 8 個量子挑戰模組影響。`,
                 cost: E(10),
             },
             3: {
@@ -613,6 +624,50 @@ const UPGS = {
                 desc: `每秒獲得重置時獲得的量子泡沫和死亡碎片的 10%`,
                 cost: E(750000),
             },
+            9: {
+                desc: `解鎖打破膨脹。`,
+                cost: E(1e7),
+            },
+            10: {
+                unl() { return player.md.break.active },
+                desc: `賦色子強 10%。`,
+                cost: E(2.5e8),
+            },
+            11: {
+                unl() { return player.md.break.active },
+                desc: `重置等級不再重置任何東西。`,
+                cost: E(1e10),
+            },
+            12: {
+                unl() { return player.md.break.active },
+                desc: `原子推遲質量軟限制^5。`,
+                cost: E(1e16),
+                effect() {
+                    let x = player.atom.points.add(1).log10().add(1).log10().add(1).root(3)
+                    return x
+                },
+                effDesc(x=this.effect()) { return "推遲 ^"+format(x) },
+            },
+            13: {
+                unl() { return player.md.break.active },
+                desc: `重置底數增加死亡碎片獲得量。`,
+                cost: E(1e17),
+                effect() {
+                    let x = (tmp.prestiges.base||E(1)).add(1).log10().tetrate(1.5).add(1)
+                    return x
+                },
+                effDesc(x=this.effect()) { return "x"+format(x) },
+            },
+            14: {
+                unl() { return player.md.break.active },
+                desc: `超級費米子階推遲 10 個開始（在應用第 8 個量子挑戰模組後）。`,
+                cost: E(1e22),
+            },
+            15: {
+                unl() { return player.md.break.active },
+                desc: `藍圖粒子稍微更強加快量子前全局運行速度。`,
+                cost: E(1e24),
+            },
 		},
     },
 }
@@ -632,4 +687,4 @@ const UPGS = {
 */
 
 function hasUpgrade(id,x) { return player.mainUpg[id].includes(x) }
-function upgEffect(id,x,def=E(1)) { return tmp.upgs.main[id][x]?tmp.upgs.main[id][x].effect:def } 
+function upgEffect(id,x,def=E(1)) { return tmp.upgs.main[id][x]?tmp.upgs.main[id][x].effect:def }

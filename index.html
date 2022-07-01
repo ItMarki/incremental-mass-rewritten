@@ -42,8 +42,8 @@
     <script src="js/tabs.js"></script>
     <script src="js/scaling.js"></script>
     <script src="js/upgrades.js"></script>
-    <script src="js/temp.js"></script>
     <script src="js/ranks.js"></script>
+    <script src="js/temp.js"></script>
 
     <script src="js/formats.js"></script>
 
@@ -201,7 +201,19 @@
         <div id="stabs" style="min-height: 30px;"></div><br>
         <div id="tab_frame0">
             <div id="stab_frame0_0">
-                <div id="ranks_table" class="table_center" style="min-height: 180px;"></div>
+                <div id="rank_tabs" class="table_center" style="min-height: 30px;">
+                    <div style="width: 145px">
+                        <button onclick="tmp.rank_tab = 0" class="btn_tab">等級</button>
+                    </div><div style="width: 145px">
+                        <button onclick="tmp.rank_tab = 1" class="btn_tab">重置等級</button>
+                    </div>
+                </div>
+                <div id="rank_tab0">
+                    <div id="ranks_table" class="table_center" style="min-height: 180px;"></div>
+                </div><div id="rank_tab1">
+                    你的重置底數是 <span id="pres_base"></span>（基於各類等級的乘積）<br><br>
+                    <div id="pres_table" class="table_center" style="min-height: 180px;"></div>
+                </div>
                 <br><br>
                 <div id="mass_upgs_table"></div><br><br>
                 <div style="width: 100%; margin-bottom: 5px;" class="table_center" id="tickspeed_div">
@@ -221,7 +233,8 @@
                     <span id="massSoft1" class="red">質量獲得量到達 <b id="massSoftStart1">X</b> 後會被軟限制！</span><br>
                     <span id="massSoft3" style="color: rgb(121, 0, 0)">質量獲得量到達 <b id="massSoftStart3">X</b> 後會被軟限制^2！</span><br>
                     <span id="massSoft4" style="color: rgb(122, 0, 86)">質量獲得量到達 <b id="massSoftStart4">X</b> 後會被軟限制^3！</span><br>
-					<span id="massSoft5" style="color: rgb(255, 94, 0)">質量獲得量到達 <b id="massSoftStart5">X</b> 後會被軟限制^4！</span>
+                    <span id="massSoft5" style="color: rgb(255, 94, 0)">質量獲得量到達 <b id="massSoftStart5">X</b> 後會被軟限制^4！</span><br>
+                    <span id="massSoft6" style="color: rgb(255, 238, 0)">質量獲得量到達 <b id="massSoftStart6">X</b> 後會被軟限制^5！</span>
                 </div>
             </div><div id="stab_frame0_1">
                 你的黑洞質量是 <span id="bhMass2">X</span><br>
@@ -293,6 +306,9 @@
             </div><div id="stab_frame1_1">
                 <button onclick="player.scaling_ch = Math.max(player.scaling_ch-1,0)" class="btn"><--</button><span id="scaling_name" style="margin: 0px 10px">aaa</span><button onclick="player.scaling_ch = Math.min(player.scaling_ch+1,SCALE_TYPE.length-1)" class="btn">--></button><br><br>
                 <div id="scaling_table"></div>
+            </div><div id="stab_frame1_2">
+                <button onclick="player.pres_reward = Math.max(player.pres_reward-1,0)" class="btn"><--</button><span id="pres_reward_name" style="margin: 0px 10px">aaa</span><button onclick="player.pres_reward = Math.min(player.pres_reward+1,Math.max(...PRESTIGES.fullNames.map((v, i) => i==0 ? i : (PRESTIGES.unl[i]() && i))))" class="btn">--></button><br><br>
+                <div id="pres_rewards_table"></div>
             </div>
         </div><div id="tab_frame2">
             <div id="main_upg_msg" style="min-height: 100px;"></div>
@@ -352,7 +368,7 @@
             </div><div id="stab_frame4_1">
                 <div id="elem_ch_div" style="min-height: 70px;">
                     <span id="elem_desc" class='sky'>X</span><br>
-                    價格：<span id="elem_cost">X</span> 夸克<br>
+                    價格：<span id="elem_cost">X</span><br>
                     <span id="elem_eff" class='green'>X</span>
                 </div><br><div id="elements_table"></div>
             </div><div id="stab_frame4_2">
@@ -361,9 +377,16 @@
                 <button onclick="MASS_DILATION.onactive()" id="md_btn" class="btn full md" tooltip="膨脹質量時，原子會被重置，所有原子前資源和原子力量的獲得量會減弱到 ^0.8。">膨脹質量</button><br><br>
                 <div class="table_center">
                     <div id="md_upg_table" class="table_center" style="width: 1000px;"></div>
+                </div><br><div>
+                    <span id="dmSoft1" class="red">膨脹質量到達 <b id="dmSoftStart1">X</b> 後獲得量會被軟限制！</span>
                 </div>
             </div><div id="stab_frame4_3">
-                敬請期待……
+                你有 <span id="bd_energy">X</span> 相對能量<br>
+                你有 <span id="bd_mass">X</span> 的相對質量<br><br>
+                <button onclick="MASS_DILATION.break.toggle()" id="bd_btn" class="btn half_full bd" tooltip="當你在大撕裂裏打破膨脹時，黑洞壓縮器和宇宙射線不再受到第 8 個量子挑戰模組影響，第 7 個量子挑戰模組失效，而你可以基於膨脹質量獲得相對能量。相對能量會生成相對質量。修補膨脹會重置你的相對能量和相對質量，並且強制執行量子重置。">打破膨脹</button><br><br>
+                <div class="table_center">
+                    <div id="bd_upg_table" class="table_center" style="width: 1000px;"></div>
+                </div>
             </div>
         </div><div id="tab_frame6">
             <div id="stab_frame6_0">
@@ -412,12 +435,13 @@
             <button class="btn" onclick="turnOffline()">離線進度：<span id="offline_active">開啟</span></button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.fonts)">字體</button>
             <button class="btn" onclick="addPopup(POPUP_GROUPS.notations)">標記法</button>
+            <button class="btn" onclick="window.open('glossary.html')">詞彙表</button>
 			<button class="btn" id="tree_anim_btn" onclick="changeTreeAnimation()">中子樹動畫：<span id="tree_anim">ON</span></button>
             <br><br>
             <h2>確認設定</h2><br>
             <div id="confirm_table" class="table_center"></div>
             <br><br>
-            增量質量（重寫版）v0.5.3.4.2——由 MrRedShark77 製作，ItMarki 翻譯<br>
+            增量質量（重寫版）v0.5.4.8——由 MrRedShark77 製作，ItMarki 翻譯<br>
             本遊戲受到 <ruby>Distance Incremental<rt>距離增量</rt></ruby> 和 <ruby>Synergism<rt>協同放置</rt></ruby> 的啟發製作<br><br><br>
             提示 1：把光標放在標籤上方的圖片上，即可查看描述……<br><br>
             總遊玩時間：<span id="total_time">X</span><br><br>

@@ -31,6 +31,7 @@ const TABS = {
         1: [
             { id: "等級獎勵" },
             { id: "價格增幅", unl() { return tmp.scaling ? tmp.scaling.super.length>0 : false } },
+            { id: "重置獎勵", unl() { return hasUpgrade("br",9) } },
         ],
         3: [
             { id: "挑戰" },
@@ -41,7 +42,7 @@ const TABS = {
             { id: "粒子" },
             { id: "元素", unl() { return player.chal.comps[7].gte(16) || player.supernova.times.gte(1) } },
             { id: "質量膨脹", unl() { return MASS_DILATION.unlocked() }, style: "dilation" },
-            { id: "打破膨脹", unl() { return player.qu.rip.first }, style: "dilation" },
+            { id: "打破膨脹", unl() { return hasUpgrade("br",9) }, style: "break_dilation" },
         ],
         5: [
             { id: "中子樹" },

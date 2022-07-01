@@ -40,6 +40,20 @@ function setupHTML() {
 	}
 	ranks_table.setHTML(table)
 
+	let pres_table = new Element("pres_table")
+	table = ""
+	for (let x = 0; x < PRES_LEN; x++) {
+		table += `<div style="width: 300px" id="pres_div_${x}">
+			<button id="pres_auto_${x}" class="btn" style="width: 80px;" onclick="RANKS.autoSwitch(${x})">關閉</button>
+			第 <span id="pres_amt_${x}">X</span> 個<span id="pres_scale_${x}""></span>${PRESTIGES.fullNames[x]}<br><br>
+			<button onclick="PRESTIGES.reset(${x})" class="btn reset" id="pres_${x}">
+				${x>0?"重置你的"+PRESTIGES.fullNames[x-1]:'強制執行量子重置'}，但是提升一個${PRESTIGES.fullNames[x]}。<span id="pres_desc_${x}"></span><br>
+				要求：<span id="pres_req_${x}">X</span>
+			</button>
+		</div>`
+	}
+	pres_table.setHTML(table)
+
 	let mass_upgs_table = new Element("mass_upgs_table")
 	table = ""
 	for (let x = 1; x <= UPGS.mass.cols; x++) {
@@ -68,11 +82,23 @@ function setupHTML() {
 		table += `<div id="ranks_reward_div_${x}">`
 		let keys = Object.keys(RANKS.desc[rn])
 		for (let y = 0; y < keys.length; y++) {
-			table += `<span id="ranks_reward_${rn}_${y}"><b>第 ${keys[y]} ${RANKS.fullNames[x]}：</b>${RANKS.desc[rn][keys[y]]}${RANKS.effect[rn][keys[y]]?`目前：<span id='ranks_eff_${rn}_${y}'></span></span>`:""}<br>`
+			table += `<span id="ranks_reward_${rn}_${y}"><b>第 ${keys[y]} ${x==3?"個":""}${RANKS.fullNames[x]}：</b>${RANKS.desc[rn][keys[y]]}${RANKS.effect[rn][keys[y]]?`目前：<span id='ranks_eff_${rn}_${y}'></span></span>`:""}<br>`
 		}
 		table += `</div>`
 	}
 	ranks_rewards_table.setHTML(table)
+
+	let pres_rewards_table = new Element("pres_rewards_table")
+	table = ""
+	for (let x = 0; x < PRES_LEN; x++) {
+		table += `<div id="pres_reward_div_${x}">`
+		let keys = Object.keys(PRESTIGES.rewards[x])
+		for (let y = 0; y < keys.length; y++) {
+			table += `<span id="pres_reward_${x}_${y}"><b>第 ${keys[y]} 個${PRESTIGES.fullNames[x]}：</b>${PRESTIGES.rewards[x][keys[y]]}${PRESTIGES.rewardEff[x][keys[y]]?`目前：<span id='pres_eff_${x}_${y}'></span></span>`:""}<br>`
+		}
+		table += `</div>`
+	}
+	pres_rewards_table.setHTML(table)
 
 	let main_upgs_table = new Element("main_upgs_table")
 	table = ""
@@ -82,7 +108,7 @@ function setupHTML() {
 		for (let y = 1; y <= UPGS.main[x].lens; y++) {
 			let key = UPGS.main[x][y]
 			table += `<img onclick="UPGS.main[${x}].buy(${y})" onmouseover="UPGS.main.over(${x},${y})" onmouseleave="UPGS.main.reset()"
-			 style="margin: 3px;" class="img_btn" id="main_upg_${x}_${y}" src="images/main_upg_${id+y}.png">`
+			style="margin: 3px;" class="img_btn" id="main_upg_${x}_${y}" src="images/main_upg_${id=="br"?"br1":id+y}.png">`
 		}
 		table += `</div><br><button id="main_upg_${x}_auto" class="btn" style="width: 80px;" onclick="player.auto_mainUpg.${id} = !player.auto_mainUpg.${id}">OFF</button></div>`
 	}
@@ -94,7 +120,7 @@ function setupHTML() {
 		table += `<div id="scaling_div_${x}">`
 		let key = Object.keys(SCALE_START[SCALE_TYPE[x]])
 		for (let y = 0; y < key.length; y++) {
-			table += `<div id="scaling_${x}_${key[y]}_div" style="margin-bottom: 10px;"><b>${NAME_FROM_RES[key[y]]}</b>（<span id="scaling_${x}_${key[y]}_power"></span>）：於 <span id="scaling_${x}_${key[y]}_start"></span> 開始</div>`
+			table += `<div id="scaling_${x}_${key[y]}_div" style="margin-bottom: 10px;"><b>${NAME_FROM_RES[key[y]]}</b>（<span id="scaling_${x}_${key[y]}_power"></span>）：在 <span id="scaling_${x}_${key[y]}_start"></span> 開始</div>`
 		}
 		table += `</div>`
 	}
@@ -202,32 +228,6 @@ function updateUpperHTML() {
 	if (unl) tmp.el.supernovaAmt.setHTML(format(player.supernova.times,0)+"<br>（+"+format(tmp.supernova.bulk.sub(player.supernova.times).max(0),0)+"）")
 }
 
-function updateRanksHTML() {
-	for (let x = 0; x < RANKS.names.length; x++) {
-        let rn = RANKS.names[x]
-		let unl = RANKS.unl[rn]?RANKS.unl[rn]():true
-		tmp.el["ranks_div_"+x].setDisplay(unl)
-		if (unl) {
-			let keys = Object.keys(RANKS.desc[rn])
-			let desc = ""
-			for (let i = 0; i < keys.length; i++) {
-				if (player.ranks[rn].lt(keys[i])) {
-					desc = `在第 ${format(keys[i],0)} ${RANKS.fullNames[x]}中，${RANKS.desc[rn][keys[i]]}`
-					break
-				}
-			}
-
-			tmp.el["ranks_scale_"+x].setTxt(getScalingName(rn))
-			tmp.el["ranks_amt_"+x].setTxt(format(player.ranks[rn],0))
-			tmp.el["ranks_"+x].setClasses({btn: true, reset: true, locked: !tmp.ranks[rn].can})
-			tmp.el["ranks_desc_"+x].setTxt(desc)
-			tmp.el["ranks_req_"+x].setTxt(x==0?formatMass(tmp.ranks[rn].req):"第 "+format(tmp.ranks[rn].req,0)+" "+RANKS.fullNames[x-1])
-			tmp.el["ranks_auto_"+x].setDisplay(RANKS.autoUnl[rn]())
-			tmp.el["ranks_auto_"+x].setTxt(player.auto_ranks[rn]?"開啟":"關閉")
-		}
-    }
-}
-
 function updateMassUpgradesHTML() {
 	for (let x = 1; x <= UPGS.mass.cols; x++) {
 		let upg = UPGS.mass[x]
@@ -279,11 +279,28 @@ function updateRanksRewardHTML() {
 	}
 }
 
+function updatePrestigesRewardHTML() {
+	tmp.el["pres_reward_name"].setTxt(PRESTIGES.fullNames[player.pres_reward])
+	for (let x = 0; x < PRES_LEN; x++) {
+		tmp.el["pres_reward_div_"+x].setDisplay(player.pres_reward == x)
+		if (player.pres_reward == x) {
+			let keys = Object.keys(PRESTIGES.rewards[x])
+			for (let y = 0; y < keys.length; y++) {
+				let unl = player.prestiges[x].gte(keys[y])
+				tmp.el["pres_reward_"+x+"_"+y].setDisplay(unl)
+				if (unl) if (tmp.el["pres_eff_"+x+"_"+y]) {
+					let eff = PRESTIGES.rewardEff[x][keys[y]]
+					tmp.el["pres_eff_"+x+"_"+y].setTxt(eff[1](tmp.prestiges.eff[x][keys[y]]))
+				}
+			}
+		}
+	}
+}
 function updateMainUpgradesHTML() {
 	if (player.main_upg_msg[0] != 0) {
 		let upg1 = UPGS.main[player.main_upg_msg[0]]
 		let upg2 = UPGS.main[player.main_upg_msg[0]][player.main_upg_msg[1]]
-		let msg = "<span class='sky'>"+(typeof upg2.desc == "function" ? upg2.desc() : upg2.desc)+"</span><br><span>價格；"+format(upg2.cost,0)+" "+upg1.res+"</span>"
+		let msg = "<span class='sky'>"+(typeof upg2.desc == "function" ? upg2.desc() : upg2.desc)+"</span><br><span>價格："+format(upg2.cost,0)+" "+upg1.res+"</span>"
 		if (upg2.effDesc !== undefined) msg += "<br><span class='green'>目前："+tmp.upgs.main[player.main_upg_msg[0]][player.main_upg_msg[1]].effDesc+"</span>"
 		tmp.el.main_upg_msg.setHTML(msg)
 	} else tmp.el.main_upg_msg.setTxt("")
@@ -292,7 +309,7 @@ function updateMainUpgradesHTML() {
 		let upg = UPGS.main[x]
 		let unl = upg.unl()
 		tmp.el["main_upg_"+x+"_div"].changeStyle("visibility", unl?"visible":"hidden")
-		tmp.el["main_upg_"+x+"_res"].setTxt(`你有 ${upg.getRes().format(0)} ${upg.res}`)
+		tmp.el["main_upg_"+x+"_res"].setTxt(`你有 ${upg.getRes().format(0)} ${x!=2?"個":""}${upg.res}`)
 		if (unl) {
 			for (let y = 1; y <= upg.lens; y++) {
 				let unl2 = upg[y].unl ? upg[y].unl() : true
@@ -375,6 +392,8 @@ function updateHTML() {
 				tmp.el.massSoftStart4.setTxt(formatMass(tmp.massSoftGain3))
 				tmp.el.massSoft5.setDisplay(tmp.massGain.gte(tmp.massSoftGain4))
 				tmp.el.massSoftStart5.setTxt(formatMass(tmp.massSoftGain4))
+				tmp.el.massSoft6.setDisplay(tmp.massGain.gte(tmp.massSoftGain5))
+				tmp.el.massSoftStart6.setTxt(formatMass(tmp.massSoftGain5))
 			}
 			if (tmp.stab[0] == 1) {
 				updateBlackHoleHTML()
@@ -389,6 +408,7 @@ function updateHTML() {
 		if (tmp.tab == 1) {
 			if (tmp.stab[1] == 0) updateRanksRewardHTML()
 			if (tmp.stab[1] == 1) updateScalingHTML()
+			if (tmp.stab[1] == 2) updatePrestigesRewardHTML()
 		}
 		if (tmp.tab == 2) {
 			updateMainUpgradesHTML()
@@ -400,6 +420,7 @@ function updateHTML() {
 			if (tmp.stab[4] == 0) updateAtomHTML()
 			if (tmp.stab[4] == 1) updateElementsHTML()
 			if (tmp.stab[4] == 2) updateMDHTML()
+			if (tmp.stab[4] == 3) updateBDHTML()
 		}
 		if (tmp.tab == 7) {
 			updateOptionsHTML()

@@ -1,0 +1,52 @@
+:root {
+    --font: 'Verdana, Geneva, Tahoma, sans-serif';
+	--cx: 0;
+    --cy: 0;
+}
+
+@font-face {
+	font-family: 'Inter';
+	src: url('https://rsms.me/inter/inter.css');
+	unicode-range: U+0-7F;
+}
+
+@font-face {
+	font-family: 'Noto Sans SC';
+	src: url(https://fonts.googleapis.com/css?family=Noto+Sans+SC:400,500,700);
+	unicode-range: U+3000-303F, U+4E00-9FFF;
+}
+
+p {
+	font-family: 'Inter', 'Noto Sans SC', sans-serif;
+	font-size: 16px;
+	line-height: 150%;
+}
+
+h1 {
+	font-size: 1.8rem;
+	font-weight: bold;
+}
+
+h1.title {
+	color: white;
+	font-size: 2rem;
+	background-color: #202020;
+}
+
+h2 {
+	font-size: 1.6rem;
+	font-weight: 600;
+}
+
+h3 {
+	font-size: 1.4rem;
+	font-weight: 500;
+}
+
+body {
+    color: #F0F0F0;
+    background-color: hsl(0, 0%, 7%);
+	font-size: 16px;
+	margin: auto;
+	width: 75%;
+}

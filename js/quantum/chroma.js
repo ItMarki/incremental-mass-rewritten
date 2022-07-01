@@ -20,15 +20,18 @@ const CHROMA = {
     eff: [
         i => {
             let x = i.add(1).log10().add(1).root(3)
+            if (hasUpgrade('br',10)) x = x.mul(1.1)
             return x
         },
         i => {
             let x = E(1.01).pow(i.add(1).log10().max(0).pow(0.8))
             if (hasUpgrade('br',7) && player.qu.rip.active) x = x.pow(2)
+            if (hasUpgrade('br',10)) x = x.pow(1.1)
             return x
         },
         i => {
             let x = E(1.1).pow(i.add(1).log10().max(0).pow(0.75))
+            if (hasUpgrade('br',10)) x = x.pow(1.1)
             return x
         },
     ],
@@ -40,7 +43,7 @@ const CHROMA = {
             return `將五級層前的要求減少 ${format(x)}x`
         },
         x => {
-            return `將挑戰 1-8 的獎勵加強 ${format(x)}x`
+            return `將第 1 至 8 個挑戰的獎勵加強 ${format(x)}x`
         },
     ],
 }

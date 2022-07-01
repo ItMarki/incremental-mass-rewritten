@@ -3,7 +3,7 @@ const MASS_DILATION = {
     penalty() {
         let x = 0.8
         if (FERMIONS.onActive("02")) x **= 2
-        if (QCs.active()) x **= tmp.qu.qc_eff[6]
+        if (QCs.active() && (player.md.break.active ? !player.qu.rip.active : true)) x **= tmp.qu.qc_eff[6]
         return x
     },
     onactive() {
@@ -17,11 +17,12 @@ const MASS_DILATION = {
         if (!player.md.active && hasTree("d1")) x = x.mul(1.25)
         if (FERMIONS.onActive("01")) x = x.div(10)
         if (QCs.active()) x = x.mul(tmp.qu.qc_eff[4])
+        if (hasElement(24) && hasPrestige(0,40)) x = x.mul(tmp.elements.effect[24])
         return x
     },
     RPmultgain() {
         let x = E(1).mul(tmp.md.upgs[2].eff)
-        if (hasElement(24)) x = x.mul(tmp.elements.effect[24])
+        if (hasElement(24) && !hasPrestige(0,40)) x = x.mul(tmp.elements.effect[24])
         if (hasElement(31)) x = x.mul(tmp.elements.effect[31])
         if (hasElement(34)) x = x.mul(tmp.elements.effect[34])
         if (hasElement(45)) x = x.mul(tmp.elements.effect[45])
@@ -35,7 +36,7 @@ const MASS_DILATION = {
     },
     massGain() {
         if (CHALS.inChal(11)) return E(0)
-        let pow = E(2)
+        let pow = E(2).add(tmp.bd.upgs[1].eff)
         let x = player.md.particles.pow(pow)
         x = x.mul(tmp.md.upgs[0].eff)
         if (hasElement(22)) x = x.mul(tmp.elements.effect[22])
@@ -43,14 +44,15 @@ const MASS_DILATION = {
         if (hasElement(40)) x = x.mul(tmp.elements.effect[40])
         if (hasElement(32)) x = x.pow(1.05)
         if (QCs.active()) x = x.pow(tmp.qu.qc_eff[4])
-        return x
+        return x.softcap(mlt(1e12),0.5,0)
     },
     mass_req() {
         let x = E(10).pow(player.md.particles.add(1).div(tmp.md.rp_mult_gain).root(tmp.md.rp_exp_gain).add(14).mul(40)).mul(1.50005e56)
         return x
     },
     effect() {
-        let x = player.md.mass.max(1).log10().add(1).root(3).mul(tmp.md.upgs[1].eff)
+        let x = tmp.md.bd3 ? player.qu.rip.active ? player.md.mass.max(1).log10().max(1).log10().add(1).log10().add(1).root(2) : player.md.mass.max(1).log10().max(1).log10().add(1).root(3) : player.md.mass.max(1).log10().add(1).root(3)
+        x = x.mul(tmp.md.upgs[1].eff)
         return x
     },
     upgs: {
@@ -73,9 +75,10 @@ const MASS_DILATION = {
                 effDesc(x) { return format(x,0)+"x"+(x.gte('e1.2e4')?`<span class='soft'>（軟限制${x.gte('e2e400')?"^2":""}）</span>`:"")},
             },{
                 desc: `加強膨脹質量效果。`,
-                cost(x) { return E(10).pow(x).mul(100) },
-                bulk() { return player.md.mass.gte(100)?player.md.mass.div(100).max(1).log10().add(1).floor():E(0) },
+                cost(x) { return tmp.md.bd3 ? E(10).pow(E(1.25).pow(x)).mul(100) : E(10).pow(x).mul(100) },
+                bulk() { return player.md.mass.gte(100)?(tmp.md.bd3 ? player.md.mass.div(100).max(1).log10().max(1).log(1.25).add(1).floor() : player.md.mass.div(100).max(1).log10().add(1).floor()):E(0) },
                 effect(x) {
+                    if (tmp.md.bd3) return x.mul(tmp.md.upgs[11].eff||1).root(player.qu.rip.active ? 3 : 2).mul(player.qu.rip.active ? 0.05 : 0.1).add(1)
                     if (hasElement(83)) return expMult(x,2,1.5).add(1)
                     return player.md.upgs[7].gte(1)?x.mul(tmp.md.upgs[11].eff||1).root(1.5).mul(0.25).add(1):x.mul(tmp.md.upgs[11].eff||1).root(2).mul(0.15).add(1)
                 },
@@ -108,7 +111,7 @@ const MASS_DILATION = {
                     let s = E(0.25).add(tmp.md.upgs[10].eff||1)
                     let x = i.mul(s)
                     if (hasElement(53)) x = x.mul(1.75)
-                    return x.softcap(1e3,0.6,0)
+                    return x.softcap(1e3,0.6,0)//.softcap(3e4,0.5,0)
                 },
                 effDesc(x) { return "+^"+format(x)+(x.gte(1e3)?"<span class='soft'>（軟限制）</span>":"") },
             },{
@@ -145,8 +148,10 @@ const MASS_DILATION = {
                 desc: `將質量膨脹升級 6 的底數增加 0.015。`,
                 cost(x) { return E(1e50).pow(x.pow(1.5)).mul('1.50001e1556') },
                 bulk() { return player.md.mass.gte('1.50001e1556')?player.md.mass.div('1.50001e1556').max(1).log(1e50).max(0).root(1.5).add(1).floor():E(0) },
-                effect(x) {
-                    return x.mul(0.015).add(1).softcap(1.2,0.75,0).sub(1)
+                effect(i) {
+                    if (player.md.break.upgs[3].gte(1)) i = i.pow(1.5).softcap(1e18,1/1.5,0)
+                    let x = i.mul(0.015).add(1).softcap(1.2,0.75,0).sub(1)
+                    return x
                 },
                 effDesc(x) { return "+"+format(x)+(x.gte(0.2)?"<span class='soft'>（軟限制）</span>":"") },
             },{
@@ -161,7 +166,165 @@ const MASS_DILATION = {
             },
         ],
     },
+    
+    break: {
+        toggle() {
+            let bd = player.md.break
+
+            bd.active = !bd.active
+
+            if (!bd.active) if (confirm("你確定要修補膨脹嗎？")) {
+                bd.energy = E(0)
+                bd.mass = E(0)
+                for (let x = 0; x < MASS_DILATION.break.upgs.ids.length; x++) bd.upgs[x] = E(0)
+
+                QUANTUM.enter(false,true,false,true)
+            } else bd.active = true
+        },
+        energyGain() {
+            if (!player.md.break.active || !player.qu.rip.active) return E(0)
+
+            let x = player.md.mass.add(1).log10().sub(400).div(2).max(0)
+            x = x.add(1).pow(x.add(1).log10()).sub(1)
+
+            if (hasPrestige(0,10)) x = x.mul(prestigeEff(0,10))
+            x = x.mul(tmp.bd.upgs[5].eff||1)
+            if (hasElement(116)) x = x.mul(tmp.elements.effect[116]||1)
+
+            return x
+        },
+        massGain() {
+            let x = player.md.break.energy.max(0).pow(2)
+            x = x.mul(tmp.bd.upgs[0].eff||1)
+            if (player.md.break.upgs[7].gte(1)) x = x.mul(tmp.bd.upgs[7].eff||1)
+            if (player.md.break.upgs[8].gte(1)) x = x.mul(tmp.bd.upgs[8].eff||1)
+
+            return x
+        },
+
+        upgs: {
+            buy(x) {
+                if (tmp.bd.upgs[x].can) {
+                    player.md.break.mass = player.md.break.mass.sub(this.ids[x].cost(tmp.bd.upgs[x].bulk.sub(1))).max(0)
+                    player.md.break.upgs[x] = player.md.break.upgs[x].max(tmp.bd.upgs[x].bulk)
+
+                    if (x == 2) {
+                        player.md.upgs[1] = E(0)
+
+                        updateMDTemp()
+                    }
+
+                    updateBDTemp()
+                }
+            },
+            ids: [
+                {
+                    desc: `相對質量獲得量翻倍。`,
+                    cost(x) { return E(10).pow(x.pow(1.1)).mul(1e5) },
+                    bulk() { return player.md.break.mass.gte(1e5)?player.md.break.mass.div(1e5).max(1).log10().root(1.1).add(1).floor():E(0) },
+                    effect(y) {
+                        let x = Decimal.pow(2,y)
+
+                        return x.softcap(1e15,0.5,0)
+                    },
+                    effDesc(x) { return format(x,0)+"x"+x.softcapHTML(1e15) },
+                },{
+                    desc: `增加膨脹質量公式的指數。`,
+                    cost(x) { return E(10).pow(x.pow(1.25)).mul(1e7) },
+                    bulk() { return player.md.break.mass.gte(1e7)?player.md.break.mass.div(1e7).max(1).log10().root(1.25).add(1).floor():E(0) },
+                    effect(y) {
+                        let x = y.div(40)
+
+                        return x
+                    },
+                    effDesc(x) { return "+^"+format(x) },
+                },{
+                    desc: `膨脹質量效果的加成轉換成指數加成（效果稍弱，在大撕裂中更弱），但是第二個質量膨脹升級的價格會指數提升。購買這個升級會重置這個增幅。`,
+                    maxLvl: 1,
+                    cost(x) { return E(1.619e23) },
+                    bulk() { return player.md.break.mass.gte(1.619e23)?E(1):E(0) },
+                },{
+                    desc: `第 11 個質量膨脹升級強 50%，其等級會在 1e18 被軟限制。`,
+                    maxLvl: 1,
+                    cost(x) { return E(1.989e33) },
+                    bulk() { return player.md.break.mass.gte(1.989e33)?E(1):E(0) },
+                },{
+                    desc: `元級等級推遲開始。`,
+                    cost(x) { return E(10).pow(x.pow(2)).mul(1.989e36) },
+                    bulk() { return player.md.break.mass.gte(1.989e36)?player.md.break.mass.div(1.989e36).max(1).log10().root(2).add(1).floor():E(0) },
+                    effect(y) {
+                        let x = y.div(10).add(1)
+
+                        return x
+                    },
+                    effDesc(x) { return "推遲 x"+format(x) },
+                },{
+                    desc: `相對能量獲得量增至三倍。`,
+                    cost(x) { return E(10).pow(x.pow(1.5)).mul(2.9835e48) },
+                    bulk() { return player.md.break.mass.gte(2.9835e48)?player.md.break.mass.div(2.9835e48).max(1).log10().root(1.5).add(1).floor():E(0) },
+                    effect(y) {
+                        let x = Decimal.pow(3,y)
+
+                        return x
+                    },
+                    effDesc(x) { return format(x,0)+"x" },
+                },{
+                    desc: `死亡碎片和熵互相加強。`,
+                    maxLvl: 1,
+                    cost(x) { return uni(1e35) },
+                    bulk() { return player.md.break.mass.gte(uni(1e35))?E(1):E(0) },
+                    effect(y) {
+                        let x = [player.qu.rip.amt.add(1).log10().add(1).pow(2),player.qu.en.amt.add(1).log10().add(1).pow(1.5)]
+
+                        return x
+                    },
+                    effDesc(x) { return "熵獲得量 "+x[0].format()+"x，死亡碎片獲得量 "+x[1].format()+"x" },
+                },{
+                    desc: `膨脹質量的指數每多一個數量級，相對質量獲得量增加 75%。`,
+                    maxLvl: 1,
+                    cost(x) { return uni(1e48) },
+                    bulk() { return player.md.break.mass.gte(uni(1e48))?E(1):E(0) },
+                    effect(y) {
+                        let x = E(1.75).pow(player.md.mass.add(1).log10().add(1).log10())
+
+                        return x
+                    },
+                    effDesc(x) { return format(x)+"x" },
+                },{
+                    desc: `量子前全局運行速度極稍微提升相對質量獲得量。`,
+                    maxLvl: 1,
+                    cost(x) { return uni(1e100) },
+                    bulk() { return player.md.break.mass.gte(uni(1e100))?E(1):E(0) },
+                    effect(y) {
+                        let x = (tmp.preQUGlobalSpeed||E(1)).add(1).root(10)
+
+                        return x
+                    },
+                    effDesc(x) { return format(x)+"x" },
+                },{
+                    desc: `超級重置等級延遲 10 個開始。`,
+                    maxLvl: 1,
+                    cost(x) { return uni(1e120) },
+                    bulk() { return player.md.break.mass.gte(uni(1e120))?E(1):E(0) },
+                },
+            ],
+        }
+    },
 }
+
+/*
+{
+    desc: `Placeholder.`,
+    cost(x) { return E(10).pow(x.pow(1.1)).mul(1e5) },
+    bulk() { return player.md.break.mass.gte(1e5)?player.md.break.mass.div(1e5).max(1).log10().root(1.1).add(1).floor():E(0) },
+    effect(y) {
+        let x = E(1)
+
+        return x
+    },
+    effDesc(x) { return format(x,0)+"x"},
+},
+*/
 
 function setupMDHTML() {
     let md_upg_table = new Element("md_upg_table")
@@ -171,7 +334,7 @@ function setupMDHTML() {
         table += `
         <button onclick="MASS_DILATION.upgs.buy(${i})" class="btn full md" id="md_upg${i}_div" style="font-size: 11px;">
         <div style="min-height: 80px">
-            [第 <span id="md_upg${i}_lvl"></span> 等級]<br>
+        ${((upg.maxLvl||1/0) > 1)?`[第 <span id="md_upg${i}_lvl"></span> 等級]<br>`:""}
             ${upg.desc}<br>
             ${upg.effDesc?`目前：<span id="md_upg${i}_eff"></span>`:""}
         </div>
@@ -180,6 +343,23 @@ function setupMDHTML() {
         `
 	}
 	md_upg_table.setHTML(table)
+    
+    let bd_upg_table = new Element("bd_upg_table")
+	table = ""
+	for (let i = 0; i < MASS_DILATION.break.upgs.ids.length; i++) {
+        let upg = MASS_DILATION.break.upgs.ids[i]
+        table += `
+        <button onclick="MASS_DILATION.break.upgs.buy(${i})" class="btn full bd" id="bd_upg${i}_div" style="font-size: 11px;">
+        <div style="min-height: 80px">
+        ${((upg.maxLvl||1/0) > 1)?`[第 <span id="bd_upg${i}_lvl"></span> 等級]<br>`:""}
+            ${upg.desc}<br>
+            ${upg.effDesc?`目前：<span id="bd_upg${i}_eff"></span>`:""}
+        </div>
+        <span id="bd_upg${i}_cost"></span>
+        </button>
+        `
+	}
+	bd_upg_table.setHTML(table)
 }
 
 function updateMDTemp() {
@@ -188,12 +368,15 @@ function updateMDTemp() {
         tmp.md.upgs = []
         for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) tmp.md.upgs[x] = {}
     }
+    tmp.md.bd3 = player.md.break.upgs[2].gte(1)
+    let mdub = 1
+    if (hasElement(115)) mdub *= 1.05
     for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) {
         let upg = MASS_DILATION.upgs.ids[x]
         tmp.md.upgs[x].cost = upg.cost(player.md.upgs[x])
         tmp.md.upgs[x].bulk = upg.bulk().min(upg.maxLvl||1/0)
         tmp.md.upgs[x].can = player.md.mass.gte(tmp.md.upgs[x].cost) && player.md.upgs[x].lt(upg.maxLvl||1/0)
-        if (upg.effect) tmp.md.upgs[x].eff = upg.effect(player.md.upgs[x])
+        if (upg.effect) tmp.md.upgs[x].eff = upg.effect(player.md.upgs[x].mul(mdub))
     }
     tmp.md.pen = MASS_DILATION.penalty()
     tmp.md.rp_exp_gain = MASS_DILATION.RPexpgain()
@@ -203,12 +386,29 @@ function updateMDTemp() {
     tmp.md.mass_gain = MASS_DILATION.massGain()
     tmp.md.mass_req = MASS_DILATION.mass_req()
     tmp.md.mass_eff = MASS_DILATION.effect()
+    
+    updateBDTemp()
+}
+
+function updateBDTemp() {
+    let bd = tmp.bd
+
+    bd.energyGain = MASS_DILATION.break.energyGain()
+    bd.massGain = MASS_DILATION.break.massGain()
+
+    for (let x = 0; x < MASS_DILATION.break.upgs.ids.length; x++) {
+        let upg = MASS_DILATION.break.upgs.ids[x]
+        bd.upgs[x].cost = upg.cost(player.md.break.upgs[x])
+        bd.upgs[x].bulk = upg.bulk().min(upg.maxLvl||1/0)
+        bd.upgs[x].can = player.md.break.mass.gte(bd.upgs[x].cost) && player.md.break.upgs[x].lt(upg.maxLvl||1/0)
+        if (upg.effect) bd.upgs[x].eff = upg.effect(player.md.break.upgs[x])
+    }
 }
 
 function updateMDHTML() {
     tmp.el.md_particles.setTxt(format(player.md.particles,0)+(hasTree("qol3")?" "+formatGain(player.md.particles,tmp.md.passive_rp_gain.mul(tmp.preQUGlobalSpeed)):""))
-    tmp.el.md_eff.setTxt(tmp.md.mass_eff.gte(10)?format(tmp.md.mass_eff)+"x":format(tmp.md.mass_eff.sub(1).mul(100))+"%")
-    tmp.el.md_mass.setTxt(formatMass(player.md.mass)+" "+formatGain(player.md.mass,tmp.md.mass_gain,true))
+    tmp.el.md_eff.setTxt(tmp.md.bd3 ? "^"+tmp.md.mass_eff.format() : tmp.md.mass_eff.gte(10)?format(tmp.md.mass_eff)+"x":format(tmp.md.mass_eff.sub(1).mul(100))+"%")
+    tmp.el.md_mass.setTxt(formatMass(player.md.mass)+" "+formatGain(player.md.mass,tmp.md.mass_gain.mul(tmp.preQUGlobalSpeed),true))
     tmp.el.md_btn.setTxt(player.md.active
         ?(tmp.md.rp_gain.gte(1)?`取消以獲得 ${format(tmp.md.rp_gain,0)} 相對粒子：`:`到達 ${formatMass(tmp.md.mass_req)} 以獲得相對粒子，或取消膨脹`)
         :"膨脹質量"
@@ -219,9 +419,33 @@ function updateMDHTML() {
         tmp.el["md_upg"+x+"_div"].setVisible(unl)
         if (unl) {
             tmp.el["md_upg"+x+"_div"].setClasses({btn: true, full: true, md: true, locked: !tmp.md.upgs[x].can})
-            tmp.el["md_upg"+x+"_lvl"].setTxt(format(player.md.upgs[x],0)+(upg.maxLvl!==undefined?" / "+format(upg.maxLvl,0):""))
+            if ((upg.maxLvl||1/0) > 1) tmp.el["md_upg"+x+"_lvl"].setTxt(format(player.md.upgs[x],0)+(upg.maxLvl!==undefined?" / "+format(upg.maxLvl,0):""))
             if (upg.effDesc) tmp.el["md_upg"+x+"_eff"].setHTML(upg.effDesc(tmp.md.upgs[x].eff))
             tmp.el["md_upg"+x+"_cost"].setTxt(player.md.upgs[x].lt(upg.maxLvl||1/0)?"價格："+formatMass(tmp.md.upgs[x].cost):"")
+        }
+    }
+    
+    tmp.el.dmSoft1.setDisplay(player.md.mass.gte(mlt(1e12)))
+    tmp.el.dmSoftStart1.setTxt(formatMass(mlt(1e12)))
+}
+
+function updateBDHTML() {
+    let bd = player.md.break
+
+    tmp.el.bd_btn.setTxt(bd.active?"修補膨脹":"打破膨脹")
+
+    tmp.el.bd_energy.setTxt(bd.energy.format(1)+" "+bd.energy.formatGain(tmp.bd.energyGain))
+    tmp.el.bd_mass.setTxt(formatMass(bd.mass)+" "+bd.mass.formatGain(tmp.bd.massGain,true))
+
+    for (let x = 0; x < MASS_DILATION.break.upgs.ids.length; x++) {
+        let upg = MASS_DILATION.break.upgs.ids[x]
+        let unl = upg.unl?upg.unl():true
+        tmp.el["bd_upg"+x+"_div"].setVisible(unl)
+        if (unl) {
+            tmp.el["bd_upg"+x+"_div"].setClasses({btn: true, full: true, bd: true, locked: !tmp.bd.upgs[x].can})
+            if ((upg.maxLvl||1/0) > 1) tmp.el["bd_upg"+x+"_lvl"].setTxt(format(bd.upgs[x],0)+(upg.maxLvl!==undefined?" / "+format(upg.maxLvl,0):""))
+            if (upg.effDesc) tmp.el["bd_upg"+x+"_eff"].setHTML(upg.effDesc(tmp.bd.upgs[x].eff))
+            tmp.el["bd_upg"+x+"_cost"].setTxt(bd.upgs[x].lt(upg.maxLvl||1/0)?"價格："+formatMass(tmp.bd.upgs[x].cost):"")
         }
     }
 }

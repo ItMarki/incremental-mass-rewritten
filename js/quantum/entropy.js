@@ -18,6 +18,7 @@ const ENTROPY = {
     gain() {
         let x = tmp.en.eff.eth.mul(getEnRewardEff(6))
         if (hasElement(93)) x = x.mul(tmp.elements.effect[93]||1)
+        if (player.md.break.upgs[6].gte(1)) x = x.mul(tmp.bd.upgs[6].eff?tmp.bd.upgs[6].eff[0]:1)
         return x
     },
     cap() {
@@ -51,7 +52,7 @@ const ENTROPY = {
             inc: E(10),
 
             eff(i) {
-                let x = i.div(2).add(1).root(3)
+                let x = hasElement(114) ? i.add(1).root(1.5) : i.div(2).add(1).root(3)
                 return x
             },
             desc(x) { return `元級時間速度、黑洞壓縮器和宇宙射線推遲 <b>${x.format()}x</b>。` },
@@ -75,7 +76,9 @@ const ENTROPY = {
             scale: {s: 10, p: 2},
 
             eff(i) {
-                let x = E(3).pow(i)
+                let b = 3
+                if (hasElement(97)) b++
+                let x = Decimal.pow(b,i)
                 return x
             },
             desc(x) { return `蒸發資源的獲得量快 <b>${x.format(1)}x</b>。` },
@@ -114,7 +117,7 @@ const ENTROPY = {
             },
             desc(x) { return `在元級增幅前，所有超新星前增幅弱 <b>${formatReduction(x)}</b>（五級層除外）。` },
         },{
-            title: "熵壓縮",
+            title: "熵濃縮",
 
             start: E(1e6),
             inc: E(100),
@@ -160,7 +163,11 @@ const ENTROPY = {
         let rc = this.rewards[i]
         let r = player.qu.en.rewards[i]
 
-        if (rc.scale) r = r.scale(rc.scale.s, rc.scale.p,0)
+        if (rc.scale) {
+            let p = rc.scale.p
+            if ((i == 2 || i == 6) && hasElement(106)) p = p**0.85
+            r = r.scale(rc.scale.s, p, 0)
+        }
         let x = rc.inc.pow(r).mul(rc.start)
         return x
     },
@@ -171,7 +178,11 @@ const ENTROPY = {
         let x = E(0)
         if (en.gte(rc.start)) {
             x = en.div(rc.start).max(1).log(rc.inc)
-            if (rc.scale) x = x.scale(rc.scale.s, rc.scale.p,0, true)
+            if (rc.scale) {
+                let p = rc.scale.p
+                if ((i == 2 || i == 6) && hasElement(106)) p = p**0.85
+                x = x.scale(rc.scale.s, p, 0, true)
+            }
             x = x.add(1).floor()
         }
         return x
@@ -210,6 +221,8 @@ function calcEntropy(dt, dt_offline) {
 function updateEntropyTemp() {
     let rbr = []
     if (hasElement(91)) rbr.push(1,4)
+    if (hasElement(96)) rbr.push(3)
+    if (hasElement(109)) rbr.push(0)
     tmp.en.reward_br = rbr
 
     for (let x = 0; x < ENTROPY.rewards.length; x++) {

@@ -34,8 +34,12 @@ const ELEMENTS = {
     canBuy(x) { return player.atom.quarks.gte(this.upgs[x].cost) && !hasElement(x) && (player.qu.rip.active ? true : x <= 86) && !tmp.elements.cannot.includes(x) },
     buyUpg(x) {
         if (this.canBuy(x)) {
-            player.atom.quarks = player.atom.quarks.sub(this.upgs[x].cost)
-            player.atom.elements.push(x)
+            if (x == 118) {
+                alert("敬請期待……")
+            } else {
+                player.atom.quarks = player.atom.quarks.sub(this.upgs[x].cost)
+                player.atom.elements.push(x)
+            }
         }
     },
     upgs: [
@@ -77,7 +81,7 @@ const ELEMENTS = {
             effect() {
                 let x = E(0)
                 for (let i = 1; i <= CHALS.cols; i++) x = x.add(player.chal.comps[i].mul(i>4?2:1))
-                if (player.atom.elements.includes(7)) x = x.mul(tmp.elements.effect[7])
+                if (hasElement(7)) x = x.mul(tmp.elements.effect[7])
                 if (hasElement(87)) x = E(1.01).pow(x).root(3)
                 else x = x.div(100).add(1).max(1)
                 return x
@@ -95,7 +99,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `C2 獎勵的軟限制減弱 75%。`,
+            desc: `第 2 個挑戰獎勵的軟限制減弱 75%。`,
             cost: E(1e21),
         },
         {
@@ -115,7 +119,7 @@ const ELEMENTS = {
             cost: E(1e29),
         },
         {
-            desc: `每完成一次 C7，C5 和 C6 的完成上限增加 2 次。`,
+            desc: `每完成一次第 7 個挑戰，第 5 和 6 個挑戰的完成上限增加 2 次。`,
             cost: E(2.5e30),
             effect() {
                 let x = player.chal.comps[7].mul(2)
@@ -155,11 +159,11 @@ const ELEMENTS = {
             effDesc(x) { return "^"+format(x) },
         },
         {
-            desc: `改善中子的第二效果。`,
+            desc: `改善中子的第 2 個效果。`,
             cost: E(1e50),
         },
         {
-            desc: `C7 完成上限增加 50 個。`,
+            desc: `第 7 個挑戰的完成上限增加 50 次。`,
             cost: E(1e53),
         },
         {
@@ -183,10 +187,10 @@ const ELEMENTS = {
             desc: `每秒獲得你會獲得的原子的 100%。原子力量稍微提升相對粒子獲得量。`,
             cost: E(1e75),
             effect() {
-                let x = player.atom.atomic.max(1).log10().add(1).pow(0.4)
+                let x = hasPrestige(0,40) ? player.atom.atomic.max(1).log10().add(1).log10().add(1).root(2) : player.atom.atomic.max(1).log10().add(1).pow(0.4)
                 return x
             },
-            effDesc(x) { return format(x)+"x" },
+            effDesc(x) { return hasPrestige(0,40) ? "^"+format(x) : format(x)+"x" },
         },
         {
             desc: `質量膨脹升級 1 的底數增加 1。`,
@@ -276,7 +280,7 @@ const ELEMENTS = {
             effDesc(x) { return "暴怒升級 7 +"+format(x,0)+"" },
         },
         {
-            desc: `移除挑戰 2 和 6 的效果的軟限制。`,
+            desc: `從挑戰 2 和 6 的效果中移除軟限制。`,
             cost: E(1e285),
         },
         {
@@ -387,7 +391,7 @@ const ELEMENTS = {
             cost: E('e3.6e4'),
             effect() {
                 let x = tmp.tickspeedEffect?tmp.tickspeedEffect.step.max(1).log10().div(10).max(1):E(1)
-                if (player.atom.elements.includes(66)) x = x.pow(2)
+                if (hasElement(66)) x = x.pow(2)
                 return x.max(1)
             },
             effDesc(x) { return format(x)+"x" },
@@ -544,7 +548,7 @@ const ELEMENTS = {
             cost: E('e150'),
         },
         {
-            desc: `所有時間速度增幅推遲 100x（在應用第 8 量子挑戰模組後）。`,
+            desc: `所有時間速度增幅推遲 100x（在應用第 8 個量子挑戰模組後）。`,
             cost: E('e500'),
         },
         {
@@ -574,7 +578,7 @@ const ELEMENTS = {
             cost: E('e4800'),
         },
         {
-            desc: `質量每到達一個數量級^2，熵獲得量增加 66.7%。`,
+            desc: `質量的指數每多一個數量級^2，熵獲得量增加 66.7%。`,
             cost: E('e29500'),
             effect() {
                 let x = E(5/3).pow(player.mass.add(1).log10().add(1).log10())
@@ -596,96 +600,116 @@ const ELEMENTS = {
             cost: E("e34500"),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `熵轉換受到的削弱弱 10%。`,
+            cost: E('e202000'),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `熵蒸發的底數增加 1。`,
+            cost: E('e8.5e6'),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `第 8 個量子挑戰模組在大撕裂中弱 20%。`,
+            cost: E('e1.2e7'),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `從第 3 個光子升級中移除軟限制^3，而且軟限制^2 更弱。`,
+            cost: E('e2.15e7'),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `五級層對重置底數給予指數加成。`,
+            cost: E('e2.5e7'),
+            effect() {
+                let x = player.ranks.pent.root(2).div(1e3).toNumber()
+                return x
+            },
+            effDesc(x) { return "+^"+format(x) },
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `大幅增強藍圖粒子。`,
+            cost: E('e3.5e7'),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `時間速度力量的軟限制推遲 ^100。`,
+            cost: E('e111111111'),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `榮耀加快量子前全局運行速度。`,
+            cost: E('e5e8'),
+            effect() {
+                let x = E(2).pow(player.prestiges[1])
+                return x
+            },
+            effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `第 9 至 12 個挑戰的完成上限增加 200 次。`,
+            cost: E('e1.2e9'),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `每個粒子能量的第一個效果獲得過強指數提升。`,
+            cost: E('e2.2e9'),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `熵蒸發^2 和濃縮^2 增幅弱 15%。`,
+            cost: E('e7.25e9'),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `貝塔粒子效果翻倍。`,
+            cost: E('e1.45e10'),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `等級到五級層的所有增幅弱 10%（在大撕裂中則是 2%）。`,
+            cost: E('e1.6e10'),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `熵倍數在大撕裂中有效。`,
+            cost: E('e3e10'),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `質量軟限制^4 弱 50%（在大撕裂中則是 20%）。`,
+            cost: E('e6e10'),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `中子星對原子獲得量給予指數加成。`,
+            cost: E('e7.5e10'),
+            effect() {
+                let x = player.supernova.stars.add(1).log10().add(1).log10().add(1).root(3)
+                return x
+            },
+            effDesc(x) { return "^"+format(x) },
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `[sn4] 的效果增加 2。`,
+            cost: E('e3e12'),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `改善 [bs2] 的公式。`,
+            cost: E('e4e12'),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `改善熵倍數的公式。`,
+            cost: E('e1.2e13'),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `質量膨脹升級強 5%。`,
+            cost: E("e7e13"),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `重置底數提升相對能量獲得量。`,
+            cost: E('e1e14'),
+            effect() {
+                let x = (tmp.prestiges.base||E(1)).add(1).root(3)
+                return x
+            },
+            effDesc(x) { return "x"+format(x) },
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `在應用所有軟限制後，質量獲得量獲得 ^10 的加成。`,
+            cost: E("e5e16"),
         },
         {
-            desc: `未定。`,
-            cost: EINF,
+            desc: `進入<span id="final_118">天門</span>。`,
+            cost: E("e1.7e17"),
         },
     ],
     /*
@@ -717,7 +741,8 @@ const ELEMENTS = {
         }
         if (PRIM.unl()) u += 3
         if (hasTree('unl3')) u += 3
-        if (player.qu.rip.first) u += 32
+        if (player.qu.rip.first) u += 9
+        if (hasUpgrade("br",9)) u += 23 // 23
 
         return u
     },
@@ -736,7 +761,7 @@ function setupElementsHTML() {
         else if (m=='x') {
             num++
             table += ELEMENTS.upgs[num]===undefined?`<div style="width: 50px; height: 50px"></div>`
-            :`<button class="elements" id="elementID_${num}" onclick="ELEMENTS.buyUpg(${num}); ssf[0]('${ELEMENTS.names[num]}')" onmouseover="tmp.elements.choosed = ${num}" onmouseleave="tmp.elements.choosed = 0"><div style="font-size: 12px;">${num}</div>${ELEMENTS.names[num]}</button>`
+            :`<button class="elements ${num == 118 ? 'final' : ''}" id="elementID_${num}" onclick="ELEMENTS.buyUpg(${num}); ssf[0]('${ELEMENTS.names[num]}')" onmouseover="tmp.elements.choosed = ${num}" onmouseleave="tmp.elements.choosed = 0"><div style="font-size: 12px;">${num}</div>${ELEMENTS.names[num]}</button>`
             if (num==57 || num==89) num += 14
             else if (num==71) num += 18
             else if (num==118) num = 57
@@ -750,8 +775,8 @@ function updateElementsHTML() {
     let ch = tmp.elements.choosed
     tmp.el.elem_ch_div.setVisible(ch>0)
     if (ch) {
-        tmp.el.elem_desc.setTxt("["+ELEMENTS.fullNames[ch]+"] "+ELEMENTS.upgs[ch].desc)
-        tmp.el.elem_cost.setTxt(format(ELEMENTS.upgs[ch].cost,0))
+        tmp.el.elem_desc.setHTML("<b>［"+ELEMENTS.fullNames[ch]+"］</b>"+ELEMENTS.upgs[ch].desc)
+        tmp.el.elem_cost.setTxt(format(ELEMENTS.upgs[ch].cost,0)+" 夸克"+(ch>86?"（大撕裂）":"")+(player.qu.rip.active&&tmp.elements.cannot.includes(ch)?"（不能在大撕裂中購買）":""))
         tmp.el.elem_eff.setHTML(ELEMENTS.upgs[ch].effDesc?"目前："+ELEMENTS.upgs[ch].effDesc(tmp.elements.effect[ch]):"")
     }
     tmp.el.element_la_1.setVisible(tmp.elements.unl_length>57)
@@ -763,7 +788,7 @@ function updateElementsHTML() {
         if (upg) {
             upg.setVisible(x <= tmp.elements.unl_length)
             if (x <= tmp.elements.unl_length) {
-                 upg.setClasses({elements: true, locked: !ELEMENTS.canBuy(x), bought: hasElement(x), br: x > 86})
+                upg.setClasses({elements: true, locked: !ELEMENTS.canBuy(x), bought: hasElement(x), br: x > 86 && x < 118, final: x == 118})
             }
         }
     }
@@ -771,7 +796,7 @@ function updateElementsHTML() {
 
 function updateElementsTemp() {
     let cannot = []
-    if (player.qu.rip.active) cannot.push(58)
+    if (player.qu.rip.active) cannot.push(58,74)
     tmp.elements.cannot = cannot
 
     if (!tmp.elements.upg_length) tmp.elements.upg_length = ELEMENTS.upgs.length-1

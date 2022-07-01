@@ -8,6 +8,7 @@ const ATOM = {
         x = x.mul(tmp.bosons.upgs.gluon[0].effect)
         if (hasElement(17)) x = x.pow(1.1)
         x = x.pow(tmp.prim.eff[3][0])
+        if (hasElement(111)) x = x.pow(tmp.elements.effect[111])
 
         if (QCs.active()) x = x.pow(tmp.qu.qc_eff[4])
         if (FERMIONS.onActive("10")) x = expMult(x,0.625)
@@ -26,6 +27,7 @@ const ATOM = {
         if (player.md.upgs[6].gte(1)) x = x.mul(tmp.md.upgs[6].eff)
         x = x.mul(tmp.md.upgs[9].eff)
         if (hasElement(47)) x = x.pow(1.1)
+        if (hasPrestige(1,7)) x = x.pow(prestigeEff(1,7))
         return x.floor()
     },
     canReset() { return tmp.atom.gain.gte(1) },
@@ -62,7 +64,8 @@ const ATOM = {
         effect() {
             let x = player.atom.atomic.max(1).log(hasElement(23)?1.5:1.75).pow(getEnRewardEff(1))
             if (!hasElement(75)) x = x.softcap(5e4,0.75,0).softcap(4e6,0.25,0)
-            return x.softcap(1e10,0.1,0).floor()
+            x = x.softcap(hasUpgrade("atom",13)?1e11:1e10,0.1,0)
+            return x.floor()
         },
     },
     gamma_ray: {
@@ -128,40 +131,40 @@ const ATOM = {
         },
         gain(i) {
             let x = tmp.atom.particles[i]?tmp.atom.particles[i].effect:E(0)
-            if (QCs.active()) x = x.pow(tmp.qu.qc_eff[4])
             if (player.mainUpg.atom.includes(7)) x = x.mul(tmp.upgs.main?tmp.upgs.main[3][7].effect:E(1))
+            if (QCs.active()) x = x.pow(tmp.qu.qc_eff[4])
             return x
         },
         powerEffect: [
             x=>{
-                let a = x.add(1).pow(3)//.softcap("ee14",0.9,2)
+                let a = hasElement(105) ? x.add(1).log10().add(1).log10().root(2).div(10).add(1) : x.add(1).pow(3)
                 let b = hasElement(29) ? x.add(1).log2().pow(1.25).mul(0.01) : x.add(1).pow(2.5).log2().mul(0.01)
                 return {eff1: a, eff2: b}
             },
             x=>{
-                let a = x.add(1).pow(2)//.softcap("ee14",0.9,2)
+                let a = hasElement(105) ? x.add(1).log10().add(1).log10().root(2).div(10).add(1) : x.add(1).pow(2)
                 let b = hasElement(19)
                 ?player.mass.max(1).log10().add(1).pow(player.rp.points.max(1).log(10).mul(x.max(1).log(10)).root(2.75))
                 :player.mass.max(1).log10().add(1).pow(player.rp.points.max(1).log(100).mul(x.max(1).log(100)).root(3))
                 return {eff1: a, eff2: b}
             },
             x=>{
-                let a = x.add(1)//.softcap("ee14",0.9,2)
+                let a = hasElement(105) ? x.add(1).log10().add(1).log10().root(2).div(10).add(1) : x.add(1)
                 let b = hasElement(30) ? x.add(1).log2().pow(1.2).mul(0.01) : x.add(1).pow(2).log2().mul(0.01)
                 return {eff1: a, eff2: b}
             },
         ],
         desc: [
             x=>{ return `
-                將質量獲得量乘以 ${format(x.eff1)}<br><br>
+                將質量獲得量提升 ${hasElement(105)?"^"+format(x.eff1):format(x.eff1)+"x"}<br><br>
                 時間速度力量增加 ${format(x.eff2.mul(100))}%
             ` },
             x=>{ return `
-                將暴怒點數獲得量乘以 ${format(x.eff1)}<br><br>
+                將暴怒點數獲得量提升 ${hasElement(105)?"^"+format(x.eff1):format(x.eff1)+"x"}<br><br>
                 暴怒點數將質量獲得量提升 ${format(x.eff2)}x<br><br>
             ` },
             x=>{ return `
-                將暗物質獲得量乘以 ${format(x.eff1)}<br><br>
+                將暗物質獲得量提升 ${hasElement(105)?"^"+format(x.eff1):format(x.eff1)+"x"}<br><br>
                 黑洞壓縮器力量增加 ${format(x.eff2)}
             ` },
         ],

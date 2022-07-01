@@ -9,6 +9,7 @@ const QUANTUM = {
         if (hasTree("qf1")) x = x.mul(treeEff("qf1"))
         if (hasTree("qf2")) x = x.mul(treeEff("qf2"))
         if (hasTree("qf3")) x = x.mul(treeEff("qf3"))
+        if (hasPrestige(0,2)) x = x.mul(4)
         return x.floor()
     },
     gainTimes() {
@@ -17,10 +18,10 @@ const QUANTUM = {
         if (hasTree("qu9")) x = x.mul(treeEff("qu9"))
         return x
     },
-    enter(auto=false,force=false,rip=false) {
+    enter(auto=false,force=false,rip=false,bd=false) {
         if (tmp.qu.gain.gte(1) || force) {
             if (player.confirms.qu&&!auto&&!force) if (confirm("你確定要量子化嗎？量子化會重置生活質素升級以外的所有功能。")?!confirm("你確定嗎？？？"):true) return
-            if (QCs.active() && !rip) {
+            if (QCs.active() && !rip && !bd && !player.qu.rip.active) {
                 player.qu.qc.shard = tmp.qu.qc_s+tmp.qu.qc_s_bouns
                 player.qu.qc.active = false
             }
@@ -105,13 +106,13 @@ const QUANTUM = {
     },
     bpGain() {
         let x = E(1)
-        if (tmp.qu.mil_reached[5]) x = x.mul(tmp.preQUGlobalSpeed.root(2))
+        if (tmp.qu.mil_reached[5]) x = x.mul(tmp.preQUGlobalSpeed.root(2).softcap(1e50,0.95,2))
         if (hasTree('qu5')) x = x.mul(tmp.supernova.tree_eff.qu5)
         x = x.mul(tmp.qu.cosmic_str_eff.eff)
         return x
     },
     bpEff() {
-        let x = player.qu.bp.add(1).log10().add(1).pow(1.5)
+        let x = hasElement(101) ? player.qu.bp.add(1).log10().add(1).tetrate(hasUpgrade("br",15) ? 1.35 : 1.25) : player.qu.bp.add(1).log10().add(1).pow(1.5)
         return x
     },
     cosmic_str: {
@@ -136,7 +137,7 @@ const QUANTUM = {
     },
     mils: [
         [E(1), `你開始時解鎖生活質素升級（qol1-6）、玻色子和費米子。`],
-        [E(2), `中子樹的量子前部分的所有升級都移除要求；量子前全局運行速度增至 10x。`],
+        [E(2), `中子樹的量子前部分的所有升級都被移除要求；量子前全局運行速度增至 10x。`],
         [E(3), `你開始時解鎖中子樹的量子前挑戰部分以及升級 [c] 和 [qol7]。`],
         [E(5), `你開始時解鎖生活質素升級（qol8-9 和 unl1）和輻射。`],
         [E(6), `量子泡沫獲得量翻倍。`],
@@ -243,6 +244,11 @@ function calcQuantum(dt, dt_offline) {
     if (player.mass.gte(mlt(7.5e6)) && !player.qu.en.unl) {
         player.qu.en.unl = true
         addPopup(POPUP_GROUPS.en)
+    }
+
+    if (hasUpgrade('br',9)) {
+        player.md.break.energy = player.md.break.energy.add(tmp.bd.energyGain.mul(dt))
+        player.md.break.mass = player.md.break.mass.add(tmp.bd.massGain.mul(dt))
     }
 
     if (hasTree("qu_qol1")) for (let x = 0; x < tmp.supernova.auto_tree.length; x++) TREE_UPGS.buy(tmp.supernova.auto_tree[x], true)

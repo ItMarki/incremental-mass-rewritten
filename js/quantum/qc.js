@@ -61,6 +61,7 @@ const QCs = {
             effDesc(x) { return `質量膨脹懲罰 ^${format(x)}。` },
         },{
             eff(i) {
+                if (hasElement(98) && player.qu.rip.active) i *= 0.8
                 let x = [1-0.05*i,i/10+1]
                 return x
             },
@@ -164,6 +165,8 @@ function updateQCModPresets() {
 function updateQCTemp() {
     tmp.qu.qc_s_b = E(2)
     if (hasTree("qf4")) tmp.qu.qc_s_b = tmp.qu.qc_s_b.add(.5)
+    if (hasPrestige(0,2)) tmp.qu.qc_s_b = tmp.qu.qc_s_b.add(.5)
+    if (hasTree("qc3")) tmp.qu.qc_s_b = tmp.qu.qc_s_b.add(treeEff('qc3',0))
     tmp.qu.qc_s_eff = tmp.qu.qc_s_b.pow(player.qu.qc.shard)
 
     let s = 0
