@@ -23,11 +23,13 @@
 @font-face {
 	font-family: 'GenYoGothic TW';
 	src: url('fonts/GenYoGothic-R_0.ttf');
+	line-height: 125%;
 }
 
 @font-face {
 	font-family: 'GenYoGothic JP';
 	src: url('fonts/GenYoGothic-R_1.ttf');
+	line-height: 125%;
 }
 
 @font-face {
