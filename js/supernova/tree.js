@@ -13,32 +13,38 @@ const TREE_IDS = [
         ['chal1'],
         ['bs4','bs1','','qf1','','rad1'],
         ['qu0'],
+        [],
     ],[
         ['s1','m1','rp1','bh1','sn1'],
         ['qol2','qol3','qol4','qu_qol2','qu_qol3','qu_qol4','qu_qol5','qu_qol6'],
         ['chal2','chal4a','chal4b','chal3'],
         ['bs5','bs2','fn1','bs3','qf2','qf3','rad2','rad3'],
         ['qu1','qu2','qu3'],
+        [],
     ],[
         ['s2','m2','t1','d1','bh2','gr1','sn2'],
         ['qol5','qol6','qol7','','','qu_qol7','',''],
         ['chal4','chal7a'],
         ['fn4','fn3','fn9','fn2','fn5','qf4','rad4','rad5'],
         ['prim3','prim2','prim1','qu4','qc1','qc2','qc3'],
+        [],
     ],[
         ['s3','m3','gr2','sn3'],
         ['qol9','unl1','qol8','unl2','unl3','qu_qol8','qu_qol9','unl4'],
         ['chal5','chal6','chal7','chal8'],
         ['fn12','fn11','fn6','fn10','rad6',""],
         ['en1','qu5','br1'],
+        [],
     ],[
         ['s4','sn5','sn4'],
         ['','','','qu_qol8a'],
         [],
-        ['fn7','fn8'],
+        ['','fn7','fn8','fn13'],
         ['qu6','qu7','qu8','qu9','qu10','qu11'],
+        [],
     ],[
         [],
+        ['qu_qol10','qu_qol11','qu_qol12'],
         [],
         [],
         [],
@@ -116,7 +122,7 @@ const TREE_UPGS = {
                 if (hasElement(112)) x = x.add(2)
                 return x
             },
-            effDesc(x) { return "+"+format(x)+(x.gte(1.5)?"<span class='soft'>（軟限制）</span>":"") },
+            effDesc(x) { return "+"+format(x)+(x.gte(1.5)?"<span class='soft'>（軟上限）</span>":"") },
         },
 		 sn5: {
             branch: ["sn4"],
@@ -137,17 +143,17 @@ const TREE_UPGS = {
                 let x = E(1e100).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
                 return x
             },
-            effDesc(x) { return format(x)+"x"+(x.max(1).log(1e100).gte(1e3)?"<span class='soft'>（軟限制）</span>":"") },
+            effDesc(x) { return format(x)+"x"+(x.max(1).log(1e100).gte(1e3)?"<span class='soft'>（軟上限）</span>":"") },
         },
         m2: {
             branch: ["m1"],
-            desc: `質量軟限制^2 推遲 ^1.5。`,
+            desc: `質量軟上限^2 推遲 ^1.5。`,
             cost: E(800),
         },
         m3: {
             branch: ["m2"],
             unl() { return player.supernova.fermions.unl && hasTree("fn1") },
-            desc: `超新星推遲質量軟限制^2-3。`,
+            desc: `超新星推遲質量軟上限^2-3。`,
             cost: E(1e46),
             effect() {
                 let x = player.supernova.times.mul(0.0125).add(1)
@@ -170,7 +176,7 @@ const TREE_UPGS = {
                 let x = E(1e50).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
                 return x
             },
-            effDesc(x) { return format(x)+"x"+(x.max(1).log(1e50).gte(1e3)?"<span class='soft'>（軟限制）</span>":"") },
+            effDesc(x) { return format(x)+"x"+(x.max(1).log(1e50).gte(1e3)?"<span class='soft'>（軟上限）</span>":"") },
         },
         bh1: {
             branch: ["c"],
@@ -180,7 +186,7 @@ const TREE_UPGS = {
                 let x = E(1e35).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
                 return x
             },
-            effDesc(x) { return format(x)+"x"+(x.max(1).log(1e35).gte(1e3)?"<span class='soft'>（軟限制）</span>":"") },
+            effDesc(x) { return format(x)+"x"+(x.max(1).log(1e35).gte(1e3)?"<span class='soft'>（軟上限）</span>":"") },
         },
         bh2: {
             branch: ['bh1'],
@@ -203,7 +209,7 @@ const TREE_UPGS = {
             branch: ["s1"],
             req() { return player.supernova.times.gte(3) },
             reqDesc: `3 個超新星。`,
-            desc: `在恆星加成公式中，層的軟限制弱 50%。`,
+            desc: `在恆星加成公式中，層的軟上限弱 50%。`,
             cost: E(2500),
         },
         s3: {
@@ -242,7 +248,7 @@ const TREE_UPGS = {
             branch: ["qol2"],
             req() { return player.supernova.times.gte(4) },
             reqDesc: `4 個超新星。`,
-            desc: `開始時解鎖鍀-43，並改善這個元素。你可以自動從質量獲得相對粒子。`,
+            desc: `開始時解鎖鍀-43，並加強這個元素。你可以自動從質量獲得相對粒子。`,
             cost: E(10000),
         },
         qol4: {
@@ -323,7 +329,7 @@ const TREE_UPGS = {
         chal4a: {
             unl() { return player.supernova.post_10 },
             branch: ["chal4"],
-            desc: `挑戰 9 的效果更好。`,
+            desc: `挑戰 9 的效果更強。`,
             cost: E(1e8),
         },
         chal4b: {
@@ -345,19 +351,19 @@ const TREE_UPGS = {
         },
         chal7: {
             branch: ["chal6"],
-            desc: `解鎖第 12 個挑戰。`,
+            desc: `解鎖挑戰 12。`,
             cost: E(1e200),
         },
         chal7a: {
             unl() { return hasTree("unl3") },
             branch: ["chal7"],
-            desc: `第 12 個挑戰的效果更強。`,
+            desc: `挑戰 12 的效果更強。`,
             cost: E('e900'),
         },
         chal8: {
             unl() { return player.qu.rip.first },
             branch: ["chal7"],
-            desc: `第 9 至 12 個挑戰的完成上限增加 200 次。`,
+            desc: `挑戰 9-12 的完成上限增加 200 次。`,
             cost: E('e35000'),
         },
         gr1: {
@@ -438,7 +444,7 @@ const TREE_UPGS = {
             branch: ["fn1"],
             req() { return player.mass.div('1.5e56').gte("ee6") && player.md.active && FERMIONS.onActive("01") },
             reqDesc() { return `在[下]和質量膨脹中到達 ${formatMass(E('e1e6').mul(1.5e56))}。` },
-            desc: `解鎖一種新的 U-夸克和一種新的 U-費米子。`,
+            desc: `解鎖一種新的 U-夸克和一種新的 U-輕子。`,
             cost: E(1e33),
         },
         fn3: {
@@ -451,7 +457,7 @@ const TREE_UPGS = {
         fn4: {
             unl() { return hasTree("fn2") },
             branch: ["fn1"],
-            desc: `第 2 個光子和膠子升級稍微更強。`,
+            desc: `光子和膠子升級 2 稍微更強。`,
             cost: E(1e39),
         },
         fn5: {
@@ -459,13 +465,13 @@ const TREE_UPGS = {
             branch: ["fn1"],
             req() { return player.atom.quarks.gte("e12500") && FERMIONS.onActive("10") },
             reqDesc() { return `在[電子]中到達 ${format("e12500")} 夸克。` },
-            desc: `[電子] 的最高階增加 35 個。它的效果軟限制更弱。`,
+            desc: `[電子] 的最高階增加 35 個。它的效果軟上限更弱。`,
             cost: E(1e42),
         },
         fn6: {
             branch: ["fn2"],
             req() { return player.mass.gte(uni('e4e4')) && FERMIONS.onActive("02") && CHALS.inChal(5) },
-            reqDesc() { return `在[粲]和挑戰 5 中到達 ${formatMass(uni("e4e4"))}。` },
+            reqDesc() { return `在[魅]和挑戰 5 中到達 ${formatMass(uni("e4e4"))}。` },
             desc: `解鎖一種新的 U-夸克和一種新的 U-費米子。`,
             cost: E(1e48),
         },
@@ -481,21 +487,21 @@ const TREE_UPGS = {
         },
         fn9: {
             branch: ["fn1"],
-            desc: `[奇] 和 [中微子] 的最高階增加 2 個。`,
+            desc: `[奇] 和 [微中子] 的最高階增加 2 個。`,
             cost: E(1e166),
         },
         fn10: {
             unl() { return PRIM.unl() },
             branch: ["fn5"],
             req() { return player.atom.points.gte("e1.5e8") && FERMIONS.onActive("10") && CHALS.inChal(9) },
-            reqDesc() { return `在 [電子] 和第 9 個挑戰中到達 ${format("e1.5e8")} 原子。` },
+            reqDesc() { return `在 [電子] 和挑戰 9 中到達 ${format("e1.5e8")} 原子。` },
             desc: `[電子] 不再有最高階，而且大幅增強它的效果。`,
             cost: E('e600'),
         },
         fn11: {
             unl() { return PRIM.unl() },
             branch: ["fn9"],
-            desc: `[奇]、[頂]、[底]、[中子] 和 [μ中微子] 的最高階增加 5。`,
+            desc: `[奇]、[頂]、[底]、[中子] 和 [緲微中子] 的最高階增加 5。`,
             cost: E('e680'),
         },
         fn12: {
@@ -606,19 +612,19 @@ const TREE_UPGS = {
         qu2: {
             qf: true,
             branch: ["qu0"],
-            desc: `大幅增強 W<sup>+</sup> 玻色子的第 1 個效果。`,
+            desc: `大幅增強 W<sup>+</sup> 玻色子的第一個效果。`,
             cost: E(1),
         },
         qu3: {
             qf: true,
             branch: ["qu0"],
-            desc: `黑洞公式的軟限制弱 30%。`,
+            desc: `黑洞公式的軟上限弱 30%。`,
             cost: E(1),
         },
         qu4: {
             qf: true,
             branch: ["qu1", 'qu2', 'qu3'],
-            desc: `從 [sn2] 效果中移除軟限制。`,
+            desc: `從 [sn2] 效果中移除軟上限。`,
             cost: E(35),
         },
         qu5: {
@@ -694,7 +700,7 @@ const TREE_UPGS = {
         qu11: {
             qf: true,
             branch: ['qu10'],
-            desc: `量子泡沫獲得量公式更好。`,
+            desc: `量子泡沫獲得量公式更強。`,
             cost: E(1e43),
         },
         qu_qol1: {
@@ -798,21 +804,21 @@ const TREE_UPGS = {
         prim2: {
             qf: true,
             branch: ["prim1"],
-            desc: `西塔粒子增加第二個效果。`,
+            desc: `Θ 粒子增加第二個效果。`,
             cost: E(500),
         },
         prim3: {
             qf: true,
             unl() { return hasTree("unl3") },
             branch: ["prim2"],
-            desc: `艾普塞朗粒子增加第二個效果。這個效果在量子挑戰中更強。`,
+            desc: `Ε 粒子增加第二個效果。這個效果在量子挑戰中更強。`,
             cost: E(1e16),
         },
         qc1: {
             qf: true,
             unl() { return hasTree("unl3") },
             branch: ['qu5'],
-            desc: `量子碎片推遲質量軟限制^4。`,
+            desc: `量子碎片推遲質量軟上限^4。`,
             cost: E(1e10),
             effect() {
                 let x = (player.qu.qc.shard+1)**0.75
@@ -899,6 +905,40 @@ const TREE_UPGS = {
             desc: `解鎖大撕裂。`,
             cost: E(1e42),
         },
+
+        qu_qol10: {
+            unl: _=>player.dark.unl,
+            icon: 'placeholder',
+
+            qf: true,
+            desc: `你不能從原始素定理獲得 Δ、Α、Ο 和 Σ 粒子，但是上述每個粒子的數量等於原始素定理的總數。`,
+            cost: E(1e110),
+        },
+        qu_qol11: {
+            branch: ["qu_qol10"],
+            icon: 'placeholder',
+
+            qf: true,
+            desc: `你不能從原始素定理獲得 Φ 和 Ε 粒子，但是上述每個粒子的數量等於原始素定理的總數。`,
+            cost: E(1e130),
+        },
+        qu_qol12: {
+            branch: ["qu_qol11"],
+            icon: 'placeholder',
+
+            qf: true,
+            desc: `你不能從原始素定理獲得 Θ 和 Β 粒子，但是上述每個粒子的數量等於原始素定理的總數。`,
+            cost: E(1e190),
+        },
+
+        fn13: {
+            unl: _=>tmp.chal13comp,
+
+            icon: 'placeholder',
+            branch: ["fn8"],
+            desc: `解鎖一種元 U-夸克和一種元 U-輕子。`,
+            cost: E('e1.5e10'),
+        },
         /*
         x: {
             unl() { return true },
@@ -936,8 +976,10 @@ function setupTreeHTML() {
             table += `<div class="tree_table_column">`
             for (let k = 0; k < TREE_IDS[i][j].length; k++) {
                 let id = TREE_IDS[i][j][k]
+                let u = TREE_UPGS.ids[id]
+
                 let option = id == "" ? `style="visibility: hidden"` : ``
-                let img = TREE_UPGS.ids[id]?`<img src="images/tree/${id}.png">`:""
+                let img = TREE_UPGS.ids[id]?`<img src="images/tree/${u.icon||id}.png">`:""
                 table += `<button id="treeUpg_${id}" class="btn_tree" onclick="TREE_UPGS.buy('${id}'); tmp.supernova.tree_choosed = '${id}'" ${option}>${img}</button>`
             }
             table += `</div>`
@@ -1049,6 +1091,7 @@ function updateTreeHTML() {
         <span class="green">${t_ch.effDesc?"目前："+t_ch.effDesc(tmp.supernova.tree_eff[tmp.supernova.tree_choosed]):""}</span>
         `
     )
+    
     for (let i = 0; i < TREE_TAB.length; i++) {
         tmp.el["tree_tab"+i+"_btn"].setDisplay(TREE_TAB[i].unl?TREE_TAB[i].unl():true)
         tmp.el["tree_tab"+i+"_notify"].setDisplay(tmp.supernova.tree_afford2[i].length>0)

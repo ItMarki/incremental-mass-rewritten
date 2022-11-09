@@ -44,10 +44,10 @@ function setupHTML() {
 	table = ""
 	for (let x = 0; x < PRES_LEN; x++) {
 		table += `<div style="width: 300px" id="pres_div_${x}">
-			<button id="pres_auto_${x}" class="btn" style="width: 80px;" onclick="RANKS.autoSwitch(${x})">關閉</button>
+			<button id="pres_auto_${x}" class="btn" style="width: 80px;" onclick="PRESTIGES.autoSwitch(${x})">關閉</button>
 			第 <span id="pres_amt_${x}">X</span> 個<span id="pres_scale_${x}""></span>${PRESTIGES.fullNames[x]}<br><br>
 			<button onclick="PRESTIGES.reset(${x})" class="btn reset" id="pres_${x}">
-				${x>0?"重置你的"+PRESTIGES.fullNames[x-1]:'強制執行量子重置'}，但是提升一個${PRESTIGES.fullNames[x]}。<span id="pres_desc_${x}"></span><br>
+				${x>0?"重置你的"+PRESTIGES.fullNames[x-1]:'強制執行量子重置'}，但是升${PRESTIGES.fullNames[x]}。<span id="pres_desc_${x}"></span><br>
 				要求：<span id="pres_req_${x}">X</span>
 			</button>
 		</div>`
@@ -82,7 +82,7 @@ function setupHTML() {
 		table += `<div id="ranks_reward_div_${x}">`
 		let keys = Object.keys(RANKS.desc[rn])
 		for (let y = 0; y < keys.length; y++) {
-			table += `<span id="ranks_reward_${rn}_${y}"><b>第 ${keys[y]} ${x==3?"個":""}${RANKS.fullNames[x]}：</b>${RANKS.desc[rn][keys[y]]}${RANKS.effect[rn][keys[y]]?`目前：<span id='ranks_eff_${rn}_${y}'></span></span>`:""}<br>`
+			table += `<span id="ranks_reward_${rn}_${y}"><b>第 ${keys[y]} ${x>=3?"個":""}${RANKS.fullNames[x]}：</b>${RANKS.desc[rn][keys[y]]}${RANKS.effect[rn][keys[y]]?`目前：<span id='ranks_eff_${rn}_${y}'></span></span>`:""}<br>`
 		}
 		table += `</div>`
 	}
@@ -108,8 +108,8 @@ function setupHTML() {
 		for (let y = 1; y <= UPGS.main[x].lens; y++) {
 			let key = UPGS.main[x][y]
 			table += `<img onclick="UPGS.main[${x}].buy(${y})" onmouseover="UPGS.main.over(${x},${y})" onmouseleave="UPGS.main.reset()"
-			style="margin: 3px;" class="img_btn" id="main_upg_${x}_${y}" src="images/main_upg_${id+y}.png">`
-		}
+			style="margin: 3px;" class="img_btn" id="main_upg_${x}_${y}" src="images/upgrades/main_upg_${id+y}.png">`
+				}
 		table += `</div><br><button id="main_upg_${x}_auto" class="btn" style="width: 80px;" onclick="player.auto_mainUpg.${id} = !player.auto_mainUpg.${id}">OFF</button></div>`
 	}
 	main_upgs_table.setHTML(table)
@@ -189,9 +189,12 @@ function updateUpperHTML() {
 	let gs = tmp.preQUGlobalSpeed
 
 	tmp.el.reset_desc.setHTML(player.reset_msg)
-	tmp.el.mass.setHTML(formatMass(player.mass)+"<br>"+formatGain(player.mass, tmp.massGain.mul(gs), true))
+	
+	let unl = true
+	tmp.el.mass_div.setDisplay(unl)
+	if (unl) tmp.el.mass.setHTML(formatMass(player.mass)+"<br>"+formatGain(player.mass, tmp.massGain.mul(gs), true))
 
-	let unl = !quUnl()
+	unl = !quUnl()
 	tmp.el.rp_div.setDisplay(unl)
 	if (unl) tmp.el.rpAmt.setHTML(format(player.rp.points,0)+"<br>"+(player.mainUpg.bh.includes(6)||player.mainUpg.atom.includes(6)?formatGain(player.rp.points, tmp.rp.gain.mul(gs)):"(+"+format(tmp.rp.gain,0)+")"))
 
@@ -226,6 +229,21 @@ function updateUpperHTML() {
 	unl = player.supernova.post_10
 	tmp.el.sn_div.setDisplay(unl)
 	if (unl) tmp.el.supernovaAmt.setHTML(format(player.supernova.times,0)+"<br>（+"+format(tmp.supernova.bulk.sub(player.supernova.times).max(0),0)+"）")
+
+	let gain2 = hasUpgrade('br',8)
+
+    unl = (quUnl() || player.chal.comps[12].gte(1))
+    tmp.el.qu_div.setDisplay(unl)
+    if (unl) tmp.el.quAmt.setHTML(format(player.qu.points,0)+"<br>"+(gain2?player.qu.points.formatGain(tmp.qu.gain.div(10)):"(+"+format(tmp.qu.gain,0)+")"))
+
+    unl = (quUnl())
+    tmp.el.gs1_div.setDisplay(unl)
+    if (unl) tmp.el.preQGSpeed.setHTML(formatMult(tmp.preQUGlobalSpeed))
+
+    unl = hasTree("unl4")
+    tmp.el.br_div.setDisplay(unl)
+    if (unl) tmp.el.brAmt.setHTML(player.qu.rip.amt.format(0)+"<br>"+(player.qu.rip.active||hasElement(147)?gain2?player.qu.rip.amt.formatGain(tmp.rip.gain.div(10)):`(+${tmp.rip.gain.format(0)})`:"（未啟動）"))
+
 }
 
 function updateMassUpgradesHTML() {
@@ -255,7 +273,7 @@ function updateTickspeedHTML() {
 		tmp.el.tickspeed_btn.setClasses({btn: true, locked: !FORMS.tickspeed.can()})
 		tmp.el.tickspeed_cost.setTxt(format(tmp.tickspeedCost,0))
 		tmp.el.tickspeed_step.setHTML((teff.step.gte(10)?format(teff.step)+"x":format(teff.step.sub(1).mul(100))+"%")
-		+(teff.step.gte(teff.ss)?"<span class='soft'>（軟限制）</span>":""))
+		+(teff.step.gte(teff.ss)?"<span class='soft'>（軟上限）</span>":""))
 		tmp.el.tickspeed_eff.setTxt(format(teff.eff))
 
 		tmp.el.tickspeed_auto.setDisplay(FORMS.tickspeed.autoUnl())
@@ -296,6 +314,7 @@ function updatePrestigesRewardHTML() {
 		}
 	}
 }
+
 function updateMainUpgradesHTML() {
 	if (player.main_upg_msg[0] != 0) {
 		let upg1 = UPGS.main[player.main_upg_msg[0]]
@@ -308,7 +327,7 @@ function updateMainUpgradesHTML() {
 		let id = UPGS.main.ids[x]
 		let upg = UPGS.main[x]
 		let unl = upg.unl()
-		tmp.el["main_upg_"+x+"_div"].changeStyle("visibility", unl?"visible":"hidden")
+		tmp.el["main_upg_"+x+"_div"].setDisplay(unl)
 		tmp.el["main_upg_"+x+"_res"].setTxt(`你有 ${upg.getRes().format(0)} ${x!=2?"個":""}${upg.res}`)
 		if (unl) {
 			for (let y = 1; y <= upg.lens; y++) {
@@ -369,15 +388,18 @@ function updateHTML() {
 	document.documentElement.style.setProperty('--font', player.options.font)
 	document.documentElement.style.setProperty('--cx', tmp.cx)
 	document.documentElement.style.setProperty('--cy', tmp.cy)
+
+	let displayMainTab = tmp.tab != 5
 	
 	tmp.el.offlineSpeed.setTxt(format(tmp.offlineMult))
 	tmp.el.loading.setDisplay(tmp.offlineActive)
-    tmp.el.app.setDisplay(tmp.offlineActive ? false : ((player.supernova.times.lte(0) && !player.supernova.post_10 ? !tmp.supernova.reached : true) && tmp.tab != 5))
+    tmp.el.app.setDisplay(tmp.offlineActive ? false : ((player.supernova.times.lte(0) && !player.supernova.post_10 ? !tmp.supernova.reached : true) && displayMainTab))
 	updateSupernovaEndingHTML()
 	updateTabsHTML()
-	if ((!tmp.supernova.reached || player.supernova.post_10) && tmp.tab != 5) {
-		updateUpperHTML()
+	updateUpperHTML()
+	if ((!tmp.supernova.reached || player.supernova.post_10) && displayMainTab) {
 		updateQuantumHTML()
+		updateDarkHTML()
 		if (tmp.tab == 0) {
 			if (tmp.stab[0] == 0) {
 				updateRanksHTML()
@@ -394,6 +416,10 @@ function updateHTML() {
 				tmp.el.massSoftStart5.setTxt(formatMass(tmp.massSoftGain4))
 				tmp.el.massSoft6.setDisplay(tmp.massGain.gte(tmp.massSoftGain5))
 				tmp.el.massSoftStart6.setTxt(formatMass(tmp.massSoftGain5))
+				tmp.el.massSoft7.setDisplay(tmp.massGain.gte(tmp.massSoftGain6))
+				tmp.el.massSoftStart7.setTxt(formatMass(tmp.massSoftGain6))
+				tmp.el.massSoft8.setDisplay(tmp.massGain.gte(tmp.massSoftGain7))
+				tmp.el.massSoftStart8.setTxt(formatMass(tmp.massSoftGain7))
 			}
 			if (tmp.stab[0] == 1) {
 				updateBlackHoleHTML()
@@ -422,7 +448,7 @@ function updateHTML() {
 			if (tmp.stab[4] == 2) updateMDHTML()
 			if (tmp.stab[4] == 3) updateBDHTML()
 		}
-		if (tmp.tab == 7) {
+		if (tmp.tab == 8) {
 			updateOptionsHTML()
 		}
 	}

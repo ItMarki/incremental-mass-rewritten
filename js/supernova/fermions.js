@@ -1,5 +1,8 @@
 const FERMIONS = {
-    onActive(id) { return player.supernova.fermions.choosed == id },
+    onActive(id) {
+        let i = player.supernova.fermions.choosed
+        return i == id || (i[1] == '6' && i[0] == id[0])
+    },
     gain(i) {
         if (!player.supernova.fermions.unl) return E(0)
         let x = E(1)
@@ -16,16 +19,12 @@ const FERMIONS = {
         }
     },
     choose(i,x) {
-        if (player.confirms.sn) if (!confirm("Are you sure to switch any type of any Fermion?")) return
-        let id = i+""+x
-        if (player.supernova.fermions.choosed != id) {
-            player.supernova.fermions.choosed = id
-            SUPERNOVA.reset(false,false,false,true)
-        }
+        if (player.confirms.sn) createConfirm("你確定要轉換成另一個費米子嗎？",'switchF', _=>CONFIRMS_FUNCTION.switchF(i,x))
+        else CONFIRMS_FUNCTION.switchF(i,x)
     },
     bonus(i,j) {
         let x = E(0)
-        if (hasTree("prim3")) x = x.add(tmp.prim.eff[5][1].min(j>2?4:1/0))
+        if (hasTree("prim3") && j < 6) x = x.add(tmp.prim.eff[5][1].min(j>2?4:1/0))
         return x
     },
 	fp() {
@@ -34,9 +33,9 @@ const FERMIONS = {
         if (QCs.active()) x = x.div(tmp.qu.qc_eff[2])
         return x
     },
-    getTierScaling(t, bulk=false) {
+    getTierScaling(t, bulk=false, meta=false) {
         let x = t
-        let fp = tmp.fermions.fp
+        let fp = meta?E(1):tmp.fermions.fp
         if (bulk) {
             x = t.scaleEvery('fTier',true).mul(fp).add(1).floor()
         } else {
@@ -50,10 +49,11 @@ const FERMIONS = {
         if (hasTree("fn6")) u++
         if (hasTree("fn7")) u++
         if (hasTree("fn8")) u++
+        if (hasTree("fn13")) u++
         return u
     },
     names: ['quark', 'lepton'],
-    sub_names: [["上","下","粲","奇","頂","底"],["電子","μ子","τ子","中微子","μ中微子","τ中微子"]],
+    sub_names: [["上","下","魅","奇","頂","底","元夸克"],["電子","緲子","陶子","微中子","緲微中子","陶微中子","元輕子"]],
     types: [
         [
             {
@@ -92,7 +92,7 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `相對粒子獲得量 x${format(x)}`+(x.gte('ee3')?"<span class='soft'>（軟限制）</span>":"")
+                    return `相對粒子獲得量 x${format(x)}`+(x.gte('ee3')?"<span class='soft'>（軟上限）</span>":"")
                 },
                 inc: "相對粒子",
                 cons: "相對粒子公式的指數除以 10",
@@ -112,13 +112,14 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `Z<sup>0</sup> 玻色子的第一個效果強 ${format(x.sub(1).mul(100))}%`+(x.gte(5)?"<span class='soft'>（軟限制）</span>":"")
+                    return `Z<sup>0</sup> 玻色子的第一個效果強 ${format(x.sub(1).mul(100))}%`+(x.gte(5)?"<span class='soft'>（軟上限）</span>":"")
                 },
                 inc: "質量",
                 cons: "你困在效果翻倍的質量膨脹裏",
                 isMass: true,
             },{
                 maxTier() {
+                    if (hasElement(142)) return Infinity
                     let x = 15
                     if (hasTree("fn9")) x += 2
                     if (hasTree("fn11")) x += 5
@@ -139,7 +140,7 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `第 4 個光子和膠子升級強 ${format(x)}x`+(x.gte(1.5)?"<span class='soft'>（軟限制）</span>":"")
+                    return `光子和膠子升級 4 強 ${format(x)}x`+(x.gte(1.5)?"<span class='soft'>（軟上限）</span>":"")
                 },
                 inc: "暴怒點數",
                 cons: "你困在質量膨脹和挑戰 3-5 裏",
@@ -161,10 +162,10 @@ const FERMIONS = {
                 },
                 eff(i, t) {
                     let x = i.add(1).log10().div(500).mul(t.root(2)).add(1)
-                    return x.softcap(1.15,0.5,0).softcap(1.8,1/3,0).min(2)
+                    return x.softcap(1.15,0.5,0).softcap(1.8,1/3,0).min(2)//.softcap(2,0.1,0)
                 },
                 desc(x) {
-                    return `輻射加成便宜 ${format(x)}x`+(x.gte(1.15)?"<span class='soft'>（軟限制）</span>":"")
+                    return `輻射加成便宜 ${format(x)}x`+(x.gte(1.15)?"<span class='soft'>（軟上限）</span>":"")
                 },
                 inc: "膨脹質量",
                 cons: "U-夸克、光子和膠子無效",
@@ -194,6 +195,26 @@ const FERMIONS = {
                 },
                 inc: "時間速度效果",
                 cons: "禁用挑戰",
+            },{
+                nextTierAt(x) {
+                    let t = FERMIONS.getTierScaling(x, false, true)
+                    return Decimal.pow(1.5,t).mul(1e10)
+                },
+                calcTier() {
+                    let res = tmp.fermions.prod[0]
+                    if (res.lt(1e10)) return E(0)
+                    let x = res.div(1e10).max(1).log(1.5).max(0)
+                    return FERMIONS.getTierScaling(x, true, true)
+                },
+                eff(i, t) {
+                    let x = i.add(1).log10().add(1).log10().div(200).mul(t.softcap(8,0.5,0)).add(1)
+                    return x
+                },
+                desc(x) {
+                    return `暗束效果強 ^${x.format()}`
+                },
+                inc: "以上所有 U-夸克的乘積",
+                cons: "啟動以上所有 U-夸克，但強制執行量子重置",
             },
 
         ],[
@@ -217,10 +238,10 @@ const FERMIONS = {
                 eff(i, t) {
                     let x = i.add(1).log10().mul(t).div(100).add(1).softcap(1.5,hasTree("fn5")?0.75:0.25,0)
                     if (hasTree("fn10")) x = x.pow(4.5)
-                    return x
+                    return x//.softcap(1e18,0.1,0)
                 },
                 desc(x) {
-                    return `塌縮恆星獲得量的軟限制推遲 ^${format(x)}`+(x.gte(1.5)?"<span class='soft'>（軟限制）</span>":"")
+                    return `塌縮恆星獲得量的軟上限推遲 ^${format(x)}`+(x.gte(1.5)?"<span class='soft'>（軟上限）</span>":"")
                 },
                 inc: "夸克",
                 cons: "原子獲得量的指數 ^0.625",
@@ -240,7 +261,7 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `希格斯玻色子和引力子的獲得量 x${format(x)}`+(x.gte(1e6)?"<span class='soft'>（軟限制）</span>":"")
+                    return `希格斯玻色子和引力子的獲得量 x${format(x)}`+(x.gte(1e6)?"<span class='soft'>（軟上限）</span>":"")
                 },
                 isMass: true,
                 inc: "黑洞質量",
@@ -267,6 +288,7 @@ const FERMIONS = {
                 cons: "你困在挑戰 8-9 裏",
             },{
                 maxTier() {
+                    if (hasElement(142)) return Infinity
                     let x = 15
                     if (hasTree("fn9")) x += 2
                     if (hasTree("fn11")) x += 5
@@ -287,7 +309,7 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `階的要求便宜 ${format(x)}x`+(x.gte(1.5)?"<span class='soft'>（軟限制）</span>":"")
+                    return `階的要求便宜 ${format(x)}x`+(x.gte(1.5)?"<span class='soft'>（軟上限）</span>":"")
                 },
                 inc: "塌縮恆星",
                 cons: "恆星生產器 ^0.5",
@@ -336,6 +358,26 @@ const FERMIONS = {
                 },
                 inc: "時間速度力量",
                 cons: "禁用輻射加成",
+            },{
+                nextTierAt(x) {
+                    let t = FERMIONS.getTierScaling(x, false, true)
+                    return Decimal.pow(1.5,t).mul(1e11)
+                },
+                calcTier() {
+                    let res = tmp.fermions.prod[1]
+                    if (res.lt(1e11)) return E(0)
+                    let x = res.div(1e11).max(1).log(1.5).max(0)
+                    return FERMIONS.getTierScaling(x, true, true)
+                },
+                eff(i, t) {
+                    let x = i.add(1).log10().add(1).log10().div(2000).mul(t.softcap(8,0.5,0))
+                    return x.toNumber()
+                },
+                desc(x) {
+                    return `將重置底數的次方增加 ${format(x)}`
+                },
+                inc: "以上所有 U-輕子的乘積",
+                cons: "啟動以上所有 U-輕子，但強制執行量子重置",
             },
 
             /*
@@ -361,6 +403,11 @@ const FERMIONS = {
             */
         ],
     ],
+    productF(i) {
+        let s = E(1)
+        for (let x = 0; x < 6; x++) s = s.mul(player.supernova.fermions.tiers[i][x].add(1))
+        return s
+    },
 }
 
 function setupFermionsHTML() {
@@ -388,6 +435,7 @@ function setupFermionsHTML() {
 function updateFermionsTemp() {
     let tf = tmp.fermions
 
+    tf.prod = [FERMIONS.productF(0),FERMIONS.productF(1)]
     tf.ch = player.supernova.fermions.choosed == "" ? [-1,-1] : [Number(player.supernova.fermions.choosed[0]),Number(player.supernova.fermions.choosed[1])]
     tf.fp = FERMIONS.fp()
     for (i = 0; i < 2; i++) {
@@ -405,6 +453,10 @@ function updateFermionsTemp() {
 }
 
 function updateFermionsHTML() {
+    let r = [
+        [player.atom.atomic, player.md.particles, player.mass, player.rp.points, player.md.mass, tmp.tickspeedEffect.eff, tmp.fermions.prod[0]],
+        [player.atom.quarks, player.bh.mass, player.bh.dm, player.stars.points, player.atom.points, tmp.tickspeedEffect.step, tmp.fermions.prod[1]]
+    ]
     for (i = 0; i < 2; i++) {
         tmp.el["f"+FERMIONS.names[i]+"Amt"].setTxt(format(player.supernova.fermions.points[i],2)+" "+formatGain(player.supernova.fermions.points[i],tmp.fermions.gains[i].mul(tmp.preQUGlobalSpeed)))
         let unls = FERMIONS.getUnlLength(i)
@@ -417,7 +469,7 @@ function updateFermionsHTML() {
             tmp.el[id+"_div"].setDisplay(unl)
 
             if (unl) {
-                let active = tmp.fermions.ch[0] == i && tmp.fermions.ch[1] == x
+                let active = FERMIONS.onActive(i+""+x)
                 tmp.el[id+"_div"].setClasses({fermion_btn: true, [FERMIONS.names[i]]: true, choosed: active})
                 tmp.el[id+"_nextTier"].setTxt(fm(f.nextTierAt(player.supernova.fermions.tiers[i][x])))
                 tmp.el[id+"_tier_scale"].setTxt(getScalingName('fTier', i, x)!=""?"個"+getScalingName('fTier', i, x):getScalingName('fTier', i, x))
@@ -427,10 +479,7 @@ function updateFermionsHTML() {
                 tmp.el[id+"_cur"].setDisplay(active)
                 if (active) {
                     tmp.el[id+"_cur"].setTxt(`目前：${fm(
-                        [
-                            [player.atom.atomic, player.md.particles, player.mass, player.rp.points, player.md.mass, tmp.tickspeedEffect.eff],
-                            [player.atom.quarks, player.bh.mass, player.bh.dm, player.stars.points, player.atom.points, tmp.tickspeedEffect.step]
-                        ][i][x]
+                        r[i][x]
                     )}`)
                 }
             }

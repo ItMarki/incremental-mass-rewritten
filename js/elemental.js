@@ -1,6 +1,9 @@
 const ELEMENTS = {
-    map: `x_________________xvxx___________xxxxxxvxx___________xxxxxxvxxx_xxxxxxxxxxxxxxxvxxx_xxxxxxxxxxxxxxxvxxx1xxxxxxxxxxxxxxxvxxx2xxxxxxxxxxxxxxxv_v___3xxxxxxxxxxxxxx_v___4xxxxxxxxxxxxxx_`,
+    map: [
+        `x_________________xvxx___________xxxxxxvxx___________xxxxxxvxx_xxxxxxxxxxxxxxxxvxx_xxxxxxxxxxxxxxxxvxx1xxxxxxxxxxxxxxxxvxx2xxxxxxxxxxxxxxxxv_v__3xxxxxxxxxxxxxx__v__4xxxxxxxxxxxxxx__`,
+    ],
     la: [null,'*','**','*','**'],
+    exp: [0,118,218,362,558,814,1138],
     names: [
         null,
         'H','He','Li','Be','B','C','N','O','F','Ne',
@@ -10,7 +13,7 @@ const ELEMENTS = {
         'Nb','Mo','Tc','Ru','Rh','Pd','Ag','Cd','In','Sn',
         'Sb','Te','I','Xe','Cs','Ba','La','Ce','Pr','Nd',
         'Pm','Sm','Eu','Gd','Tb','Dy','Ho','Er','Tm','Yb',
-        'Lu','Hf','Ta','W','Re','Os','Ir','Pt','At','Hg',
+        'Lu','Hf','Ta','W','Re','Os','Ir','Pt','Au','Hg',
         'Tl','Pb','Bi','Po','At','Rn','Fr','Ra','Ac','Th',
         'Pa','U','Np','Pu','Am','Cm','Bk','Cf','Es','Fm',
         'Md','No','Lr','Rf','Db','Sg','Bh','Hs','Mt','Ds',
@@ -31,21 +34,21 @@ const ELEMENTS = {
         '鍆','鍩','鐒','鑪','𨧀（⿰金杜）','𨭎（⿰金喜）','𨨏（⿰金波）','𨭆（⿰金黑）','䥑（⿰金麥）','鐽',
         '錀','鎶','鉨','鈇','鏌','鉝','鿬（⿰石田）','鿫（⿹气奧）'
     ],
-    canBuy(x) { return player.atom.quarks.gte(this.upgs[x].cost) && !hasElement(x) && (player.qu.rip.active ? true : x <= 86) && !tmp.elements.cannot.includes(x) },
+    canBuy(x) {
+        let res = this.upgs[x].dark ? player.dark.shadow : player.atom.quarks
+        return res.gte(this.upgs[x].cost) && !hasElement(x) && (player.qu.rip.active ? true : !BR_ELEM.includes(x)) && !tmp.elements.cannot.includes(x) && !(CHALS.inChal(14) && x < 118)
+    },
     buyUpg(x) {
         if (this.canBuy(x)) {
-            if (x == 118) {
-                alert("敬請期待……")
-            } else {
-                player.atom.quarks = player.atom.quarks.sub(this.upgs[x].cost)
-                player.atom.elements.push(x)
-            }
+            if (this.upgs[x].dark) player.dark.shadow = player.dark.shadow.sub(this.upgs[x].cost)
+            else player.atom.quarks = player.atom.quarks.sub(this.upgs[x].cost)
+            player.atom.elements.push(x)
         }
     },
     upgs: [
         null,
         {
-            desc: `改善夸克獲得量公式。`,
+            desc: `加強夸克獲得量公式。`,
             cost: E(5e8),
         },
         {
@@ -60,7 +63,7 @@ const ELEMENTS = {
                 if (x.gte('e1e4')) x = expMult(x.div('e1e4'),0.9).mul('e1e4')
                 return x
             },
-            effDesc(x) { return format(x)+"x"+(x.gte('e1e4')?"<span class='soft'>（軟限制）</span>":"") },
+            effDesc(x) { return format(x)+"x"+(x.gte('e1e4')?"<span class='soft'>（軟上限）</span>":"") },
         },
         {
             desc: `質子力量加強增強器力量。`,
@@ -72,7 +75,7 @@ const ELEMENTS = {
             effDesc(x) { return "加強 "+format(x)+"x" },
         },
         {
-            desc: `第 7 個挑戰的效果翻倍。`,
+            desc: `挑戰 7 的效果翻倍。`,
             cost: E(1e18),
         },
         {
@@ -99,7 +102,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `第 2 個挑戰獎勵的軟限制減弱 75%。`,
+            desc: `挑戰 2 獎勵的軟上限減弱 75%。`,
             cost: E(1e21),
         },
         {
@@ -107,7 +110,7 @@ const ELEMENTS = {
             cost: E(6.5e21),
         },
         {
-            desc: `減弱第 3 和 4 個挑戰的增幅。`,
+            desc: `減弱挑戰 3 和 4 的增幅。`,
             cost: E(1e24),
         },
         {
@@ -115,11 +118,11 @@ const ELEMENTS = {
             cost: E(1e27),
         },
         {
-            desc: `改善每個原子力量的獲得量的公式。`,
+            desc: `加強每個原子力量的獲得量的公式。`,
             cost: E(1e29),
         },
         {
-            desc: `每完成一次第 7 個挑戰，第 5 和 6 個挑戰的完成上限增加 2 次。`,
+            desc: `每完成一次挑戰 7，挑戰 5 和 6 的完成上限增加 2 次。`,
             cost: E(2.5e30),
             effect() {
                 let x = player.chal.comps[7].mul(2)
@@ -153,17 +156,17 @@ const ELEMENTS = {
             desc: `你可以自動購買宇宙射線。宇宙射線極稍微加強時間速度效果。`,
             cost: E(1e44),
             effect() {
-                let x = player.atom.gamma_ray.pow(0.35).mul(0.01).add(1)
+                let x = hasElement(129) ? player.atom.gamma_ray.pow(0.5).mul(0.02).add(1) : player.atom.gamma_ray.pow(0.35).mul(0.01).add(1)
                 return x
             },
             effDesc(x) { return "^"+format(x) },
         },
         {
-            desc: `改善中子的第 2 個效果。`,
+            desc: `加強中子的第二個效果。`,
             cost: E(1e50),
         },
         {
-            desc: `第 7 個挑戰的完成上限增加 50 次。`,
+            desc: `挑戰 7 的完成上限增加 50 次。`,
             cost: E(1e53),
         },
         {
@@ -171,7 +174,7 @@ const ELEMENTS = {
             cost: E(1e56),
         },
         {
-            desc: `時間速度稍微增加膨脹質量獲得量。`,
+            desc: `時間速度稍微提升膨脹質量獲得量。`,
             cost: E(1e61),
             effect() {
                 let x = E(1.25).pow(player.tickspeed.pow(0.55))
@@ -180,7 +183,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `改善原子力量的效果。`,
+            desc: `加強原子力量的效果。`,
             cost: E(1e65),
         },
         {
@@ -226,9 +229,9 @@ const ELEMENTS = {
             cost: E(1e130),
             effect() {
                 let x = player.md.mass.add(1).pow(0.0125)
-                return x
+                return x.softcap('ee27',0.95,2)
             },
-            effDesc(x) { return format(x)+"x" },
+            effDesc(x) { return format(x)+"x"+x.softcapHTML('ee27') },
         },
         {
             desc: `膨脹質量獲得量指數增加 5%。`,
@@ -280,7 +283,7 @@ const ELEMENTS = {
             effDesc(x) { return "暴怒升級 7 +"+format(x,0)+"" },
         },
         {
-            desc: `從挑戰 2 和 6 的效果中移除軟限制。`,
+            desc: `從挑戰 2 和 6 的效果中移除軟上限。`,
             cost: E(1e285),
         },
         {
@@ -306,7 +309,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `如果已經購買某個質量膨脹升級，則可以自動購買它。它們不再花費膨脹質量。`,
+            desc: `如果你已經購買某個質量膨脹升級，則可以自動購買它。它們不再花費膨脹質量。`,
             cost: E('e360'),
         },
         {
@@ -353,7 +356,7 @@ const ELEMENTS = {
             cost: E('e1750'),
         },
         {
-            desc: `質量軟限制^2 弱 10%。`,
+            desc: `質量軟上限^2 弱 10%。`,
             cost: E('e2400'),
         },
         {
@@ -414,7 +417,7 @@ const ELEMENTS = {
             cost: E('e7.7e4'),
         },
         {
-            desc: `軟限制生效後，粒子力獲得量乘以對應粒子數量的平方根。`,
+            desc: `應用軟上限後，粒子力獲得量乘以對應粒子數量的平方根。`,
             cost: E('e1.5e5'),
         },
         {
@@ -424,14 +427,14 @@ const ELEMENTS = {
                 let x = player.supernova.times.mul(3)
                 return x
             },
-            effDesc(x) { return format(x,0)+" later" },
+            effDesc(x) { return "推遲 " + format(x,0)+" 階" },
         },
         {
             desc: `非獎勵時間速度強 25x。`,
             cost: E('e3e5'),
         },
 		{
-            desc: `挑戰 3 - 4 和 8 的獎勵強 50%。`,
+            desc: `挑戰 3-4 和 8 的獎勵強 50%。`,
             cost: E('e5e5'),
         },
         {
@@ -439,7 +442,7 @@ const ELEMENTS = {
             cost: E('e8e5'),
         },
         {
-            desc: `鑭的效果強一倍。`,
+            desc: `鑭的效果翻倍。`,
             cost: E('e1.1e6'),
         },
         {
@@ -464,7 +467,7 @@ const ELEMENTS = {
             cost: E('e6.9e7'),
         },
         {
-            desc: `超新星推遲黑洞公式的軟限制。`,
+            desc: `超新星推遲黑洞公式的軟上限。`,
             cost: E('e1.6e8'),
             effect() {
                 let x = player.supernova.times.add(1).root(4)
@@ -491,7 +494,7 @@ const ELEMENTS = {
             cost: E('e2.6e9'),
         },
         {
-            desc: `從原子力量的效果中移除 2 個軟限制。`,
+            desc: `從原子力量的效果中移除 2 個軟上限。`,
             cost: E('e3.9e9'),
         },
         {
@@ -499,7 +502,7 @@ const ELEMENTS = {
             cost: E('e3.75e10'),
         },
         {
-            desc: `質量軟限制^3 弱 17.5%。`,
+            desc: `質量軟上限^3 弱 17.5%。`,
             cost: E('e4e11'),
         },
         {
@@ -536,11 +539,11 @@ const ELEMENTS = {
             effDesc(x) { return "弱 "+formatReduction(x)},
         },
         {
-            desc: `增強器的軟限制推遲 3x，弱 10%。`,
+            desc: `增強器的軟上限推遲 3x，弱 10%。`,
             cost: E('e7.5e15'),
         },
         {
-            desc: `時間速度力量軟限制推遲^2，增幅弱 50%。`,
+            desc: `時間速度力量軟上限推遲^2，增幅弱 50%。`,
             cost: E('e2e16'),
         },
         {
@@ -548,7 +551,7 @@ const ELEMENTS = {
             cost: E('e150'),
         },
         {
-            desc: `所有時間速度增幅推遲 100x（在應用第 8 個量子挑戰模組後）。`,
+            desc: `所有時間速度增幅推遲 100x（在應用量子挑戰模組 8 後）。`,
             cost: E('e500'),
         },
         {
@@ -556,6 +559,7 @@ const ELEMENTS = {
             cost: E('e1100'),
             effect() {
                 let x = player.bh.mass.add(1).log10().add(1).log10().mul(1.25).add(1).pow(player.qu.rip.active?2:0.4)
+                //if (player.qu.rip.active) x = x.softcap(100,0.1,0)
                 return x
             },
             effDesc(x) { return "^"+x.format() },
@@ -590,13 +594,15 @@ const ELEMENTS = {
             desc: `每變成一次超新星，死亡碎片獲得量增加 10%。`,
             cost: E("e32000"),
             effect() {
-                let x = E(1.1).pow(player.supernova.times)
+                let s = player.supernova.times
+                if (!player.qu.rip.active) s = s.root(1.5)
+                let x = E(1.1).pow(s)
                 return x
             },
             effDesc(x) { return "x"+x.format() },
         },
         {
-            desc: `艾普塞朗粒子在大撕裂中有效，但效果弱 90%。`,
+            desc: `Ε 粒子在大撕裂中有效，但效果弱 90%。`,
             cost: E("e34500"),
         },
         {
@@ -608,11 +614,11 @@ const ELEMENTS = {
             cost: E('e8.5e6'),
         },
         {
-            desc: `第 8 個量子挑戰模組在大撕裂中弱 20%。`,
+            desc: `量子挑戰模組 8 在大撕裂中弱 20%。`,
             cost: E('e1.2e7'),
         },
         {
-            desc: `從第 3 個光子升級中移除軟限制^3，而且軟限制^2 更弱。`,
+            desc: `從光子升級 3 中移除軟上限^3，而且軟上限^2 更弱。`,
             cost: E('e2.15e7'),
         },
         {
@@ -629,20 +635,22 @@ const ELEMENTS = {
             cost: E('e3.5e7'),
         },
         {
-            desc: `時間速度力量的軟限制推遲 ^100。`,
+            desc: `時間速度力量的軟上限推遲 ^100。`,
             cost: E('e111111111'),
         },
         {
             desc: `榮耀加快量子前全局運行速度。`,
             cost: E('e5e8'),
             effect() {
-                let x = E(2).pow(player.prestiges[1])
+                let b = E(2)
+                if (player.prestiges[0].gte(70)) b = b.add(player.prestiges[1])
+                let x = b.pow(player.prestiges[1])
                 return x
             },
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `第 9 至 12 個挑戰的完成上限增加 200 次。`,
+            desc: `挑戰 9-12 的完成上限增加 200 次。`,
             cost: E('e1.2e9'),
         },
         {
@@ -654,7 +662,7 @@ const ELEMENTS = {
             cost: E('e7.25e9'),
         },
         {
-            desc: `貝塔粒子效果翻倍。`,
+            desc: `Β 粒子效果翻倍。`,
             cost: E('e1.45e10'),
         },
         {
@@ -666,7 +674,7 @@ const ELEMENTS = {
             cost: E('e3e10'),
         },
         {
-            desc: `質量軟限制^4 弱 50%（在大撕裂中則是 20%）。`,
+            desc: `質量軟上限^4 弱 50%（在大撕裂中則是 20%）。`,
             cost: E('e6e10'),
         },
         {
@@ -683,11 +691,11 @@ const ELEMENTS = {
             cost: E('e3e12'),
         },
         {
-            desc: `改善 [bs2] 的公式。`,
+            desc: `加強 [bs2] 的公式。`,
             cost: E('e4e12'),
         },
         {
-            desc: `改善熵倍數的公式。`,
+            desc: `加強熵倍數的公式。`,
             cost: E('e1.2e13'),
         },
         {
@@ -704,12 +712,170 @@ const ELEMENTS = {
             effDesc(x) { return "x"+format(x) },
         },
         {
-            desc: `在應用所有軟限制後，質量獲得量獲得 ^10 的加成。`,
+            desc: `在應用「^5」前的所有軟上限後，質量獲得量獲得 ^10 的加成。`,
             cost: E("e5e16"),
         },
         {
-            desc: `進入<span id="final_118">天門</span>。`,
+            desc: `解鎖<span id="final_118">暗界</span>，你可以化身黑暗。`,
             cost: E("e1.7e17"),
+        },
+        {
+            dark: true,
+            desc: `量子前全局運行速度以對數比率提升暗影獲得量。`,
+            cost: E("500"),
+            effect() {
+                let s = tmp.preQUGlobalSpeed||E(1)
+                let x = hasPrestige(0,110) ? expMult(s,0.4) : s.max(1).log10().add(1)
+                return x
+            },
+            effDesc(x) { return "x"+format(x) },
+        },{
+            dark: true,
+            desc: `超難和魔王挑戰增幅弱 50%。`,
+            cost: E("5000"),
+        },{
+            dark: true,
+            desc: `你可以在大撕裂中購買鈰-58。`,
+            cost: E("25000"),
+        },{
+            dark: true,
+            desc: `你可以自動完成挑戰 9-11。開始大撕裂或量子挑戰時保留挑戰 12 的完成次數。`,
+            cost: E("1e6"),
+        },{
+            br: true,
+            desc: `你可以自動購買打破膨脹升級。它們不再花費相對質量。`,
+            cost: E("ee19"),
+        },{
+            dark: true,
+            desc: `進入暗界時保留量子樹。`,
+            cost: E("1e7"),
+        },{
+            desc: `挑戰 7 的效果以 10% 比率增加挑戰 9-12 的完成次數。`,
+            cost: E("e9e24"),
+            effect() {
+                let c = tmp.chal?tmp.chal.eff[7]:E(0)
+                let x = c.div(10).ceil()
+                return x
+            },
+            effDesc(x) { return "+"+format(x,0) },
+        },{
+            dark: true,
+            desc: `你可以在大撕裂中購買鎢-74。`,
+            cost: E("1e8"),
+        },{
+            dark: true,
+            desc: `開始時解鎖打破膨脹。相對能量獲得量增加 10%。`,
+            cost: E("1e9"),
+        },{
+            dark: true,
+            desc: `你不在大撕裂中也可以購買原子升級 13-15。`,
+            cost: E("1e11"),
+        },{
+            br: true,
+            desc: `大幅增強氬-18，它可以增強黑洞壓縮器和宇宙射線力量。`,
+            cost: E("e1.7e20"),
+        },{
+            br: true,
+            desc: `熵增幅和熵輻射在大撕裂中有效。`,
+            cost: E("e3e20"),
+        },{
+            dark: true,
+            desc: `你可以自動完成挑戰 12。`,
+            cost: E("e12"),
+        },{
+            dark: true,
+            desc: `解鎖挑戰 13。你可以自動購買大撕裂升級。`,
+            cost: E("e13"),
+        },{
+            desc: `加強挑戰 3、4 和 8 的效果。`,
+            cost: E("e6.5e27"),
+        },{
+            desc: `超級重置等級和榮耀增幅弱 5%。`,
+            cost: E("e1.5e29"),
+        },{
+            br: true,
+            desc: `死亡碎片提升暗影獲得量。`,
+            cost: E("e2.5e25"),
+            effect() {
+                let x = player.qu.rip.amt.add(1).log10().add(1)
+                return x
+            },
+            effDesc(x) { return "x"+format(x,1) },
+        },{
+            dark: true,
+            desc: `你不在大撕裂中也可以獲得相對能量。進入任何暗界挑戰時，你可以保留非生活質素部分的量子樹。`,
+            cost: E("1e18"),
+        },{
+            desc: `超級和高級宇宙弦增幅弱 25%。`,
+            cost: E("ee30"),
+        },{
+            br: true,
+            desc: `超新星提升藍圖粒子獲得量。`,
+            cost: E("e8.6e26"),
+            effect() {
+                let x = Decimal.pow(1.1,player.supernova.times)
+                return x
+            },
+            effDesc(x) { return "x"+format(x,1) },
+        },{
+            dark: true,
+            desc: `每秒獲得你會獲得的量子化的 100%。超新星提升量子化次數。`,
+            cost: E("2e22"),
+            effect() {
+                let x = player.supernova.times.pow(1.25).add(1)
+                return x
+            },
+            effDesc(x) { return "x"+format(x,1) },
+        },{
+            br: true,
+            desc: `移除 10 次量子化里程碑的效果上限。`,
+            cost: E("e2e27"),
+        },{
+            desc: `暗束獲得量 10x。`,
+            cost: E("e1.5e30"),
+        },{
+            dark: true,
+            desc: `移除 [奇] 和 [微中子] 的上限。`,
+            cost: E("2e26"),
+        },{
+            dark: true,
+            desc: `加強暗影的第二個效果。進入暗界時保留第 118 個或以前的大撕裂元素。`,
+            cost: E("1e27"),
+        },{
+            dark: true,
+            desc: `解鎖挑戰 14。`,
+            cost: E("1e32"),
+        },{
+            desc: `重置底數提升暗束獲得量。`,
+            cost: E("e1.7e31"),
+            effect() {
+                let x = (tmp.prestiges.base||E(1)).add(1).log10().add(1)
+                return x
+            },
+            effDesc(x) { return "x"+format(x) },
+        },{
+            br: true,
+            desc: `已購買元素數量增加量子碎片的底數。`,
+            cost: E("ee30"),
+            effect() {
+                let x = player.atom.elements.length/100
+                return x
+            },
+            effDesc(x) { return "+"+format(x,2) },
+        },{
+            dark: true,
+            desc: `你可以在大撕裂外獲得死亡碎片。你可以自動購買宇宙弦。`,
+            cost: E("1e40"),
+        },{
+            br: true,
+            desc: `大撕裂升級 7 在大撕裂外有效。`,
+            cost: E("e2.6e30"),
+        },{
+            desc: `增強器效果的軟上限稍微更弱。`,
+            cost: E("e4e45"),
+        },{
+            desc: `增強器效果的軟上限再次稍微更弱。時間速度的效果大幅增強。`,
+            cost: E("ee54"),
         },
     ],
     /*
@@ -726,77 +892,186 @@ const ELEMENTS = {
     getUnlLength() {
         let u = 4
 
-        if (quUnl()) u = 77+3
+        if (player.dark.unl) u = 118+14
         else {
-            if (player.supernova.times.gte(1)) u = 49+5
+            if (quUnl()) u = 77+3
             else {
-                if (player.chal.comps[8].gte(1)) u += 14
-                if (hasElement(18)) u += 3
-                if (MASS_DILATION.unlocked()) u += 15
-                if (STARS.unlocked()) u += 18
+                if (player.supernova.times.gte(1)) u = 49+5
+                else {
+                    if (player.chal.comps[8].gte(1)) u += 14
+                    if (hasElement(18)) u += 3
+                    if (MASS_DILATION.unlocked()) u += 15
+                    if (STARS.unlocked()) u += 18
+                }
+                if (player.supernova.post_10) u += 3
+                if (player.supernova.fermions.unl) u += 10
+                if (tmp.radiation.unl) u += 10
             }
-            if (player.supernova.post_10) u += 3
-            if (player.supernova.fermions.unl) u += 10
-            if (tmp.radiation.unl) u += 10
+            if (PRIM.unl()) u += 3
+            if (hasTree('unl3')) u += 3
+            if (player.qu.rip.first) u += 9
+            if (hasUpgrade("br",9)) u += 23 // 23
         }
-        if (PRIM.unl()) u += 3
-        if (hasTree('unl3')) u += 3
-        if (player.qu.rip.first) u += 9
-        if (hasUpgrade("br",9)) u += 23 // 23
+        if (tmp.chal13comp) u += 10 + 2
+        if (tmp.chal14comp) u += 6
 
         return u
     },
 }
 
+const MAX_ELEM_TIERS = 2
+
+const BR_ELEM = (_=>{
+    let x = []
+    for (let i in ELEMENTS.upgs) if (i>86&&i<=118 || i>0&&ELEMENTS.upgs[i].br) x.push(Number(i))
+    return x
+})()
+
+function getElementId(x) {
+    let log = Math.floor(Math.log10(x))
+    let list = ["n", "u", "b", "t", "q", "p", "h", "s", "o", "e"]
+    let r = ""
+    for (var i = log; i >= 0; i--) {
+        let n = Math.floor(x / Math.pow(10, i)) % 10
+        if (r == "") r = list[n].toUpperCase()
+        else r += list[n]
+    }
+    return r
+}
+
+function getElementName(x) {
+    return "第 " + x + " 個元素"
+}
+
+function WE(a,b) { return 2*(a**2-(a-b)**2) }
+
+for (let x = 2; x <= MAX_ELEM_TIERS; x++) {
+    let [ts,te] = [ELEMENTS.exp[x-1],ELEMENTS.exp[x]]
+
+    let m = 'xx1xxxxxxxxxxxxxxxxvxx2xxxxxxxxxxxxxxxxv_v'
+
+    for (let y = x; y >= 1; y--) {
+        let k = 10 + 4 * y
+        m += "1"+'x'.repeat(k)+"v"
+        m += "2"+'x'.repeat(k)
+        if (y > 1) m += "v_v"
+    }
+
+    for (let y = ts+1; y <= te; y++) {
+        ELEMENTS.names.push(getElementId(y))
+        ELEMENTS.fullNames.push(getElementName(y))
+        if (!ELEMENTS.upgs[y]) ELEMENTS.upgs.push({
+            desc: `待定。`,
+            cost: EINF,
+        })
+    }
+
+    ELEMENTS.map.push(m)
+}
+
 function hasElement(x) { return player.atom.elements.includes(x) }
+
+function elemEffect(x,def=1) { return tmp.elements.effect[x]||def }
 
 function setupElementsHTML() {
     let elements_table = new Element("elements_table")
-	let table = "<div class='table_center'>"
+	let table = ""
     let num = 0
-	for (let i = 0; i < ELEMENTS.map.length; i++) {
-		let m = ELEMENTS.map[i]
-        if (m=='v') table += '</div><div class="table_center">'
-        else if (m=='_' || !isNaN(Number(m))) table += `<div ${ELEMENTS.la[m]!==undefined?`id='element_la_${m}'`:""} style="width: 50px; height: 50px">${ELEMENTS.la[m]!==undefined?"<br>"+ELEMENTS.la[m]:""}</div>`
-        else if (m=='x') {
-            num++
-            table += ELEMENTS.upgs[num]===undefined?`<div style="width: 50px; height: 50px"></div>`
-            :`<button class="elements ${num == 118 ? 'final' : ''}" id="elementID_${num}" onclick="ELEMENTS.buyUpg(${num}); ssf[0]('${ELEMENTS.names[num]}')" onmouseover="tmp.elements.choosed = ${num}" onmouseleave="tmp.elements.choosed = 0"><div style="font-size: 12px;">${num}</div>${ELEMENTS.names[num]}</button>`
-            if (num==57 || num==89) num += 14
-            else if (num==71) num += 18
-            else if (num==118) num = 57
+    for (let k = 1; k <= MAX_ELEM_TIERS; k++) {
+        let n = 0, p = (k+3)**2*2, xs = ELEMENTS.exp[k-1], xe = ELEMENTS.exp[k]
+        table += `<div id='elemTier${k}_div'><div class='table_center'>`
+        for (let i = 0; i < ELEMENTS.map[k-1].length; i++) {
+            let m = ELEMENTS.map[k-1][i]
+            if (m=='v') table += '</div><div class="table_center">'
+            else if (m=='_' || !isNaN(Number(m))) table += `<div ${ELEMENTS.la[m]!==undefined&&k==1?`id='element_la_${m}'`:""} style="width: 50px; height: 50px">${ELEMENTS.la[m]!==undefined?"<br>"+ELEMENTS.la[m]:""}</div>`
+            else if (m=='x') {
+                num++
+                table += ELEMENTS.upgs[num]===undefined?`<div style="width: 50px; height: 50px"></div>`
+                :`<button class="elements ${num == 118 ? 'final' : ''}" id="elementID_${num}" onclick="ELEMENTS.buyUpg(${num}); ssf[0]('${ELEMENTS.names[num]}')" onmouseover="tmp.elements.choosed = ${num}" onmouseleave="tmp.elements.choosed = 0"><div style="font-size: 12px;">${num}</div>${ELEMENTS.names[num]}</button>`
+                if (k == 1) {
+                    if (num==56 || num==88) num += 14
+                    else if (num==70) num += 18
+                    else if (num==118) num = 56
+                    else if (num==102) num = 118
+                } else {
+                    //console.log(num,p)
+                    if (n == 0) {
+                        if (num == xs + 2 || num == xs + p + 2) num += p - 18
+                        else if (num == xe) {
+                            num = xs + 2
+                            n++
+                        }
+                    } else {
+                        if (num == xs + WE(k+3,n) + 2) num = xs + p + WE(k+3,n-1) + 2
+                        else if (num == xe - 16) num = xe
+                        else if (num == xs + p + WE(k+3,n) + 2) {
+                            num = xs + WE(k+3,n) + 2
+                            n++
+                        }
+                    }
+                }
+            }
         }
-	}
-    table += "</div>"
-	elements_table.setHTML(table)
+        table += "</div></div>"
+    }
+	    elements_table.setHTML(table)
 }
 
 function updateElementsHTML() {
-    let ch = tmp.elements.choosed
+    let tElem = tmp.elements
+
+    tmp.el.elemTierDiv.setDisplay(player.dark.unl)
+    tmp.el.elemTier.setHTML("元素第 "+player.atom.elemTier + " 階")
+
+    let ch = tElem.choosed
     tmp.el.elem_ch_div.setVisible(ch>0)
     if (ch) {
-        tmp.el.elem_desc.setHTML("<b>［"+ELEMENTS.fullNames[ch]+"］</b>"+ELEMENTS.upgs[ch].desc)
-        tmp.el.elem_cost.setTxt(format(ELEMENTS.upgs[ch].cost,0)+" 夸克"+(ch>86?"（大撕裂）":"")+(player.qu.rip.active&&tmp.elements.cannot.includes(ch)?"（不能在大撕裂中購買）":""))
-        tmp.el.elem_eff.setHTML(ELEMENTS.upgs[ch].effDesc?"目前："+ELEMENTS.upgs[ch].effDesc(tmp.elements.effect[ch]):"")
+        let eu = ELEMENTS.upgs[ch]
+        let res = eu.dark?" 個暗影":" 個夸克"
+
+        tmp.el.elem_desc.setHTML("<b>["+ELEMENTS.fullNames[ch]+"]</b> "+eu.desc)
+        tmp.el.elem_cost.setTxt(format(eu.cost,0)+res+(BR_ELEM.includes(ch)?"（大撕裂）":"")+(player.qu.rip.active&&tElem.cannot.includes(ch)?"（不能在大撕裂中購買）":""))
+        tmp.el.elem_eff.setHTML(eu.effDesc?"目前："+eu.effDesc(tElem.effect[ch]):"")
     }
-    tmp.el.element_la_1.setVisible(tmp.elements.unl_length>57)
-    tmp.el.element_la_3.setVisible(tmp.elements.unl_length>57)
-    tmp.el.element_la_2.setVisible(tmp.elements.unl_length>88)
-    tmp.el.element_la_4.setVisible(tmp.elements.unl_length>88)
-    for (let x = 1; x <= tmp.elements.upg_length; x++) {
-        let upg = tmp.el['elementID_'+x]
-        if (upg) {
-            upg.setVisible(x <= tmp.elements.unl_length)
-            if (x <= tmp.elements.unl_length) {
-                upg.setClasses({elements: true, locked: !ELEMENTS.canBuy(x), bought: hasElement(x), br: x > 86 && x < 118, final: x == 118})
+
+    for (let x = 1; x <= MAX_ELEM_TIERS; x++) {
+        let unl = player.atom.elemTier == x
+        tmp.el["elemTier"+x+"_div"].setDisplay(unl)
+        if (unl) {
+            if (x == 1) {
+                tmp.el.element_la_1.setVisible(tElem.unl_length>56)
+                tmp.el.element_la_3.setVisible(tElem.unl_length>56)
+                tmp.el.element_la_2.setVisible(tElem.unl_length>88)
+                tmp.el.element_la_4.setVisible(tElem.unl_length>88)
+            }
+
+            let len = x > 1 ? tElem.te : tElem.upg_length
+
+            for (let x = tElem.ts+1; x <= len; x++) {
+                let upg = tmp.el['elementID_'+x]
+                if (upg) {
+                    let unl2 = x <= tElem.unl_length
+                    upg.setVisible(unl2)
+                    if (unl2) {
+                        let eu = ELEMENTS.upgs[x]
+                        upg.setClasses({elements: true, locked: !ELEMENTS.canBuy(x), bought: hasElement(x), br: BR_ELEM.includes(x), final: x == 118, dark: eu.dark})
+                    }
+                }
             }
         }
     }
 }
 
 function updateElementsTemp() {
+    tmp.elements.ts = ELEMENTS.exp[player.atom.elemTier-1]
+    tmp.elements.te = ELEMENTS.exp[player.atom.elemTier]
+    tmp.elements.tt = tmp.elements.te - tmp.elements.ts
+
     let cannot = []
-    if (player.qu.rip.active) cannot.push(58,74)
+    if (player.qu.rip.active) {
+        if (!hasElement(121)) cannot.push(58)
+        if (!hasElement(126)) cannot.push(74)
+    }
     tmp.elements.cannot = cannot
 
     if (!tmp.elements.upg_length) tmp.elements.upg_length = ELEMENTS.upgs.length-1

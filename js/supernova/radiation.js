@@ -96,12 +96,12 @@ const RADIATION = {
             },
             desc(x) { return `非獎勵時間速度加強 ${format(x)}x` },
         },{
-            title: `質量軟限制加成`,
+            title: `質量軟上限加成`,
             eff(b) {
                 let x = b.add(1).root(4)
                 return x
             },
-            desc(x) { return `質量軟限制^3 推遲 ^${format(x)}` },
+            desc(x) { return `質量軟上限^3 推遲 ^${format(x)}` },
         },{
             title: `微波加成`,
             eff(b) {
@@ -136,7 +136,7 @@ const RADIATION = {
                 let x = b.add(1).root(3)
                 return x
             },
-            desc(x) { return `第 1 個光子和膠子升級強 ${format(x)}x` },
+            desc(x) { return `光子和膠子升級 1 強 ${format(x)}x` },
         },{
             title: `元加成 I`,
             eff(b) {
@@ -174,16 +174,16 @@ const RADIATION = {
             },
             desc(x) { return `紫外線獲得量提升 ${format(x)}x（基於可見光）` },
         },{
-            title: `時間速度軟限制加成`,
+            title: `時間速度軟上限加成`,
             eff(b) {
                 let x = E(1e3).pow(b.pow(0.9))
                 return x
             },
-            desc(x) { return `時間速度軟限制推遲 ${format(x)}x` },
+            desc(x) { return `時間速度軟上限推遲 ${format(x)}x` },
         },{
             title: `元級等級加成`,
             eff(b) {
-                let x = E(1.025).pow(b)
+                let x = E(1.025).pow(b.softcap(400,0.5,0))
                 return x
             },
             desc(x) { return `元級等級推遲 ${format(x)}x` },
@@ -197,7 +197,7 @@ const RADIATION = {
         },{
             title: `U-輕子加成`,
             eff(b) {
-                let x = b.add(1).root(4)
+                let x = b.add(1).root(4).softcap(5,0.5,0)
                 return x
             },
             desc(x) { return `U-輕子強 ${format(x)}x` },
@@ -219,7 +219,7 @@ const RADIATION = {
         },{
             title: `U-夸克加成`,
             eff(b) {
-                let x = b.add(1).root(5)
+                let x = b.add(1).root(5).softcap(3,0.5,0)
                 return x
             },
             desc(x) { return `U-夸克強 ${format(x)}x` },
@@ -229,7 +229,7 @@ const RADIATION = {
                 let x = b.div(2).add(1).root(3)
                 return x
             },
-            desc(x) { return `黑洞公式軟限制推遲 ^${format(x)}` },
+            desc(x) { return `黑洞公式軟上限推遲 ^${format(x)}` },
         },
 
         /*
@@ -305,8 +305,8 @@ function updateRadiationHTML() {
 
     let rad_id = 1
     let comp = false
-    for (let x = 1; x < RAD_LEN; x++) {
-        if (x == RAD_LEN-1) comp = true;
+    for (let x = 1; x <= RAD_LEN; x++) {
+        if (x == RAD_LEN) comp = true;
         if (player.supernova.radiation.hz.lt(RADIATION.unls[x]||1/0) || comp) break
         rad_id++
     }

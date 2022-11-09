@@ -1,7 +1,9 @@
-a. the general rule is to put a space beetwen a number and surrounding text (except for punctuation)
+a. put a space between a number and surrounding text (except for punctuation)
 b. use "[number]x" instead of "[number]倍"
 c. use 到達 instead of 達到
 d. use 質量軟限制 as an abbreviation of 質量獲得量軟限制
-e. all phrases about the nth challenge or phrase must follow this regex: /第 [0-9]* 個.*(挑戰|升級)/
+e. all phrases about the nth challenge or upgrade must follow this regex: /(挑戰|升級) \d*/
+    - this does not include tiers or levels
 f. all phrases about increasing the limit of completions must follow this regex: /完成上限.*次/
 g. ranges are expressed as "x 至 y"
+h. use greek letters when referring to primordium particles
