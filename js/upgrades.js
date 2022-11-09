@@ -2,6 +2,7 @@ const UPGS = {
     mass: {
         cols: 3,
         temp() {
+            tmp.massFP = 1;
             for (let x = this.cols; x >= 1; x--) {
                 let d = tmp.upgs.mass
                 let data = this.getData(x)
@@ -42,6 +43,7 @@ const UPGS = {
             let start = upg.start
             let lvl = player.massUpg[i]||E(0)
             let cost, bulk
+            let fp = tmp.massFP
 
             if (i==4) {
                 cost = mlt(inc.pow(lvl).mul(start))
@@ -52,9 +54,9 @@ const UPGS = {
                 if (i == 2 && player.ranks.rank.gte(3)) inc = inc.pow(0.8)
                 if (i == 3 && player.ranks.rank.gte(4)) inc = inc.pow(0.8)
                 if (player.ranks.tier.gte(3)) inc = inc.pow(0.8)
-                cost = inc.pow(lvl.scaleEvery("massUpg")).mul(start)
+                cost = inc.pow(lvl.div(fp).scaleEvery("massUpg")).mul(start)
                 bulk = E(0)
-                if (player.mass.gte(start)) bulk = player.mass.div(start).max(1).log(inc).scaleEvery("massUpg",true).add(1).floor()
+                if (player.mass.gte(start)) bulk = player.mass.div(start).max(1).log(inc).scaleEvery("massUpg",true).mul(fp).add(1).floor()
             }
 
             return {cost: cost, bulk: bulk}
@@ -122,7 +124,8 @@ const UPGS = {
                 let ss = E(10)
                 if (player.ranks.rank.gte(34)) ss = ss.add(2)
                 if (player.mainUpg.bh.includes(9)) ss = ss.add(tmp.upgs.main?tmp.upgs.main[2][9].effect:E(0))
-                let step = E(1).add(RANKS.effect.tetr[2]())
+                let step = E(1)
+                if (player.ranks.tetr.gte(2)) step = step.add(RANKS.effect.tetr[2]())
                 if (player.mainUpg.rp.includes(9)) step = step.add(0.25)
                 if (player.mainUpg.rp.includes(12)) step = step.add(tmp.upgs.main?tmp.upgs.main[1][12].effect:E(0))
                 if (hasElement(4)) step = step.mul(tmp.elements.effect[4])
@@ -132,19 +135,30 @@ const UPGS = {
                 if (player.ranks.tier.gte(30)) sp *= 1.1
                 let sp2 = 0.1
                 let ss2 = E(5e15)
+                let sp3 = hasPrestige(0,12)?0.525:0.5
                 if (hasElement(85)) {
                     sp2 **= 0.9
                     ss2 = ss2.mul(3)
                 }
-                let ret = step.mul(xx.mul(hasElement(80)?25:1)).add(1).softcap(ss,sp,0).softcap(1.8e5,hasPrestige(0,12)?0.525:0.5,0)
+                if (hasElement(149)) {
+                    sp **= 0.5
+                    sp3 **= 0.9
+                }
+                if (hasElement(150)) {
+                    sp **= 0.9
+                    sp3 **= 0.925
+                }
+                step = step.softcap(1e43,0.75,0)
+                let ret = step.mul(xx.mul(hasElement(80)?25:1)).add(1).softcap(ss,sp,0).softcap(1.8e5,sp3,0)
                 ret = ret.mul(tmp.prim.eff[0])
                 if (!player.ranks.pent.gte(15)) ret = ret.softcap(ss2,sp2,0)
+
                 return {step: step, eff: ret, ss: ss}
             },
             effDesc(eff) {
                 return {
                     step: "+^"+format(eff.step),
-                    eff: "提升器力量 ^"+format(eff.eff)+(eff.eff.gte(eff.ss)?`<span class='soft'>（軟限制${eff.eff.gte(1.8e5)?eff.eff.gte(5e15)&&!player.ranks.pent.gte(15)?"^3":"^2":""}）</span>`:"")
+                    eff: "提升器力量 ^"+format(eff.eff)+(eff.eff.gte(eff.ss)?`<span class='soft'>（軟上限${eff.eff.gte(1.8e5)?eff.eff.gte(5e15)&&!player.ranks.pent.gte(15)?"^3":"^2":""}）</span>`:"")
                 }
             },
             bonus() {
@@ -239,7 +253,7 @@ const UPGS = {
                     return ret
                 },
                 effDesc(x=this.effect()) {
-                    return "弱 "+format(E(1).sub(x).mul(100))+"%"+(x.log(0.9).gte(2.5)?"<span class='soft'>（軟限制）</span>":"")
+                    return "弱 "+format(E(1).sub(x).mul(100))+"%"+(x.log(0.9).gte(2.5)?"<span class='soft'>（軟上限）</span>":"")
                 },
             },
             9: {
@@ -258,10 +272,10 @@ const UPGS = {
                 cost: E(1e72),
                 effect() {
                     let ret = player.rp.points.add(1).root(10).softcap('e4000',0.1,0)
-                    return ret
+                    return ret.softcap("e1.5e31",0.95,2)
                 },
                 effDesc(x=this.effect()) {
-                    return format(x)+"x"+(x.gte("e4000")?"<span class='soft'>（軟限制）</span>":"")
+                    return format(x)+"x"+(x.gte("e4000")?"<span class='soft'>（軟上限）</span>":"")
                 },
             },
             12: {
@@ -273,12 +287,12 @@ const UPGS = {
                     return ret
                 },
                 effDesc(x=this.effect()) {
-                    return "+^"+format(x)+(x.gte(0.2)?"<span class='soft'>（軟限制）</span>":"")
+                    return "+^"+format(x)+(x.gte(0.2)?"<span class='soft'>（軟上限）</span>":"")
                 },
             },
             13: {
                 unl() { return player.chal.unl },
-                desc: "每擁有一個等級，質量軟限制推遲 3x。",
+                desc: "每擁有一個等級，質量軟上限推遲 3x。",
                 cost: E(1e180),
                 effect() {
                     let ret = E(3).pow(player.ranks.rank)
@@ -343,7 +357,7 @@ const UPGS = {
                     return ret.min(400)
                 },
                 effDesc(x=this.effect()) {
-                    return "推遲 +"+format(x,0)+(x.gte(100)?"<span class='soft'>（軟限制）</span>":"")
+                    return "推遲 +"+format(x,0)+(x.gte(100)?"<span class='soft'>（軟上限）</span>":"")
                 },
             },
             4: {
@@ -367,7 +381,7 @@ const UPGS = {
             },
             7: {
                 unl() { return player.chal.unl },
-                desc: "黑洞質量推遲質量軟限制。",
+                desc: "黑洞質量推遲質量軟上限。",
                 cost: E(1e13),
                 effect() {
                     let ret = player.bh.mass.add(1).root(3)
@@ -384,7 +398,7 @@ const UPGS = {
             },
             9: {
                 unl() { return player.chal.unl },
-                desc: "未花費暗物質推遲增強器效果的軟限制。",
+                desc: "未花費暗物質推遲增強器效果的軟上限。",
                 cost: E(1e27),
                 effect() {
                     let ret = player.bh.dm.max(1).log10().pow(0.5)
@@ -403,12 +417,12 @@ const UPGS = {
                     return ret
                 },
                 effDesc(x=this.effect()) {
-                    return format(x)+"x"+(x.max(1).log2().gte(11600)?"<span class='soft'>（軟限制）</span>":"")
+                    return format(x)+"x"+(x.max(1).log2().gte(11600)?"<span class='soft'>（軟上限）</span>":"")
                 },
             },
             11: {
                 unl() { return player.atom.unl },
-                desc: "質量軟限制減弱 10%、",
+                desc: "質量軟上限減弱 10%、",
                 cost: E(1e80),
             },
             12: {
@@ -488,7 +502,7 @@ const UPGS = {
                 cost: E(1e16),
             },
             6: {
-                desc: "每秒獲得重置時獲得的暗物質的 100%。原子力量推遲黑洞質量軟限制。",
+                desc: "每秒獲得重置時獲得的暗物質的 100%。原子力量推遲黑洞質量軟上限。",
                 cost: E(1e18),
                 effect() {
                     let ret = player.atom.atomic.add(1).pow(0.5)
@@ -521,7 +535,7 @@ const UPGS = {
                 },
             },
             9: {
-                desc: "增強器效果軟限制減弱 15%。",
+                desc: "增強器效果軟上限減弱 15%。",
                 cost: E(2e44),
             },
             10: {
@@ -553,17 +567,17 @@ const UPGS = {
                 cost: E('e2015'),
             },
             13: {
-                unl() { return player.md.break.active && player.qu.rip.active },
-                desc: "宇宙射線效果的軟限制推遲 10x 開始。",
+                unl() { return (player.md.break.active && player.qu.rip.active) || hasElement(128) },
+                desc: "宇宙射線效果的軟上限推遲 10x 開始。",
                 cost: E('e3.2e11'),
             },
             14: {
-                unl() { return player.md.break.active && player.qu.rip.active },
+                unl() { return (player.md.break.active && player.qu.rip.active) || hasElement(128) },
                 desc: "時間速度、黑洞壓縮器和宇宙射線元級或以下的增幅推遲 10x 開始。",
                 cost: E('e4.3e13'),
             },
             15: {
-                unl() { return player.md.break.active && player.qu.rip.active },
+                unl() { return (player.md.break.active && player.qu.rip.active) || hasElement(128) },
                 desc: "宇宙射線價格增幅弱 20%。",
                 cost: E('e3.4e14'),
             },
@@ -580,7 +594,7 @@ const UPGS = {
                     player.mainUpg.br.push(x)
                 }
             },
-            auto_unl() { return false },
+            auto_unl() { return hasElement(132) },
             lens: 15,
             1: {
                 desc: `開始大撕裂時解鎖氫-1。`,
@@ -640,7 +654,7 @@ const UPGS = {
             },
             12: {
                 unl() { return player.md.break.active },
-                desc: `原子推遲質量軟限制^5。`,
+                desc: `原子推遲質量軟上限^5。`,
                 cost: E(1e16),
                 effect() {
                     let x = player.atom.points.add(1).log10().add(1).log10().add(1).root(3)
@@ -688,3 +702,9 @@ const UPGS = {
 
 function hasUpgrade(id,x) { return player.mainUpg[id].includes(x) }
 function upgEffect(id,x,def=E(1)) { return tmp.upgs.main[id][x]?tmp.upgs.main[id][x].effect:def }
+function resetMainUpgs(id,keep=[]) {
+    let k = []
+    let id2 = UPGS.main.ids[id]
+    for (let x = 0; x < player.mainUpg[id2].length; x++) if (keep.includes(player.mainUpg[id2][x])) k.push(player.mainUpg[id2][x])
+    player.mainUpg[id2] = k
+}

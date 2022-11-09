@@ -53,7 +53,7 @@ const BOSONS = {
     effect: {
         pos_w(x) {
             let a = x.add(1).pow(2e4)
-            if (hasTree("qu2") && !player.qu.rip.active) a = a.pow(x.add(1).log10().add(1).pow(4/3))
+            if (hasTree("qu2") && !player.qu.rip.active) a = a.pow(x.add(1).log10().add(1).pow(4/3).softcap(1e15,0.1,0))
             let b = expMult(x.add(1),2/3,2)
             return [a,b]
         },
@@ -107,7 +107,7 @@ const BOSONS = {
                 cost(x) { return E(5).pow(x.pow(1.25)).mul(500) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(500) ? x.div(500).max(1).log(5).root(1.25).add(1).floor() : E(0) },
                 effect(x) { return player.stars.points.add(1).log10().add(1).pow(x.mul(0.2)).softcap(1e15,0.6,0) },
-                effDesc(x) { return format(x)+"x"+(x.gte(1e15)?"<span class='soft'>（軟限制）</span>":"") },
+                effDesc(x) { return format(x)+"x"+(x.gte(1e15)?"<span class='soft'>（軟上限）</span>":"") },
             },{
                 desc: "光子提升所有恆星資源的獲得量。",
                 cost(x) { return E(5).pow(x.pow(1.25)).mul(1e5) },
@@ -142,7 +142,7 @@ const BOSONS = {
                 cost(x) { return E(5).pow(x.pow(1.25)).mul(500) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(500) ? x.div(500).max(1).log(5).root(1.25).add(1).floor() : E(0) },
                 effect(x) { return player.atom.quarks.add(1).log10().add(1).pow(x.mul(0.125)).softcap(1e15,0.6,0) },
-                effDesc(x) { return format(x)+"x"+(x.gte(1e15)?"<span class='soft'>（軟限制）</span>":"") },
+                effDesc(x) { return format(x)+"x"+(x.gte(1e15)?"<span class='soft'>（軟上限）</span>":"") },
             },{
                 desc: "膠子減少超新星要求。",
                 cost(x) { return E(10).pow(x.pow(1.25)).mul(1e5) },
@@ -152,7 +152,7 @@ const BOSONS = {
                     if (!hasPrestige(0,28)) y = y.softcap(5.5,0.25,0).softcap(10,0.25,0)
                     return y
                 },
-                effDesc(x) { return "/"+format(x)+(x.gte(5.5)&&!hasPrestige(0,28)?"<span class='soft'>（軟限制）</span>":"") },
+                effDesc(x) { return "/"+format(x)+(x.gte(5.5)&&!hasPrestige(0,28)?"<span class='soft'>（軟上限）</span>":"") },
             },
         ],
     },

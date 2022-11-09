@@ -32,11 +32,9 @@ const ATOM = {
     },
     canReset() { return tmp.atom.gain.gte(1) },
     reset() {
-        if (tmp.atom.canReset) if (player.confirms.atom?confirm("Are you sure to reset?"):true) {
-            player.atom.points = player.atom.points.add(tmp.atom.gain)
-            player.atom.quarks = player.atom.quarks.add(tmp.atom.quarkGain)
-            player.atom.unl = true
-            this.doReset()
+        if (tmp.atom.canReset) {
+            if (player.confirms.atom) createConfirm("你確定要重置嗎？",'atomReset',CONFIRMS_FUNCTION.atom)
+            else CONFIRMS_FUNCTION.atom()
         }
     },
     doReset(chal_reset=true) {
@@ -93,6 +91,9 @@ const ATOM = {
             pow = pow.mul(getEnRewardEff(3)[1])
             if (hasTree('bs5')) pow = pow.mul(tmp.bosons.effect.z_boson[0])
             if (hasTree("gr2")) pow = pow.pow(1.25)
+            if (hasElement(129)) pow = pow.pow(elemEffect(18))
+            pow = pow//.softcap('e3e12',0.9,2)
+            
             let eff = pow.pow(t.add(tmp.atom.gamma_ray_bonus)).sub(1)
             return {pow: pow, eff: eff}
         },
@@ -223,7 +224,7 @@ function setupAtomHTML() {
 
 function updateAtomicHTML() {
     tmp.el.atomicAmt.setHTML(format(player.atom.atomic)+" "+formatGain(player.atom.atomic, tmp.atom.atomicGain.mul(tmp.preQUGlobalSpeed)))
-	tmp.el.atomicEff.setHTML(format(tmp.atom.atomicEff,0)+(tmp.atom.atomicEff.gte(5e4)?"<span class='soft'>（軟限制）</span>":""))
+	tmp.el.atomicEff.setHTML(format(tmp.atom.atomicEff,0)+(tmp.atom.atomicEff.gte(5e4)?"<span class='soft'>（軟上限）</span>":""))
 
 	tmp.el.gamma_ray_lvl.setTxt(format(player.atom.gamma_ray,0)+(tmp.atom.gamma_ray_bonus.gte(1)?" + "+format(tmp.atom.gamma_ray_bonus,0):""))
 	tmp.el.gamma_ray_btn.setClasses({btn: true, locked: !tmp.atom.gamma_ray_can})

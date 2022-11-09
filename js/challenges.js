@@ -1,8 +1,13 @@
 function setupChalHTML() {
     let chals_table = new Element("chals_table")
 	let table = ""
-	for (let x = 1; x <= CHALS.cols; x++) {
-        table += `<div id="chal_div_${x}" style="width: 120px; margin: 5px;"><img id="chal_btn_${x}" onclick="CHALS.choose(${x})" class="img_chal" src="images/chal_${x}.png"><br><span id="chal_comp_${x}">X</span></div>`
+	for (let x = Math.ceil(CHALS.cols/4)-1; x >= 0; x--) {
+        table += `<div class="table_center" style="min-height: 160px;">`
+        for (let y = 1; y <= Math.min(CHALS.cols-4*x,4); y++) {
+            let i = 4*x+y
+            table += `<div id="chal_div_${i}" style="width: 120px; margin: 5px;"><img id="chal_btn_${i}" onclick="CHALS.choose(${i})" class="img_chal" src="images/chal_${i}.png"><br><span id="chal_comp_${i}">X</span></div>`
+        }
+        table += "</div>"
 	}
 	chals_table.setHTML(table)
 }
@@ -24,7 +29,7 @@ function updateChalHTML() {
         tmp.el.chal_desc_div.setDisplay(player.chal.choosed != 0)
         if (player.chal.choosed != 0) {
             let chal = CHALS[player.chal.choosed]
-            tmp.el.chal_ch_title.setTxt(`[${player.chal.choosed}]${CHALS.getScaleName(player.chal.choosed)}「${chal.title}」[完成 ${format(player.chal.comps[player.chal.choosed],0)+"/"+format(tmp.chal.max[player.chal.choosed],0)} 次]`)
+            tmp.el.chal_ch_title.setTxt(`[${player.chal.choosed}]${CHALS.getScaleName(player.chal.choosed)}「${chal.title}」[已完成 ${format(player.chal.comps[player.chal.choosed],0)+"/"+format(tmp.chal.max[player.chal.choosed],0)} 次]`)
             tmp.el.chal_ch_desc.setHTML(chal.desc)
             tmp.el.chal_ch_reset.setTxt(CHALS.getReset(player.chal.choosed))
             tmp.el.chal_ch_goal.setTxt("目標："+CHALS.getFormat(player.chal.choosed)(tmp.chal.goal[player.chal.choosed])+CHALS.getResName(player.chal.choosed))
@@ -70,7 +75,8 @@ const CHALS = {
     reset(x, chal_reset=true) {
         if (x < 5) FORMS.bh.doReset()
         else if (x < 9) ATOM.doReset(chal_reset)
-        else SUPERNOVA.reset(true, true)
+        else if (x < 13) SUPERNOVA.reset(true, true)
+        else DARK.doReset(true)
     },
     exit(auto=false) {
         if (!player.chal.active == 0) {
@@ -107,7 +113,8 @@ const CHALS = {
     getReset(x) {
         if (x < 5) return "進入挑戰會執行一次暗物質重置！"
         if (x < 9) return "進入挑戰會執行一次原子重置，但不會重置以往的挑戰！"
-        return "進入挑戰會強制執行重置，但不會變成超新星！"
+        if (x < 13) return "進入挑戰會強制執行重置，但不會變成超新星！"
+        return "進入挑戰會強制執行暗界重置！"
     },
     getMax(i) {
         let x = this[i].max
@@ -123,14 +130,15 @@ const CHALS = {
         if (hasElement(73) && (i==5||i==6||i==8)) x = x.add(tmp.elements.effect[73])
         if (hasTree("chal1") && (i==7||i==8))  x = x.add(100)
         if (hasTree("chal4b") && (i==9))  x = x.add(100)
-        if (hasTree("chal8") && (i>=9))  x = x.add(200)
-        if (hasElement(104) && (i>=9))  x = x.add(200)
+        if (hasTree("chal8") && (i>=9 && i<=12))  x = x.add(200)
+        if (hasElement(104) && (i>=9 && i<=12))  x = x.add(200)
+        if (hasElement(125) && (i>=9 && i<=12))  x = x.add(elemEffect(125,0))
         return x.floor()
     },
     getScaleName(i) {
-        if (player.chal.comps[i].gte(1000)) return " 魔王"
-        if (player.chal.comps[i].gte(i==8?200:i>8?50:300)) return " 超難"
-        if (player.chal.comps[i].gte(i>8?10:75)) return " 困難"
+        if (player.chal.comps[i].gte(i==13?10:1000)) return " 魔王"
+        if (player.chal.comps[i].gte(i==13?5:i==8?200:i>8&&i!=13?50:300)) return " 超難"
+        if (player.chal.comps[i].gte(i==13?2:i>8&&i!=13?10:75)) return " 困難"
         return ""
     },
     getPower(i) {
@@ -142,10 +150,12 @@ const CHALS = {
     getPower2(i) {
         let x = E(1)
         if (hasElement(92)) x = x.mul(0.75)
+        if (hasElement(120)) x = x.mul(0.75)
         return x
     },
     getPower3(i) {
         let x = E(1)
+        if (hasElement(120)) x = x.mul(0.75)
         return x
     },
     getChalData(x, r=E(-1)) {
@@ -153,12 +163,17 @@ const CHALS = {
         let lvl = r.lt(0)?player.chal.comps[x]:r
         let chal = this[x]
         let fp = 1
-        if (QCs.active()) fp /= tmp.qu.qc_eff[5]
+        if (QCs.active() && x <= 12) fp /= tmp.qu.qc_eff[5]
         let s1 = x > 8 ? 10 : 75
         let s2 = 300
         if (x == 8) s2 = 200
         if (x > 8) s2 = 50
         let s3 = 1000
+        if (x == 13) {
+            s1 = 2
+            s2 = 5
+            s3 = 10
+        }
         let pow = chal.pow
         if (hasElement(10) && (x==3||x==4)) pow = pow.mul(0.95)
         chal.pow = chal.pow.max(1)
@@ -167,7 +182,7 @@ const CHALS = {
         if (res.lt(chal.start)) bulk = E(0)
         if (lvl.max(bulk).gte(s1)) {
             let start = E(s1);
-            let exp = E(3).pow(this.getPower());
+            let exp = E(3).pow(this.getPower(x));
             goal =
             chal.inc.pow(
                     lvl.div(fp).pow(exp).div(start.pow(exp.sub(1))).pow(pow)
@@ -184,9 +199,9 @@ const CHALS = {
         }
         if (lvl.max(bulk).gte(s2)) {
             let start = E(s1);
-            let exp = E(3).pow(this.getPower());
+            let exp = E(3).pow(this.getPower(x));
             let start2 = E(s2);
-            let exp2 = E(4.5).pow(this.getPower2())
+            let exp2 = E(4.5).pow(this.getPower2(x))
             goal =
             chal.inc.pow(
                     lvl.div(fp).pow(exp2).div(start2.pow(exp2.sub(1))).pow(exp).div(start.pow(exp.sub(1))).pow(pow)
@@ -205,11 +220,11 @@ const CHALS = {
         }
         if (lvl.max(bulk).gte(s3)) {
             let start = E(s1);
-            let exp = E(3).pow(this.getPower());
+            let exp = E(3).pow(this.getPower(x));
             let start2 = E(s2);
-            let exp2 = E(4.5).pow(this.getPower2())
+            let exp2 = E(4.5).pow(this.getPower2(x))
             let start3 = E(s3);
-            let exp3 = E(1.001).pow(this.getPower3())
+            let exp3 = E(1.001).pow(this.getPower3(x))
             goal =
             chal.inc.pow(
                     exp3.pow(lvl.div(fp).sub(start3)).mul(start3)
@@ -251,7 +266,7 @@ const CHALS = {
     2: {
         unl() { return player.chal.comps[1].gte(1) || player.atom.unl },
         title: "反時間速度",
-        desc: "不能購買時間速度。",
+        desc: "你不能購買時間速度。",
         reward: `每完成一次，時間速度力量增加 7.5%。`,
         max: E(100),
         inc: E(10),
@@ -264,12 +279,12 @@ const CHALS = {
             let ret = x.mul(0.075).add(1).softcap(1.3,sp,0).sub(1)
             return ret
         },
-        effDesc(x) { return "+"+format(x.mul(100))+"%"+(x.gte(0.3)?"<span class='soft'>（軟限制）</span>":"") },
+        effDesc(x) { return "+"+format(x.mul(100))+"%"+(x.gte(0.3)?"<span class='soft'>（軟上限）</span>":"") },
     },
     3: {
         unl() { return player.chal.comps[2].gte(1) || player.atom.unl },
         title: "熔融質量",
-        desc: "質量獲得量軟限制提早 1e150 開始，而且效果更強。",
+        desc: "質量獲得量軟上限提早 1e150 開始，而且效果更強。",
         reward: `基於完成次數，質量獲得量獲得次方加成，但該加成不適用於此挑戰中！`,
         max: E(100),
         inc: E(25),
@@ -277,15 +292,15 @@ const CHALS = {
         start: E(2.9835e49),
         effect(x) {
             if (hasElement(64)) x = x.mul(1.5)
-            let ret = x.root(1.5).mul(0.01).add(1)
+            let ret = hasElement(133) ? x.root(4/3).mul(0.01).add(1) : x.root(1.5).mul(0.01).add(1)
             return ret.softcap(3,0.25,0)
         },
-        effDesc(x) { return "^"+format(x)+(x.gte(3)?"<span class='soft'>（軟限制）</span>":"") },
+        effDesc(x) { return "^"+format(x)+(x.gte(3)?"<span class='soft'>（軟上限）</span>":"") },
     },
     4: {
         unl() { return player.chal.comps[3].gte(1) || player.atom.unl },
         title: "弱化狂怒",
-        desc: "暴怒點數獲得量開 10 次方根。質量獲得量軟限制提早 1e100 開始。",
+        desc: "暴怒點數獲得量開 10 次方根。質量獲得量軟上限提早 1e100 開始。",
         reward: `基於完成次數，暴怒點數獲得量獲得次方加成。`,
         max: E(100),
         inc: E(30),
@@ -293,15 +308,15 @@ const CHALS = {
         start: E(1.736881338559743e133),
         effect(x) {
             if (hasElement(64)) x = x.mul(1.5)
-            let ret = x.root(1.5).mul(0.01).add(1)
+            let ret = hasElement(133) ? x.root(4/3).mul(0.01).add(1) : x.root(1.5).mul(0.01).add(1)
             return ret.softcap(3,0.25,0)
         },
-        effDesc(x) { return "^"+format(x)+(x.gte(3)?"<span class='soft'>（軟限制）</span>":"") },
+        effDesc(x) { return "^"+format(x)+(x.gte(3)?"<span class='soft'>（軟上限）</span>":"") },
     },
     5: {
         unl() { return player.atom.unl },
         title: "無等級",
-        desc: "不能升等級。",
+        desc: "你不能升等級。",
         reward: `基於完成次數，等級要求更弱。`,
         max: E(50),
         inc: E(50),
@@ -311,12 +326,12 @@ const CHALS = {
             let ret = E(0.97).pow(x.root(2).softcap(5,0.5,0))
             return ret
         },
-        effDesc(x) { return "弱 "+format(E(1).sub(x).mul(100))+"%"+(x.log(0.97).gte(5)?"<span class='soft'>（軟限制）</span>":"") },
+        effDesc(x) { return "弱 "+format(E(1).sub(x).mul(100))+"%"+(x.log(0.97).gte(5)?"<span class='soft'>（軟上限）</span>":"") },
     },
     6: {
         unl() { return player.chal.comps[5].gte(1) || player.supernova.times.gte(1) },
         title: "無時間速度與壓縮器",
-        desc: "不能購買時間速度和黑洞壓縮器。",
+        desc: "你不能購買時間速度和黑洞壓縮器。",
         reward: `每完成一次，時間速度和黑洞壓縮器增加 10%。`,
         max: E(50),
         inc: E(64),
@@ -326,12 +341,12 @@ const CHALS = {
             let ret = x.mul(0.1).add(1).softcap(1.5,hasElement(39)?1:0.5,0).sub(1)
             return ret
         },
-        effDesc(x) { return "+"+format(x)+"x"+(x.gte(0.5)?"<span class='soft'>（軟限制）</span>":"") },
+        effDesc(x) { return "+"+format(x)+"x"+(x.gte(0.5)?"<span class='soft'>（軟上限）</span>":"") },
     },
     7: {
         unl() { return player.chal.comps[6].gte(1) || player.supernova.times.gte(1) || quUnl() },
         title: "無暴怒點數",
-        desc: "不能獲得暴怒點數，但你會根據質量獲得暗物質。<br>質量獲得量軟限制更強。",
+        desc: "你不能獲得暴怒點數，但你會根據質量獲得暗物質。<br>質量獲得量軟上限更強。",
         reward: `每完成一次，挑戰 1 - 4 的完成上限增加 2 次。<br><span class="yellow">完成 16 次時，解鎖元素</span>`,
         max: E(50),
         inc: E(64),
@@ -348,22 +363,22 @@ const CHALS = {
         unl() { return player.chal.comps[7].gte(1) || player.supernova.times.gte(1) },
         title: "白洞",
         desc: "暗物質和黑洞的質量加成開 8 次方根。",
-        reward: `基於完成次數，暗物質和黑洞的質量加成獲得次方加成。<br><span class="yellow">首次完成時，解鎖 3 行元素</span>`,
+        reward: `基於完成次數，暗物質和黑洞的質量加成獲得次方加成。<br><span class="yellow">初次完成時，你會解鎖 3 行元素</span>`,
         max: E(50),
         inc: E(80),
         pow: E(1.3),
         start: E(1.989e38),
         effect(x) {
             if (hasElement(64)) x = x.mul(1.5)
-            let ret = x.root(1.75).mul(0.02).add(1)
+            let ret = hasElement(133) ? x.root(1.5).mul(0.025).add(1) : x.root(1.75).mul(0.02).add(1)
             return ret.softcap(2.3,0.25,0)
         },
-        effDesc(x) { return "^"+format(x)+(x.gte(2.3)?"<span class='soft'>（軟限制）</span>":"") },
+        effDesc(x) { return "^"+format(x)+(x.gte(2.3)?"<span class='soft'>（軟上限）</span>":"") },
     },
     9: {
         unl() { return hasTree("chal4") },
         title: "無粒子",
-        desc: "不能分配夸克。質量獲得量的指數 ^0.9。",
+        desc: "你不能分配夸克。質量獲得量的指數 ^0.9。",
         reward: `加強鎂-12 的效果。`,
         max: E(100),
         inc: E('e500'),
@@ -379,7 +394,7 @@ const CHALS = {
         unl() { return hasTree("chal5") },
         title: "現實·一",
         desc: "挑戰 1-8 的懲罰全部生效，而且你困在質量膨脹裏。",
-        reward: `相對粒子公式的指數根據完成次數獲得加成。（該效果不適用於此挑戰中）<br><span class="yellow">首次完成時，解鎖費米子。</span>`,
+        reward: `相對粒子公式的指數根據完成次數獲得加成。（該效果不適用於此挑戰中）<br><span class="yellow">初次完成時，你會解鎖費米子。</span>`,
         max: E(100),
         inc: E('e2000'),
         pow: E(2),
@@ -393,7 +408,7 @@ const CHALS = {
     11: {
         unl() { return hasTree("chal6") },
         title: "絕對主義",
-        desc: "不能獲得相對粒子和膨脹質量。你困在質量膨脹裏。",
+        desc: "媽不能獲得相對粒子和膨脹質量。你困在質量膨脹裏。",
         reward: `完成次數加強恆星提升器。`,
         max: E(100),
         inc: E("ee6"),
@@ -409,18 +424,48 @@ const CHALS = {
         unl() { return hasTree("chal7") },
         title: "原子的衰變",
         desc: "不能獲得原子和夸克。",
-        reward: `完成次數免費給予輻射加成。<br><span class="yellow">首次完成時，解鎖新的重置層次！</span>`,
+        reward: `完成次數免費給予輻射加成。<br><span class="yellow">初次完成時，你會解鎖新的重置層次！</span>`,
         max: E(100),
         inc: E('e2e7'),
         pow: E(2),
         start: uni('e8.4e8'),
         effect(x) {
             let ret = x.root(hasTree("chal7a")?1.5:2)
+            return ret.softcap(50,0.5,0)
+        },
+        effDesc(x) { return "+"+format(x)+softcapHTML(x,50) },
+    },
+    13: {
+        unl() { return hasElement(132) },
+        title: "絕對漆黑",
+        desc: "普通質量和黑洞質量的獲得量設為 lg(x)^^1.5。",
+        reward: `完成次數增加暗束獲得量。<br><span class="yellow">初次完成時，你會解鎖新的功能！</span>`,
+        max: E(25),
+        inc: E('e2e4'),
+        pow: E(8),
+        start: uni('e2e5'),
+        effect(x) {
+            let ret = x.add(1).pow(1.5)
             return ret
         },
-        effDesc(x) { return "+"+format(x) },
+        effDesc(x) { return "x"+format(x,1) },
     },
-    cols: 12,
+    14: {
+        unl() { return hasElement(144) },
+        title: "門捷列夫的怨靈",
+        desc: "你不能購買第 118 個或以前的元素。此外，你困在模組為 [5,5,5,5,5,5,5,5] 的量子挑戰裏。",
+        reward: `獲得更多原始素定理。<br><span class="yellow">初次完成時，你會解鎖更多功能！</span>`,
+        max: E(100),
+        inc: E('e2e19'),
+        pow: E(3),
+        start: uni('ee20'),
+        effect(x) {
+            let ret = x.div(25).add(1)
+            return ret
+        },
+        effDesc(x) { return "x"+format(x,2) },
+    },
+    cols: 14,
 }
 
 /*
