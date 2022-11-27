@@ -40,7 +40,7 @@ const CHROMA = {
             return `將時間速度力量提升 ^${format(x)}`
         },
         x => {
-            return `將五級層前的要求減少 ${format(x)}x`
+            return `將${player.dark.unl ? "奇異級前" : ""}五級層前的要求減少 ${format(x)}x`
         },
         x => {
             return `將挑戰 1-8 的獎勵加強 ${format(x)}x`

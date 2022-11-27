@@ -7,6 +7,9 @@ const RADIATION = {
         if (hasTree('rad1')) x = x.mul(tmp.supernova.tree_eff.rad1||1)
         if (player.ranks.pent.gte(2)) x = x.mul(RANKS.effect.pent[2]())
         if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
+
+        if (player.dark.run.active) x = expMult(x,mgEff(4)[0])
+
         return x
     },
     hz_effect() {
@@ -25,6 +28,9 @@ const RADIATION = {
         if (hasTree('rad5')) x = x.mul(tmp.supernova.tree_eff.rad5||1)
         x = x.mul(tmp.radiation.bs.eff[3*i])
         if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
+
+        if (player.dark.run.active) x = expMult(x,mgEff(4)[0])
+        
         return x
     },
     ds_eff(i) {
@@ -183,7 +189,7 @@ const RADIATION = {
         },{
             title: `元級等級加成`,
             eff(b) {
-                let x = E(1.025).pow(b.softcap(400,0.5,0))
+                let x = E(1.025).pow(b.softcap(400,0.5,0))//.softcap(1e8,0.5,2)
                 return x
             },
             desc(x) { return `元級等級推遲 ${format(x)}x` },

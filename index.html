@@ -23,6 +23,7 @@
     <script src="js/saves.js"></script>
     <script src="js/challenges.js"></script>
 
+    <script src="js/darkness/dark_run.js"></script>
     <script src="js/darkness/dark.js"></script>
     
     <script src="js/quantum/big_rip.js"></script>
@@ -245,6 +246,8 @@
                     <span id="massSoft6" style="color: rgb(255, 238, 0)">質量獲得量到達 <b id="massSoftStart6">X</b> 後會被軟上限^5！</span><br>
                     <span id="massSoft7" style="color: rgb(166, 255, 0)">質量獲得量到達  <b id="massSoftStart7">X</b> 後會被軟上限^6！</span><br>
                     <span id="massSoft8" style="color: rgb(0, 255, 149)">質量獲得量到達  <b id="massSoftStart8">X</b> 後會被軟上限^7！</span>
+                    <span id="massSoft9" style="color: rgb(0, 225, 255)">質量獲得量到達 <b id="massSoftStart9">X</b> 後會被軟上限^8！</span>
+                    <span id="massOverflow"></span>
                     </div>
                 </div><div id="stab_frame0_1">
                 你的黑洞質量是 <span id="bhMass2">X</span>，<br>
@@ -266,7 +269,8 @@
                         <span id="massSoft2" class="red">黑洞質量獲得量到達 <b id="massSoftStart2">X</b> 後會被軟上限！</span><br>
                         <span id="bhFSoft1" class="red">
                             (x + 1)<sup id="bhMassPower2">0.33</sup> 的公式會在 <b id="bhFSoftStart1">X</b> 被軟上限
-                        </span>
+                        </span><br>
+                        <span id="bhOverflow"></span>
                     </div>
                 </div><div id="stab_frame0_2">
                     你有 <span id="atomicAmt">X</span> 原子力量，<br>
@@ -287,7 +291,7 @@
                     </div>
                 </div><div id="stab_frame0_3">
                     你塌縮了 <span id="stars_Amt">X</span> 個恆星，基於各級別的效果提升質量獲得量<br>
-                    <span class="green">目前：<span id="stars_Eff">X</span>x</span><br><br>
+                    <span class="green">目前：<span id="stars_Eff">X</span></span><br><br>
                     <button id="star_btn" class="btn" onclick="STARS.generators.unl()">X</button><br><br>
                     <div id="stars_table" class="table_center"></div><br><br>
                     <span id="starSoft1" class="red">塌縮恆星獲得量到達 <b id="starSoftStart1">X</b> 後會被軟上限！</span><br>
@@ -404,7 +408,7 @@
                 </div><div id="stab_frame4_3">
                     你有 <span id="bd_energy">X</span> 相對能量<br>
                     你有 <span id="bd_mass">X</span> 的相對質量<br><br>
-                    <button onclick="MASS_DILATION.break.toggle()" id="bd_btn" class="btn half_full bd" tooltip="當你在大撕裂裏打破膨脹時，黑洞壓縮器和宇宙射線不再受到量子挑戰模組 8 的影響，量子挑戰模組 7 失效，而你可以基於膨脹質量獲得相對能量。相對能量會生產相對質量。修補膨脹會重置你的相對能量和相對質量，並且強制執行量子重置。">打破膨脹</button><br><br>
+                    <button onclick="MASS_DILATION.break.toggle()" id="bd_btn" class="btn half_full bd" tooltip="當你在大撕裂裏打破膨脹時，黑洞壓縮器和宇宙射線不再受到 QC 模組 8 的影響，QC 模組 7 失效，而你可以基於膨脹質量獲得相對能量。相對能量會生產相對質量。修補膨脹會重置你的相對能量和相對質量，並且強制執行量子重置。">打破膨脹</button><br><br>
                     <div class="table_center">
                         <div id="bd_upg_table" class="table_center" style="width: 1000px;"></div>
                     </div>
@@ -424,10 +428,13 @@
                 </div><div id="stab_frame6_3">
                     你有 <span id="prim_theorem">0</span> 個原始素定理（基於藍圖粒子的數量）<br>
                     （下一個原始素定理在 <span id="prim_next_theorem">X</span>）<br><br>
-                    <button class="btn" onclick="giveRandomPParticles(1)">隨機給予 1 個粒子</button>
-                    <button class="btn" onclick="giveRandomPParticles(10)">隨機給予 10 個粒子</button>
-                    <button class="btn" onclick="giveRandomPParticles(1,true)">隨機給予所有粒子</button>
-                    <button class="btn" onclick="respecPParticles()">重置所有粒子</button><br><br>
+                    <div id="prim_btns">
+                        <button class="btn" onclick="giveRandomPParticles(1)">隨機給予 1 個粒子</button>
+                        <button class="btn" onclick="giveRandomPParticles(10)">隨機給予 10 個粒子</button>
+                        <button class="btn" onclick="giveRandomPParticles(1,true)">隨機給予所有粒子</button>
+                        <button class="btn" onclick="respecPParticles()">重置所有粒子</button>
+                        <br><br>
+                    </div>
                     <div id="primordium_table"></div>
                 </div><div id="stab_frame6_4">
                     <div class="table_center" style="min-height: 250px">
@@ -446,19 +453,33 @@
                     <div id="en_table" class="table_center"></div>
                 </div>
             </div><div id="tab_frame7">
-                <div class="table_center">
-                    <div style="width: 33.3%; min-width: 300px;">
-                        你有 <b id="darkRay"></b> 個暗束，
-                        <div id="drEff" class="sky"></div>
-                    </div><div style="width: 33.3%; min-width: 300px;">
-                        你有 <b id="darkShadow"></b> 個暗影，
-                        <div id="dsEff" class="sky"></div>
-                    </div><div style="width: 33.3%; min-width: 300px;">
-                        <div id="ab_div">
-                            你有 <b id="abyssalBlot"></b> 個深淵之漬，
-                            <div id="abEff" class="sky"></div>
+                <div id="stab_frame7_0">
+                    <div class="table_center">
+                        <div style="width: 33.3%; min-width: 300px;">
+                            你有 <b id="darkRay"></b> 個暗束，
+                            <div id="drEff" class="sky"></div>
+                        </div><div style="width: 33.3%; min-width: 300px;">
+                            你有 <b id="darkShadow"></b> 個暗影，
+                            <div id="dsEff" class="sky"></div>
+                        </div><div style="width: 33.3%; min-width: 300px;">
+                            <div id="ab_div">
+                                你有 <b id="abyssalBlot"></b> 個深淵之漬，
+                                <div id="abEff" class="sky"></div>
+                            </div>
                         </div>
                     </div>
+                </div><div id="stab_frame7_1">
+                    <button onclick="darkRun()" class="btn half_full" id="dark_run_btn" tooltip="進入黑暗試煉會強制執行暗界重置，並將你困在 QC 模組部分填滿的大撕裂裏。你會基於資源獲得削弱遊戲的符文質量。選擇符文時，你會退出黑暗試煉。"></button>
+                    <button class="btn half_full" onclick="player.dark.run.gmode = (player.dark.run.gmode+1)%3">符文獲得模式：<span id="mg_btn_mode">X</span></button>
+                    <br><br>
+                    <div>
+                        <button class="btn" onclick="player.dark.run.gamount = Math.max(1,player.dark.run.gamount-1)">-1</button>
+                        <span style="margin: 0 10px;">每種符文最多可獲得 <span id="mg_max_gain">X</span> 個</span>
+                        <button class="btn" onclick="player.dark.run.gamount++">+1</button>
+                    </div><br>
+                    <div class="table_center" id="mass_glyph_table"></div><br>
+                    <div class="table_center" id="glyph_upg_table"></div><br>
+                    <div id="glyph_upg_msg"></div>
                 </div>
             </div><div id="tab_frame8">
                 <button class="btn" onclick="save()">儲存</button>
@@ -478,7 +499,7 @@
                 <h2>確認設定</h2><br>
                 <div id="confirm_table" class="table_center"></div>
                 <br><br>
-                增量質量（重寫版）v0.6 - 暗界更新 - 由 MrRedShark77 製作，ItMarki 翻譯<br>
+                增量質量（重寫版）v0.6.1.1 - 由 MrRedShark77 製作，ItMarki 翻譯<br>
                 本遊戲受到 <ruby>Distance Incremental<rt>距離增量</rt></ruby> 和 <ruby>Synergism<rt>協同放置</rt></ruby> 的啟發製作<br><br><br>
                 提示 1：把指標放在標籤上方的圖片上，即可查看描述……<br><br>
                 總遊玩時間：<span id="total_time">X</span><br><br>

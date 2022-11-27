@@ -38,7 +38,7 @@ const TABS = {
         ],
         3: [
             { id: "挑戰" },
-            { id: "量子挑戰", unl() { return hasTree("unl3") }, style: "qu" },
+            { id: "量子挑戰（QC）", unl() { return hasTree("unl3") }, style: "qu" },
             //{ id: "大撕裂", unl() { return hasTree("unl4") }, style: "qu" },
         ],
         4: [
@@ -60,5 +60,9 @@ const TABS = {
             { id: "原始素", unl() { return PRIM.unl() } },
             { id: "熵", unl() { return player.qu.en.unl } },
         ],
+        7: [
+            { id: "黑暗效果" },
+            { id: "黑暗試煉", unl() { return tmp.darkRunUnlocked } },
+        ]
     },
 }

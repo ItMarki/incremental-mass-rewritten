@@ -26,6 +26,8 @@ function resetTemp() {
             req: [],
             bulk: [],
             eff: [],
+            baseExp: 1,
+            base: E(1),
         },
 
         bd: {
@@ -108,11 +110,24 @@ function resetTemp() {
         dark: {
             shadowEff: {},
             rayEff: {},
+            mass_glyph_eff: [],
+            mass_glyph_gain: [],
         },
 
         overflow: {
+            mass: E(1),
             dm: E(1),
+            bh: E(1),
+            star: E(1),
         },
+
+        overflow_start: {
+            dm: E('ee30'),
+        },
+
+        mass_glyph_msg: 0,
+
+        glyph_upg_eff: [],
 
         prevSave: "",
     }
@@ -158,6 +173,8 @@ function updateMassTemp() {
     tmp.massSoftGain6 = FORMS.massSoftGain6()
     tmp.massSoftPower7 = FORMS.massSoftPower7()
     tmp.massSoftGain7 = FORMS.massSoftGain7()
+    tmp.massSoftPower8 = FORMS.massSoftPower8()
+    tmp.massSoftGain8 = FORMS.massSoftGain8()
     tmp.massGain = FORMS.massGain()
 }
 
@@ -209,6 +226,7 @@ function updateTemp() {
 
     tmp.chal13comp = player.chal.comps[13].gte(1)
     tmp.chal14comp = player.chal.comps[14].gte(1)
+    tmp.darkRunUnlocked = hasElement(161)
 
     updateDarkTemp()
     updateQuantumTemp()

@@ -10,6 +10,9 @@ const FERMIONS = {
         if (tmp.radiation.unl) x = x.mul(tmp.radiation.hz_effect)
         for (let j = 0; j < FERMIONS.types[i].length; j++) x = x.mul(base.pow(player.supernova.fermions.tiers[i][j]))
         if (hasTree("fn1") && tmp.supernova) x = x.mul(tmp.supernova.tree_eff.fn1)
+
+        if (player.dark.run.active) x = expMult(x,mgEff(4)[0])
+
         return x
     },
     backNormal() {
@@ -146,6 +149,7 @@ const FERMIONS = {
                 cons: "你困在質量膨脹和挑戰 3-5 裏",
             },{
                 maxTier() {
+                    if (hasElement(156)) return Infinity
                     let x = 30
                     if (hasTree("fn11")) x += 5
                     return x
@@ -315,6 +319,7 @@ const FERMIONS = {
                 cons: "恆星生產器 ^0.5",
             },{
                 maxTier() {
+                    if (hasElement(156)) return Infinity
                     let x = 25
                     if (hasTree("fn11")) x += 5
                     return x
@@ -330,7 +335,8 @@ const FERMIONS = {
                     return FERMIONS.getTierScaling(x, true)
                 },
                 eff(i, t) {
-                    let x = E(0.95).pow(i.add(1).log10().mul(t).root(4).softcap(27,0.5,0)).max(2/3).toNumber()
+                    let m = i.add(1).log10().mul(t).root(4)
+                    let x = Math.min(hasElement(157)?m.div(150).add(1).softcap(5,0.5,0).pow(-1).toNumber():1,E(0.95).pow(m.softcap(27,0.5,0)).max(2/3).toNumber())
                     return x
                 },
                 desc(x) {

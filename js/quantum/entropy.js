@@ -116,7 +116,7 @@ const ENTROPY = {
                 let x = i.root(2).div(10).add(1).pow(-1)
                 return x
             },
-            desc(x) { return `在元級增幅前，所有超新星前增幅弱 <b>${formatReduction(x)}</b>（五級層除外）。` },
+            desc(x) { return `在元級增幅前，所有超新星前增幅弱 <b>${formatReduction(x)}</b>（不適用於五級層或以後）。` },
         },{
             title: "熵濃縮",
 
@@ -189,10 +189,10 @@ const ENTROPY = {
         return x
     },
     getRewardEffect(i) {
-        if (player.qu.rip.active && !tmp.en.reward_br.includes(i)) return E(0)
+        if ((player.qu.rip.active || player.dark.run.active) && !tmp.en.reward_br.includes(i)) return E(0)
         let x = player.qu.en.rewards[i]
 
-        if (hasElement(91) && player.qu.rip.active && (i==1||i==4)) x = x.mul(0.1)
+        if (hasElement(91) && (player.qu.rip.active || player.dark.run.active) && (i==1||i==4)) x = x.mul(0.1)
 
         return x
     },

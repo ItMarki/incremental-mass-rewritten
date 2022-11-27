@@ -104,6 +104,12 @@
 }
 
 @font-face {
+	font-family: 'Source Serif Pro';
+	src: url('fonts/SourceSerifPro-Regular.ttf');
+	size-adjust: 97%;
+}
+
+@font-face {
 	font-family: 'Unifont';
 	src: url('fonts/unifont-14.0.02.ttf');
 }

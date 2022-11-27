@@ -140,10 +140,12 @@ const TREE_UPGS = {
             desc: `中子星提升質量獲得量。`,
             cost: E(100),
             effect() {
-                let x = E(1e100).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
+                let x = hasElement(164)
+                ? player.supernova.stars.add(1).log10().add(1).log10().div(10).add(1)
+                : E(1e100).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
                 return x
             },
-            effDesc(x) { return format(x)+"x"+(x.max(1).log(1e100).gte(1e3)?"<span class='soft'>（軟上限）</span>":"") },
+            effDesc(x) { return hasElement(164)?"^"+format(x):(format(x)+"x"+(x.max(1).log(1e100).gte(1e3)?"<span class='soft'>（軟上限）</span>":"")) },
         },
         m2: {
             branch: ["m1"],
@@ -173,20 +175,24 @@ const TREE_UPGS = {
             desc: `中子星提升暴怒點數獲得量。`,
             cost: E(200),
             effect() {
-                let x = E(1e50).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
+                let x = hasElement(165)
+                ? player.supernova.stars.add(1).log10().add(1).log10().div(10).add(1)
+                : E(1e50).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
                 return x
             },
-            effDesc(x) { return format(x)+"x"+(x.max(1).log(1e50).gte(1e3)?"<span class='soft'>（軟上限）</span>":"") },
+            effDesc(x) { return hasElement(165)?"^"+format(x):(format(x)+"x"+(x.max(1).log(1e50).gte(1e3)?"<span class='soft'>（軟上限）</span>":"")) },
         },
         bh1: {
             branch: ["c"],
             desc: `中子星提升暗物質獲得量。`,
             cost: E(400),
             effect() {
-                let x = E(1e35).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
+                let x = hasElement(166)
+                ? player.supernova.stars.add(1).log10().add(1).log10().div(10).add(1)
+                : E(1e35).pow(player.supernova.stars.add(1).log10().pow(5).softcap(1e3,0.25,0))
                 return x
             },
-            effDesc(x) { return format(x)+"x"+(x.max(1).log(1e35).gte(1e3)?"<span class='soft'>（軟上限）</span>":"") },
+            effDesc(x) { return hasElement(166)?"^"+format(x):(format(x)+"x"+(x.max(1).log(1e35).gte(1e3)?"<span class='soft'>（軟上限）</span>":"")) },
         },
         bh2: {
             branch: ['bh1'],

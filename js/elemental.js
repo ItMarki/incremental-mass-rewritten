@@ -70,7 +70,7 @@ const ELEMENTS = {
             cost: E(2.5e16),
             effect() {
                 let x = player.atom?player.atom.powers[0].max(1).log10().pow(0.8).div(50).add(1):E(1)
-                return x
+                return x.softcap(1e45,0.1,0)
             },
             effDesc(x) { return "加強 "+format(x)+"x" },
         },
@@ -551,7 +551,7 @@ const ELEMENTS = {
             cost: E('e150'),
         },
         {
-            desc: `所有時間速度增幅推遲 100x（在應用量子挑戰模組 8 後）。`,
+            desc: `所有時間速度增幅推遲 100x（在應用 QC 模組 8 後）。`,
             cost: E('e500'),
         },
         {
@@ -614,7 +614,7 @@ const ELEMENTS = {
             cost: E('e8.5e6'),
         },
         {
-            desc: `量子挑戰模組 8 在大撕裂中弱 20%。`,
+            desc: `QC 模組 8 在大撕裂中弱 20%。`,
             cost: E('e1.2e7'),
         },
         {
@@ -876,6 +876,83 @@ const ELEMENTS = {
         },{
             desc: `增強器效果的軟上限再次稍微更弱。時間速度的效果大幅增強。`,
             cost: E("ee54"),
+        },{
+            dark: true,
+            desc: `挑戰 13 的完成上限增加 75 次。`,
+            cost: E("1e68"),
+        },{
+            desc: `基於夸克，暗束獲得量提升。`,
+            cost: E("e3.6e61"),
+            effect() {
+                let x = player.atom.quarks.add(1).log10().add(1).log10().add(1).pow(1.5)
+                return x
+            },
+            effDesc(x) { return "x"+format(x) },
+        },{
+            br: true,
+            desc: `重置底數指數提升深淵之漬獲得量。`,
+            cost: E("e6e47"),
+            effect() {
+                let x = Math.max(1,tmp.prestiges.baseExp**1.5)
+                return x
+            },
+            effDesc(x) { return "^"+format(x) },
+        },{
+            desc: `高級重置等級、層和五級層增幅弱 10%。`,
+            cost: E("e5e64"),
+        },{
+            br: true,
+            desc: `元級等級稍微影響元級階的增幅門檻。`,
+            cost: E("e1.3e49"),
+            effect() {
+                let x = tmp.radiation.bs.eff[14].max(1).log10().add(1)
+                return x
+            },
+            effDesc(x) { return "x"+format(x)+" later" },
+        },{
+            dark: true,
+            desc: `移除 [頂] 和 [緲微中子] 的階上限。`,
+            cost: E("1e80"),
+        },{
+            dark: true,
+            desc: `移除 [緲微中子] 的效果上限，如果它的效果大於 33%，則它會更強。`,
+            cost: E("1e84"),
+        },{
+            br: true,
+            desc: `元級時間速度增幅推遲 ^2。`,
+            cost: E("e2.5e53"),
+        },{
+            desc: `深淵之漬的第二個效果也適用於質量軟上限^7-8。這些上限弱 20%。`,
+            cost: E("e2.2e69"),
+        },{
+            br: true,
+            desc: `增強器力量的軟上限更弱。`,
+            cost: E("e2.9e61"),
+        },{
+            dark: true,
+            desc: `解鎖黑暗試煉。進入暗界時保留 Og-118。`,
+            cost: E("1e96"),
+        },{
+            desc: `塌縮恆星升級以弱指數增長影響它的效果。它也可以影響黑洞質量獲得量，但是鈀-46、鎘-48、銩-69 和鋨-76 失效。B`,
+            cost: E("e4.20e69"), // nice
+        },{
+            desc: `空間膨脹稍微更弱。`,
+            cost: E("e4.7e70"),
+        },{
+            br: true,
+            desc: `大幅增強 [m1] 的效果。`,
+            cost: E("e4.20e69"), // nice x2
+        },{
+            br: true,
+            desc: `大幅增強 [rp1] 的效果。`,
+            cost: E("e6.3e69"),
+        },{
+            br: true,
+            desc: `再次大幅增強 [bh1] 的效果。`,
+            cost: E("e2.27e70"),
+        },{
+            desc: `六級層和榮譽的要求稍微更弱。`,
+            cost: E("e1.08e72"),
         },
     ],
     /*
@@ -913,7 +990,8 @@ const ELEMENTS = {
             if (hasUpgrade("br",9)) u += 23 // 23
         }
         if (tmp.chal13comp) u += 10 + 2
-        if (tmp.chal14comp) u += 6
+        if (tmp.chal14comp) u += 6 + 11
+        if (tmp.darkRunUnlocked) u += 6
 
         return u
     },

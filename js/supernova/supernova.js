@@ -7,7 +7,7 @@ const SUPERNOVA = {
         else CONFIRMS_FUNCTION.sn(force,chal,post,fermion)
     },
     doReset() {
-        let br = player.qu.rip.active
+        let br = player.qu.rip.active || player.dark.run.active
         tmp.supernova.time = 0
 
         player.atom.points = E(0)
@@ -63,7 +63,7 @@ const SUPERNOVA = {
         if (hasTree("bs3")) x = x.mul(tmp.supernova.tree_eff.bs3)
         if (hasTree("sn5")) x = x.mul(tmp.supernova.tree_eff.sn5)
         
-        let qs = Decimal.pow(1.2,player.qu.times)
+        let qs = Decimal.pow(1.2,player.qu.times.softcap(1e17,0.1,0))
         if (!hasElement(140)) qs = qs.min(1e10)
 
         if (tmp.qu.mil_reached[6]) x = x.mul(qs.softcap('ee9',0.01,0).softcap('ee10',0.1,0))
@@ -72,6 +72,7 @@ const SUPERNOVA = {
     },
     req(x=player.supernova.times) {
         ff = tmp.dark.shadowEff.sn||1
+        if (player.dark.run.active) ff /= mgEff(4)[1]
 
         ml_fp = E(1).mul(tmp.bosons.upgs.gluon[3].effect)
         maxlimit = E(1e20).pow(x.div(ff).scaleEvery('supernova').div(ml_fp).pow(1.25)).mul(1e90)
