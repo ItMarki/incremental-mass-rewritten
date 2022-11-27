@@ -214,7 +214,7 @@ function getScalingName(name, x=0, y=0) {
 	let amt = SCALING_RES[name](x,y);
 	for (let n = cap - 1; n >= 0; n--) {
 		if (scalingActive(name, amt, Object.keys(SCALE_START)[n]))
-		return (n==3?"元級":n==2?"極高級":n==1?"高級":n==0?"超級":"") // improvised code for the purpose of translation; do not delete
+		return (n==4?"奇異級":n==3?"元級":n==2?"極高級":n==1?"高級":n==0?"超級":"") // improvised code for the purpose of translation; do not delete
 	}
 	return current;
 }

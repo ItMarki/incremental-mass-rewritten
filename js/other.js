@@ -58,27 +58,29 @@ const POPUP_GROUPS = {
     fonts: {
         // <button class="btn" style="font-family: Comic Sans MS;" onclick="player.options.font = 'Comic Sans MS'">Comic Sans MS</button>
         html: `
+            <b>注意</b>：支援漢字的字型以<span style="color: yellow;">黃色文字</span>標記。<br>
             <button class="btn" style="font-family: 'Andy Bold';" onclick="player.options.font = 'Andy Bold'">Andy Bold</button>
             <button class="btn" style="font-family: Arial, Helvetica, sans-ser;" onclick="player.options.font = 'Arial, Helvetica, sans-ser'">Arial</button>
             <button class="btn" style="font-family: Bahnschrift;" onclick="player.options.font = 'Bahnschrift'">Bahnschrift</button>
             <button class="btn" style="font-family: Courier;" onclick="player.options.font = 'Courier'">Courier</button>
             <button class="btn" style="font-family: Cousine;" onclick="player.options.font = 'Cousine'">Cousine</button>
             <button class="btn" style="font-family: 'Flexi IBM VGA False';" onclick="player.options.font = 'Flexi IBM VGA False'">Flexi IBM VGA False</button>
-            <button class="btn" style="font-family: GenYoGothic TW;" onclick="player.options.font = 'GenYoGothic TW'">源樣黑體 TW</button>
-            <button class="btn" style="font-family: GenYoGothic JP;" onclick="player.options.font = 'GenYoGothic JP'">源樣黑體 JP</button>
+            <button class="btn" style="color: yellow;font-family: GenYoGothic TW;" onclick="player.options.font = 'GenYoGothic TW'">源樣黑體 TW</button>
+            <button class="btn" style="color: yellow;font-family: GenYoMin TW;" onclick="player.options.font = 'GenYoMin TW'">源樣明體 TW</button>
+            <button class="btn" style="color: yellow;font-family: IMing;" onclick="player.options.font = 'IMing'">一點明體</button>
             <button class="btn" style="font-family: Inconsolata;" onclick="player.options.font = 'Inconsolata'">Inconsolata</button>
             <button class="btn" style="font-family: 'Lucida Handwriting';" onclick="player.options.font = 'Lucida Handwriting'">Lucida Handwriting</button>
-            <button class="btn" style="font-family: 'LXGWWenKai';" onclick="player.options.font = 'LXGWWenKai'">霞鶩文楷</button>
+            <button class="btn" style="color: yellow;font-family: 'LXGWWenKai';" onclick="player.options.font = 'LXGWWenKai'">霞鶩文楷</button>
             <button class="btn" style="font-family: Monospace-Typewritter;" onclick="player.options.font = 'Monospace-Typewritter'">Monospace Typewritter</button>
 			<button class="btn" style="font-family: 'MS Sans Serif';" onclick="player.options.font = 'MS Sans Serif'">MS Sans Serif</button>
-            <button class="btn" style="font-family: 'Noto Sans SC';" onclick="player.options.font = 'Noto Sans SC'">Noto Sans SC</button>
-            <button class="btn" style="font-family: 'Noto Sans TC';" onclick="player.options.font = 'Noto Sans TC'">Noto Sans TC</button>
+            <button class="btn" style="color: yellow;font-family: 'Noto Sans SC';" onclick="player.options.font = 'Noto Sans SC'">Noto Sans SC</button>
+            <button class="btn" style="color: yellow;font-family: 'Noto Sans TC';" onclick="player.options.font = 'Noto Sans TC'">Noto Sans TC</button>
             <button class="btn" style="font-family: 'Nova Mono';" onclick="player.options.font = 'Nova Mono'">Nova Mono</button>
             <button class="btn" style="font-family: 'Retron2000';" onclick="player.options.font = 'Retron2000'">Retron 2000</button>
             <button class="btn" style="font-family: 'Roboto';" onclick="player.options.font = 'Roboto'">Roboto</button>
             <button class="btn" style="font-family: 'Roboto Mono';" onclick="player.options.font = 'Roboto Mono'">Roboto Mono</button>
             <button class="btn" style="font-family: 'Source Serif Pro';" onclick="player.options.font = 'Source Serif Pro'">Source Serif Pro</button>
-            <button class="btn" style="font-family: 'Unifont';" onclick="player.options.font = 'Unifont'">Unifont</button>
+            <button class="btn" style="color: yellow;font-family: 'Unifont';" onclick="player.options.font = 'Unifont'">Unifont</button>
             <button class="btn" style="font-family: Verdana, Geneva, Tahoma, sans-serif;" onclick="player.options.font = 'Verdana, Geneva, Tahoma, sans-serif'">Verdana</button>
         `,
     },

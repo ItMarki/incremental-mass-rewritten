@@ -27,9 +27,14 @@
 }
 
 @font-face {
-	font-family: 'GenYoGothic JP';
-	src: url('fonts/GenYoGothic-R_1.ttf');
+	font-family: 'GenYoMin TW';
+	src: url('fonts/GenYoMin-R_0.ttf');
 	line-height: 125%;
+}
+
+@font-face {
+	font-family: 'IMing';
+	src: url('fonts/I.Ming-7.01.ttf');
 }
 
 @font-face {

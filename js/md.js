@@ -480,7 +480,7 @@ function updateMDHTML() {
     tmp.el.dmSoftStart1.setTxt(formatMass(tmp.md.massSoftcap1))
 
     tmp.el.dmOverflow.setDisplay(player.md.mass.gte(tmp.overflow_start.dm))
-    tmp.el.dmOverflow.setHTML(`因為你的膨脹質量在 <b>${formatMass(tmp.overflow_start.dm)}</b> 溢出，它已經${overflowFormat(tmp.overflow.dm||1)}！`)
+    tmp.el.dmOverflow.setHTML(`由於你的膨脹質量在 <b>${formatMass(tmp.overflow_start.dm)}</b> 溢出，它已經${overflowFormat(tmp.overflow.dm||1)}！`)
 }
 
 function updateBDHTML() {

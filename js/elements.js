@@ -33,7 +33,7 @@ function setupHTML() {
 			<button id="ranks_auto_${x}" class="btn" style="width: 80px;" onclick="RANKS.autoSwitch('${rn}')">關閉</button>
 			第 <span id="ranks_amt_${x}">X</span> <span id="ranks_scale_${x}""></span>${RANKS.fullNames[x]}<br><br>
 			<button onclick="RANKS.reset('${rn}')" class="btn reset" id="ranks_${x}">
-				重置${x>0?RANKS.fullNames[x-1]:'質量和升級'}，但是升${RANKS.fullNames[x]}。<span id="ranks_desc_${x}"></span><br>
+				重置${x>0?RANKS.fullNames[x-1]:'質量和升級'}，但你可以升${RANKS.fullNames[x]}。<span id="ranks_desc_${x}"></span><br>
 				要求：<span id="ranks_req_${x}">X</span>
 			</button>
 		</div>`
@@ -47,7 +47,7 @@ function setupHTML() {
 			<button id="pres_auto_${x}" class="btn" style="width: 80px;" onclick="PRESTIGES.autoSwitch(${x})">關閉</button>
 			第 <span id="pres_amt_${x}">X</span> 個<span id="pres_scale_${x}""></span>${PRESTIGES.fullNames[x]}<br><br>
 			<button onclick="PRESTIGES.reset(${x})" class="btn reset" id="pres_${x}">
-				${x>0?"重置你的"+PRESTIGES.fullNames[x-1]:'強制執行量子重置'}，但是升${PRESTIGES.fullNames[x]}。<span id="pres_desc_${x}"></span><br>
+				${x>0?"重置你的"+PRESTIGES.fullNames[x-1]:'強制執行量子重置'}，但你可以升${PRESTIGES.fullNames[x]}。<span id="pres_desc_${x}"></span><br>
 				要求：<span id="pres_req_${x}">X</span>
 			</button>
 		</div>`
@@ -363,7 +363,7 @@ function updateBlackHoleHTML() {
 	tmp.el.bhCondenser_auto.setTxt(player.bh.autoCondenser?"開啟":"關閉")
 
 	tmp.el.bhOverflow.setDisplay(player.bh.mass.gte('ee69'))
-    tmp.el.bhOverflow.setHTML(`因為你的黑洞質量在 <b>${formatMass('ee69')}</b> 溢出，它已經${overflowFormat(tmp.overflow.bh||1)}！`)
+    tmp.el.bhOverflow.setHTML(`由於你的黑洞質量在 <b>${formatMass('ee69')}</b> 溢出，它已經${overflowFormat(tmp.overflow.bh||1)}！`)
 }
 
 function updateOptionsHTML() {
@@ -428,7 +428,7 @@ function updateHTML() {
 				tmp.el.massSoftStart9.setTxt(formatMass(tmp.massSoftGain8))
 
 				tmp.el.massOverflow.setDisplay(player.mass.gte('ee69'))
-    			tmp.el.massOverflow.setHTML(`因為你的質量在 <b>${formatMass('ee69')}</b> 溢出，它已經${overflowFormat(tmp.overflow.mass||1)}!`)
+    			tmp.el.massOverflow.setHTML(`由於你的質量在 <b>${formatMass('ee69')}</b> 溢出，它已經${overflowFormat(tmp.overflow.mass||1)}!`)
 			}
 			if (tmp.stab[0] == 1) {
 				updateBlackHoleHTML()
