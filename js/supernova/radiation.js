@@ -119,7 +119,7 @@ const RADIATION = {
             title: `黑洞指數加成`,
             eff(b) {
                 let x = b.root(2).div(100)
-                return x.min(.15)
+                return x//.min(.15)
             },
             desc(x) { return `黑洞質量公式的指數增加 ${format(x)}（最高 0.15）` },
         },{

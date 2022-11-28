@@ -427,8 +427,8 @@ function updateHTML() {
 				tmp.el.massSoft9.setDisplay(tmp.massGain.gte(tmp.massSoftGain8))
 				tmp.el.massSoftStart9.setTxt(formatMass(tmp.massSoftGain8))
 
-				tmp.el.massOverflow.setDisplay(player.mass.gte('ee69'))
-    			tmp.el.massOverflow.setHTML(`由於你的質量在 <b>${formatMass('ee69')}</b> 溢出，它已經${overflowFormat(tmp.overflow.mass||1)}!`)
+				tmp.el.massOverflow.setDisplay(player.mass.gte(tmp.overflow_start.mass))
+    			tmp.el.massOverflow.setHTML(`由於你的質量在 <b>${formatMass(tmp.overflow_start.mass)}</b> 溢出，它已經${overflowFormat(tmp.overflow.mass||1)}!`)
 			}
 			if (tmp.stab[0] == 1) {
 				updateBlackHoleHTML()

@@ -27,7 +27,10 @@ const CHROMA = {
             let x = E(1.01).pow(i.add(1).log10().max(0).pow(0.8))
             if (hasUpgrade('br',7) && (player.qu.rip.active || hasElement(148))) x = x.pow(2)
             if (hasUpgrade('br',10)) x = x.pow(1.1)
-            return x
+            
+            let y = hasPrestige(2,4)?i.add(1).log10().root(2).div(250).add(1).pow(-1):E(1)
+
+            return [x,y]
         },
         i => {
             let x = E(1.1).pow(i.add(1).log10().max(0).pow(0.75))
@@ -41,6 +44,7 @@ const CHROMA = {
         },
         x => {
             return `將${player.dark.unl ? "奇異級前" : ""}五級層前的要求減少 ${format(x)}x`
+            +(hasPrestige(2,4)?`<br>所有奇異級前六級層前增幅弱 ${formatReduction(x[1])}`:"")
         },
         x => {
             return `將挑戰 1-8 的獎勵加強 ${format(x)}x`

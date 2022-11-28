@@ -57,7 +57,7 @@ function updateChalTemp() {
         tmp.chal.max[x] = CHALS.getMax(x)
         tmp.chal.goal[x] = data.goal
         tmp.chal.bulk[x] = data.bulk
-        tmp.chal.eff[x] = CHALS[x].effect(FERMIONS.onActive("05")?E(0):player.chal.comps[x].mul(x<=8?s:1))
+        tmp.chal.eff[x] = CHALS[x].effect(FERMIONS.onActive("05")?E(0):player.chal.comps[x].mul(x<=8?s:hasElement(174)&&x<=12?s.root(5):1))
     }
     tmp.chal.format = player.chal.active != 0 ? CHALS.getFormat() : format
     tmp.chal.gain = player.chal.active != 0 ? tmp.chal.bulk[player.chal.active].min(tmp.chal.max[player.chal.active]).sub(player.chal.comps[player.chal.active]).max(0).floor() : E(0)
@@ -71,7 +71,7 @@ const CHALS = {
         }
         player.chal.choosed = x
     },
-    inChal(x) { return player.chal.active == x },
+    inChal(x) { return player.chal.active == x || (player.chal.active == 15 && x <= 12) },
     reset(x, chal_reset=true) {
         if (x < 5) FORMS.bh.doReset()
         else if (x < 9) ATOM.doReset(chal_reset)
@@ -134,6 +134,7 @@ const CHALS = {
         if (hasElement(104) && (i>=9 && i<=12))  x = x.add(200)
         if (hasElement(125) && (i>=9 && i<=12))  x = x.add(elemEffect(125,0))
         if (hasElement(151) && (i==13)) x = x.add(75)
+        if (hasElement(171) && (i==13||i==14)) x = x.add(100)
         return x.floor()
     },
     getScaleName(i) {
@@ -409,7 +410,7 @@ const CHALS = {
     11: {
         unl() { return hasTree("chal6") },
         title: "絕對主義",
-        desc: "媽不能獲得相對粒子和膨脹質量。你困在質量膨脹裏。",
+        desc: "你不能獲得相對粒子和膨脹質量。你困在質量膨脹裏。",
         reward: `完成次數加強恆星提升器。`,
         max: E(100),
         inc: E("ee6"),
@@ -466,7 +467,22 @@ const CHALS = {
         },
         effDesc(x) { return "x"+format(x,2) },
     },
-    cols: 14,
+    15: {
+        unl() { return hasElement(168) },
+        title: "現實·二",
+        desc: "挑戰 1-12 全部生效。此外，你困在模組為 [10,5,10,10,10,10,10,10] 的量子挑戰裏。",
+        reward: `基於完成次數，普通質量溢出推遲。<br><span class="yellow">初次完成時，你會解鎖更多功能！!</span>`,
+        max: E(100),
+        inc: E('e1e6'),
+        pow: E(2),
+        start: uni('e2e7'),
+        effect(x) {
+            let ret = x.add(1).pow(2)
+            return ret
+        },
+        effDesc(x) { return "^"+format(x,2)+" later" },
+    },
+    cols: 15,
 }
 
 /*

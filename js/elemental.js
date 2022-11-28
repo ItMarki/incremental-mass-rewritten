@@ -953,6 +953,43 @@ const ELEMENTS = {
         },{
             desc: `六級層和榮譽的要求稍微更弱。`,
             cost: E("e1.08e72"),
+        },{
+            dark: true,
+            desc: `解鎖挑戰 15。`,
+            cost: E("1e106"),
+        },{
+            desc: `移除兩個粒子力量的軟上限。`,
+            cost: E("e2.35e72"),
+        },{
+            br: true,
+            desc: `再次加強塌縮恆星的效果。`,
+            cost: E("e1.7e72"),
+        },{
+            dark: true,
+            desc: `挑戰 13 和 14 完成上限增加 100 次。`,
+            cost: E("1e109"),
+        },{
+            br: true,
+            desc: `移除 Ε 粒子的費米子獎勵的上限。`,
+            cost: E("e1.24e73"),
+        },{
+            desc: `移除 [底] 的階上限。`,
+            cost: E("e1.45e78"),
+        },{
+            desc: `中子元素-0 稍微影響超新星挑戰。`,
+            cost: E("e1.51e78"),
+        },{
+            br: true,
+            desc: `超級和高級重置等級增幅推遲 30 個。`,
+            cost: E("e1.39e75"),
+        },{
+            desc: `超新星提升暗束獲得量。`,
+            cost: E("e4.8e78"),
+            effect() {
+                let x = player.supernova.times.add(1).root(2)
+                return x
+            },
+            effDesc(x) { return "x"+format(x) },
         },
     ],
     /*
@@ -991,7 +1028,8 @@ const ELEMENTS = {
         }
         if (tmp.chal13comp) u += 10 + 2
         if (tmp.chal14comp) u += 6 + 11
-        if (tmp.darkRunUnlocked) u += 6
+        if (tmp.chal15comp) u += 10
+        if (tmp.darkRunUnlocked) u += 7
 
         return u
     },
@@ -1092,7 +1130,7 @@ function setupElementsHTML() {
         }
         table += "</div></div>"
     }
-	    elements_table.setHTML(table)
+	elements_table.setHTML(table)
 }
 
 function updateElementsHTML() {
