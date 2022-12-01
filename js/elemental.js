@@ -291,9 +291,10 @@ const ELEMENTS = {
             cost: E(1e303),
             effect() {
                 let x = player.stars.points.add(1).pow(0.5)
-                return x
+                let y = hasPrestige(0,190)?player.stars.points.add(1).log10().add(1).log10().add(1):E(1)
+                return [x.softcap('e4e66',0.95,2),y]
             },
-            effDesc(x) { return format(x)+"x" },
+            effDesc(x) { return format(x[0])+"x"+(hasPrestige(0,190)?", ^"+format(x[1]):"") },
         },
         {
             desc: `挑戰 7 的完成上限增加 50 次。`,
@@ -990,6 +991,33 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { return "x"+format(x) },
+        },{
+            dark: true,
+            desc: `暗影的第五個效果稍微提升熵上限。`,
+            cost: E("1e141"),
+            effect() {
+                let e = tmp.dark.shadowEff.en||E(1)
+                let x = expMult(e,0.5)
+                return x
+            },
+            effDesc(x) { return "x"+format(x) },
+        },{
+            desc: `基於元級等級的起點，奇異級等級增幅推遲。`,
+            cost: E("e4.8e79"),
+            effect() {
+                let x = scaleStart('meta','rank').add(1).log10().add(1)
+                return x
+            },
+            effDesc(x) { return "推遲 x"+format(x) },
+        },{
+            br: true,
+            desc: `每擁有一個重置等級，熵上限提升 25%。熵蒸發^2 稍微更弱。`,
+            cost: E("e4.4e76"),
+            effect() {
+                let x = Decimal.pow(1.25,player.prestiges[0])
+                return x
+            },
+            effDesc(x) { return "x"+format(x) },
         },
     ],
     /*
@@ -1028,7 +1056,7 @@ const ELEMENTS = {
         }
         if (tmp.chal13comp) u += 10 + 2
         if (tmp.chal14comp) u += 6 + 11
-        if (tmp.chal15comp) u += 10
+        if (tmp.chal15comp) u += 10 + 2
         if (tmp.darkRunUnlocked) u += 7
 
         return u

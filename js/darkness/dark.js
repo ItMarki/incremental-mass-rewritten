@@ -1,6 +1,6 @@
 const DARK = {
     nextEffectAt: [
-        [0,1e12],
+        [0,1e12,1e22],
         [1e6,1e11,1e25,1e130],
         [1e120,1e180,'e345'],
     ],
@@ -25,6 +25,7 @@ const DARK = {
         x.shadow = a.max(1).pow(2).pow(tmp.fermions.effs[0][6]||1)
 
         if (a.gte(1e12)) x.passive = a.div(1e12).max(1).log10().add(1).pow(2).div(1e3)
+        if (a.gte(1e22)) x.glyph = a.div(1e22).max(1).log10().add(1).root(2).sub(1).div(10).add(1).toNumber()
 
         return x
     },
@@ -220,6 +221,7 @@ function updateDarkHTML() {
             `
 
             if (eff.passive) e += `<br>每秒獲得重置時獲得的暗束的 <b>${formatPercent(eff.passive)}</b>`
+            if (eff.glyph) e += `<br>將符文質量獲得量提升 <b>x${format(eff.glyph,3)}</b>`
 
         tmp.el.drEff.setHTML(e)
     } else if (tmp.stab[7] == 1) {
