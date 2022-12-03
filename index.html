@@ -288,6 +288,8 @@
                             宇宙射線力量：<span id="gamma_ray_pow">X</span>x<br>
                             宇宙射線效果：<span id="gamma_ray_eff">X</span>
                         </div>
+                    </div><br><div>
+                        <span id="atomicOverflow"></span>
                     </div>
                 </div><div id="stab_frame0_3">
                     你塌縮了 <span id="stars_Amt">X</span> 個恆星，基於各級別的效果提升質量獲得量<br>
@@ -385,7 +387,9 @@
                     <br><br>
                     比例模式：<span id="atom_ratio">X</span><br>
                     <button class="btn" onclick="player.atom.ratio = 0">+1</button><button class="btn"onclick="player.atom.ratio = 1">25%</button><button class="btn"onclick="player.atom.ratio = 2">100%</button><br><br>
-                    <div id="particles_table" class="table_center" style="justify-content: space-evenly;"></div>
+                    <div id="particles_table" class="table_center" style="justify-content: space-evenly;"></div><br><div>
+                        <span id="quarkOverflow"></span>
+                    </div>
                 </div><div id="stab_frame4_1">
                     <div id="elemTierDiv">
                         <button onclick="player.atom.elemTier = Math.max(1,player.atom.elemTier-1)" class="btn"><--</button><span id="elemTier" style="margin: 0px 10px">元素第 1 階</span><button onclick="player.atom.elemTier = Math.min(MAX_ELEM_TIERS,player.atom.elemTier+1)" class="btn">--></button><br><br>
@@ -495,11 +499,12 @@
                 <button class="btn" onclick="window.open('glossary.html')">詞彙表</button>
                 <button class="btn" onclick="window.open('https://g8hh.github.io/incremental-mass-rewritten')"><ruby>简体版<rt>友情链接</rt></ruby></button>
                 <button class="btn" id="tree_anim_btn" onclick="changeTreeAnimation()">中子樹動畫：<span id="tree_anim">ON</span></button>
+                <button class="btn" onclick="player.options.massDis = (player.options.massDis + 1) % 4">質量顯示格式：<span id="mass_dis">預設</span></button>
                 <br><br>
                 <h2>確認設定</h2><br>
                 <div id="confirm_table" class="table_center"></div>
                 <br><br>
-                增量質量（重寫版）v0.6.1.3 - 由 MrRedShark77 製作，ItMarki 翻譯<br>
+                增量質量（重寫版）v0.6.1.5 - 由 MrRedShark77 製作，ItMarki 翻譯<br>
                 本遊戲受到 <ruby>Distance Incremental<rt>距離增量</rt></ruby> 和 <ruby>Synergism<rt>協同放置</rt></ruby> 的啟發製作<br><br><br>
                 提示 1：把指標放在標籤上方的圖片上，即可查看描述……<br><br>
                 總遊玩時間：<span id="total_time">X</span><br><br>

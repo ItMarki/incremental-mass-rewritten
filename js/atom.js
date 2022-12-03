@@ -36,6 +36,12 @@ const ATOM = {
 
         if (player.dark.run.active) x = expMult(x,mgEff(2))
 
+        let o = x
+
+        x = overflow(x,'ee90',0.5)
+
+        tmp.overflow.quark = calcOverflow(o,x,'ee90')
+
         return x.floor()
     },
     canReset() { return tmp.atom.gain.gte(1) },
@@ -68,12 +74,18 @@ const ATOM = {
 
             if (player.dark.run.active) x = expMult(x,mgEff(2))
 
+            let o = x
+
+            x = overflow(x,'ee82',0.25)
+
+            tmp.overflow.atomic = calcOverflow(o,x,'ee82')
+
             return x
         },
         effect() {
             let x = player.atom.atomic.max(1).log(hasElement(23)?1.5:1.75).pow(getEnRewardEff(1))
             if (!hasElement(75)) x = x.softcap(5e4,0.75,0).softcap(4e6,0.25,0)
-            x = x.softcap(hasUpgrade("atom",13)?1e11:1e10,0.1,0)
+            x = x.softcap(hasUpgrade("atom",13)?1e11:1e10,0.1,0).softcap(2.5e35,0.1,0)
             return x.floor()
         },
     },
@@ -246,6 +258,9 @@ function updateAtomicHTML() {
 	tmp.el.gamma_ray_eff.setHTML(format(tmp.atom.gamma_ray_eff.eff))
     tmp.el.gamma_ray_auto.setDisplay(hasElement(18))
 	tmp.el.gamma_ray_auto.setTxt(player.atom.auto_gr?"開啟":"關閉")
+
+    tmp.el.atomicOverflow.setDisplay(player.atom.atomic.gte('ee82'))
+    tmp.el.atomicOverflow.setHTML(`由於你的原子力量在 <b>${format('ee82')}</b> 溢出，它已經${overflowFormat(tmp.overflow.atomic||1)}！`)
 }
 
 function updateAtomHTML() {
@@ -257,4 +272,7 @@ function updateAtomHTML() {
         tmp.el["particle_"+x+"_power"].setTxt(format(player.atom.powers[x])+" "+formatGain(player.atom.powers[x],tmp.atom.particles[x].powerGain.mul(tmp.preQUGlobalSpeed)))
         tmp.el["particle_"+x+"_powerEff"].setHTML(ATOM.particles.desc[x](tmp.atom.particles[x].powerEffect))
     }
+
+    tmp.el.quarkOverflow.setDisplay(player.atom.quarks.gte('ee90'))
+    tmp.el.quarkOverflow.setHTML(`由於你的夸克在 <b>${format('ee90')}</b> 溢出，它已經${overflowFormat(tmp.overflow.quark||1)}!`)
 }

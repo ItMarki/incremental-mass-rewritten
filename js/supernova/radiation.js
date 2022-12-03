@@ -189,7 +189,7 @@ const RADIATION = {
         },{
             title: `元級等級加成`,
             eff(b) {
-                let x = E(1.025).pow(b.softcap(400,0.5,0)).softcap(1e24,0.5,2)
+                let x = E(1.025).pow(b.softcap(13000,0.2,0).softcap(400,0.5,0))
                 return x
             },
             desc(x) { return `元級等級推遲 ${format(x)}x` },

@@ -814,7 +814,7 @@ const ELEMENTS = {
             desc: `超新星提升藍圖粒子獲得量。`,
             cost: E("e8.6e26"),
             effect() {
-                let x = Decimal.pow(1.1,player.supernova.times)
+                let x = Decimal.pow(1.1,player.supernova.times.softcap(2e5,0.25,0))
                 return x
             },
             effDesc(x) { return "x"+format(x,1) },
@@ -1018,6 +1018,52 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { return "x"+format(x) },
+        },{
+            br: true,
+            desc: `首 12 個挑戰的增幅弱 30%。`,
+            cost: E("e2e77"),
+        },{
+            desc: `元級階推遲 x10。`,
+            cost: E("e1.2e84"),
+        },{
+            desc: `應用軟上限後，塌縮恆星獲得量 ^10。`,
+            cost: E("e3.2e84"),
+        },{
+            br: true,
+            desc: `熵提升暗束獲得量。`,
+            cost: E("e9.5e80"),
+            effect() {
+                let x = Decimal.pow(1.1,player.qu.en.amt.add(1).log10().pow(.9))
+                return x
+            },
+            effDesc(x) { return "x"+format(x) },
+        },{
+            desc: `鈾砹混合體的第一個效果推遲超級五級階和六級階增幅。`,
+            cost: E("e3e85"),
+            effect() {
+                let x = tmp.qu.chroma_eff[1][0].max(1).log10().div(2).add(1)
+                return x
+            },
+            effDesc(x) { return "x"+format(x) },
+        },{
+            dark: true,
+            desc: `熵的上限變為溢出軟上限。`,
+            cost: E("e200"),
+        },{
+            br: true,
+            desc: `挑戰 13-15 的完成上限增加 100 次。`,
+            cost: E("e7.3e86"),
+        },{
+            desc: `重置底數推遲黑洞溢出。`,
+            cost: E("e2e90"),
+            effect() {
+                let x = Decimal.pow(2,tmp.prestiges.base.max(1).log10().root(2))
+                return x
+            },
+            effDesc(x) { return "推遲 ^"+format(x) },
+        },{
+            desc: `解鎖 ???。`,
+            cost: EINF,
         },
     ],
     /*
@@ -1056,7 +1102,7 @@ const ELEMENTS = {
         }
         if (tmp.chal13comp) u += 10 + 2
         if (tmp.chal14comp) u += 6 + 11
-        if (tmp.chal15comp) u += 10 + 2
+        if (tmp.chal15comp) u += 16 + 4
         if (tmp.darkRunUnlocked) u += 7
 
         return u

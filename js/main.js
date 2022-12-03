@@ -17,7 +17,7 @@ const ST_NAMES = [
 const CONFIRMS = ['rp', 'bh', 'atom', 'sn', 'qu', 'br', 'dark']
 
 const FORMS = {
-	    getPreQUGlobalSpeed() {
+	getPreQUGlobalSpeed() {
         let x = E(1)
         if (tmp.qu.mil_reached[1]) x = x.mul(10)
         if (quUnl()) x = x.mul(tmp.qu.bpEff)
@@ -156,6 +156,7 @@ const FORMS = {
         return p
     },
     massSoftGain5() {
+        if (player.ranks.hex.gte(36)) return EINF
         let s = mlt(player.qu.rip.active || player.dark.run.active?1e4:1e12)
         if (hasPrestige(0,8)) s = s.pow(prestigeEff(0,8))
         if (hasUpgrade("br",12)) s = s.pow(upgEffect(4,12))
@@ -343,13 +344,16 @@ const FORMS = {
             if (hasElement(162)) x = x.pow(tmp.stars.effect).pow(player.dark.run.active ? 5 : 100)
             
             let o = x
+            let os = E('ee69')
 
-            x = overflow(x,'ee69',0.5)
+            if (hasElement(187)) os = os.pow(elemEffect(187))
 
-            tmp.overflow.bh = calcOverflow(o,x,'ee69')
+            x = overflow(x,os,0.5)
+
+            tmp.overflow.bh = calcOverflow(o,x,os)
+            tmp.overflow_start.bh = os
 
             if (CHALS.inChal(13)) x = x.max(1).log10().tetrate(1.5)
-
             return x
         },
         f() {
@@ -540,15 +544,23 @@ function turnOffline() { player.offline.active = !player.offline.active }
 
 const ARV = ['mlt','mgv','giv','tev','pev','exv','zev','yov']
 
-function formatARV(ex,gain=false) {
+function formatARV(ex,gain=false,set_mlt=false) {
     if (gain) ex = uni('ee9').pow(ex)
     let mlt = ex.div(1.5e56).log10().div(1e9)
+    if (set_mlt) return format(mlt)+" mlt"
     let arv = mlt.log10().div(15).floor()
     return format(mlt.div(Decimal.pow(1e15,arv))) + " " + (arv.gte(8)?"arv^"+format(arv.add(2),0):ARV[arv.toNumber()])
 }
 
 function formatMass(ex) {
+    let md = player.options.massDis
     ex = E(ex)
+    if (md == 1) return format(ex) + ' g'
+    else if (md == 2) return format(ex.div(1.5e56).max(1).log10().div(1e9)) + ' mlt'
+    else if (md == 3) {
+        return ex.gte('1.5e1000000056') ? format(ex.div(1.5e56).max(1).log10().div(1e9)) + ' mlt' : format(ex) + ' g'
+    }
+
     if (ex.gte(E(1.5e56).mul('ee9'))) return formatARV(ex)
     if (ex.gte(1.5e56)) return format(ex.div(1.5e56)) + ' uni'
     if (ex.gte(2.9835e45)) return format(ex.div(2.9835e45)) + ' MMWG'
@@ -572,7 +584,8 @@ function formatGain(amt, gain, isMass=false) {
     ooms = next.div(amt)
     if (ooms.gte(10) && amt.gte(1e100)) {
         ooms = ooms.log10().mul(20)
-        if (isMass && amt.gte(mlt(1)) && ooms.gte(1e6)) rate = "（+"+formatARV(ooms.div(1e9),true) + "/秒）"
+        let md = player.options.massDis
+        if (isMass && amt.gte(mlt(1)) && ooms.gte(1e6) && md!=1) rate = "(+"+formatARV(ooms.div(1e9),true,md>1) + "/sec)"
         else rate = "（+"+format(ooms) + " 數量級/秒）"
     }
     else rate = "（+"+f(gain)+"/秒）"

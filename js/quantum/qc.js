@@ -14,7 +14,7 @@ const QCs = {
         if (player.qu.qc.active) CONFIRMS_FUNCTION.enterQC()
         else createConfirm("你確定要進入量子挑戰嗎？這樣做會強制執行重置！",'qc',CONFIRMS_FUNCTION.enterQC)
     },
-    names: ["「黑矮星」","「時間異常」","「迅速升階」","「熔融互動」","「神奇催化劑」","「往日挑戰」","「空間膨脹」","「極速增幅」"],
+    names: ["「黑矮星」","「時間異常」","「迅速增幅」","「熔融互動」","「神奇催化劑」","「往日挑戰」","「空間膨脹」","「極速增幅」"],
     ctn: [
         {
             eff(i) {

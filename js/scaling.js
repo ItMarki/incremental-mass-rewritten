@@ -50,6 +50,7 @@ const SCALE_START = {
 	},
 	exotic: {
 		rank: E(1e16),
+		supernova: E(2e5),
 	},
 }
 
@@ -105,6 +106,7 @@ const SCALE_POWER= {
 	},
 	exotic: {
 		rank: 15,
+		supernova: 20,
 	}
 }
 
@@ -240,6 +242,12 @@ function getScalingStart(type, name) {
 		else if (name=="tetr") {
 			if (player.ranks.tier.gte(100)) start = start.add(5)
 		}
+		else if (name=="pent") {
+			if (hasElement(184)) start = start.mul(elemEffect(184))
+		}
+		else if (name=="hex") {
+			if (hasElement(184)) start = start.mul(elemEffect(184))
+		}
 		else if (name=="massUpg") {
 			if (CHALS.inChal(1) || CHALS.inChal(10)) return E(25)
 			if (player.mainUpg.bh.includes(3)) start = start.add(tmp.upgs?tmp.upgs.main?tmp.upgs.main[2][3].effect:0:0)
@@ -293,6 +301,7 @@ function getScalingStart(type, name) {
 		else if (name == "supernova") {if (hasPrestige(1,2)) start = start.add(100)}
 		else if (name=='tier') {
 			if (hasElement(155)) start = start.mul(elemEffect(155))
+			if (hasElement(181)) start = start.mul(10)
 		}
 	} else if (type=="exotic") {
 		if (name=="rank") {
@@ -300,7 +309,7 @@ function getScalingStart(type, name) {
 			if (hasElement(178)) start = start.mul(elemEffect(178))
 		}
 	}
-	if (name=='supernova') {
+	if (name=='supernova' && type != 'exotic') {
 		start = start.add(tmp.prim.eff[7])
 	}
 	if ((name=="bh_condenser" || name=="gamma_ray" || name=="tickspeed") && hasUpgrade('atom',14)) start = start.mul(10)

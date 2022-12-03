@@ -362,8 +362,8 @@ function updateBlackHoleHTML() {
 	tmp.el.bhCondenser_auto.setDisplay(FORMS.bh.condenser.autoUnl())
 	tmp.el.bhCondenser_auto.setTxt(player.bh.autoCondenser?"開啟":"關閉")
 
-	tmp.el.bhOverflow.setDisplay(player.bh.mass.gte('ee69'))
-    tmp.el.bhOverflow.setHTML(`由於你的黑洞質量在 <b>${formatMass('ee69')}</b> 溢出，它已經${overflowFormat(tmp.overflow.bh||1)}！`)
+	tmp.el.bhOverflow.setDisplay(player.bh.mass.gte(tmp.overflow_start.bh))
+    tmp.el.bhOverflow.setHTML(`由於你的黑洞質量在 <b>${formatMass(tmp.overflow_start.bh)}</b> 溢出，它已經${overflowFormat(tmp.overflow.bh||1)}！`)
 }
 
 function updateOptionsHTML() {
@@ -384,6 +384,7 @@ function updateOptionsHTML() {
 	tmp.el.offline_active.setTxt(player.offline.active?"開啟":"關閉")
 	tmp.el.tree_anim_btn.setDisplay(player.supernova.times.gte(1) || quUnl())
 	tmp.el.tree_anim.setTxt(TREE_ANIM[player.options.tree_animation])
+	tmp.el.mass_dis.setTxt(["預設",'一律顯示 g','一律顯示 mlt','只顯示重要單位'][player.options.massDis])
 	
 	tmp.el.omega_badge.setDisplay(localStorage.getItem("imr_secret_badge1") == "1")
 }
