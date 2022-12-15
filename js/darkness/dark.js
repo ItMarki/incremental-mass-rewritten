@@ -2,7 +2,7 @@ const DARK = {
     nextEffectAt: [
         [0,1e12,1e22],
         [1e6,1e11,1e25,1e130],
-        [1e120,1e180,'e345'],
+        [1e120,1e180,'e345','e800','e2500'],
     ],
     gain() {
         let x = E(1)
@@ -15,6 +15,8 @@ const DARK = {
         if (hasElement(152)) x = x.mul(elemEffect(152))
         if (hasElement(176)) x = x.mul(elemEffect(176))
         if (hasElement(183)) x = x.mul(elemEffect(183))
+
+        if (hasPrestige(0,233)) x = x.mul(prestigeEff(0,233))
         x = x.mul(glyphUpgEff(6))
 
         return x.floor()
@@ -77,7 +79,7 @@ const DARK = {
             player.supernova.tree = qk2
         }
 
-        for (let x = 0; x < player.prestiges.length; x++) player.prestiges[x] = E(0)
+        if (!hasElement(194)) for (let x = 0; x < player.prestiges.length; x++) player.prestiges[x] = E(0)
 
         let ke = []
         for (let x = 0; x < player.atom.elements.length; x++) {
@@ -126,6 +128,7 @@ const DARK = {
         let x = E(1)
 
         x = x.mul(tmp.dark.shadowEff.ab||1)
+        if (hasElement(189)) x = x.mul(elemEffect(189))
         if (hasElement(153)) x = x.pow(elemEffect(153))
 
         return x
@@ -139,6 +142,8 @@ const DARK = {
         if (a.gte(1e120)) x.hr = a.div(1e120).log10().add(1).pow(2)
         if (a.gte(1e180)) x.pb = a.div(1e180).log10().add(1)
         if (a.gte('e345')) x.csp = a.div('e345').log10().add(1).pow(2)
+        if (a.gte('e800') && tmp.matterUnl) x.mexp = a.div('e800').log10().div(10).add(1).root(2.5)
+        if (a.gte('e2500') && hasElement(199)) x.accelPow = a.div('e2500').log10().add(1).log10().add(1).pow(1.5).softcap(5,0.2,0)
 
         return x
     },
@@ -151,12 +156,23 @@ function calcDark(dt, dt_offline) {
         if (tmp.chal14comp) player.dark.abyssalBlot = player.dark.abyssalBlot.add(tmp.dark.abGain.mul(dt))
 
         if (tmp.dark.rayEff.passive) player.dark.rays = player.dark.rays.add(tmp.dark.gain.mul(dt).mul(tmp.dark.rayEff.passive))
+
+        if (tmp.matterUnl) {
+            let mu = player.dark.matters.unls
+
+            for (let x = 0; x < mu-1; x++) {
+                player.dark.matters.amt[x] = player.dark.matters.amt[x].add(tmp.matters.gain[x].mul(dt))
+                if (hasElement(195)) getMatterUpgrade(x)
+            }
+            if (player.dark.matters.unls<MATTERS_LEN+1 && player.dark.matters.amt[mu-2].gte(tmp.matters.req_unl)) player.dark.matters.unls++
+        }
     }
 }
 
 function updateDarkTemp() {
     let dtmp = tmp.dark
 
+    updateMattersTemp()
     updateDarkRunTemp()
 
     dtmp.rayEff = DARK.rayEffect()
@@ -170,6 +186,7 @@ function updateDarkTemp() {
 
 function setupDarkHTML() {
     setupDarkRunHTML()
+    setupMattersHTML()
 }
 
 function updateDarkHTML() {
@@ -213,6 +230,8 @@ function updateDarkHTML() {
                 if (eff.hr) e += `<br>將霍金輻射獲得量提升 <b>x${eff.hr.format(3)}</b>`
                 if (eff.pb) e += `<br>將重置底數倍數提升 <b>x${eff.pb.format(3)}</b>`
                 if (eff.csp) e += `<br>將宇宙弦力量提升 <b>x${eff.csp.format(3)}</b>`
+                if (eff.mexp) e += `<br>將所有有色物質獲得量提升 <b>^${eff.mexp.format(3)}</b>`
+                if (eff.accelPow) e += `<br>將加速器力量提升 <b>x${eff.accelPow.format(3)}</b>`+eff.accelPow.softcapHTML(5)
 
                 tmp.el.abEff.setHTML(e)
             }
@@ -229,6 +248,8 @@ function updateDarkHTML() {
         tmp.el.drEff.setHTML(e)
     } else if (tmp.stab[7] == 1) {
         updateDarkRunHTML()
+    } else if (tmp.stab[7] == 2) {
+        updateMattersHTML()
     }
     }
 }
@@ -257,6 +278,16 @@ function getDarkSave() {
             gamount: 1,
             upg: [],
         },
+
+        matters: {
+            amt: [],
+            upg: [],
+            unls: 3,
+        },
+    }
+    for (let x = 0; x < MATTERS_LEN; x++) {
+        s.matters.amt[x] = E(0)
+        s.matters.upg[x] = E(0)
     }
     return s
 }

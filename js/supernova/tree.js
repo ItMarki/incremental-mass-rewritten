@@ -419,7 +419,7 @@ const TREE_UPGS = {
             cost: E(1e14),
             effect() {
                 let x = tmp.bosons.effect.graviton[0].add(1).root(2)
-                return x.softcap('e1000',1/3,0)
+                return x.softcap('e1000',1/3,0).softcap('ee38',0.95,2)
             },
             effDesc(x) { return format(x)+"x"+x.softcapHTML('e1000') },
         },
@@ -640,7 +640,7 @@ const TREE_UPGS = {
             desc: `時間速度效果稍微提升藍圖粒子和賦色子的獲得量。`,
             cost: E(100),
             effect() {
-                let x = tmp.tickspeedEffect?tmp.tickspeedEffect.eff.add(1).log10().add(1).log10().add(1).pow(3):E(1)
+                let x = tmp.tickspeedEffect?tmp.tickspeedEffect.eff_bottom.add(1).log10().add(1).log10().add(1).pow(3):E(1)
                 return x
             },
             effDesc(x) { return format(x)+"x" },

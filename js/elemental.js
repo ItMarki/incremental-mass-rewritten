@@ -61,7 +61,7 @@ const ELEMENTS = {
             effect() {
                 let x = player.atom?player.atom.powers[2].add(1).root(2):E(1)
                 if (x.gte('e1e4')) x = expMult(x.div('e1e4'),0.9).mul('e1e4')
-                return x
+                return overflow(x,'ee100',0.25).min('ee101')
             },
             effDesc(x) { return format(x)+"x"+(x.gte('e1e4')?"<span class='soft'>（軟上限）</span>":"") },
         },
@@ -626,8 +626,8 @@ const ELEMENTS = {
             desc: `五級層對重置底數給予指數加成。`,
             cost: E('e2.5e7'),
             effect() {
-                let x = player.ranks.pent.root(2).div(1e3).toNumber()
-                return x
+                let x = hasElement(195) ? player.ranks.pent.root(1.5).div(400) : player.ranks.pent.root(2).div(1e3)
+                return x.toNumber()
             },
             effDesc(x) { return "+^"+format(x) },
         },
@@ -850,7 +850,8 @@ const ELEMENTS = {
             desc: `重置底數提升暗束獲得量。`,
             cost: E("e1.7e31"),
             effect() {
-                let x = (tmp.prestiges.base||E(1)).add(1).log10().add(1)
+                let pb = tmp.prestiges.base||E(1)
+                let x = hasPrestige(0,218) ? Decimal.pow(10,pb.add(1).log10().root(2)) : pb.add(1).log10().add(1)
                 return x
             },
             effDesc(x) { return "x"+format(x) },
@@ -1062,8 +1063,67 @@ const ELEMENTS = {
             },
             effDesc(x) { return "推遲 ^"+format(x) },
         },{
-            desc: `解鎖 ???。`,
-            cost: EINF,
+            dark: true,
+            desc: `解鎖有色物質。`,
+            cost: E(1e250),
+        },{
+            br: true,
+            desc: `暗物質提升深淵之漬獲得量。極高級質量升級推遲 ^1.5。`,
+            cost: E("e8.8e89"),
+            effect() {
+                let x = player.bh.dm.add(1).log10().add(1)
+                return x
+            },
+            effDesc(x) { return "x"+format(x) },
+        },{
+            desc: `賦色子獲得量 ^1.1。`,
+            cost: E("e1.8e91"),
+        },{
+            desc: `Z0 玻色子的第一個效果稍微加強時間速度力量。`,
+            cost: E("e3.5e92"),
+            effect() {
+                let x = tmp.bosons.effect.z_boson[0].add(1).log10().add(1).log10().add(1)
+                return x
+            },
+            effDesc(x) { return "^"+format(x) },
+        },{
+            dark: true,
+            desc: `暗物質每次到達一個 OoM^2，所有有色物質的獲得量提升 10%。解鎖更多主升級。`,
+            cost: E(1e303),
+            effect() {
+                let x = Decimal.pow(1.1,player.bh.dm.add(1).log10().add(1).log10())
+                return x
+            },
+            effDesc(x) { return "x"+format(x) },
+        },{
+            desc: `鈾砹混合體的第一個效果推遲奇異級等級和元級階，效率為 ^0.5。`,
+            cost: E("e3.3e93"),
+            effect() {
+                let x = tmp.qu.chroma_eff[1][0].max(1).root(2)
+                return x
+            },
+            effDesc(x) { return "推遲 x"+format(x) },
+        },{
+            dark: true,
+            desc: `進入黑暗時保留級別。超級和高級重置等級推遲 x2。`,
+            cost: E('e360'),
+        },{
+            desc: `鐨-100 稍微更強。你可以自動購買所有有色物質的升級。`,
+            cost: E("e1.2e94"),
+        },{
+            br: true,
+            desc: `挑戰 13-14 的完成上限增加 200 次。`,
+            cost: E("e7.7e92"),
+        },{
+            dark: true,
+            desc: `奇異級等級和極高級重置等級增幅弱 10%。`,
+            cost: E('e435'),
+        },{
+            desc: `粒子力量的第一個效果更強。`,
+            cost: E("e1.6e94"),
+        },{
+            desc: `解鎖加速器，時間速度會提供指數加成，但是氬-18 和第 150 個元素失效（在挑戰 15 裏除外）。`,
+            cost: E("e8.6e95"),
         },
     ],
     /*
@@ -1104,6 +1164,7 @@ const ELEMENTS = {
         if (tmp.chal14comp) u += 6 + 11
         if (tmp.chal15comp) u += 16 + 4
         if (tmp.darkRunUnlocked) u += 7
+        if (tmp.matterUnl) u += 8 + 3
 
         return u
     },

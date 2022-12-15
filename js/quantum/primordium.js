@@ -30,15 +30,21 @@ const PRIM = {
                 return x
             },
             p=>{
-                let x = [p.root(3).div(5).add(1).softcap(3,0.4,0),p.pow(1.25).add(1)]
+                let br16 = hasUpgrade('br',16)
+                let x = [p.root(3).div(5).add(1).softcap(3,0.4,0,br16),p.pow(1.25).add(1)]
+                if (br16) x[0] = x[0].pow(1.5)
                 return x
             },
             p=>{
-                let x = [p.root(3).div(5).add(1).softcap(3,0.4,0),E(3).pow(p.pow(0.75))]
+                let br16 = hasUpgrade('br',16)
+                let x = [p.root(3).div(5).add(1).softcap(3,0.4,0,br16),E(3).pow(p.pow(0.75))]
+                if (br16) x[0] = x[0].pow(1.5)
                 return x
             },
             p=>{
-                let x = [p.root(3).div(5).add(1).softcap(3,0.4,0),E(2).pow(p.pow(0.75))]
+                let br16 = hasUpgrade('br',16)
+                let x = [p.root(3).div(5).add(1).softcap(3,0.4,0,br16),E(2).pow(p.pow(0.75))]
+                if (br16) x[0] = x[0].pow(1.5)
                 return x
             },
             p=>{
@@ -61,9 +67,9 @@ const PRIM = {
         ],
         effDesc: [
             x=>{ return `將增強器力量提升 ${format(x)}x` },
-            x=>{ return `將暴怒點數獲得量提升 ^${format(x[0]) + x[0].softcapHTML(3)}；<br>將非獎勵時間速度加強 ${format(x[1])}x` },
-            x=>{ return `將暗物質獲得量提升 ^${format(x[0]) + x[0].softcapHTML(3)}；<br>將黑洞壓縮器力量提升 ${format(x[1])}x` },
-            x=>{ return `將原子獲得量提升 ^${format(x[0]) + x[0].softcapHTML(3)}；<br>將宇宙射線力量提升 ${format(x[1])}x` },
+            x=>{ return `將暴怒點數獲得量提升 ^${format(x[0]) + x[0].softcapHTML(3,hasUpgrade('br',16))}；<br>將非獎勵時間速度加強 ${format(x[1])}x` },
+            x=>{ return `將暗物質獲得量提升 ^${format(x[0]) + x[0].softcapHTML(3,hasUpgrade('br',16))}；<br>將黑洞壓縮器力量提升 ${format(x[1])}x` },
+            x=>{ return `將原子獲得量提升 ^${format(x[0]) + x[0].softcapHTML(3,hasUpgrade('br',16))}；<br>將宇宙射線力量提升 ${format(x[1])}x` },
             x=>{ return `將希格斯玻色子的效果加強 ${format(x)}x` },
             x=>{ return `將費米子獲得量的底數增加 ${format(x[0])}` + (hasTree("prim3") ? `；<br>免費給予 ${format(x[1])} 個費米子階` : "") },
             x=>{ return `將所有輻射的獲得量提升 ${format(x[0])}x` + (hasTree("prim2") ? `；<br>將所有輻射的效果加強 ${format(x[1])}x` : "") },

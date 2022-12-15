@@ -110,8 +110,15 @@ function resetTemp() {
         dark: {
             shadowEff: {},
             rayEff: {},
+            abEff: {},
             mass_glyph_eff: [],
             mass_glyph_gain: [],
+        },
+
+        matters: {
+            gain: [],
+            upg: [],
+            exponent: 2,
         },
 
         overflow: {
@@ -127,6 +134,7 @@ function resetTemp() {
             dm: E('ee30'),
             mass: E('ee69'),
             bh: E('ee69'),
+            quark: E('ee90'),
         },
 
         mass_glyph_msg: 0,
@@ -167,6 +175,7 @@ function resetTemp() {
         tmp.scaling_power[st] = {}
         tmp.scaling_start[st] = {}
     }
+    for (let x = 0; x < MATTERS_LEN; x++) tmp.matters.upg[x] = {}
     tmp.el = keep[0]
     tmp.prevSave = keep[1]
 }
@@ -199,6 +208,13 @@ function updateTickspeedTemp() {
     tmp.tickspeedBulk = E(0)
     if (player.rp.points.gte(1)) tmp.tickspeedBulk = player.rp.points.max(1).log(2).scaleEvery('tickspeed',true).add(1).floor()
     tmp.tickspeedEffect = FORMS.tickspeed.effect()
+}
+
+function updateAcceleratorTemp() {
+    tmp.accelCost = Decimal.pow(10,Decimal.pow(1.5,player.accelerator)).floor()
+    tmp.accelBulk = E(0)
+    if (player.rp.points.gte(10)) tmp.accelBulk = player.rp.points.max(1).log10().max(1).log(1.5).add(1).floor()
+    tmp.accelEffect = FORMS.accel.effect()
 }
 
 function updateUpgradesTemp() {
@@ -243,6 +259,8 @@ function updateTemp() {
     tmp.chal14comp = player.chal.comps[14].gte(1)
     tmp.darkRunUnlocked = hasElement(161)
     tmp.chal15comp = player.chal.comps[15].gte(1)
+    tmp.matterUnl = hasElement(188)
+    tmp.moreUpgs = hasElement(192)
 
     updateDarkTemp()
     updateQuantumTemp()
@@ -261,6 +279,7 @@ function updateTemp() {
     updateAtomTemp()
     updateRagePowerTemp()
     updateBlackHoleTemp()
+    updateAcceleratorTemp()
     updateTickspeedTemp()
     updateRanksTemp()
     updateMassTemp()

@@ -136,6 +136,7 @@ const CHALS = {
         if (hasElement(151) && (i==13)) x = x.add(75)
         if (hasElement(171) && (i==13||i==14)) x = x.add(100)
         if (hasElement(186) && (i==13||i==14||i==15)) x = x.add(100)
+        if (hasElement(196) && (i==13||i==14)) x = x.add(200)
         return x.floor()
     },
     getScaleName(i) {
@@ -392,9 +393,9 @@ const CHALS = {
         start: E('e9.9e4').mul(1.5e56),
         effect(x) {
             let ret = x.root(hasTree("chal4a")?3.5:4).mul(0.1).add(1)
-            return ret
+            return ret.softcap(21,0.25,0)
         },
-        effDesc(x) { return "^"+format(x) },
+        effDesc(x) { return "^"+format(x)+softcapHTML(x,21) },
     },
     10: {
         unl() { return hasTree("chal5") },

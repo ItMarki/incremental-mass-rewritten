@@ -195,7 +195,7 @@ const UPGS = {
                 }
             },
             auto_unl() { return player.mainUpg.bh.includes(5) },
-            lens: 15,
+            lens: 16,
             1: {
                 desc: "提升器增加提重器。",
                 cost: E(1),
@@ -319,6 +319,11 @@ const UPGS = {
                     return "x"+format(x)
                 },
             },
+            16: {
+                unl() { return tmp.moreUpgs },
+                desc: `移除時間速度力量的軟上限。`,
+                cost: E('e1.8e91'),
+            },
         },
         2: {
             title: "黑洞升級",
@@ -333,7 +338,7 @@ const UPGS = {
                     player.mainUpg.bh.push(x)
                 }
             },
-            lens: 15,
+            lens: 17,
             1: {
                 desc: "質量升級不再花費質量。",
                 cost: E(1),
@@ -441,7 +446,7 @@ const UPGS = {
                 cost: E(1e210),
                 effect() {
                     let ret = player.atom.powers[1].add(1).pow(2)
-                    return ret//.softcap("ee13",0.9,2)
+                    return overflow(ret,'ee108',0.25).min('ee110')
                 },
                 effDesc(x=this.effect()) {
                     return format(x)+"x"
@@ -459,6 +464,30 @@ const UPGS = {
                     return "+"+format(x,0)
                 },
             },
+            16: {
+                unl() { return tmp.moreUpgs },
+                desc: `紅物質升級稍微影響質量獲得量。`,
+                cost: E('e5e101'),
+                effect() {
+                    let x = tmp.matters.upg[0].eff.max(1).pow(0.75)
+                    return x
+                },
+                effDesc(x=this.effect()) {
+                    return "^"+format(x)
+                },
+            },
+            17: {
+                unl() { return tmp.moreUpgs },
+                desc: `靛物質的升級稍微提升塌縮恆星獲得量。`,
+                cost: E('e4e113'),
+                effect() {
+                    let x = tmp.matters.upg[4].eff.max(1).log10().add(1).pow(2)
+                    return x
+                },
+                effDesc(x=this.effect()) {
+                    return "^"+format(x)
+                },
+            },
         },
         3: {
             title: "原子升級",
@@ -473,7 +502,7 @@ const UPGS = {
                 }
             },
             auto_unl() { return hasTree("qol1") },
-            lens: 15,
+            lens: 17,
             1: {
                 desc: "開始時解鎖質量升級。",
                 cost: E(1),
@@ -581,6 +610,23 @@ const UPGS = {
                 desc: "宇宙射線價格增幅弱 20%。",
                 cost: E('e3.4e14'),
             },
+            16: {
+                unl() { return tmp.moreUpgs },
+                desc: `夸克溢出推遲 ^10。`,
+                cost: E('e3e96'),
+            },
+            17: {
+                unl() { return tmp.moreUpgs },
+                desc: `粉紅物質稍微提升夸克獲得量。`,
+                cost: E('e7.45e98'),
+                effect() {
+                    let x = tmp.matters.upg[2].eff.max(1).log10().add(1)
+                    return x
+                },
+                effDesc(x=this.effect()) {
+                    return "^"+format(x)
+                },
+            },
         },
 		        4: {
             title: "大撕裂升級",
@@ -595,7 +641,7 @@ const UPGS = {
                 }
             },
             auto_unl() { return hasElement(132) },
-            lens: 15,
+            lens: 16,
             1: {
                 desc: `開始大撕裂時解鎖氫-1。`,
                 cost: E(5),
@@ -681,6 +727,11 @@ const UPGS = {
                 unl() { return player.md.break.active },
                 desc: `藍圖粒子稍微更強加快量子前全局運行速度。`,
                 cost: E(1e24),
+            },
+            16: {
+                unl() { return tmp.moreUpgs },
+                desc: `移除 Α、Ω 和 Σ 粒子第一個效果的軟上限，並且加強它們。`,
+                cost: E(1e273),
             },
 		},
     },

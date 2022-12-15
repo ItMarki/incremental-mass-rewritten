@@ -63,6 +63,7 @@ const TABS = {
         7: [
             { id: "黑暗效果" },
             { id: "黑暗試煉", unl() { return tmp.darkRunUnlocked } },
+            { id: "有色物質", unl() { return tmp.matterUnl } },
         ]
     },
 }

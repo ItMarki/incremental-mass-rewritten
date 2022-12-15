@@ -10,6 +10,8 @@ const CHROMA = {
         if (tmp.qu.mil_reached[5]) x = x.mul(tmp.preQUGlobalSpeed.max(1).root(2))
         if (hasTree('qu5')) x = x.mul(tmp.supernova.tree_eff.qu5)
         if (hasTree('qu8')) x = x.mul(tmp.supernova.tree_eff.qu8)
+        if (hasElement(190)) x = x.pow(1.1)
+        if (hasGlyphUpg(13) && i == 1) x = x.pow(2)
         return x
     },
     names: [
@@ -30,7 +32,7 @@ const CHROMA = {
             
             let y = hasPrestige(2,4)?i.add(1).log10().root(2).div(250).add(1).pow(-1):E(1)
 
-            return [x,y]
+            return [x.softcap(1e10,0.5,0),y]
         },
         i => {
             let x = E(1.1).pow(i.add(1).log10().max(0).pow(0.75))
@@ -43,7 +45,7 @@ const CHROMA = {
             return `將時間速度力量提升 ^${format(x)}`
         },
         x => {
-            return `將${player.dark.unl ? "奇異級前" : ""}五級層前的要求減少 ${format(x)}x`
+            return `將${player.dark.unl ? "奇異級前" : ""}五級層前的要求減少 ${format(x)}x`+x[0].softcapHTML(1e10)
             +(hasPrestige(2,4)?`<br>所有奇異級前六級層前增幅弱 ${formatReduction(x[1])}`:"")
         },
         x => {

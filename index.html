@@ -23,6 +23,7 @@
     <script src="js/saves.js"></script>
     <script src="js/challenges.js"></script>
 
+    <script src="js/darkness/matter.js"></script>
     <script src="js/darkness/dark_run.js"></script>
     <script src="js/darkness/dark.js"></script>
     
@@ -237,6 +238,19 @@
                     <div style="margin-left: 5px; text-align: left; width: 400px">
                         時間速度力量：<span id="tickspeed_step">X</span><br>
                         時間速度效果：質量獲得量 <span id="tickspeed_eff">X</span>x
+                    </div>
+                </div><div style="width: 100%; margin-bottom: 5px;" class="table_center" id="accel_div">
+                    <div style="width: 400px">
+                        <div class="resources">
+                            <img src="images/accelerator.png">
+                            <span style="margin-left: 5px; text-align: left;"><span id="accel_scale"></span>加速器 [<span id="accel_lvl">X</span>]</span>
+                        </div>
+                    </div><button id="accel_btn" class="btn" style="width: 200px;" onclick="FORMS.accel.buy()">價格：<span id="accel_cost">X</span> 暴怒點數</button>
+                    <button class="btn" style="width: 120px;" onclick="FORMS.accel.buyMax()">購買最大</button>
+                    <button id="accel_auto" class="btn" style="width: 80px;" onclick="FORMS.accel.autoSwitch()">關閉</button>
+                    <div style="margin-left: 5px; text-align: left; width: 400px">
+                        加速器力量：<span id="accel_step">X</span><br>
+                        加速器效果：<span id="accel_eff">X</span>
                         </div>
                     </div><br><div>
                     <span id="massSoft1" class="red">質量獲得量到達 <b id="massSoftStart1">X</b> 後會被軟上限！</span><br>
@@ -484,6 +498,12 @@
                     <div class="table_center" id="mass_glyph_table"></div><br>
                     <div class="table_center" id="glyph_upg_table"></div><br>
                     <div id="glyph_upg_msg"></div>
+                </div><div id="stab_frame7_2">
+                    <div>
+                        某一種物質基於前一種物質的獲得量公式：10<sup>lg(lg(x))<sup id="matter_exponent">2</sup></sup><br>
+                        提示：到達 <span id="matter_req">???</span> 的最新一種物質以獲得下一種物質！
+                    </div><br>
+                    <div class="table_center" id="matters_table"></div>
                 </div>
             </div><div id="tab_frame8">
                 <button class="btn" onclick="save()">儲存</button>
@@ -504,8 +524,9 @@
                 <h2>確認設定</h2><br>
                 <div id="confirm_table" class="table_center"></div>
                 <br><br>
-                增量質量（重寫版）v0.6.1.5 - 由 MrRedShark77 製作，ItMarki 翻譯<br>
-                本遊戲受到 <ruby>Distance Incremental<rt>距離增量</rt></ruby> 和 <ruby>Synergism<rt>協同放置</rt></ruby> 的啟發製作<br><br><br>
+                增量質量（重寫版）v0.6.2.1 - 由 MrRedShark77 製作，ItMarki 翻譯<br>
+                本遊戲受到 <ruby>Distance Incremental<rt>距離增量</rt></ruby> 和 <ruby>Synergism<rt>協同放置</rt></ruby> 的啟發製作<br>
+                貢獻：<span style="cursor: pointer;" onclick='addNotify(`frfrfr<br><img src="https://5.imimg.com/data5/HO/DK/MY-8155364/lemon-500x500.jpg" style="width:100%">`)'>Lemon</span>、16777216 和 Aarex（繪畫）<br><br><br>
                 提示 1：把指標放在標籤上方的圖片上，即可查看描述……<br><br>
                 總遊玩時間：<span id="total_time">X</span><br><br>
                 <a href="https://www.easycounter.com/">

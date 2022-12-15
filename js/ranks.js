@@ -120,6 +120,9 @@ const RANKS = {
             '13': "移除第三個質量軟上限。",
             '17': "移除第四個質量軟上限。",
             '36': "移除第五個質量軟上限。",
+            '43': "大幅增強第 4 六級層的效果。",
+            '48': "移除第六個質量軟上限。",
+            '62': "移除第七個質量軟上限。",
         },
     },
     effect: {
@@ -215,7 +218,9 @@ const RANKS = {
         },
         hex: {
             '4'() {
-                let ret = player.ranks.hex.mul(.2).add(1)
+                let hex = player.ranks.hex
+                let ret = hex.mul(.2).add(1)
+                if (hex.gte(43)) ret = ret.pow(hex.div(10).add(1).root(2))
                 return ret
             },
         },
@@ -372,6 +377,10 @@ const PRESTIGES = {
             "70": `鐒-103 稍微更強。`,
             "110": `第 119 個元素稍微更強。`,
             "190": `鋯-40 稍微更強。`,
+            "218": `第 145 個元素稍微更強。`,
+            "233": `紅物質提升暗束獲得量。`,
+            "382": `重置等級提升有色物質指數。塌縮恆星的效果大幅增強。`,
+            "388": `鈾砹混合體稍微影響元級前榮譽前資源。`,
         },
         {
             "1": `所有恆星資源平方。`,
@@ -387,6 +396,7 @@ const PRESTIGES = {
             "1": `重置等級和榮耀的要求減少 15%。`,
             "3": `打破膨脹升級 12 更便宜。`,
             "4": `鈾砹混合體解鎖另一個效果。`,
+            "5": `榮譽提升符文質量獲得量。`,
         },
     ],
     rewardEff: [
@@ -403,6 +413,18 @@ const PRESTIGES = {
                 let x = player.prestiges[0].div(1e4).toNumber()
                 return x
             },x=>"+^"+format(x)],
+            "233": [_=>{
+                let x = player.dark.matters.amt[0].add(1).log10().add(1).log10().add(1).pow(2)
+                return x
+            },x=>"x"+format(x)],
+            "382": [_=>{
+                let x = player.prestiges[0].max(0).root(2).div(1e3).toNumber()
+                return x
+            },x=>"+"+format(x)],
+            "388": [_=>{
+                let x = tmp.qu.chroma_eff[1][1].root(2)
+                return x
+            },x=>"弱 "+formatReduction(x)],
             /*
             "1": [_=>{
                 let x = E(1)
@@ -431,7 +453,10 @@ const PRESTIGES = {
             },x=>"減少 "+formatReduction(x)],
         },
         {
-
+            "5": [_=>{
+                let x = player.prestiges[2].root(2).div(10).add(1)
+                return x.toNumber()
+            },x=>"x"+format(x,2)],
         },
     ],
     reset(i, bulk = false) {
@@ -485,8 +510,8 @@ function updateRanksTemp() {
 
     let tps = 0
 
-    tmp.ranks.tetr.req = player.ranks.tetr.div(fp2).div(ffp2).scaleEvery('tetr').div(fp).pow(pow).mul(3).add(10-tps).floor()
-    tmp.ranks.tetr.bulk = player.ranks.tier.sub(10-tps).div(3).max(0).root(pow).mul(fp).scaleEvery('tetr',true).mul(fp2).mul(ffp2).add(1).floor();
+    tmp.ranks.tetr.req = player.ranks.tetr.div(ffp2).scaleEvery('tetr',[1,1,1,fp2]).div(fp).pow(pow).mul(3).add(10-tps).floor()
+    tmp.ranks.tetr.bulk = player.ranks.tier.sub(10-tps).div(3).max(0).root(pow).mul(fp).scaleEvery('tetr',true,[1,1,1,fp2]).mul(ffp2).add(1).floor();
 
     fp = E(1).mul(ffp)
     if (player.ranks.hex.gte(1)) fp = fp.div(0.8)

@@ -34,7 +34,6 @@ const FORMS = {
         x = x.add(tmp.upgs.mass[1]?tmp.upgs.mass[1].eff.eff:1)
         if (player.ranks.rank.gte(6)) x = x.mul(RANKS.effect.rank[6]())
         if (player.ranks.rank.gte(13)) x = x.mul(3)
-        x = x.mul(tmp.tickspeedEffect.eff||E(1))
         if (player.bh.unl) x = x.mul(tmp.bh.effect)
         if (player.mainUpg.bh.includes(10)) x = x.mul(tmp.upgs.main?tmp.upgs.main[2][10].effect:E(1))
         x = x.mul(tmp.atom.particles[1].powerEffect.eff2)
@@ -46,6 +45,9 @@ const FORMS = {
 
         if (!hasElement(105)) x = x.mul(tmp.atom.particles[0].powerEffect.eff1)
         else x = x.pow(tmp.atom.particles[0].powerEffect.eff1)
+
+        if (!hasElement(199) || CHALS.inChal(15)) x = x.mul(tmp.tickspeedEffect.eff||E(1))
+        else x = x.pow(tmp.tickspeedEffect.eff||E(1))
 
         if (player.ranks.tier.gte(2)) x = x.pow(1.15)
         if (player.ranks.rank.gte(180)) x = x.pow(1.025)
@@ -78,6 +80,8 @@ const FORMS = {
         if (hasElement(164)) x = x.pow(tmp.supernova.tree_eff.m1)
 
         x = x.pow(glyphUpgEff(1))
+
+        if (hasUpgrade('bh',16)) x = x.pow(upgEffect(2,16))
 
         if (player.dark.run.active) x = expMult(x,mgEff(0))
 
@@ -168,6 +172,7 @@ const FORMS = {
         return p
     },
     massSoftGain6() {
+        if (player.ranks.hex.gte(48)) return EINF
         let s = mlt(1e22)
         s = s.pow(tmp.dark.abEff.msoftcap||1)
         return s.max(1)
@@ -177,6 +182,7 @@ const FORMS = {
         return p
     },
     massSoftGain7() {
+        if (player.ranks.hex.gte(62)) return EINF
         let s = mlt(1e36)
         if (hasElement(159)) s = s.pow(tmp.dark.abEff.msoftcap||1)
         return s.max(1)
@@ -227,6 +233,7 @@ const FORMS = {
                 if (player.ranks.rank.gte(40)) step = step.add(RANKS.effect.rank[40]())
             step = step.mul(tmp.bosons.effect.z_boson[0])
             step = tmp.md.bd3 ? step.pow(tmp.md.mass_eff) : step.mul(tmp.md.mass_eff)
+            if (hasElement(191)) step = step.pow(elemEffect(191))
             step = step.pow(tmp.qu.chroma_eff[0])
             if (hasTree("t1")) step = step.pow(1.15)
 
@@ -238,18 +245,51 @@ const FORMS = {
             }
             if (hasPrestige(0,6)) ss = ss.pow(100)
             if (hasElement(102)) ss = ss.pow(100)
-            step = step.softcap(ss,p,0)
+            step = step.softcap(ss,p,0,hasUpgrade('rp',16))
             
             let eff = step.pow(t.add(bonus).mul(hasElement(80)?25:1))
-            if (hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
-            if (player.ranks.tetr.gte(3)) eff = eff.pow(1.05)
 
-            if (hasElement(150)) eff = expMult(eff,1.6)
+            if (!hasElement(199) || CHALS.inChal(15)) {
+                if (hasElement(18)) eff = eff.pow(tmp.elements.effect[18])
+                if (player.ranks.tetr.gte(3)) eff = eff.pow(1.05)
 
-            return {step: step, eff: eff, bonus: bonus, ss: ss}
+                if (hasElement(150)) eff = expMult(eff,1.6)
+            }
+
+            let eff_bottom = eff
+			if (hasElement(199) && !CHALS.inChal(15)){
+				eff = eff.add(9).log10().add(9).log10().pow(tmp.accelEffect.eff.mul(0.1));
+				eff_bottom = eff_bottom.pow(tmp.accelEffect.eff);
+				if (player.ranks.tetr.gte(3)) eff = eff.pow(1.05),eff_bottom = eff_bottom.pow(1.05);
+			}
+
+            return {step: step, eff: eff, bonus: bonus, ss: ss, eff_bottom: eff_bottom}
         },
         autoUnl() { return player.mainUpg.bh.includes(5) },
         autoSwitch() { player.autoTickspeed = !player.autoTickspeed },
+    },
+    accel: {
+        cost(x=player.accelerator) { return Decimal.pow(10,Decimal.pow(1.5,x)).floor() },
+        can() { return player.rp.points.gte(tmp.accelCost) },
+        buy() {
+            if (this.can()) {
+                player.accelerator = player.accelerator.add(1)
+            }
+        },
+        buyMax() { 
+            if (this.can()) {
+                player.accelerator = tmp.accelBulk
+            }
+        },
+        effect() {
+            let step = E(0.0004)
+            step = step.mul(tmp.dark.abEff.accelPow||1)
+
+            let x = player.accelerator.mul(step).add(1)
+            return {step: step, eff: x}
+        },
+        autoUnl() { return true },
+        autoSwitch() { player.autoAccel = !player.autoAccel },
     },
     rp: {
         gain() {
@@ -310,6 +350,7 @@ const FORMS = {
             if (player.md.active || CHALS.inChal(10) || FERMIONS.onActive("02") || FERMIONS.onActive("03") || CHALS.inChal(11)) gain = expMult(gain,tmp.md.pen)
 
             if (hasElement(166)) gain = gain.pow(tmp.supernova.tree_eff.bh1)
+            gain = gain.pow(tmp.matters.upg[0].eff)
             if (player.dark.run.active) gain = expMult(gain,mgEff(1))
 
             return gain.floor()
@@ -392,6 +433,7 @@ const FORMS = {
             player.mainUpg.rp = keep
             player.rp.points = E(0)
             player.tickspeed = E(0)
+            player.accelerator = E(0)
             player.bh.mass = E(0)
             FORMS.rp.doReset()
         },
@@ -585,7 +627,7 @@ function formatGain(amt, gain, isMass=false) {
     if (ooms.gte(10) && amt.gte(1e100)) {
         ooms = ooms.log10().mul(20)
         let md = player.options.massDis
-        if (isMass && amt.gte(mlt(1)) && ooms.gte(1e6) && md!=1) rate = "(+"+formatARV(ooms.div(1e9),true,md>1) + "/sec)"
+        if (isMass && amt.gte(mlt(1)) && ooms.gte(1e6) && md!=1) rate = "（+"+formatARV(ooms.div(1e9),true,md>1) + "/秒）"
         else rate = "（+"+format(ooms) + " 數量級/秒）"
     }
     else rate = "（+"+f(gain)+"/秒）"
