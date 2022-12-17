@@ -31,8 +31,8 @@ const BOSONS = {
         },
         photon() {
             let x = E(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
-            x = x.mul(tmp.bosons.upgs.photon[2]?tmp.bosons.upgs.photon[2].effect:1)
             if (hasTree("bs2") && tmp.supernova.tree_eff.bs2) x = x.mul(tmp.supernova.tree_eff.bs2[1])
+            x = hasElement(204) ? x.pow(tmp.bosons.upgs.photon[2]?tmp.bosons.upgs.photon[2].effect:1) : x.mul(tmp.bosons.upgs.photon[2]?tmp.bosons.upgs.photon[2].effect:1)
             if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
             if (hasPrestige(1,3)) x = x.pow(prestigeEff(1,3))
 
@@ -42,8 +42,8 @@ const BOSONS = {
         },
         gluon() {
             let x = E(0.01).mul(tmp.bosons.effect.graviton?tmp.bosons.effect.graviton[0]:1)
-            x = x.mul(tmp.bosons.upgs.gluon[2]?tmp.bosons.upgs.gluon[2].effect:1)
             if (hasTree("bs2") && tmp.supernova.tree_eff.bs2) x = x.mul(tmp.supernova.tree_eff.bs2[0])
+            x = hasElement(204) ? x.pow(tmp.bosons.upgs.gluon[2]?tmp.bosons.upgs.gluon[2].effect:1) : x.mul(tmp.bosons.upgs.gluon[2]?tmp.bosons.upgs.gluon[2].effect:1)
             if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
             if (hasPrestige(1,3)) x = x.pow(prestigeEff(1,3))
 
@@ -111,8 +111,12 @@ const BOSONS = {
                 desc: "基於光子數量，獲得更多暗物質和黑洞質量。",
                 cost(x) { return E(1.5).pow(x.pow(1.25)).mul(10) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(10) ? x.div(10).max(1).log(1.5).root(1.25).add(1).floor() : E(0) },
-                effect(x) { return player.supernova.bosons.photon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100)) },
-                effDesc(x) { return format(x)+"x" },
+                effect(x) {
+                    return hasElement(204)
+                    ?Decimal.pow(1.1,player.supernova.bosons.photon.add(10).log10().log10().add(1).mul(x.add(10).log10()).root(2).sub(1))
+                    :player.supernova.bosons.photon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100))
+                },
+                effDesc(x) { return hasElement(204)?"^"+format(x):format(x)+"x" },
             },{
                 desc: "加強黑洞壓縮器的力量。",
                 cost(x) { return E(2).pow(x.pow(1.25)).mul(100) },
@@ -127,8 +131,12 @@ const BOSONS = {
                 desc: "塌縮恆星提升光子獲得量。",
                 cost(x) { return E(5).pow(x.pow(1.25)).mul(500) },
                 bulk(x=player.supernova.bosons.photon) { return x.gte(500) ? x.div(500).max(1).log(5).root(1.25).add(1).floor() : E(0) },
-                effect(x) { return player.stars.points.add(1).log10().add(1).pow(x.mul(0.2)).softcap(1e15,0.6,0) },
-                effDesc(x) { return format(x)+"x"+(x.gte(1e15)?"<span class='soft'>（軟上限）</span>":"") },
+                effect(x) {
+                    return hasElement(204)
+                    ? Decimal.pow(1.1,player.stars.points.add(10).log10().log10().add(1).mul(x.add(10).log10()).root(2).sub(1))
+                    : player.stars.points.add(1).log10().add(1).pow(x.mul(0.2)).softcap(1e15,0.6,0)
+                },
+                effDesc(x) { return hasElement(204)?"^"+format(x):format(x)+"x"+(x.gte(1e15)?"<span class='soft'>（軟上限）</span>":"") },
             },{
                 desc: "光子提升所有恆星資源的獲得量。",
                 cost(x) { return E(5).pow(x.pow(1.25)).mul(1e5) },
@@ -146,8 +154,12 @@ const BOSONS = {
                 desc: "基於膠子數量，獲得更多原子和原子力量。",
                 cost(x) { return E(1.5).pow(x.pow(1.25)).mul(10) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(10) ? x.div(10).max(1).log(1.5).root(1.25).add(1).floor() : E(0) },
-                effect(x) { return player.supernova.bosons.gluon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100)) },
-                effDesc(x) { return format(x)+"x" },
+                effect(x) {
+                    return hasElement(204)
+                    ?Decimal.pow(1.1,player.supernova.bosons.gluon.add(10).log10().log10().add(1).mul(x.add(10).log10()).root(2).sub(1))
+                    :player.supernova.bosons.gluon.add(1).pow(x.mul(tmp.radiation.bs.eff[7]).pow(0.8).mul(100))
+                },
+                effDesc(x) { return hasElement(204)?"^"+format(x):format(x)+"x" },
             },{
                 desc: "加強宇宙射線力量。",
                 cost(x) { return E(2).pow(x.pow(1.25)).mul(100) },
@@ -162,8 +174,12 @@ const BOSONS = {
                 desc: "夸克提升膠子獲得量。",
                 cost(x) { return E(5).pow(x.pow(1.25)).mul(500) },
                 bulk(x=player.supernova.bosons.gluon) { return x.gte(500) ? x.div(500).max(1).log(5).root(1.25).add(1).floor() : E(0) },
-                effect(x) { return player.atom.quarks.add(1).log10().add(1).pow(x.mul(0.125)).softcap(1e15,0.6,0) },
-                effDesc(x) { return format(x)+"x"+(x.gte(1e15)?"<span class='soft'>（軟上限）</span>":"") },
+                effect(x) {
+                    return hasElement(204)
+                    ? Decimal.pow(1.1,player.atom.quarks.add(10).log10().log10().add(1).mul(x.add(10).log10()).root(2).sub(1))
+                    : player.atom.quarks.add(1).log10().add(1).pow(x.mul(0.125)).softcap(1e15,0.6,0)
+                },
+                effDesc(x) { return hasElement(204)?"^"+format(x):format(x)+"x"+(x.gte(1e15)?"<span class='soft'>（軟上限）</span>":"") },
             },{
                 desc: "膠子減少超新星要求。",
                 cost(x) { return E(10).pow(x.pow(1.25)).mul(1e5) },

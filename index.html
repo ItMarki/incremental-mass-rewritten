@@ -253,19 +253,20 @@
                         加速器效果：<span id="accel_eff">X</span>
                         </div>
                     </div><br><div>
-                    <span id="massSoft1" class="red">質量獲得量到達 <b id="massSoftStart1">X</b> 後會被軟上限！</span><br>
-                    <span id="massSoft3" style="color: rgb(121, 0, 0)">質量獲得量到達 <b id="massSoftStart3">X</b> 後會被軟上限^2！</span><br>
-                    <span id="massSoft4" style="color: rgb(122, 0, 86)">質量獲得量到達 <b id="massSoftStart4">X</b> 後會被軟上限^3！</span><br>
-                    <span id="massSoft5" style="color: rgb(255, 94, 0)">質量獲得量到達 <b id="massSoftStart5">X</b> 後會被軟上限^4！</span><br>
-                    <span id="massSoft6" style="color: rgb(255, 238, 0)">質量獲得量到達 <b id="massSoftStart6">X</b> 後會被軟上限^5！</span><br>
-                    <span id="massSoft7" style="color: rgb(166, 255, 0)">質量獲得量到達  <b id="massSoftStart7">X</b> 後會被軟上限^6！</span><br>
-                    <span id="massSoft8" style="color: rgb(0, 255, 149)">質量獲得量到達  <b id="massSoftStart8">X</b> 後會被軟上限^7！</span><br>
-                    <span id="massSoft9" style="color: rgb(0, 225, 255)">質量獲得量到達 <b id="massSoftStart9">X</b> 後會被軟上限^8！</span><br>
-                    <span id="massOverflow"></span>
+                    <span id="massSoft1" class="red">質量獲得量到達 <b id="massSoftStart1">X</b> 後會被軟上限！<br></span>
+                    <span id="massSoft3" style="color: rgb(121, 0, 0)">質量獲得量到達 <b id="massSoftStart3">X</b> 後會被軟上限^2！<br></span>
+                    <span id="massSoft4" style="color: rgb(122, 0, 86)">質量獲得量到達 <b id="massSoftStart4">X</b> 後會被軟上限^3！<br></span>
+                    <span id="massSoft5" style="color: rgb(255, 94, 0)">質量獲得量到達 <b id="massSoftStart5">X</b> 後會被軟上限^4！<br></span>
+                    <span id="massSoft6" style="color: rgb(255, 238, 0)">質量獲得量到達 <b id="massSoftStart6">X</b> 後會被軟上限^5！<br></span>
+                    <span id="massSoft7" style="color: rgb(166, 255, 0)">質量獲得量到達 <b id="massSoftStart7">X</b> 後會被軟上限^6！<br></span>
+                    <span id="massSoft8" style="color: rgb(0, 255, 149)">質量獲得量到達 <b id="massSoftStart8">X</b> 後會被軟上限^7！<br></span>
+                    <span id="massSoft9" style="color: rgb(0, 225, 255)">質量獲得量到達 <b id="massSoftStart9">X</b> 後會被軟上限^8！</span>
+                    <div id="massOverflow"></div>
+                    <div id="strongerOverflow"></div>
                     </div>
                 </div><div id="stab_frame0_1">
                 你的黑洞質量是 <span id="bhMass2">X</span>，<br>
-                <span class="green">將質量獲得量乘以 <span id="bhEffect">X</span></span><br><br>
+                <span class="green">將質量獲得量提升 <span id="bhEffect">X</span></span><br><br>
                 黑洞對質量獲得量的加成公式：(x + 1)<sup id="bhMassPower">0.33</sup> * <span id="bhCondenserEffect">X</span><br><br>
                     <div style="width: 100%; margin-bottom: 5px;" class="table_center">
                         <div style="width: 400px">
@@ -496,7 +497,7 @@
                         <button class="btn" onclick="player.dark.run.gamount++">+1</button>
                     </div><br>
                     <div class="table_center" id="mass_glyph_table"></div><br>
-                    <div class="table_center" id="glyph_upg_table"></div><br>
+                    <div class="table_center"><div id="glyph_upg_table" style="width: 500px;"></div></div><br>
                     <div id="glyph_upg_msg"></div>
                 </div><div id="stab_frame7_2">
                     <div>
@@ -524,14 +525,14 @@
                 <h2>確認設定</h2><br>
                 <div id="confirm_table" class="table_center"></div>
                 <br><br>
-                增量質量（重寫版）v0.6.2.1 - 由 MrRedShark77 製作，ItMarki 翻譯<br>
+                增量質量（重寫版）v0.6.2.2 - 由 MrRedShark77 製作，ItMarki 翻譯<br>
                 本遊戲受到 <ruby>Distance Incremental<rt>距離增量</rt></ruby> 和 <ruby>Synergism<rt>協同放置</rt></ruby> 的啟發製作<br>
                 貢獻：<span style="cursor: pointer;" onclick='addNotify(`frfrfr<br><img src="https://5.imimg.com/data5/HO/DK/MY-8155364/lemon-500x500.jpg" style="width:100%">`)'>Lemon</span>、16777216 和 Aarex（繪畫）<br><br><br>
                 提示 1：把指標放在標籤上方的圖片上，即可查看描述……<br><br>
                 總遊玩時間：<span id="total_time">X</span><br><br>
-                <a href="https://www.easycounter.com/">
+                <!-- <a href="https://www.easycounter.com/">
                 <img src="https://www.easycounter.com/counter.php?mrredshark77"
-                border="0" alt="error"></a>
+                border="0" alt="error"></a> -->
     
                 <div style="position: absolute; bottom: 35px; right: 35px;">
                     <img id="omega_badge" src="images/omega.png">

@@ -43,6 +43,8 @@ const ELEMENTS = {
             if (this.upgs[x].dark) player.dark.shadow = player.dark.shadow.sub(this.upgs[x].cost)
             else player.atom.quarks = player.atom.quarks.sub(this.upgs[x].cost)
             player.atom.elements.push(x)
+
+            tmp.pass = false
         }
     },
     upgs: [
@@ -559,7 +561,7 @@ const ELEMENTS = {
             desc: `黑洞質量效果稍微加強自己。`,
             cost: E('e1100'),
             effect() {
-                let x = player.bh.mass.add(1).log10().add(1).log10().mul(1.25).add(1).pow(player.qu.rip.active?2:0.4)
+                let x = player.bh.mass.add(1).log10().add(1).log10().mul(1.25).add(1).pow(hasElement(201)||player.qu.rip.active?2:0.4)
                 //if (player.qu.rip.active) x = x.softcap(100,0.1,0)
                 return x
             },
@@ -626,7 +628,8 @@ const ELEMENTS = {
             desc: `五級層對重置底數給予指數加成。`,
             cost: E('e2.5e7'),
             effect() {
-                let x = hasElement(195) ? player.ranks.pent.root(1.5).div(400) : player.ranks.pent.root(2).div(1e3)
+                let pent = player.ranks.pent
+                let x = hasElement(195) ? pent.softcap(2e5,0.25,0).root(1.5).div(400) : pent.root(2).div(1e3)
                 return x.toNumber()
             },
             effDesc(x) { return "+^"+format(x) },
@@ -852,9 +855,9 @@ const ELEMENTS = {
             effect() {
                 let pb = tmp.prestiges.base||E(1)
                 let x = hasPrestige(0,218) ? Decimal.pow(10,pb.add(1).log10().root(2)) : pb.add(1).log10().add(1)
-                return x
+                return x.softcap(1e12,0.25,0)
             },
-            effDesc(x) { return "x"+format(x) },
+            effDesc(x) { return "x"+format(x)+softcapHTML(x,1e12) },
         },{
             br: true,
             desc: `已購買元素數量增加量子碎片的底數。`,
@@ -1124,6 +1127,30 @@ const ELEMENTS = {
         },{
             desc: `解鎖加速器，時間速度會提供指數加成，但是氬-18 和第 150 個元素失效（在挑戰 15 裏除外）。`,
             cost: E("e8.6e95"),
+        },{
+            br: true,
+            desc: `挑戰 15 的效果影響黑洞溢出的起點。`,
+            cost: E("1e2.6e97"),
+        },{
+            desc: `黑洞效果對質量提供指數加成。錒-89 在大撕裂外更強。`,
+            cost: E("e3.65e99"),
+        },{
+            br: true,
+            desc: `解鎖加強增強器的第四個質量升級。`,
+            cost: E("1e8e98"),
+        },{
+            desc: `提升器加強自己。`,
+            cost: E("e6.5e99"),
+            effect() {
+                let x = (player.massUpg[2]||E(0)).add(10).log10().pow(0.8);
+
+				return x
+            },
+            effDesc(x) { return "^"+format(x) },
+        },{
+            dark: true,
+            desc: `光子和膠子升級 1 和 3 提供指數加成。進入黑暗時保留大撕裂升級。`,
+            cost: E('e605'),
         },
     ],
     /*
@@ -1164,7 +1191,8 @@ const ELEMENTS = {
         if (tmp.chal14comp) u += 6 + 11
         if (tmp.chal15comp) u += 16 + 4
         if (tmp.darkRunUnlocked) u += 7
-        if (tmp.matterUnl) u += 8 + 3
+        if (tmp.matterUnl) u += 14
+        if (tmp.mass4Unl) u += 2
 
         return u
     },
@@ -1191,6 +1219,7 @@ function getElementId(x) {
 }
 
 function getElementName(x) {
+    if (x <= 118) return ELEMENTS.fullNames[x]
     return "第 " + x + " 個元素"
 }
 

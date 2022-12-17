@@ -407,8 +407,8 @@ const TREE_UPGS = {
             desc: `光子和膠子互相加強。`,
             cost: E(1e14),
             effect() {
-                let x = expMult(player.supernova.bosons.photon,hasElement(113) ? 0.95 : 1/2,2).max(1)
-                let y = expMult(player.supernova.bosons.gluon,hasElement(113) ? 0.95 : 1/2,2).max(1)
+                let x = overflow(expMult(player.supernova.bosons.photon,hasElement(113) ? 0.95 : 1/2,2).max(1),'ee60',0.5)
+                let y = overflow(expMult(player.supernova.bosons.gluon,hasElement(113) ? 0.95 : 1/2,2).max(1),'ee60',0.5)
                 return [x,y]
             },
             effDesc(x) { return "光子 "+format(x[1])+"x；膠子 "+format(x[0])+"x" },
@@ -441,7 +441,7 @@ const TREE_UPGS = {
             desc: `時間速度稍微提升各費米子的獲得量。`,
             cost: E(1e27),
             effect() {
-                let x = E(1.25).pow(player.tickspeed.pow(0.4))
+                let x = E(1.25).pow(player.tickspeed.softcap(1e24,0.5,2).pow(0.4))
                 return x
             },
             effDesc(x) { return format(x)+"x" },
@@ -914,7 +914,6 @@ const TREE_UPGS = {
 
         qu_qol10: {
             unl: _=>player.dark.unl,
-            icon: 'placeholder',
 
             qf: true,
             desc: `你不能從原始素定理獲得 Δ、Α、Ο 和 Σ 粒子，但是上述每個粒子的數量等於原始素定理的總數。`,
@@ -922,7 +921,6 @@ const TREE_UPGS = {
         },
         qu_qol11: {
             branch: ["qu_qol10"],
-            icon: 'placeholder',
 
             qf: true,
             desc: `你不能從原始素定理獲得 Φ 和 Ε 粒子，但是上述每個粒子的數量等於原始素定理的總數。`,
@@ -930,7 +928,6 @@ const TREE_UPGS = {
         },
         qu_qol12: {
             branch: ["qu_qol11"],
-            icon: 'placeholder',
 
             qf: true,
             desc: `你不能從原始素定理獲得 Θ 和 Β 粒子，但是上述每個粒子的數量等於原始素定理的總數。`,

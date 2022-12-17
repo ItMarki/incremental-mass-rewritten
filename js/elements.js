@@ -367,7 +367,7 @@ function updateBlackHoleHTML() {
 	tmp.el.massSoft2.setDisplay(tmp.bh.mass_gain.gte(tmp.bh.massSoftGain))
 	tmp.el.massSoftStart2.setTxt(formatMass(tmp.bh.massSoftGain))
 
-	tmp.el.bhEffect.setTxt(format(tmp.bh.effect))
+	tmp.el.bhEffect.setTxt(hasElement(201)?"^"+format(tmp.bh.effect):format(tmp.bh.effect)+"x")
 
 	tmp.el.bhCondenser_lvl.setTxt(format(player.bh.condenser,0)+(tmp.bh.condenser_bonus.gte(1)?" + "+format(tmp.bh.condenser_bonus,0):""))
 	tmp.el.bhCondenser_btn.setClasses({btn: true, locked: !FORMS.bh.condenser.can()})
@@ -445,7 +445,10 @@ function updateHTML() {
 				tmp.el.massSoftStart9.setTxt(formatMass(tmp.massSoftGain8))
 
 				tmp.el.massOverflow.setDisplay(player.mass.gte(tmp.overflow_start.mass))
-    			tmp.el.massOverflow.setHTML(`由於你的質量在 <b>${formatMass(tmp.overflow_start.mass)}</b> 溢出，它已經${overflowFormat(tmp.overflow.mass||1)}!`)
+    			tmp.el.massOverflow.setHTML(`由於你的質量在 <b>${formatMass(tmp.overflow_start.mass)}</b> 溢出，它已經${overflowFormat(tmp.overflow.mass||1)}！`)
+
+				tmp.el.strongerOverflow.setDisplay(tmp.upgs.mass[3].eff.eff.gte(tmp.overflow_start.stronger))
+    			tmp.el.strongerOverflow.setHTML(`由於你的增強器在 <b>${formatMass(tmp.overflow_start.stronger)}</b> 溢出，它的效果已經${overflowFormat(tmp.overflow.stronger||1)}！`)
 			}
 			if (tmp.stab[0] == 1) {
 				updateBlackHoleHTML()
