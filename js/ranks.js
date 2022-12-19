@@ -124,6 +124,7 @@ const RANKS = {
             '48': "移除第六個質量軟上限。",
             '62': "移除第七個質量軟上限。",
             '91': "有色物質指數 +0.15。",
+            '157': "移除第八個質量軟上限。",
         },
     },
     effect: {
@@ -383,6 +384,7 @@ const PRESTIGES = {
             "382": `重置等級提升有色物質指數。塌縮恆星的效果大幅增強。`,
             "388": `鈾砹混合體稍微影響元級前榮譽前資源。`,
             "552": `奇異級超新星增幅推遲 x1.25。`,
+            "607": `重置底數提升賦色子獲得量。`,
         },
         {
             "1": `所有恆星資源平方。`,
@@ -400,6 +402,7 @@ const PRESTIGES = {
             "3": `打破膨脹升級 12 更便宜。`,
             "4": `鈾砹混合體解鎖另一個效果。`,
             "5": `榮譽提升符文質量獲得量。`,
+            "8": `榮譽減弱黑洞溢出。`,
         },
     ],
     rewardEff: [
@@ -428,6 +431,10 @@ const PRESTIGES = {
                 let x = tmp.qu.chroma_eff[1][1].root(2)
                 return x
             },x=>"弱 "+formatReduction(x)],
+            "607": [_=>{
+                let x = tmp.prestiges.base.max(1).pow(1.5)
+                return x
+            },x=>"x"+format(x)],
             /*
             "1": [_=>{
                 let x = E(1)
@@ -464,6 +471,10 @@ const PRESTIGES = {
                 let x = player.prestiges[2].root(2).div(10).add(1)
                 return x.toNumber()
             },x=>"x"+format(x,2)],
+            "8": [_=>{
+                let x = player.prestiges[2].root(3).div(10).add(1).pow(-1)
+                return x.toNumber()
+            },x=>"弱 "+formatReduction(x)],
         },
     ],
     reset(i, bulk = false) {

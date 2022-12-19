@@ -189,6 +189,7 @@ const UPGS = {
                 let xx = i.add(tmp.upgs.mass[4].bonus)
 
                 let step = E(.005)
+                if (hasUpgrade('rp',17)) step = step.add(.005)
 
                 let x = step.mul(xx).add(1)
 
@@ -232,7 +233,7 @@ const UPGS = {
                 }
             },
             auto_unl() { return player.mainUpg.bh.includes(5) },
-            lens: 16,
+            lens: 17,
             1: {
                 desc: "提升器增加提重器。",
                 cost: E(1),
@@ -360,6 +361,11 @@ const UPGS = {
                 unl() { return tmp.moreUpgs },
                 desc: `移除時間速度力量的軟上限。`,
                 cost: E('e1.8e91'),
+            },
+            17: {
+                unl() { return tmp.mass4Unl },
+                desc: `過強器力量提升 0.005。`,
+                cost: E('e7.75e116'),
             },
         },
         2: {
@@ -539,7 +545,7 @@ const UPGS = {
                 }
             },
             auto_unl() { return hasTree("qol1") },
-            lens: 17,
+            lens: 18,
             1: {
                 desc: "開始時解鎖質量升級。",
                 cost: E(1),
@@ -664,6 +670,11 @@ const UPGS = {
                     return "^"+format(x)
                 },
             },
+            18: {
+                unl() { return tmp.mass4Unl },
+                desc: `中子力量的第二個效果提供指數加成，而且會影響黑洞質量。`,
+                cost: E('e4.2e120'),
+            },
         },
 		        4: {
             title: "大撕裂升級",
@@ -678,7 +689,7 @@ const UPGS = {
                 }
             },
             auto_unl() { return hasElement(132) },
-            lens: 16,
+            lens: 17,
             1: {
                 desc: `開始大撕裂時解鎖氫-1。`,
                 cost: E(5),
@@ -769,6 +780,16 @@ const UPGS = {
                 unl() { return tmp.moreUpgs },
                 desc: `移除 Α、Ω 和 Σ 粒子第一個效果的軟上限，並且加強它們。`,
                 cost: E(1e273),
+            },
+            17: {
+                unl() { return tmp.mass4Unl },
+                desc: `暗物質對原子獲得量提供稍弱的指數加成。`,
+                cost: E('e386'),
+                effect() {
+                    let x = Decimal.pow(1.1,player.bh.dm.add(1).log10().add(1).log10())
+                    return x
+                },
+                effDesc(x=this.effect()) { return "^"+format(x) },
             },
 		},
     },
