@@ -33,7 +33,7 @@ function setupHTML() {
 			<button id="ranks_auto_${x}" class="btn" style="width: 80px;" onclick="RANKS.autoSwitch('${rn}')">關閉</button>
 			第 <span id="ranks_amt_${x}">X</span> <span id="ranks_scale_${x}""></span>${RANKS.fullNames[x]}<br><br>
 			<button onclick="RANKS.reset('${rn}')" class="btn reset" id="ranks_${x}">
-				重置${x>0?RANKS.fullNames[x-1]:'質量和升級'}，但你可以升${RANKS.fullNames[x]}。<span id="ranks_desc_${x}"></span><br>
+				重置${x>0?RANKS.fullNames[x-1]:'質量和升級'}，但你會升${RANKS.fullNames[x]}。<span id="ranks_desc_${x}"></span><br>
 				要求：<span id="ranks_req_${x}">X</span>
 			</button>
 		</div>`
@@ -47,7 +47,7 @@ function setupHTML() {
 			<button id="pres_auto_${x}" class="btn" style="width: 80px;" onclick="PRESTIGES.autoSwitch(${x})">關閉</button>
 			第 <span id="pres_amt_${x}">X</span> 個<span id="pres_scale_${x}""></span>${PRESTIGES.fullNames[x]}<br><br>
 			<button onclick="PRESTIGES.reset(${x})" class="btn reset" id="pres_${x}">
-				${x>0?"重置你的"+PRESTIGES.fullNames[x-1]:'強制執行量子重置'}，但你可以升${PRESTIGES.fullNames[x]}。<span id="pres_desc_${x}"></span><br>
+				${x>0?"重置你的"+PRESTIGES.fullNames[x-1]:'強制執行量子重置'}，但你會升${PRESTIGES.fullNames[x]}。<span id="pres_desc_${x}"></span><br>
 				要求：<span id="pres_req_${x}">X</span>
 			</button>
 		</div>`
@@ -99,6 +99,18 @@ function setupHTML() {
 		table += `</div>`
 	}
 	pres_rewards_table.setHTML(table)
+
+	let br_rewards_table = new Element("br_rewards_table")
+	table = ""
+	for (let x in BEYOND_RANKS.rewards) {
+		x = Number(x)
+		let ee = BEYOND_RANKS.rewardEff[x]
+		for (let y in BEYOND_RANKS.rewards[x]) {
+			table += `<span id="br_reward_${x}_${y}"><b>第 ${format(y,0)} 個${getRankTierName(x+5)}：</b>${BEYOND_RANKS.rewards[x][y]}${ee&&BEYOND_RANKS.rewardEff[x][y]?`目前：<span id='br_eff_${x}_${y}'></span>`:""}</span><br>`
+		}
+		table += '<br>'
+	}
+	br_rewards_table.setHTML(table)
 
 	let main_upgs_table = new Element("main_upgs_table")
 	table = ""
@@ -252,7 +264,7 @@ function updateMassUpgradesHTML() {
 		let upg = UPGS.mass[x]
 		tmp.el["massUpg_div_"+x].setDisplay(upg.unl())
 		if (upg.unl()) {
-			tmp.el["massUpg_scale_"+x].setTxt(getScalingName("massUpg", x))
+			tmp.el["massUpg_scale_"+x].setTxt(x==4?getScalingName("massUpg4"):getScalingName("massUpg", x))
 			tmp.el["massUpg_lvl_"+x].setTxt(format(player.massUpg[x]||0,0)+(tmp.upgs.mass[x].bonus.gt(0)?" + "+format(tmp.upgs.mass[x].bonus,0):""))
 			tmp.el["massUpg_btn_"+x].setClasses({btn: true, locked: player.mass.lt(tmp.upgs.mass[x].cost)})
 			tmp.el["massUpg_cost_"+x].setTxt(formatMass(tmp.upgs.mass[x].cost))
@@ -327,6 +339,21 @@ function updatePrestigesRewardHTML() {
 					let eff = PRESTIGES.rewardEff[x][keys[y]]
 					tmp.el["pres_eff_"+x+"_"+y].setTxt(eff[1](tmp.prestiges.eff[x][keys[y]]))
 				}
+			}
+		}
+	}
+}
+
+function updateBeyondRanksRewardHTML() {
+	let t = tmp.beyond_ranks.max_tier, lt = tmp.beyond_ranks.latestRank
+	for (let x in BEYOND_RANKS.rewards) {
+		x = Number(x)
+		for (let y in BEYOND_RANKS.rewards[x]) {
+			let unl = t > x || t == x && lt.gte(y)
+			tmp.el["br_reward_"+x+"_"+y].setDisplay(unl)
+			if (unl) if (tmp.el["br_eff_"+x+"_"+y]) {
+				let eff = BEYOND_RANKS.rewardEff[x][y]
+				tmp.el["br_eff_"+x+"_"+y].setHTML(eff[1](tmp.beyond_ranks.eff[x][y]))
 			}
 		}
 	}
@@ -448,7 +475,7 @@ function updateHTML() {
     			tmp.el.massOverflow.setHTML(`由於你的質量在 <b>${formatMass(tmp.overflow_start.mass)}</b> 溢出，它已經${overflowFormat(tmp.overflow.mass||1)}！`)
 
 				tmp.el.strongerOverflow.setDisplay(tmp.upgs.mass[3].eff.eff.gte(tmp.overflow_start.stronger))
-    			tmp.el.strongerOverflow.setHTML(`由於你的增強器在 <b>${formatMass(tmp.overflow_start.stronger)}</b> 溢出，它的效果已經${overflowFormat(tmp.overflow.stronger||1)}！`)
+    			tmp.el.strongerOverflow.setHTML(`由於你的增強器在 <b>${format(tmp.overflow_start.stronger)}</b> 溢出，它的效果已經${overflowFormat(tmp.overflow.stronger||1)}！`)
 			}
 			if (tmp.stab[0] == 1) {
 				updateBlackHoleHTML()
@@ -464,6 +491,7 @@ function updateHTML() {
 			if (tmp.stab[1] == 0) updateRanksRewardHTML()
 			if (tmp.stab[1] == 1) updateScalingHTML()
 			if (tmp.stab[1] == 2) updatePrestigesRewardHTML()
+			if (tmp.stab[1] == 3) updateBeyondRanksRewardHTML()
 		}
 		if (tmp.tab == 2) {
 			updateMainUpgradesHTML()

@@ -2,7 +2,7 @@ const DARK = {
     nextEffectAt: [
         [0,1e12,1e22],
         [1e6,1e11,1e25,1e130],
-        [1e120,1e180,'e345','e800','e2500','e56000'],
+        [1e120,1e180,'e345','e800','e2500','e56000','e125500'],
     ],
     gain() {
         let x = E(1)
@@ -90,7 +90,7 @@ const DARK = {
 
         QUANTUM.doReset(true,true)
 
-        tmp.rank_tab = 0
+        if (!hasElement(127)) tmp.rank_tab = 0
         if (tmp.stab[4] == 3 && !hasElement(127)) tmp.stab[4] = 0
 
         tmp.pass = false
@@ -145,6 +145,7 @@ const DARK = {
         if (a.gte('e800') && tmp.matterUnl) x.mexp = a.div('e800').log10().div(10).add(1).root(2.5)
         if (a.gte('e2500') && hasElement(199)) x.accelPow = a.div('e2500').log10().add(1).log10().add(1).pow(1.5).softcap(5,0.2,0)
         if (a.gte('e56000')) x.ApQ_Overflow = Decimal.pow(10,a.div('e56000').log10().add(1).log10())
+        if (a.gte('e125500')) x.fss = a.div('e56000').log10().add(1).log10().div(10).add(1).toNumber()
 
         return x
     },
@@ -233,7 +234,8 @@ function updateDarkHTML() {
                 if (eff.csp) e += `<br>將宇宙弦力量提升 <b>x${eff.csp.format(3)}</b>`
                 if (eff.mexp) e += `<br>將所有有色物質獲得量提升 <b>^${eff.mexp.format(3)}</b>`
                 if (eff.accelPow) e += `<br>將加速器力量提升 <b>x${eff.accelPow.format(3)}</b>`+eff.accelPow.softcapHTML(5)
-                if (eff.ApQ_Overflow) e += `<br>原子力量及夸克的溢出推遲 <b>^${eff.ApQ_Overflow.format(3)}</b>`
+                if (eff.ApQ_Overflow) e += `<br>原子力量和夸克的溢出推遲 <b>^${eff.ApQ_Overflow.format(3)}</b>`
+                if (eff.fss) e += `<br>天樞碎片強 <b>${formatPercent(eff.fss-1)}</b>`
 
                 tmp.el.abEff.setHTML(e)
             }
@@ -285,6 +287,7 @@ function getDarkSave() {
             amt: [],
             upg: [],
             unls: 3,
+            final: 0,
         },
     }
     for (let x = 0; x < MATTERS_LEN; x++) {

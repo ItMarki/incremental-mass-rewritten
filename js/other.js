@@ -32,7 +32,7 @@ function updateNotify() {
         tmp.el.notify.setHTML(tmp.notify[0].text)
         tmp.el.notify.setVisible(true)
         tmp.el.notify.setClasses({hide: false})
-        setTimeout(_=>{
+        setTimeout(()=>{
             tmp.el.notify.setClasses({hide: true})
             setTimeout(removeNotify, 750)
         }, tmp.notify[0].duration*1000)
@@ -70,6 +70,7 @@ const POPUP_GROUPS = {
             <button class="btn" style="color: yellow;font-family: IMing;" onclick="player.options.font = 'IMing'">一點明體</button>
             <button class="btn" style="font-family: Inconsolata;" onclick="player.options.font = 'Inconsolata'">Inconsolata</button>
             <button class="btn" style="font-family: 'Lucida Handwriting';" onclick="player.options.font = 'Lucida Handwriting'">Lucida Handwriting</button>
+            <button class="btn" style="color: yellow;font-family: 'LXGWNeoXiHei';" onclick="player.options.font = 'LXGWNeoXiHei'">霞鶩新晰黑</button>
             <button class="btn" style="color: yellow;font-family: 'LXGWWenKai';" onclick="player.options.font = 'LXGWWenKai'">霞鶩文楷</button>
             <button class="btn" style="font-family: Monospace-Typewritter;" onclick="player.options.font = 'Monospace-Typewritter'">Monospace Typewritter</button>
 			<button class="btn" style="font-family: 'MS Sans Serif';" onclick="player.options.font = 'MS Sans Serif'">MS Sans Serif</button>
@@ -182,7 +183,7 @@ function createPopup(text, id, txtButton) {
     const textButton = document.createElement('button')
     textButton.className = 'btn'
     textButton.innerText = txtButton||"好"
-    textButton.onclick = _ => {
+    textButton.onclick = () => {
         popups[popups.indexOf(id)] = undefined
         updatePopupIndex()
         popup.remove()
@@ -210,7 +211,7 @@ function createConfirm(text, id, yesFunction, noFunction) {
     const yesButton = document.createElement('button')
     yesButton.className = 'btn'
     yesButton.innerText = "是"
-    yesButton.onclick = _ => {
+    yesButton.onclick = () => {
         popups[popups.indexOf(id)] = undefined
         updatePopupIndex()
         if (yesFunction) yesFunction()
@@ -220,7 +221,7 @@ function createConfirm(text, id, yesFunction, noFunction) {
     const noButton = document.createElement('button')
     noButton.className = 'btn'
     noButton.innerText = "不是"
-    noButton.onclick = _ => {
+    noButton.onclick = () => {
         popups[popups.indexOf(id)] = undefined
         updatePopupIndex()
         if (noFunction) noFunction()
@@ -254,7 +255,7 @@ function createPrompt(text, id, func) {
     const textButton = document.createElement('button')
     textButton.className = 'btn'
     textButton.innerText = "好"
-    textButton.onclick = _ => {
+    textButton.onclick = () => {
         popups[popups.indexOf(id)] = undefined
         updatePopupIndex()
         if (func) func(input.value)

@@ -46,10 +46,10 @@ Decimal.prototype.scaleName = function (type, id, rev=false) {
     return x
 }
 
-Decimal.prototype.scaleEvery = function (id, rev=false, fp=SCALE_FP[id]?SCALE_FP[id]():[1,1,1,1,1]) {
+Decimal.prototype.scaleEvery = function (id, rev=false, fp=SCALE_FP[id]?SCALE_FP[id]():[1,1,1,1,1,1]) {
     var x = this.clone()
-    for (let i = 0; i < 5; i++) {
-        let s = rev?i:4-i
+    for (let i = 0; i < SCALE_TYPE.length; i++) {
+        let s = rev?i:SCALE_TYPE.length-1-i
         let sc = SCALE_TYPE[s]
         let f = fp[s]||1
 
@@ -83,6 +83,7 @@ function calc(dt, dt_offline) {
             let rn = RANKS.names[x]
             if (RANKS.autoUnl[rn]() && player.auto_ranks[rn]) RANKS.bulk(rn)
         }
+        if (player.auto_ranks.beyond) BEYOND_RANKS.reset(true)
         for (let x = 0; x < PRES_LEN; x++) if (PRESTIGES.autoUnl[x]() && player.auto_pres[x]) PRESTIGES.reset(x,true)
         for (let x = 1; x <= UPGS.main.cols; x++) {
             let id = UPGS.main.ids[x]
@@ -151,6 +152,7 @@ function getPlayerData() {
             tetr: E(0),
             pent: E(0),
             hex: E(0),
+            beyond: E(0),
         },
         auto_ranks: {
             rank: false,
@@ -422,7 +424,7 @@ function importy() {
         if (loadgame != null) {
             let keep = player
             try {
-                setTimeout(_=>{
+                setTimeout(()=>{
                     if (findNaN(loadgame, true)) {
                         addNotify("由於發生 NaN 錯誤，遊戲不能導出")
                         return

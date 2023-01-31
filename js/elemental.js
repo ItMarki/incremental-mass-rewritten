@@ -61,11 +61,18 @@ const ELEMENTS = {
             desc: `電子力量加強原子力量獲得量。`,
             cost: E(1e15),
             effect() {
-                let x = player.atom?player.atom.powers[2].add(1).root(2):E(1)
-                if (x.gte('e1e4')) x = expMult(x.div('e1e4'),0.9).mul('e1e4')
-                return overflow(x,'ee100',0.25).min('ee101')
+                let x
+                if (hasPrestige(0,867)) {
+                    x = player.atom?player.atom.powers[2].add(1).log10().add(1).log10().add(1).pow(1.5):E(1)
+                } else {
+                    x = player.atom?player.atom.powers[2].add(1).root(2):E(1)
+                    if (x.gte('e1e4')) x = expMult(x.div('e1e4'),0.9).mul('e1e4')
+                    x = overflow(x,'ee100',0.25).min('ee101')
+                }
+
+                return x
             },
-            effDesc(x) { return format(x)+"x"+(x.gte('e1e4')?"<span class='soft'>（軟上限）</span>":"") },
+            effDesc(x) { return hasPrestige(0,867) ? '^'+format(x) : format(x)+"x"+softcapHTML(x,'ee4') },
         },
         {
             desc: `質子力量加強增強器力量。`,
@@ -159,7 +166,7 @@ const ELEMENTS = {
             cost: E(1e44),
             effect() {
                 let x = hasElement(129) ? player.atom.gamma_ray.pow(0.5).mul(0.02).add(1) : player.atom.gamma_ray.pow(0.35).mul(0.01).add(1)
-                return x
+                return overflow(x,1000,0.5)
             },
             effDesc(x) { return "^"+format(x) },
         },
@@ -307,6 +314,9 @@ const ELEMENTS = {
             cost: E('e325'),
             effect() {
                 let x = player.stars.points.add(1).pow(1/3)
+
+                x = overflow(x,'ee112',0.5)
+
                 return x
             },
             effDesc(x) { return format(x)+"x" },
@@ -453,7 +463,7 @@ const ELEMENTS = {
             cost: E('e1.7e6'),
             effect() {
                 let x = player.stars.points.add(1)
-                return x.softcap('e3e15',0.85,2)
+                return overflow(x.softcap('e3e15',0.85,2),'ee100',0.5)
             },
             effDesc(x) { return format(x)+"x" },
         },
@@ -911,9 +921,10 @@ const ELEMENTS = {
             cost: E("e1.3e49"),
             effect() {
                 let x = tmp.radiation.bs.eff[14].max(1).log10().add(1)
+                if (hasElement(211)) x = x.pow(3)
                 return x
             },
-            effDesc(x) { return "x"+format(x)+" later" },
+            effDesc(x) { return "推遲 x"+format(x) },
         },{
             dark: true,
             desc: `移除 [頂] 和 [緲微中子] 的階上限。`,
@@ -938,7 +949,7 @@ const ELEMENTS = {
             desc: `解鎖黑暗試煉。進入暗界時保留 Og-118。`,
             cost: E("1e96"),
         },{
-            desc: `塌縮恆星升級以弱指數增長影響它的效果。它也可以影響黑洞質量獲得量，但是鈀-46、鎘-48、銩-69 和鋨-76 失效。B`,
+            desc: `塌縮恆星升級提供稍弱的指數倍數。它也可以影響黑洞質量獲得量，但是鈀-46、鎘-48、銩-69 和鋨-76 失效。`,
             cost: E("e4.20e69"), // nice
         },{
             desc: `空間膨脹稍微更弱。`,
@@ -972,7 +983,7 @@ const ELEMENTS = {
         },{
             dark: true,
             desc: `挑戰 13 和 14 完成上限增加 100 次。`,
-            cost: E("1e109"),
+            cost: E("1e108"),
         },{
             br: true,
             desc: `移除 Ε 粒子的費米子獎勵的上限。`,
@@ -1009,7 +1020,9 @@ const ELEMENTS = {
             desc: `基於元級等級的起點，奇異級等級增幅推遲。`,
             cost: E("e4.8e79"),
             effect() {
-                let x = scaleStart('meta','rank').add(1).log10().add(1)
+                if (!tmp.scaling_start.meta || !tmp.scaling_start.meta.rank) return E(1)
+                let x = tmp.scaling_start.meta.rank.add(1).log10().add(1)
+                if (hasElement(216)) x = x.pow(2)
                 return x
             },
             effDesc(x) { return "推遲 x"+format(x) },
@@ -1140,7 +1153,7 @@ const ELEMENTS = {
             cost: E("1e4.9e98"),
         },{
             desc: `提升器加強自己。`,
-            cost: E("e6.5e99"),
+            cost: E("e4e99"),
             effect() {
                 let x = (player.massUpg[2]||E(0)).add(10).log10().pow(0.8);
 
@@ -1175,7 +1188,60 @@ const ELEMENTS = {
             desc: `鈾砹混合體的第二個效果使用於六級階增幅，效果也更強。`,
             cost: E("1e1.67e103"),
         },{
-            desc: `解鎖超越級別（未開發）。`,
+            desc: `解鎖超越級別。`,
+            cost: E('e2e111'),
+        },{
+            desc: `提重器加強自己。`,
+            cost: E('e1.4e112'),
+            effect() {
+                let x = (player.massUpg[1]||E(0)).add(10).log10().pow(0.8);
+
+				return x
+            },
+            effDesc(x) { return "^"+format(x) },
+        },{
+            dark: true,
+            desc: `FSS 推遲增強器溢出。`,
+            cost: E('e710'),
+            effect() {
+                let x = E(2+player.dark.matters.final**.8).pow(player.dark.matters.final)
+
+				return x
+            },
+            effDesc(x) { return "推遲 x"+format(x) },
+        },{
+            br: true,
+            desc: `元級等級稍微影響元級四級層的增幅門檻，並加強第 155 個元素。`,
+            cost: E("1e5e110"),
+            effect() {
+                let x = tmp.radiation.bs.eff[14].max(1).log10().add(1)
+                return x
+            },
+            effDesc(x) { return "推遲 x"+format(x) },
+        },{
+            br: true,
+            desc: `奇異級超新星增幅弱 25%。`,
+            cost: E("1e1.6e117"),
+        },{
+            dark: true,
+            desc: `[底] 的效果更好，而且沒有上限。光子升級 4 提供指數加成。`,
+            cost: E('e1024'),
+        },{
+            desc: `大幅增強熵倍數。`,
+            cost: E('e2.6e127'),
+        },{
+            br: true,
+            desc: `熵蒸發^2 和熵濃縮^2 增幅弱 15%。`,
+            cost: E('e3.1e123'),
+        },{
+            desc: `稍微加強第 178 個元素。`,
+            cost: E('e4.9e130'),
+        },{
+            dark: true,
+            desc: `天樞碎片要求減少 20%。`,
+            cost: E('1e1480'),
+        },{
+            desc: `解鎖挑戰 16。（敬請期待）`,
             cost: EINF,
         },
     ],
@@ -1219,6 +1285,7 @@ const ELEMENTS = {
         if (tmp.darkRunUnlocked) u += 7
         if (tmp.matterUnl) u += 14
         if (tmp.mass4Unl) u += 6
+        if (tmp.brUnl) u += 10
 
         return u
     },
@@ -1226,7 +1293,7 @@ const ELEMENTS = {
 
 const MAX_ELEM_TIERS = 2
 
-const BR_ELEM = (_=>{
+const BR_ELEM = (()=>{
     let x = []
     for (let i in ELEMENTS.upgs) if (i>86&&i<=118 || i>0&&ELEMENTS.upgs[i].br) x.push(Number(i))
     return x

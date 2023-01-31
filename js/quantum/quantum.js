@@ -22,7 +22,7 @@ const QUANTUM = {
     enter(auto=false,force=false,rip=false,bd=false) {
         if (tmp.qu.gain.gte(1) || force) {
             if (player.confirms.qu&&!auto&&!force) createConfirm("你確定要量子化嗎？量子化會重置生活質素升級以外的所有功能",'quReset',
-            _=>{createConfirm("你確定嗎？？？",'quReset',_=>CONFIRMS_FUNCTION.qu(auto,force,rip,bd))})
+            ()=>{createConfirm("你確定嗎？？？",'quReset',()=>CONFIRMS_FUNCTION.qu(auto,force,rip,bd))})
             else CONFIRMS_FUNCTION.qu(auto,force,rip,bd)
         }
     },

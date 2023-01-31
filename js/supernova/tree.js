@@ -913,7 +913,7 @@ const TREE_UPGS = {
         },
 
         qu_qol10: {
-            unl: _=>player.dark.unl,
+            unl: ()=>player.dark.unl,
 
             qf: true,
             desc: `你不能從原始素定理獲得 Δ、Α、Ο 和 Σ 粒子，但是上述每個粒子的數量等於原始素定理的總數。`,
@@ -935,9 +935,8 @@ const TREE_UPGS = {
         },
 
         fn13: {
-            unl: _=>tmp.chal13comp,
+            unl: ()=>tmp.chal13comp,
 
-            icon: 'placeholder',
             branch: ["fn8"],
             desc: `解鎖一種元 U-夸克和一種元 U-輕子。`,
             cost: E('e1.5e10'),

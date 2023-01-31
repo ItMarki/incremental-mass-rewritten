@@ -22,7 +22,7 @@ const FERMIONS = {
         }
     },
     choose(i,x) {
-        if (player.confirms.sn) createConfirm("你確定要轉換成另一個費米子嗎？",'switchF', _=>CONFIRMS_FUNCTION.switchF(i,x))
+        if (player.confirms.sn) createConfirm("你確定要轉換成另一個費米子嗎？",'switchF', ()=>CONFIRMS_FUNCTION.switchF(i,x))
         else CONFIRMS_FUNCTION.switchF(i,x)
     },
     bonus(i,j) {
@@ -193,6 +193,10 @@ const FERMIONS = {
                 },
                 eff(i, t) {
                     let x = i.add(1).log10().pow(0.5).div(150).add(1).pow(t)
+                    if (hasElement(213)) {
+                        let y = expMult(t.add(1).pow(i.add(1).log10().add(1).log10()),0.8)
+                        return x.min(500).max(y)
+                    }
                     return x.min(500)//overflow(x,500,0.25)
                 },
                 desc(x) {
@@ -378,10 +382,11 @@ const FERMIONS = {
                 },
                 eff(i, t) {
                     let x = i.add(1).log10().add(1).log10().div(2000).mul(t.softcap(8,0.5,0))
+                    if (hasBeyondRank(2,2)) x = x.mul(8)
                     return x.toNumber()
                 },
                 desc(x) {
-                    return `將重置底數的次方增加 ${format(x)}`
+                    return `將重置底數的指數增加 ${format(x)}`
                 },
                 inc: "以上所有 U-輕子的乘積",
                 cons: "啟動以上所有 U-輕子，但強制執行量子重置",

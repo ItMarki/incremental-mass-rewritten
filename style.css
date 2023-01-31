@@ -50,6 +50,11 @@
 }
 
 @font-face {
+	font-family: 'LXGWNeoXiHei';
+	src: url('fonts/LXGWNeoXiHei.ttf');
+}
+
+@font-face {
 	font-family: 'LXGWWenKai';
 	src: url('fonts/LXGWWenKai-Regular.ttf');
 	size-adjust: 95%;
@@ -822,6 +827,15 @@ h3 {
 	font-size: 20px;
 }
 
+.matter_div.final {
+	background-color: rgb(255,0,0,.133);
+	animation: final_star_animation 10s linear infinite;
+}
+
+.matter_div.final > span {
+	font-size: 12px;
+}
+
 #popups {
 	z-index: 3;
 	width: 100%;
@@ -855,6 +869,10 @@ h3 {
     transform: translate(-50%, -50%);
 }
 
+#pre_beyond_ranks > div {
+	margin-bottom: 5px;
+}
+
 /*
 #popup {
 	z-index: 3;
@@ -882,4 +900,43 @@ h3 {
     0% {transform:scale(1); filter:blur(0px)}
     50% {transform:scale(0); filter:blur(5px)}
     100% {transform:scale(1); filter:blur(0px)}
+}
+
+@keyframes final_star_animation {
+	100%,0%{
+		background-color: rgb(255,0,0,.133);
+	}
+	8%{
+		background-color: rgb(255,127,0,.133);
+	}
+	16%{
+		background-color: rgb(255,255,0,.133);
+	}
+	25%{
+		background-color: rgb(127,255,0,.133);
+	}
+	33%{
+		background-color: rgb(0,255,0,.133);
+	}
+	41%{
+		background-color: rgb(0,255,127,.133);
+	}
+	50%{
+		background-color: rgb(0,255,255,.133);
+	}
+	58%{
+		background-color: rgb(0,127,255,.133);
+	}
+	66%{
+		background-color: rgb(0,0,255,.133);
+	}
+	75%{
+		background-color: rgb(127,0,255,.133);
+	}
+	83%{
+		background-color: rgb(255,0,255,.133);
+	}
+	91%{
+		background-color: rgb(255,0,127,.133);
+	}
 }

@@ -130,10 +130,14 @@ const ATOM = {
             if (hasElement(129)) pow = pow.pow(elemEffect(18))
             pow = pow//.softcap('e3e12',0.9,2)
             
+            if (hasBeyondRank(2,4)) pow = pow.pow(tmp.accelEffect.eff)
+            
             let eff = pow.pow(t.add(tmp.atom.gamma_ray_bonus)).sub(1)
             
             let exp = E(1)
             if (hasGlyphUpg(12)) exp = Decimal.pow(1.1,eff.max(1).log10().add(1).log10())
+
+            //exp = overflow(exp,1000,0.5)
 
             return {pow: pow, eff: eff, exp: exp}
         },

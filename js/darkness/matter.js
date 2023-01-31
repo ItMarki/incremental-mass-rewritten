@@ -13,6 +13,9 @@ const MATTERS = {
         x = x.pow(glyphUpgEff(14,1))
         if (i < MATTERS_LEN-1) x = x.pow(tmp.matters.upg[i+1].eff)
 
+        x = x.pow(tmp.matters.FSS_eff[0])
+        if (hasBeyondRank(1,7)) x = x.pow(beyondRankEffect(1,7))
+
         return x
     },
 
@@ -23,9 +26,51 @@ const MATTERS = {
 
         let bulk = player.dark.matters.amt[i].max(1).log(1e10).root(pow).sub(1).scale(i>0?25:50,1.05,1,true).add(1).floor()
 
-        let eff = i==0?lvl.add(1):Decimal.pow(4/3,lvl)
+        let eff = i==0?lvl.mul(tmp.matters.str).add(1):Decimal.pow(4/3,lvl.mul(tmp.matters.str))
 
         return {cost: cost, bulk: bulk, eff: eff}
+    },
+
+    final_star_shard: {
+        base() {
+            let x = E(1)
+            for (let i = 0; i < 13; i++) x = x.mul(player.dark.matters.amt[i].add(1).log10().add(1).log10().add(1))
+
+            if (hasPrestige(1,91)) x = x.pow(1.05)
+
+            return x.sub(1)
+        },
+        req() {
+            let f = player.dark.matters.final
+
+            if (hasElement(217)) f *= .8
+
+            let x = Decimal.pow(100,f**1.5).mul(1e43)
+            return x
+        },
+
+        reset() {
+            if (tmp.matters.FSS_base.gte(tmp.matters.FSS_req)) {
+                player.dark.matters.final++
+
+                resetMatters()
+                player.dark.shadow = E(0)
+                player.dark.abyssalBlot = E(0)
+                DARK.doReset()
+            }
+        },
+
+        effect() {
+            let fss = player.dark.matters.final
+
+            fss *= tmp.dark.abEff.fss||1
+
+            let x = Decimal.pow(2,fss**1.25)
+
+            let y = fss*.15+1
+
+            return [x,y]
+        },
     },
 }
 
@@ -38,9 +83,14 @@ function getMatterUpgrade(i) {
     if (amt.gte(tu.cost) && player.dark.matters.upg[i].lt(tu.bulk)) player.dark.matters.upg[i] = tu.bulk
 }
 
+function resetMatters() {
+    for (let i = 0; i < 13; i++) player.dark.matters.amt[i] = E(0)
+}
+
 function updateMattersHTML() {
     tmp.el.matter_exponent.setTxt(format(tmp.matters.exponent))
-    tmp.el.matter_req.setTxt(format(tmp.matters.req_unl))
+    tmp.el.matter_req_div.setDisplay(player.dark.matters.unls<14)
+    if (player.dark.matters.unls<14) tmp.el.matter_req.setTxt(format(tmp.matters.req_unl))
 
     for (let i = 0; i < 14; i++) {
         let unl = i < player.dark.matters.unls
@@ -62,13 +112,39 @@ function updateMattersHTML() {
             }
         }
     }
+
+    let unl = player.dark.matters.unls == 14
+
+    tmp.el.final_star_shard_div.setDisplay(unl)
+
+    if (unl) {
+        tmp.el.FSS1.setTxt(format(player.dark.matters.final,0))
+        tmp.el.final_star_base.setHTML(`你有 ${tmp.matters.FSS_base.format(0)} FSS 底數（基於之前所有物質）`)
+        tmp.el.FSS_req.setTxt(tmp.matters.FSS_req.format(0))
+        tmp.el.FSS_btn.setClasses({btn: true, full: true, locked: tmp.matters.FSS_base.lt(tmp.matters.FSS_req)})
+    }
+
+    tmp.el.FSS_eff1.setHTML(
+        player.dark.matters.final > 0
+        ? `你的 FSS 將有色物質獲得量提升 ^${tmp.matters.FSS_eff[0].format(1)}`
+        : ''
+    )
 }
 
 function updateMattersTemp() {
+    tmp.matters.FSS_base = MATTERS.final_star_shard.base()
+    tmp.matters.FSS_req = MATTERS.final_star_shard.req()
+    tmp.matters.FSS_eff = MATTERS.final_star_shard.effect()
+
+    tmp.matters.str = 1
+    if (hasBeyondRank(1,2)) tmp.matters.str *= beyondRankEffect(1,2)
+
     tmp.matters.exponent = 2 + glyphUpgEff(11,0)
     if (hasPrestige(0,382)) tmp.matters.exponent += prestigeEff(0,382,0)
     if (player.ranks.hex.gte(91)) tmp.matters.exponent += .15
     if (hasElement(206)) tmp.matters.exponent += elemEffect(206,0)
+    if (hasBeyondRank(1,1)) tmp.matters.exponent += .5
+    if (hasPrestige(0,1337)) tmp.matters.exponent += prestigeEff(0,1337,0)
     
     tmp.matters.req_unl = Decimal.pow(1e100,Decimal.pow(1.2,Math.max(0,player.dark.matters.unls-4)**1.5))
 
@@ -103,6 +179,19 @@ function setupMattersHTML() {
 
             html +=
             `
+            </div>
+            `
+        } else {
+            html +=
+            `
+            <div class="matter_div final" id="final_star_shard_div">
+                你有 <h3 id="FSS1">0</h3> 個天樞碎片（FSS）<br>
+                <span id="final_star_base">你有 ??? 天樞碎片底數（基於之前所有物質）</span>
+                <br><br>
+                <button class="btn full" id="FSS_btn" onclick="MATTERS.final_star_shard.reset()">
+                    獲得天樞碎片時，你會重置暗影、深淵之漬和有色物質，並強制執行暗界重置。天樞碎片會提升有色物質和符文質量獲得量。<br>
+                    要求：<span id="FSS_req">???</span> FSS 底數
+                </button>
             </div>
             `
         }

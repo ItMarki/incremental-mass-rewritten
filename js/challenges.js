@@ -137,6 +137,7 @@ const CHALS = {
         if (hasElement(171) && (i==13||i==14)) x = x.add(100)
         if (hasElement(186) && (i==13||i==14||i==15)) x = x.add(100)
         if (hasElement(196) && (i==13||i==14)) x = x.add(200)
+        if (hasPrestige(1,46) && (i==13||i==14||i==15)) x = x.add(200)
         return x.floor()
     },
     getScaleName(i) {
@@ -300,7 +301,7 @@ const CHALS = {
         effect(x) {
             if (hasElement(64)) x = x.mul(1.5)
             let ret = hasElement(133) ? x.root(4/3).mul(0.01).add(1) : x.root(1.5).mul(0.01).add(1)
-            return ret.softcap(3,0.25,0)
+            return overflow(ret.softcap(3,0.25,0),1e12,0.5)
         },
         effDesc(x) { return "^"+format(x)+(x.gte(3)?"<span class='soft'>（軟上限）</span>":"") },
     },
@@ -316,7 +317,7 @@ const CHALS = {
         effect(x) {
             if (hasElement(64)) x = x.mul(1.5)
             let ret = hasElement(133) ? x.root(4/3).mul(0.01).add(1) : x.root(1.5).mul(0.01).add(1)
-            return ret.softcap(3,0.25,0)
+            return overflow(ret.softcap(3,0.25,0),1e12,0.5)
         },
         effDesc(x) { return "^"+format(x)+(x.gte(3)?"<span class='soft'>（軟上限）</span>":"") },
     },
@@ -378,7 +379,7 @@ const CHALS = {
         effect(x) {
             if (hasElement(64)) x = x.mul(1.5)
             let ret = hasElement(133) ? x.root(1.5).mul(0.025).add(1) : x.root(1.75).mul(0.02).add(1)
-            return ret.softcap(2.3,0.25,0)
+            return overflow(ret.softcap(2.3,0.25,0),1e10,0.5)
         },
         effDesc(x) { return "^"+format(x)+(x.gte(2.3)?"<span class='soft'>（軟上限）</span>":"") },
     },
@@ -485,7 +486,7 @@ const CHALS = {
             let ret = x.add(1).pow(2)
             return ret
         },
-        effDesc(x) { return "^"+format(x,2)+" later" },
+        effDesc(x) { return "推遲 ^"+format(x,2) },
     },
     cols: 15,
 }

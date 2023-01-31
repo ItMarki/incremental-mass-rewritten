@@ -56,6 +56,8 @@ const MASS_DILATION = {
         let o = x
         let os = E('ee30').pow(glyphUpgEff(8))
 
+        if (hasUpgrade('atom',19)) os = os.pow(upgEffect(3,19))
+        
         x = overflow(x,os,0.5)
 
         tmp.overflow.dm = calcOverflow(o,x,os)
@@ -193,7 +195,7 @@ const MASS_DILATION = {
         toggle() {
             let bd = player.md.break
             
-            if (bd.active) createConfirm("你確定要修補膨脹嗎？",'bd',_=>{
+            if (bd.active) createConfirm("你確定要修補膨脹嗎？",'bd',()=>{
                 bd.active = false
                 
                 bd.energy = E(0)
@@ -334,13 +336,13 @@ const MASS_DILATION = {
                     cost(x) { return uni(1e120) },
                     bulk() { return player.md.break.mass.gte(uni(1e120))?E(1):E(0) },
                 },{
-                    unl: _=>player.dark.unl,
+                    unl: ()=>player.dark.unl,
                     desc: `你可以自動蒸發資源（比手動做更強）。`,
                     maxLvl: 1,
                     cost(x) { return uni(1e240) },
                     bulk() { return player.md.break.mass.gte(uni(1e240))?E(1):E(0) },
                 },{
-                    unl: _=>player.dark.unl,
+                    unl: ()=>player.dark.unl,
                     desc: `暗影獲得量翻倍。`,
                     cost(x) {
                         x = x.scale(17,hasPrestige(2,3)?1.5:3,0)
