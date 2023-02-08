@@ -122,7 +122,7 @@ const RADIATION = {
                 if (!tmp.dark.shadowEff.bhp) x = x.min(.15)
                 return x
             },
-            desc(x) { return `黑洞質量公式的指數增加 ${format(x)}（最高 0.15）` },
+            desc(x) { return `黑洞質量公式的指數增加 ${format(x)}` },
         },{
             title: `黑洞壓縮器加成`,
             eff(b) {

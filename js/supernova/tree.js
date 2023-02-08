@@ -112,7 +112,7 @@ const TREE_UPGS = {
         },
         sn4: {
             branch: ["sn3"],
-            desc: `超新星提升升級 [sn2] 的效果。`,
+            desc: `超新星提升 [sn2] 的效果。`,
             unl() { return player.supernova.post_10 },
             req() { return player.supernova.times.gte(13) },
             reqDesc: `13 個超新星。`,
@@ -234,7 +234,7 @@ const TREE_UPGS = {
             branch: ["s3"],
             req() { return player.supernova.times.gte(6) },
             reqDesc: `6 個超新星。`,
-            desc: `解鎖完恆星後，恆星解鎖器會變成提升器。`,
+            desc: `解鎖所有 5 種恆星後，恆星解鎖器會變成提升器。`,
             cost: E(1e5),
         },
         qol1: {
@@ -404,14 +404,14 @@ const TREE_UPGS = {
         },
         bs2: {
             branch: ["bs1"],
-            desc: `光子和膠子互相加強。`,
+            desc: `光子和膠子提升彼此的獲得量。`,
             cost: E(1e14),
             effect() {
                 let x = overflow(expMult(player.supernova.bosons.photon,hasElement(113) ? 0.95 : 1/2,2).max(1),'ee60',0.5)
                 let y = overflow(expMult(player.supernova.bosons.gluon,hasElement(113) ? 0.95 : 1/2,2).max(1),'ee60',0.5)
                 return [x,y]
             },
-            effDesc(x) { return "光子 "+format(x[1])+"x；膠子 "+format(x[0])+"x" },
+            effDesc(x) { return "光子 "+format(x[1])+"x，膠子 "+format(x[0])+"x" },
         },
         bs3: {
             branch: ["bs1"],
@@ -471,7 +471,7 @@ const TREE_UPGS = {
             branch: ["fn1"],
             req() { return player.atom.quarks.gte("e12500") && FERMIONS.onActive("10") },
             reqDesc() { return `在[電子]中到達 ${format("e12500")} 夸克。` },
-            desc: `[電子] 的最高階增加 35 個。它的效果軟上限更弱。`,
+            desc: `[電子] 的階上限增加 35 個。它的效果軟上限更弱。`,
             cost: E(1e42),
         },
         fn6: {
@@ -493,7 +493,7 @@ const TREE_UPGS = {
         },
         fn9: {
             branch: ["fn1"],
-            desc: `[奇] 和 [微中子] 的最高階增加 2 個。`,
+            desc: `[奇] 和 [微中子] 的階上限增加 2 個。`,
             cost: E(1e166),
         },
         fn10: {
@@ -501,13 +501,13 @@ const TREE_UPGS = {
             branch: ["fn5"],
             req() { return player.atom.points.gte("e1.5e8") && FERMIONS.onActive("10") && CHALS.inChal(9) },
             reqDesc() { return `在 [電子] 和挑戰 9 中到達 ${format("e1.5e8")} 原子。` },
-            desc: `[電子] 不再有最高階，而且大幅增強它的效果。`,
+            desc: `移除 [電子] 的階上限，而且大幅增強它的效果。`,
             cost: E('e600'),
         },
         fn11: {
             unl() { return PRIM.unl() },
             branch: ["fn9"],
-            desc: `[奇]、[頂]、[底]、[中子] 和 [緲微中子] 的最高階增加 5。`,
+            desc: `[奇]、[頂]、[底]、[中子] 和 [緲微中子] 的階上限增加 5。`,
             cost: E('e680'),
         },
         fn12: {
@@ -714,7 +714,7 @@ const TREE_UPGS = {
             unl() { return quUnl() },
             req() { return player.qu.times.gte(4) },
             reqDesc: `量子化 4 次。`,
-            desc: `你可以自動購買不需要量子泡沫的中子樹升級。`,
+            desc: `你可以自動購買不花費量子泡沫的中子樹升級。`,
             cost: E(3),
         },
         qu_qol2: {
@@ -742,7 +742,7 @@ const TREE_UPGS = {
         qu_qol4: {
             qf: true,
             branch: ["qu_qol1"],
-            desc: `你可以自動變成超新星；它不重置任何東西。`,
+            desc: `你可以自動變成超新星，它不重置任何東西。`,
             cost: E(4),
         },
         qu_qol5: {
@@ -790,7 +790,7 @@ const TREE_UPGS = {
             unl() { return player.md.break.active },
             qf: true,
             branch: ["qu_qol8"],
-            desc: `[qu_qol8] 在量子挑戰或大撕裂中有效。`,
+            desc: `[qu_qol8] 在量子挑戰和大撕裂中有效。`,
             cost: E(1e75),
         },
         qu_qol9: {
@@ -859,7 +859,7 @@ const TREE_UPGS = {
             unl() { return player.qu.rip.first },
             qf: true,
             branch: ['qu5'],
-            desc: `蒸發頻率和黑洞質量而獲得的資源快多一倍，其效果也更強。`,
+            desc: `蒸發頻率和黑洞質量所獲得的資源快一倍，其效果也更強。`,
             cost: E(1e55),
         },
         br1: {
@@ -916,21 +916,21 @@ const TREE_UPGS = {
             unl: ()=>player.dark.unl,
 
             qf: true,
-            desc: `你不能從原始素定理獲得 Δ、Α、Ο 和 Σ 粒子，但是上述每個粒子的數量等於原始素定理的總數。`,
+            desc: `你不能從原始素定理獲得 Δ、Α、Ο 和 Σ 粒子，但是以上每個粒子的數量等於原始素定理。`,
             cost: E(1e110),
         },
         qu_qol11: {
             branch: ["qu_qol10"],
 
             qf: true,
-            desc: `你不能從原始素定理獲得 Φ 和 Ε 粒子，但是上述每個粒子的數量等於原始素定理的總數。`,
+            desc: `你不能從原始素定理獲得 Φ 和 Ε 粒子，但是以上每個粒子的數量等於原始素定理。`,
             cost: E(1e130),
         },
         qu_qol12: {
             branch: ["qu_qol11"],
 
             qf: true,
-            desc: `你不能從原始素定理獲得 Θ 和 Β 粒子，但是上述每個粒子的數量等於原始素定理的總數。`,
+            desc: `你不能從原始素定理獲得 Θ 和 Β 粒子，但是以上每個粒子的數量等於原始素定理。`,
             cost: E(1e190),
         },
 

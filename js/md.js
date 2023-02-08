@@ -60,6 +60,7 @@ const MASS_DILATION = {
         
         x = overflow(x,os,0.5)
 
+        tmp.overflowBefore.dm = o
         tmp.overflow.dm = calcOverflow(o,x,os)
         tmp.overflow_start.dm = os
 

@@ -121,7 +121,7 @@ const ENTROPY = {
                 let x = i.root(2).div(10).add(1).pow(-1)
                 return x
             },
-            desc(x) { return `在元級增幅前，所有超新星前增幅弱 <b>${formatReduction(x)}</b>（不適用於五級層或以後）。` },
+            desc(x) { return `所有超新星前、五級層前和元級層前的增幅弱 <b>${formatReduction(x)}</b>。` },
         },{
             title: "熵濃縮",
 
@@ -147,7 +147,7 @@ const ENTROPY = {
                 let x = player.qu.en.amt.add(1).log10().pow(0.75).mul(i).div(1500).add(1)
                 return x
             },
-            desc(x) { return `輻射效果加強 <b>^${x.format()}</b>（基於熵）。` },
+            desc(x) { return `熵將輻射效果加強 <b>^${x.format()}</b>。` },
         },
 
         /*

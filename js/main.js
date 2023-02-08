@@ -93,6 +93,7 @@ const FORMS = {
 
         x = overflow(x,os,0.5)
 
+        tmp.overflowBefore.mass = o
         tmp.overflow.mass = calcOverflow(o,x,os)
         tmp.overflow_start.mass = os
 
@@ -408,6 +409,7 @@ const FORMS = {
 
             x = overflow(x,os,op)
 
+            tmp.overflowBefore.bh = o
             tmp.overflow.bh = calcOverflow(o,x,os)
             tmp.overflow_start.bh = os
             tmp.overflow_power.bh = op
@@ -510,20 +512,20 @@ const FORMS = {
     },
     reset_msg: {
         msgs: {
-            rp: "到達 1e9 tonne 的質量後，可以重置以往功能以獲得暴怒點數",
-            dm: "到達 1e20 暴怒點數後，可以重置以往功能以獲得暗物質",
-            atom: "到達 1e100 uni 的黑洞後，可以重置以往所有功能以獲得原子和夸克",
-            md: "膨脹質量，然後取消",
-            br: "將維度大撕裂，然後取消",
-            dark: "需要鿫（⿹气奧）-118 才能進入暗界",
+            rp: "到達 1e9 tonne 的質量後，可以重置以往功能，獲得暴怒點數。",
+            dm: "到達 1e20 暴怒點數後，可以重置以往功能，獲得暗物質。",
+            atom: "到達 1e100 uni 的黑洞後，可以重置以往所有功能，獲得原子和夸克。",
+            md: "膨脹質量或取消之。",
+            br: "將維度大撕裂或取消之。",
+            dark: "需要鿫（⿹气奧）-118 才能進入暗界。",
         },
         set(id) {
             if (id=="sn") {
-                player.reset_msg = "到達 "+format(tmp.supernova.maxlimit)+" 塌縮恆星以變成超新星"
+                player.reset_msg = "到達 "+format(tmp.supernova.maxlimit)+" 塌縮恆星即可變成超新星"
                 return
             }
             if (id=="qu") {
-                player.reset_msg = "到達 "+formatMass(mlt(1e4))+" 質量以"+(QCs.active()?"完成量子挑戰":"量子化")
+                player.reset_msg = "到達 "+formatMass(mlt(1e4))+" 質量即可"+(QCs.active()?"完成量子挑戰":"量子化")
                 return
             }
             player.reset_msg = this.msgs[id]

@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="tooltip.css">
 
     <script src="js/break_eternity.js"></script>
+    <script src="js/tooltip.js"></script>
     <script src="js/Element.js"></script>
     <script src="js/elements.js"></script>
     <script src="js/confirm.js"></script>
@@ -54,12 +55,14 @@
 
     <script src="js/secret.js"></script>
 
+    <script src="js/tooltip_res.js"></script>
     <script src="js/main.js"></script>
 
     <title>增量質量（重寫版）</title>
 </head>
 <body onload="loadGame()">
     <input id="copy" style="position: absolute; top: 0; left: 0; user-select: all; visibility: hidden;">
+    <div id="tooltip-div"></div>
     <div id="loading" class='table_center' style="align-items: center; height: 100%;">
         <div>
             <h1>正在加載遊戲……</h1><br>
@@ -89,7 +92,7 @@
             <h2>你變成了 <span id="supernova_rank"></span>  次<span id="supernova_scale"></span>超新星</h2><br>
             下一次超新星在 <span id="supernova_next">X</span> 個恆星
         </div>
-        <div class="line"></div>
+        <div class="main-line"></div>
         <div id="sn_stabs" style="min-height: 40px;"></div><br>
         <div id="stab_frame5_0">
             <div style="height: 130px;">
@@ -159,52 +162,79 @@
                 <div id="table_resources" class="top_text">
 
                     <div class="resources sml" id="mass_div">
-                        <div tooltip="質量" t-size="small"><img class="res_img" src="images/mass.png"></div>
+                        <div id="mass_tooltip" class="tooltip" tooltip-pos="bottom" tooltip-align="left" tooltip-text-align="left" tooltip-html="質量">
+                            <img class="res_img" src="images/mass.png">
+                        </div>
                         <span style="margin-left: 5px; text-align: left;" id="mass">X</span>
                     </div><div class="resources sml red" id="rp_div">
-                        <div tooltip="暴怒點數" t-size="small"><img class="res_img" src="images/rp.png" onclick="FORMS.rp.reset()" onmousemove="FORMS.reset_msg.set('rp')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
+                        <div id="rp_tooltip" class="tooltip" tooltip-pos="bottom" tooltip-align="left" tooltip-text-align="left" tooltip-html="暴怒力量">
+                            <img class="res_img" src="images/rp.png" onclick="FORMS.rp.reset()" style="cursor: pointer;">
+                        </div>
                         <span style="margin-left: 5px; text-align: left;" id="rpAmt">X</span>
                     </div><div class="resources sml yellow" id="dm_div">
-                        <div tooltip="暗物質" t-size="small"><img class="res_img" src="images/dm.png" onclick="FORMS.bh.reset()" onmousemove="FORMS.reset_msg.set('dm')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
+                        <div id="dm_tooltip" class="tooltip" tooltip-pos="bottom" tooltip-align="left" tooltip-text-align="left" tooltip-html="暗物質">
+                            <img class="res_img" src="images/dm.png" onclick="FORMS.bh.reset()" style="cursor: pointer;">
+                        </div>
                         <span style="margin-left: 5px; text-align: left;" id="dmAmt">X</span>
                     </div><div class="resources sml yellow" id="bh_div">
-                        <div tooltip="黑洞" t-size="small"><img class="res_img" src="images/bh.png"></div>
+                        <div id="bh_tooltip" class="tooltip" tooltip-pos="bottom" tooltip-align="left" tooltip-text-align="left" tooltip-html="黑洞">
+                            <img class="res_img" src="images/bh.png">
+                        </div>
                         <span style="margin-left: 5px; text-align: left;" id="bhMass">X</span>
                     </div><div class="resources sml" id="atom_div">
-                        <div tooltip="原子" t-size="small"><img class="res_img" src="images/atom.png" onclick="ATOM.reset()" onmousemove="FORMS.reset_msg.set('atom')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
+                        <div id="atom_tooltip" class="tooltip" tooltip-pos="bottom" tooltip-align="left" tooltip-text-align="left" tooltip-html="原子">
+                            <img class="res_img" src="images/atom.png" onclick="ATOM.reset()" style="cursor: pointer;">
+                        </div>
                         <span style="margin-left: 5px; text-align: left;" id="atomAmt">X</span>
                     </div><div class="resources sml quark_color" id="quark_div">
-                        <div tooltip="夸克" t-size="small"><img class="res_img" src="images/quark.png"></div>
+                        <div id="quarks_tooltip" class="tooltip" tooltip-pos="bottom" tooltip-align="left" tooltip-text-align="left" tooltip-html="夸克">
+                            <img class="res_img" src="images/quark.png">
+                        </div>
                         <span style="margin-left: 5px; text-align: left;" id="quarkAmt">X</span>
                     </div><div class="resources sml green" id="md_div">
-                        <div tooltip="質量膨脹" t-size="small"><img class="res_img" src="images/md.png" onclick="MASS_DILATION.onactive()" onmousemove="FORMS.reset_msg.set('md')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
+                        <div id="md_tooltip" class="tooltip" tooltip-pos="bottom" tooltip-align="left" tooltip-text-align="left" tooltip-html="質量膨脹">
+                            <img class="res_img" src="images/md.png" onclick="MASS_DILATION.onactive()" style="cursor: pointer;">
+                        </div>
                         <span style="margin-left: 5px; text-align: left;" id="md_massAmt">X</span>
                     </div> <div class="resources sml magenta" id="sn_div">
-                        <div tooltip="超新星" t-size="small"><img class="res_img" src="images/sn.png" onclick="SUPERNOVA.reset(false,false,true)" onmousemove="FORMS.reset_msg.set('sn')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
+                        <div id="sn_tooltip" class="tooltip" tooltip-pos="bottom" tooltip-align="left" tooltip-text-align="left" tooltip-html="超新星">
+                            <img class="res_img" src="images/sn.png" onclick="SUPERNOVA.reset(false,false,true)" style="cursor: pointer;">
+                        </div>
                         <span style="margin-left: 5px; text-align: left;" id="supernovaAmt">X</span>
                     </div><div class="resources sml light_green" id="qu_div">
-                        <div tooltip="量子泡沫" t-size="small"><img class="res_img" src="images/qu.png" onclick="QUANTUM.enter()" onmousemove="FORMS.reset_msg.set('qu')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
+                        <div id="qu_tooltip" class="tooltip" tooltip-pos="bottom" tooltip-align="left" tooltip-text-align="left" tooltip-html="量子泡沫">
+                            <img class="res_img" src="images/qu.png" onclick="QUANTUM.enter()" style="cursor: pointer;">
+                        </div>
                         <span style="margin-left: 5px; text-align: left;" id="quAmt">X</span>
                     </div><div class="resources sml light_red" id="br_div">
-                        <div tooltip="死亡碎片" t-size="small"><img class="res_img" src="images/br.png" onclick="BIG_RIP.rip()" onmousemove="FORMS.reset_msg.set('br')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
+                        <div id="br_tooltip" class="tooltip" tooltip-pos="bottom" tooltip-align="left" tooltip-text-align="left" tooltip-html="死亡碎片">
+                            <img class="res_img" src="images/br.png" onclick="BIG_RIP.rip()" style="cursor: pointer;">
+                        </div>
                         <span style="margin-left: 5px; text-align: left;" id="brAmt">X</span>
                     </div><div class="resources sml gray" id="dark_div">
-                        <div tooltip="暗束" t-size="small"><img class="res_img" src="images/dark.png" onclick="DARK.reset()" onmousemove="FORMS.reset_msg.set('dark')" onmouseleave="FORMS.reset_msg.reset()" style="cursor: pointer;"></div>
+                        <div id="dark_tooltip" class="tooltip" tooltip-pos="bottom" tooltip-align="left" tooltip-text-align="left" tooltip-html="暗束">
+                            <img class="res_img" src="images/dark.png" onclick="DARK.reset()" style="cursor: pointer;">
+                        </div>
                         <span style="margin-left: 5px; text-align: left;" id="darkAmt">X</span>
+                    </div><div class="resources sml" id="fss_div">
+                        <div id="fss_tooltip" class="tooltip" tooltip-pos="bottom" tooltip-align="left" tooltip-text-align="left" tooltip-html="天樞碎片">
+                            <img class="res_img" src="images/fss.png" onclick="MATTERS.final_star_shard.reset()" style="cursor: pointer;">
+                        </div>
+                        <span style="margin-left: 5px; text-align: left;" id="FSS2">X</span>
                     </div>
                     
                     <div class="resources sml orange" id="gs1_div">
-                        <div tooltip="量子前全局運行速度" t-size="medium"><img class="res_img" src="images/preQGSpeed.png"></div>
+                        <div id="speed_tooltip" class="tooltip" tooltip-pos="bottom" tooltip-align="left" tooltip-text-align="left" tooltip-html="Pre-Quantum Global Speed">
+                            <img class="res_img" src="images/preQGSpeed.png">
+                        </div>
                         <span style="margin-left: 5px; text-align: left;" id="preQGSpeed">X</span>
                     </div>
                 </div>
             </div>
-        </div><br><div style="min-height: 40px;">
-            <span id="reset_desc"></span>
-        </div><div style="min-height: 30px">
+        </div><br><div style="min-height: 30px">
             <div id="tabs" class="table_center"></div>
         </div>
-        <div class="line"></div>
+        <div class="main-line"></div>
         <div style="min-height: 30px;">
             <div id="stabs"></div>
         </div><br>
@@ -365,7 +395,7 @@
                 <div id="main_upgs_table" class="table_center"></div>
             </div><div id="tab_frame3">
                 <div id="stab_frame3_0">
-                    備註 1：點擊任何圖片以顯示挑戰描述，再次點擊以進入挑戰。<br><br>
+                    提示：點擊任何圖片以顯示挑戰描述，再次點擊以進入挑戰。<br><br>
                     <div class="table_center" style="width: 100%;">
                         <div style="width: calc(50% - 36px); height: 400px; overflow-y: auto; border: solid 3px white; margin: 0 15px; border-radius: 10px; background-color: black; padding: 5px 0;">
                             <div id="chals_table"></div>
@@ -396,13 +426,9 @@
                         </div>
                     </div><br>
                     <div id="qc_tab0">
-                        備註 1：點擊圖片以顯示挑戰描述。<br>
-                        備註 2：所有量子挑戰需要量子化才可以完成。<br><br>
-                        <div class="table_center" id="QC_table"></div><br>
-                        <div id="qc_desc_div">
-                            <p id="qc_ch_title"></p>
-                            <span class="red" id="qc_ch_desc"></span>
-                        </div>
+                        提示 1：點擊圖片以顯示挑戰描述。<br>
+                        提示 2：所有量子挑戰需要量子化才可以完成。<br><br>
+                        <div class="table_center" id="QC_table"></div>
                     </div><div id="qc_tab1">
                         <button class="btn" onclick="addQCPresetAs()">新增預設組合</button><br><br>
                         <div id="QC_Presets_table"></div>
@@ -436,7 +462,7 @@
                 </div><div id="stab_frame4_2">
                     你有 <span id="md_particles">X</span> 個相對粒子<br>
                     你有 <span id="md_mass">X</span> 的膨脹質量，將時間速度加強 <span id="md_eff">X</span><br><br>
-                    <button onclick="MASS_DILATION.onactive()" id="md_btn" class="btn full md" tooltip="膨脹質量時，原子會被重置，而所有原子前資源和原子力量的獲得量都會減弱到 ^0.8。">膨脹質量</button><br><br>
+                    <button onclick="MASS_DILATION.onactive()" id="md_btn" class="btn full md tooltip" tooltip-html="膨脹質量時執行原子重置，而所有原子前資源和原子力量的獲得量都會減弱到 ^0.8。">膨脹質量</button><br><br>
                     <div class="table_center">
                         <div id="md_upg_table" class="table_center" style="width: 1000px;"></div>
                     </div><br><div>
@@ -446,7 +472,7 @@
                 </div><div id="stab_frame4_3">
                     你有 <span id="bd_energy">X</span> 相對能量<br>
                     你有 <span id="bd_mass">X</span> 的相對質量<br><br>
-                    <button onclick="MASS_DILATION.break.toggle()" id="bd_btn" class="btn half_full bd" tooltip="當你在大撕裂裏打破膨脹時，黑洞壓縮器和宇宙射線不再受到 QC 模組 8 的影響，QC 模組 7 失效，而你可以基於膨脹質量獲得相對能量。相對能量會生產相對質量。修補膨脹會重置你的相對能量和相對質量，並且強制執行量子重置。">打破膨脹</button><br><br>
+                    <button onclick="MASS_DILATION.break.toggle()" id="bd_btn" class="btn half_full bd tooltip" tooltip-html="當你在大撕裂裏打破膨脹時，黑洞壓縮器和宇宙射線不再受到 QC 模組 8 的影響，QC 模組 7 失效，而你可以基於膨脹質量獲得<b>相對能量</b>。相對能量會生產<b>相對質量</b>。修補膨脹會重置你的相對能量和相對質量，並且強制執行量子重置。">打破膨脹</button><br><br>
                     <div class="table_center">
                         <div id="bd_upg_table" class="table_center" style="width: 1000px;"></div>
                     </div>
@@ -479,7 +505,7 @@
                         <div style="width: 33.3%; min-width: 300px;">
                             你的頻率是 <span id="enEva1">0</span> 赫茲<br><br>
                             <button id="evaBtn1" class="btn half_full" onclick="ENTROPY.switch(0)">將你的頻率蒸發以獲得焓</button><br><br>
-                            你有 <span id="enAmt1">0</span> 焓，將熵的每秒獲得量增加到 <span id="enEff1">0</span>
+                            你有 <span id="enAmt1">0</span> 焓，將熵的每秒獲得量增加 <span id="enEff1">0</span>
                         </div><div style="width: 33.3%; min-width: 300px;">
                             你有 <span id="enAmt2">0</span> 熵<br><span id="enGain"></span>
                         </div><div style="width: 33.3%; min-width: 300px;">
@@ -508,7 +534,7 @@
                     </div>
                 </div><div id="stab_frame7_1">
                     <div id="FSS_eff2"></div><br>
-                    <button onclick="darkRun()" class="btn half_full" id="dark_run_btn" tooltip="進入黑暗試煉會強制執行暗界重置，並將你困在 QC 模組部分填滿的大撕裂裏。你會基於資源獲得削弱遊戲的符文質量。選擇符文時，你會退出黑暗試煉。"></button>
+                    <button onclick="darkRun()" class="btn half_full tooltip" id="dark_run_btn" tooltip-html="進入黑暗試煉會強制執行暗界重置，並將你困在 QC 模組部分填滿的大撕裂裏。你會基於資源獲得削弱遊戲的<b>符文質量</b>。選擇符文時，你會退出黑暗試煉。"></button>
                     <button class="btn half_full" onclick="player.dark.run.gmode = (player.dark.run.gmode+1)%3">符文獲得模式：<span id="mg_btn_mode">X</span></button>
                     <button class="btn half_full" onclick="player.dark.run.glyphs = [0,0,0,0,0,0]">清空所有符文</button>
                     <br><br>
@@ -538,7 +564,7 @@
                 <button class="btn" onclick="export_copy()">導出至剪貼簿</button>
                 <button class="btn" onclick="importy()">導入</button>
                 <button class="btn" onclick="window.open('https://discord.gg/Ekp8FsSwzR')">加入 Discord 伺服器</button>
-                <button class="btn" onclick="window.open('https://www.donationalerts.com/r/mrredshark77')" tooltip="支持原作者！">捐助</button>
+                <button class="btn tooltip" onclick="window.open('https://www.donationalerts.com/r/mrredshark77')" tooltip-html="支持原作者！">捐助</button>
                 <button class="btn" onclick="createPopup(POPUP_GROUPS.help.html,'help')">幫助</button><br>
                 <button class="btn" onclick="turnOffline()">離線進度：<span id="offline_active">開啟</span></button>
                 <button class="btn" onclick="createPopup(POPUP_GROUPS.fonts.html,'fonts')">字型</button>
@@ -551,7 +577,7 @@
                 <h2>確認設定</h2><br>
                 <div id="confirm_table" class="table_center"></div>
                 <br><br>
-                增量質量（重寫版）v0.6.3.3 - 由 MrRedShark77 製作，ItMarki 翻譯<br>
+                增量質量（重寫版）v0.6.3.4 - 樣式更新 - 由 MrRedShark77 製作，ItMarki 翻譯<br>
                 本遊戲受到 <ruby>Distance Incremental<rt>距離增量</rt></ruby> 和 <ruby>Synergism<rt>協同放置</rt></ruby> 的啟發製作<br>
                 貢獻：<span style="cursor: pointer;" onclick='addNotify(`frfrfr<br><img src="https://5.imimg.com/data5/HO/DK/MY-8155364/lemon-500x500.jpg" style="width:100%">`)'>Lemon</span>、16777216 和 Aarex（繪畫）<br><br><br>
                 提示 1：把指標放在標籤上方的圖片上，即可查看描述……<br><br>

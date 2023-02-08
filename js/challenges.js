@@ -111,10 +111,10 @@ const CHALS = {
         return formatMass
     },
     getReset(x) {
-        if (x < 5) return "進入挑戰會執行一次暗物質重置！"
-        if (x < 9) return "進入挑戰會執行一次原子重置，但不會重置以往的挑戰！"
-        if (x < 13) return "進入挑戰會強制執行重置，但不會變成超新星！"
-        return "進入挑戰會強制執行暗界重置！"
+        if (x < 5) return "進入挑戰會強制執行暗物質重置。"
+        if (x < 9) return "進入挑戰會強制執行原子重置。"
+        if (x < 13) return "進入挑戰會強制執行超新星重置。"
+        return "進入挑戰會強制執行暗界重置。"
     },
     getMax(i) {
         let x = this[i].max
@@ -292,8 +292,8 @@ const CHALS = {
     3: {
         unl() { return player.chal.comps[2].gte(1) || player.atom.unl },
         title: "熔融質量",
-        desc: "質量獲得量軟上限提早 1e150 開始，而且效果更強。",
-        reward: `基於完成次數，質量獲得量獲得次方加成，但該加成不適用於此挑戰中！`,
+        desc: "質量獲得量軟上限提早 150 個數量級開始，而且效果更強。",
+        reward: `基於完成次數，質量獲得量獲得次方加成。（該加成不適用於此挑戰）`,
         max: E(100),
         inc: E(25),
         pow: E(1.25),
@@ -308,7 +308,7 @@ const CHALS = {
     4: {
         unl() { return player.chal.comps[3].gte(1) || player.atom.unl },
         title: "弱化狂怒",
-        desc: "暴怒點數獲得量開 10 次方根。質量獲得量軟上限提早 1e100 開始。",
+        desc: "暴怒點數獲得量開 10 次方根。質量獲得量軟上限提早 100 個數量級開始。",
         reward: `基於完成次數，暴怒點數獲得量獲得次方加成。`,
         max: E(100),
         inc: E(30),
@@ -354,7 +354,7 @@ const CHALS = {
     7: {
         unl() { return player.chal.comps[6].gte(1) || player.supernova.times.gte(1) || quUnl() },
         title: "無暴怒點數",
-        desc: "你不能獲得暴怒點數，但你會根據質量獲得暗物質。<br>質量獲得量軟上限更強。",
+        desc: "你不能獲得暴怒點數，但你會基於質量獲得暗物質。質量獲得量軟上限更強。",
         reward: `每完成一次，挑戰 1 - 4 的完成上限增加 2 次。<br><span class="yellow">完成 16 次時，解鎖元素</span>`,
         max: E(50),
         inc: E(64),
@@ -401,8 +401,8 @@ const CHALS = {
     10: {
         unl() { return hasTree("chal5") },
         title: "現實·一",
-        desc: "挑戰 1-8 的懲罰全部生效，而且你困在質量膨脹裏。",
-        reward: `相對粒子公式的指數根據完成次數獲得加成。（該效果不適用於此挑戰中）<br><span class="yellow">初次完成時，你會解鎖費米子。</span>`,
+        desc: "你困在挑戰 1-8 和質量膨脹裏。",
+        reward: `相對粒子公式的指數根據完成次數獲得加成。（該效果不適用於此挑戰）<br><span class="yellow">初次完成時，你會解鎖費米子。</span>`,
         max: E(100),
         inc: E('e2000'),
         pow: E(2),
@@ -416,7 +416,7 @@ const CHALS = {
     11: {
         unl() { return hasTree("chal6") },
         title: "絕對主義",
-        desc: "你不能獲得相對粒子和膨脹質量。你困在質量膨脹裏。",
+        desc: "你不能獲得膨脹質量，而且你困在質量膨脹裏。",
         reward: `完成次數加強恆星提升器。`,
         max: E(100),
         inc: E("ee6"),
@@ -476,7 +476,7 @@ const CHALS = {
     15: {
         unl() { return hasElement(168) },
         title: "現實·二",
-        desc: "挑戰 1-12 全部生效。此外，你困在模組為 [10,5,10,10,10,10,10,10] 的量子挑戰裏。",
+        desc: "你困在挑戰 1-12 和模組為 [10,5,10,10,10,10,10,10] 的量子挑戰裏。",
         reward: `基於完成次數，普通質量溢出推遲。<br><span class="yellow">初次完成時，你會解鎖更多功能！!</span>`,
         max: E(100),
         inc: E('e1e6'),

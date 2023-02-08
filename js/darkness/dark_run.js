@@ -12,12 +12,12 @@ const DARK_RUN = {
     },
 
     mass_glyph_effDesc: [
-        x => `在黑暗試煉中，將普通質量加成和黑洞質量加成的指數和減少 ^${format(x)}。\n你會根據普通質量獲得符文。`,
-        x => `在黑暗試煉中，將暗物質加成和暴怒力量加成的指數減少 ^${format(x)}。\n你會根據黑洞質量獲得符文。`,
-        x => `在黑暗試煉中，將原子、原子力量和夸克加成的指數減少 ^${format(x)}。\n你會根據夸克獲得符文。`,
-        x => `在黑暗試煉中，將相對粒子加成和膨脹質量公式的指數減少 ^${format(x)}。\n你會根據膨脹質量獲得符文。`,
-        x => `在黑暗試煉中，將超新星資源加成的指數減少 ^${format(x[0])}，並將超新星要求提升 x${format(x[1])}。\n你會根據塌縮恆星獲得符文。`,
-        x => `在黑暗試煉中，將重置底數的指數減少 /${format(x)}，並將所有級別的要求提升 x${format(x)}。\n你會根據重置底數獲得符文。`,
+        x => `在黑暗試煉中，將普通質量加成和黑洞質量加成的指數和減少 <b>^${format(x)}</b>。<br class='line'>你會根據普通質量獲得符文。`,
+        x => `在黑暗試煉中，將暗物質加成和暴怒力量加成的指數減少 <b>^${format(x)}</b>。<br class='line'>你會根據黑洞質量獲得符文。`,
+        x => `在黑暗試煉中，將原子、原子力量和夸克加成的指數減少 <b>^${format(x)}</b>。<br class='line'>你會根據夸克獲得符文。`,
+        x => `在黑暗試煉中，將相對粒子加成和膨脹質量公式的指數減少 <b>^${format(x)}</b>。<br class='line'>你會根據膨脹質量獲得符文。`,
+        x => `在黑暗試煉中，將超新星資源加成的指數減少 <b>^${format(x[0])}</b>，並將超新星要求提升 <b>x${format(x[1])}</b>。<br class='line'>你會根據塌縮恆星獲得符文。`,
+        x => `在黑暗試煉中，將重置底數的指數減少 <b>/${format(x)}</b>，並將所有級別的要求提升 <b>x${format(x)}</b>。<br class='line'>你會根據重置底數獲得符文。`,
     ],
 
     mass_glyph_gain: [
@@ -78,7 +78,7 @@ const DARK_RUN = {
             eff(i) { return 1.5**i },
             effDesc: x=>"^"+format(x,2),
         },{
-            desc: `暗束獲得量 +200%。`,
+            desc: `暗束獲得量增至 3x。`,
             cost(i) {
                 i *= Math.max(1,i-4)**0.5
                 return {0: Math.floor(20+20*i), 1: Math.floor(20+20*i), 2: Math.floor(20+20*i)}
@@ -196,7 +196,7 @@ function updateDarkRunHTML() {
     tmp.el.mg_max_gain.setTxt(format(player.dark.run.gamount,0))
     for (let x = 0; x < MASS_GLYPHS_LEN; x++) {
         tmp.el["mass_glyph"+x].setHTML(player.dark.run.glyphs[x] + (dra ? " (+" + format(tmp.dark.mass_glyph_gain[x],0) + ")" : ""))
-        tmp.el["mass_glyph_tooltip"+x].setTooltip(DARK_RUN.mass_glyph_name[x]+"\n"+DARK_RUN.mass_glyph_effDesc[x](tmp.dark.mass_glyph_eff[x]))
+        tmp.el["mass_glyph_tooltip"+x].setTooltip("<h3>"+DARK_RUN.mass_glyph_name[x]+"</h3><br class='line'>"+DARK_RUN.mass_glyph_effDesc[x](tmp.dark.mass_glyph_eff[x]))
     }
 
     let gum = tmp.mass_glyph_msg
@@ -274,7 +274,7 @@ function setupDarkRunHTML() {
     for (let x = 0; x < MASS_GLYPHS_LEN; x++) {
         html += `
         <div style="margin: 5px; width: 100px">
-            <div id="mass_glyph_tooltip${x}" style="margin-bottom: 5px;" onclick="glyphButton(${x})" tooltip="${DARK_RUN.mass_glyph_name[x]}"><img style="cursor: pointer" src="images/glyphs/glyph${x}.png"></div>
+        <div id="mass_glyph_tooltip${x}" class="tooltip" style="margin-bottom: 5px;" onclick="glyphButton(${x})" tooltip-html="${DARK_RUN.mass_glyph_name[x]}"><img style="cursor: pointer" src="images/glyphs/glyph${x}.png"></div>
             <div id="mass_glyph${x}">0</div>
         </div>
         `

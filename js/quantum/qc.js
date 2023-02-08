@@ -20,51 +20,51 @@ const QCs = {
             eff(i) {
                 return [1-0.03*i,2/(i+2)]
             },
-            effDesc(x) { return `所有恆星資源 ^${format(x[0])}。<br>恆星生產器強度 ^${format(x[1])}。` },
+            effDesc(x) { return `所有恆星資源 <b>^${format(x[0])}</b>。<br>恆星生產器強度 <b>^${format(x[1])}</b>。` },
         },{
             eff(i) {
                 let x = E(2).pow(i**2)
                 return x
             },
-            effDesc(x) { return `量子前全局運行速度 /${format(x,0)}。` },
+            effDesc(x) { return `量子前全局運行速度 <b>/${format(x,0)}</b>。` },
         },{
             eff(i) {
                 let x = i**1.5*0.15+1
                 return x
             },
-            effDesc(x) { return `所有費米子的要求提升 x${format(x)}。` },
+            effDesc(x) { return `所有費米子的要求提升 <b>x${format(x)}</b>。` },
         },{
             eff(i) {
                 let x = 0.9**(i**1.25)
                 return x
             },
-            effDesc(x) { return `玻色子和輻射資源的加成 ^${format(x)}。` },
+            effDesc(x) { return `玻色子和輻射資源的加成 <b>^${format(x)}</b>。` },
         },{
             eff(i) {
                 let x = 0.8**(i**1.25)
                 return x
             },
-            effDesc(x) { return `超新星前資源的加成 ^${format(x)}，所有恆星資源除外。` },
+            effDesc(x) { return `超新星前資源的加成 <b>^${format(x)}</b>，所有恆星資源除外。` },
         },{
             eff(i) {
                 let x = 1.2**i
                 return x
             },
-            effDesc(x) { return `量子前挑戰的要求提升 x${format(x)}。` },
+            effDesc(x) { return `量子前挑戰的要求提升 <b>x${format(x)}</b>。` },
         },{
             eff(i) {
                 if (hasElement(163)) i /= 2
                 let x = i**1.5/2+1
                 return x
             },
-            effDesc(x) { return `質量膨脹懲罰 ^${format(x)}。` },
+            effDesc(x) { return `質量膨脹懲罰 <b>^${format(x)}</b>。` },
         },{
             eff(i) {
                 if (hasElement(98) && player.qu.rip.active) i *= 0.8
                 let x = [1-0.05*i,i/10+1]
                 return x
             },
-            effDesc(x) { return `量子前增幅的開始 ^${format(x[0])}。<br>量子前增幅加強 ${format(x[1]*100)}%。` },
+            effDesc(x) { return `量子前增幅的開始 <b>^${format(x[0])}</b>。<br>量子前增幅加強 <b>${format(x[1]*100)}%</b>。` },
         },
     ],
 }
@@ -126,9 +126,9 @@ function setupQCHTML() {
 	for (let x = 0; x < QCs_len; x++) {
         table += `
         <div style="margin: 5px;">
-        <div style="margin: 5px" tooltip="${QCs.names[x]}"><img onclick="tmp.qc_ch = ${x}" style="cursor: pointer" src="images/qcm${x}.png"></div>
+        <div style="margin: 5px" id='qc_tooltip${x}' class="tooltip" tooltip-html="${QCs.names[x]}"><img style="cursor: pointer" src="images/qcm${x}.png"></div>
         <div><span id="qcm_mod${x}">0</span>/10</div>
-        <div id="qcm_btns${x}"><button onclick="QCs.incMod(${x},-1); tmp.qc_ch = ${x}">-</button><button onclick="QCs.incMod(${x},1); tmp.qc_ch = ${x}">+</button></div>
+        <div id="qcm_btns${x}"><button onclick="QCs.incMod(${x},-1)">-</button><button onclick="QCs.incMod(${x},1)">+</button></div>
         </div>
         `
     }
@@ -147,8 +147,7 @@ function updateQCModPresets() {
         for (let y = 0; y < QCs_len; y++) {
             table += `
             <div style="margin: 5px; align-items: center;" class="table_center">
-            <div style="margin-right: 3px; width: 20px; text-align: right;">${p.mods[y]}</div><div tooltip="${QCs.names[y]}"><img style="width: 25px; height: 25px" src="images/qcm${y}.png"></div>
-            </div>
+            <div style="margin-right: 3px; width: 20px; text-align: right;">${p.mods[y]}</div><div class="tooltip" tooltip-html="${QCs.names[y]}"><img style="width: 25px; height: 25px" src="images/qcm${y}.png"></div>
             `
         }
         table += `</div>
@@ -161,6 +160,7 @@ function updateQCModPresets() {
         </div>`
     }
     tmp.el.QC_Presets_table.setHTML(table)
+    setupTooltips()
 }
 
 function updateQCTemp() {
@@ -198,12 +198,14 @@ function updateQCHTML() {
         for (let x = 0; x < QCs_len; x++) {
             tmp.el["qcm_mod"+x].setTxt(QCs.getMod(x))
             tmp.el["qcm_btns"+x].setDisplay(!QCs.active())
-        }
-        tmp.el.qc_desc_div.setDisplay(tmp.qc_ch >= 0)
-        if (tmp.qc_ch >= 0) {
-            let x = tmp.qc_ch
-            tmp.el.qc_ch_title.setTxt(`[${x+1}] ${QCs.names[x]} [${QCs.getMod(x)}/10]`)
-            tmp.el.qc_ch_desc.setHTML(QCs.ctn[x].effDesc(tmp.qu.qc_eff[x]))
+
+            tmp.el['qc_tooltip'+x].setTooltip(
+                `
+                <h3>${QCs.names[x]}</h3>
+                <br class='line'>
+                ${QCs.ctn[x].effDesc(tmp.qu.qc_eff[x])}
+                `
+            )
         }
     }
 }
