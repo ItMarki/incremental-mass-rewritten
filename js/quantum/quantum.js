@@ -65,11 +65,11 @@ const QUANTUM = {
             for (let y = 0; y < 2; y++) player.supernova.radiation.bs[2*x+y] = E(0)
         }
 
-        for (let x = 1; x <= 12; x++) if (!hasTree("qu_qol7") || x <= 8 || force || dark) if (!hasElement(122) || x != 12 || dark)
+        for (let x = 1; x <= 12; x++) if (!hasTree("qu_qol7") || x <= 8 || force || dark) if (!hasElement(122) || x != 12 || dark) player.chal.comps[x] = E(0)
 
         SUPERNOVA.doReset()
 
-        tmp.pass = false
+        tmp.pass = 2
     },
     bpGain() {
         let x = E(1)

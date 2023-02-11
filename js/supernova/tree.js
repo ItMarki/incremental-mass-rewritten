@@ -4,7 +4,10 @@ const TREE_TAB = [
     {title: "挑戰"},
     {title: "超新星後", unl() { return player.supernova.post_10 } },
     {title: "量子", unl() { return quUnl() } },
+    {title: "腐蝕", unl() { return player.dark.c16.first } },
 ]
+
+const CORRUPTED_TREE = ['s1']
 
 const TREE_IDS = [
     [
@@ -13,14 +16,14 @@ const TREE_IDS = [
         ['chal1'],
         ['bs4','bs1','','qf1','','rad1'],
         ['qu0'],
-        [],
+        ['ct1'],
     ],[
         ['s1','m1','rp1','bh1','sn1'],
         ['qol2','qol3','qol4','qu_qol2','qu_qol3','qu_qol4','qu_qol5','qu_qol6'],
         ['chal2','chal4a','chal4b','chal3'],
         ['bs5','bs2','fn1','bs3','qf2','qf3','rad2','rad3'],
         ['qu1','qu2','qu3'],
-        [],
+        ['ct2','ct3','ct4','ct5'],
     ],[
         ['s2','m2','t1','d1','bh2','gr1','sn2'],
         ['qol5','qol6','qol7','','','qu_qol7','',''],
@@ -52,6 +55,12 @@ const TREE_IDS = [
     ],
 ]
 
+const CS_TREE = (_=>{
+    let t = []
+    for (let i in TREE_IDS) t.push(...TREE_IDS[i][5])
+    return t
+})()
+
 var tree_canvas,tree_ctx,tree_update=true
 
 const NO_REQ_QU = ['qol1','qol2','qol3','qol4','qol5',
@@ -65,8 +74,11 @@ const TREE_UPGS = {
     buy(x, auto=false) {
         if ((tmp.supernova.tree_choosed == x || auto) && tmp.supernova.tree_afford[x]) {
             if (this.ids[x].qf) player.qu.points = player.qu.points.sub(this.ids[x].cost).max(0)
+            else if (this.ids[x].cs) player.dark.c16.shard = player.dark.c16.shard.sub(this.ids[x].cost).max(0)
             else player.supernova.stars = player.supernova.stars.sub(this.ids[x].cost).max(0)
-            player.supernova.tree.push(x)
+            
+            if (CS_TREE.includes(x)) player.dark.c16.tree.push(x)
+            else  player.supernova.tree.push(x)
         }
     },
     ids: {
@@ -941,6 +953,74 @@ const TREE_UPGS = {
             desc: `解鎖一種元 U-夸克和一種元 U-輕子。`,
             cost: E('e1.5e10'),
         },
+
+        // Corrupted Tree
+
+        ct1: {
+            desc: `你在挑戰 16 中的最佳黑洞質量提升普通質量獲得量。`,
+            cost: E(10),
+
+            effect() {
+                let x = player.dark.c16.bestBH.add(1).log10().add(1)
+                return overflow(x,10,0.5)
+            },
+            effDesc(x) { return "^"+format(x) },
+        },
+        ct2: {
+            branch: ['ct1'],
+
+            desc: `你在挑戰 16 中的最佳黑洞質量提升玻色子資源獲得量。`,
+            cost: E(50),
+
+            effect() {
+                let x = player.dark.c16.bestBH.add(1).log10().add(1).pow(2)
+                return x
+            },
+            effDesc(x) { return "x"+format(x) },
+        },
+        ct3: {
+            branch: ['ct1'],
+
+            desc: `你在挑戰 16 中的最佳黑洞質量免費提供費米子階。`,
+            cost: E(50),
+
+            req() { return tmp.c16active && player.supernova.fermions.choosed == "06" && player.bh.mass.gte('1e81') },
+            reqDesc() { return `在挑戰 16 和 [元夸克] 中到達 ${formatMass('1e81')} 的黑洞質量。` },
+
+            effect() {
+                let x = player.dark.c16.bestBH.add(1).log10().add(1).log10().mul(1.5)
+                return x
+            },
+            effDesc(x) { return "+"+format(x) },
+        },
+        ct4: {
+            branch: ['ct1'],
+
+            desc: `你在挑戰 16 中的最佳黑洞質量提升所有有色物質的升級的底數。`,
+            cost: E(100),
+
+            req() { return tmp.c16active && player.bh.dm.gte(1e300) },
+            reqDesc() { return `在挑戰 16 中到達 ${format(1e300)} 暗物質。` },
+
+            effect() {
+                let x = player.dark.c16.bestBH.add(1).log10().add(1).log10().div(tmp.c16active?8:30)
+                return x.toNumber()
+            },
+            effDesc(x) { return "+"+format(x) },
+        },
+        ct5: {
+            branch: ['ct1'],
+
+            desc: `中子元素-0 稍微加強挑戰 13 的獎勵。`,
+            cost: E(100),
+
+            effect() {
+                let x = overflow(tmp.qu.chroma_eff[2],10,0.5).root(3)
+                return x
+            },
+            effDesc(x) { return "x"+format(x) },
+        },
+
         /*
         x: {
             unl() { return true },
@@ -958,7 +1038,23 @@ const TREE_UPGS = {
     },
 }
 
-function hasTree(id) { return player.supernova.tree.includes(id) }
+for (let i in CS_TREE) {
+    let u = TREE_UPGS.ids[CS_TREE[i]]
+    if (!u) TREE_UPGS.ids[CS_TREE[i]] = {
+        icon: `placeholder`,
+        cs: true,
+        desc: `Placeholder.`,
+        cost: EINF,
+    }
+    else {
+        u.icon = u.icon||`placeholder`
+        u.desc = u.desc||`Placeholder.`
+        u.cs = true
+        u.cost = u.cost||EINF
+    }
+}
+
+function hasTree(id) { return (player.supernova.tree.includes(id) || player.dark.c16.tree.includes(id)) && !(tmp.c16active && CORRUPTED_TREE.includes(id)) }
 
 function treeEff(id,def=1) { return tmp.supernova.tree_eff[id]||E(def) }
 
@@ -1053,13 +1149,13 @@ function drawTreeBranch(num1, num2) {
     tree_ctx.beginPath();
     let color = TREE_UPGS.ids[num2].qf?"#39FF49":"#00520b"
     let color2 = TREE_UPGS.ids[num2].qf?"#009C15":"#fff"
-    tree_ctx.strokeStyle = hasTree(num2)?color:tmp.supernova.tree_afford[num2]?"#fff":"#333";
+    tree_ctx.strokeStyle = player.supernova.tree.includes(num2)||player.dark.c16.tree.includes(num2)?color:tmp.supernova.tree_afford[num2]?"#fff":"#333";
     tree_ctx.moveTo(x1, y1);
     tree_ctx.lineTo(x2, y2);
     tree_ctx.stroke();
 
     if (player.options.tree_animation != 2) {
-        tree_ctx.fillStyle = hasTree(num2)?color2:"#888";
+        tree_ctx.fillStyle = player.supernova.tree.includes(num2)||player.dark.c16.tree.includes(num2)?color2:"#888";
         let tt = [tmp.tree_time, (tmp.tree_time+1)%3, (tmp.tree_time+2)%3]
         for (let i = 0; i < 3; i++) {
             let [t, dx, dy] = [tt[i], x2-x1, y2-y1]
@@ -1082,14 +1178,15 @@ function changeTreeAnimation() {
 }
 
 function updateTreeHTML() {
+    let c16 = tmp.c16active
     let req = ""
     let t_ch = TREE_UPGS.ids[tmp.supernova.tree_choosed]
     if (tmp.supernova.tree_choosed != "") req = t_ch.req?`<span class="${t_ch.req()?"green":"red"}">${t_ch.reqDesc?"要求："+(typeof t_ch.reqDesc == "function"?t_ch.reqDesc():t_ch.reqDesc):""}</span>`:""
     tmp.el.tree_desc.setHTML(
         tmp.supernova.tree_choosed == "" ? `<div style="font-size: 12px; font-weight: bold;"><span class="gray">（點擊任意升級以顯示）</span></div>`
         : `<div style="font-size: 12px; font-weight: bold;"><span class="gray">（再次點擊以購買）</span>${req}</div>
-        <span class="sky"><b>[${tmp.supernova.tree_choosed}]</b> ${t_ch.desc}</span><br>
-        <span>價格：${format(t_ch.cost,2)} ${t_ch.qf?'量子泡沫':'中子星'}</span><br>
+        ${`<span class="sky"><b>[${tmp.supernova.tree_choosed}]</b> ${t_ch.desc}</span>`.corrupt(c16 && CORRUPTED_TREE.includes(tmp.supernova.tree_choosed))}<br>
+        <span>價格：${format(t_ch.cost,2)} ${t_ch.qf?'量子泡沫':t_ch.cs?'<span class="corrupted_text">腐蝕碎片</span>':'中子星'}</span><br>
         <span class="green">${t_ch.effDesc?"目前："+t_ch.effDesc(tmp.supernova.tree_eff[tmp.supernova.tree_choosed]):""}</span>
         `
     )
@@ -1102,7 +1199,8 @@ function updateTreeHTML() {
             let id = tmp.supernova.tree_had2[i][x]
             let unl = tmp.supernova.tree_unlocked[id]
             tmp.el["treeUpg_"+id].setVisible(unl)
-            if (unl) tmp.el["treeUpg_"+id].setClasses({btn_tree: true, qu_tree: TREE_UPGS.ids[id].qf, locked: !tmp.supernova.tree_afford[id], bought: hasTree(id), choosed: id == tmp.supernova.tree_choosed})
+            let bought = player.supernova.tree.includes(id)
+            if (unl) tmp.el["treeUpg_"+id].setClasses(player.dark.c16.tree.includes(id) || c16 && CORRUPTED_TREE.includes(id) ? {btn_tree: true, corrupted: true, choosed: id == tmp.supernova.tree_choosed} : {btn_tree: true, qu_tree: TREE_UPGS.ids[id].qf, locked: !tmp.supernova.tree_afford[id], bought: bought, choosed: id == tmp.supernova.tree_choosed})
         }
     }
 }

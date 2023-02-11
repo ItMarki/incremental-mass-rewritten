@@ -24,6 +24,7 @@ const CHROMA = {
     ],
     eff: [
         i => {
+            //if (tmp.c16active) return E(1)
             let x = i.add(1).log10().add(1).root(3)
             if (hasUpgrade('br',10)) x = x.mul(1.1)
             return x
@@ -47,7 +48,7 @@ const CHROMA = {
     ],
     effDesc: [
         x => {
-            return `將時間速度力量提升 ^${format(x)}`
+            return `將時間速度力量提升 ^${format(x)}`//.corrupt(tmp.c16active)
         },
         x => {
             return `將${player.dark.unl ? "奇異級前" : ""}五級層前的要求減少 ${format(x[0])}x`+x[0].softcapHTML(1e10)

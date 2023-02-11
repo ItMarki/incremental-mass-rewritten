@@ -9,8 +9,8 @@ const TOOLTIP_RES = {
 
             if (quUnl())
             h += `
-            <br class='line'>你有 <b class='red'>${player.rp.points.format(0)} ${player.rp.points.formatGain(tmp.rp.gain)}</b> 暴怒力量（量子後）。
-            <br class='line'>你有 <b class='yellow'>${player.bh.dm.format(0)} ${player.bh.dm.formatGain(tmp.bh.dm_gain)}</b> 暗物質（量子後）。
+            <br class='line'>你有 <b class='red'>${player.rp.points.format(0)} ${player.rp.points.formatGain(tmp.rp.gain.mul(tmp.preQUGlobalSpeed))}</b> 暴怒力量（量子後）。
+            <br class='line'>你有 <b class='yellow'>${player.bh.dm.format(0)} ${player.bh.dm.formatGain(tmp.bh.dm_gain.mul(tmp.preQUGlobalSpeed))}</b> 暗物質（量子後）。
             `;
 
             return h
@@ -46,7 +46,7 @@ const TOOLTIP_RES = {
 
             if (quUnl())
             h += `
-            <br class='line'>你有 <b class='cyan'>${player.atom.points.format(0)} ${player.atom.points.formatGain(tmp.atom.gain)}</b> 個原子（量子後）。
+            <br class='line'>你有 <b class='cyan'>${player.atom.points.format(0)} ${player.atom.points.formatGain(tmp.atom.gain.mul(tmp.preQUGlobalSpeed))}</b> 個原子（量子後）。
             `;
 
             return h
@@ -77,7 +77,7 @@ const TOOLTIP_RES = {
         full: "質量膨脹",
         desc() {
             let h = `
-            你有 <b>${formatMass(player.md.mass)} ${player.md.mass.formatGain(tmp.md.mass_gain,true)}</b> 的膨脹質量。
+            你有 <b>${formatMass(player.md.mass)} ${player.md.mass.formatGain(tmp.md.mass_gain.mul(tmp.preQUGlobalSpeed),true)}</b> 的膨脹質量。
             `
 
             if (tmp.overflowBefore.dm.gte(tmp.overflow_start.dm))
@@ -102,10 +102,10 @@ const TOOLTIP_RES = {
         full: "超新星",
         desc() {
             let h = `
-            你有 <b>${player.stars.points.format(0)} ${player.stars.points.formatGain(tmp.stars.gain)}</b> 個塌縮恆星。
+            你有 <b>${player.stars.points.format(0)} ${player.stars.points.formatGain(tmp.stars.gain.mul(tmp.preQUGlobalSpeed))}</b> 個塌縮恆星。
             <br class='line'>
             <i>
-            ${"你需要到達 <b>"+format(tmp.supernova.maxlimit)+"</b> 個塌縮恆星才可以變成超新星"}.
+            ${"你需要到達 <b>"+format(tmp.supernova.maxlimit)+"</b> 個塌縮恆星才可以變成超新星"}。
             </i>`
 
             return h
@@ -115,7 +115,7 @@ const TOOLTIP_RES = {
         full: "量子泡沫",
         desc() {
             let h = `<i>
-            ${"你需要到達 <b>"+formatMass(mlt(1e4))+"</b> 普通質量才可以"+(QCs.active()?"完成量子挑戰":"量子化")}.
+            ${"你需要到達 <b>"+formatMass(mlt(1e4))+"</b> 普通質量才可以"+(QCs.active()?"完成量子挑戰":"量子化")}。
             </i>`
 
             return h
@@ -171,6 +171,24 @@ const TOOLTIP_RES = {
             <br class='line'>
             <i>
             你需要到達 <b>${tmp.matters.FSS_req.format(0)}</b> 的 FSS 底數才可以獲得天樞碎片。
+            </i>`
+
+            return h
+        },
+    },
+    corrupt: {
+        full: "腐蝕碎片",
+        desc() {
+            let h = `
+            你在挑戰 16 中的最佳黑洞質量是 <b>${formatMass(player.dark.c16.bestBH)}</b>。
+            <br class='line'>
+            <i>
+            開始挑戰 16。退出挑戰時，你會基於黑洞質量獲得<b>腐蝕碎片</b>，門檻為 <b>${formatMass('e100')}</b>。<br><br>
+            • 你不能獲得暴怒點數和暗物質。所有有色物質的公式失效，但它們會產生其他有色物質。紅物質會生產暗物質。<br>
+            • 挑戰 16 前的內容都被腐蝕/禁用（包括級別和重置等級、主升級、元素、中子樹等）。<br>
+            • 你困在質量膨脹和暗黑試煉裏，每個符文都有 100 個。<br>
+            • 原始素粒子失效。<br>
+            • 量子前全局運行速度一律定為 /100。<br>
             </i>`
 
             return h

@@ -35,6 +35,7 @@ const ELEMENTS = {
         '錀','鎶','鉨','鈇','鏌','鉝','鿬（⿰石田）','鿫（⿹气奧）'
     ],
     canBuy(x) {
+        if (tmp.c16active && CORRUPTED_ELEMENTS.includes(x)) return false
         let res = this.upgs[x].dark ? player.dark.shadow : player.atom.quarks
         return res.gte(this.upgs[x].cost) && !hasElement(x) && (player.qu.rip.active ? true : !BR_ELEM.includes(x)) && !tmp.elements.cannot.includes(x) && !(CHALS.inChal(14) && x < 118)
     },
@@ -44,7 +45,7 @@ const ELEMENTS = {
             else player.atom.quarks = player.atom.quarks.sub(this.upgs[x].cost)
             player.atom.elements.push(x)
 
-            tmp.pass = false
+            tmp.pass = 2
         }
     },
     upgs: [
@@ -408,7 +409,7 @@ const ELEMENTS = {
             effect() {
                 let x = tmp.tickspeedEffect?tmp.tickspeedEffect.step.max(1).log10().div(10).max(1):E(1)
                 if (hasElement(66)) x = x.pow(2)
-                return x.max(1)
+                return x
             },
             effDesc(x) { return format(x)+"x" },
         },
@@ -1104,7 +1105,7 @@ const ELEMENTS = {
             effDesc(x) { return "^"+format(x) },
         },{
             dark: true,
-            desc: `暗物質每次到達一個 OoM^2，所有有色物質的獲得量提升 10%。解鎖更多主升級。`,
+            desc: `暗物質每次到達一個數量級^2，所有有色物質的獲得量提升 10%。解鎖更多主升級。`,
             cost: E(1e303),
             effect() {
                 let x = Decimal.pow(1.1,player.bh.dm.add(1).log10().add(1).log10())
@@ -1241,8 +1242,8 @@ const ELEMENTS = {
             desc: `天樞碎片要求減少 20%。`,
             cost: E('1e1480'),
         },{
-            desc: `解鎖挑戰 16。（尚未開發）`,
-            cost: EINF,
+            desc: `解鎖挑戰 16。`,
+            cost: E('e7e134'),
         },
     ],
     /*
@@ -1342,7 +1343,9 @@ for (let x = 2; x <= MAX_ELEM_TIERS; x++) {
     ELEMENTS.map.push(m)
 }
 
-function hasElement(x) { return player.atom.elements.includes(x) }
+const CORRUPTED_ELEMENTS = [40,150,162,187,199,200,204]
+
+function hasElement(x) { return player.atom.elements.includes(x) && !(tmp.c16active && CORRUPTED_ELEMENTS.includes(x)) }
 
 function elemEffect(x,def=1) { return tmp.elements.effect[x]||def }
 
@@ -1391,7 +1394,7 @@ function setupElementsHTML() {
 }
 
 function updateElementsHTML() {
-    let tElem = tmp.elements
+    let tElem = tmp.elements, c16 = tmp.c16active
 
     tmp.el.elemTierDiv.setDisplay(player.dark.unl)
     tmp.el.elemTier.setHTML("元素第 "+player.atom.elemTier + " 階")
@@ -1403,6 +1406,7 @@ function updateElementsHTML() {
         let res = eu.dark?" 個暗影":" 個夸克"
 
         tmp.el.elem_desc.setHTML("<b>["+ELEMENTS.fullNames[ch]+"]</b> "+eu.desc)
+        tmp.el.elem_desc.setClasses({sky: true, corrupted_text2: c16 && CORRUPTED_ELEMENTS.includes(ch)})
         tmp.el.elem_cost.setTxt(format(eu.cost,0)+res+(BR_ELEM.includes(ch)?"（大撕裂）":"")+(player.qu.rip.active&&tElem.cannot.includes(ch)?"（不能在大撕裂中購買）":""))
         tmp.el.elem_eff.setHTML(eu.effDesc?"目前："+eu.effDesc(tElem.effect[ch]):"")
     }
@@ -1427,7 +1431,7 @@ function updateElementsHTML() {
                     upg.setVisible(unl2)
                     if (unl2) {
                         let eu = ELEMENTS.upgs[x]
-                        upg.setClasses({elements: true, locked: !ELEMENTS.canBuy(x), bought: hasElement(x), br: BR_ELEM.includes(x), final: x == 118, dark: eu.dark})
+                        upg.setClasses(c16 && CORRUPTED_ELEMENTS.includes(x)?{elements: true, locked: true, corrupted: true}:{elements: true, locked: !ELEMENTS.canBuy(x), bought: hasElement(x), br: BR_ELEM.includes(x), final: x == 118, dark: eu.dark})
                     }
                 }
             }

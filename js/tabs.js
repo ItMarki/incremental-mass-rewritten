@@ -65,6 +65,7 @@ const TABS = {
             { id: "黑暗效果" },
             { id: "黑暗試煉", unl() { return tmp.darkRunUnlocked } },
             { id: "有色物質", unl() { return tmp.matterUnl } },
+            { id: "腐蝕", unl() { return player.dark.c16.first } },
         ]
     },
 }

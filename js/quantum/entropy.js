@@ -69,10 +69,11 @@ const ENTROPY = {
             inc: E(20),
 
             eff(i) {
+                if (tmp.c16active) return E(1)
                 let x = i.pow(0.5).div(5).add(1)
                 return x
             },
-            desc(x) { return `原子力量效果的指數強 <b>${formatPercent(x.sub(1))}</b>。` },
+            desc(x) { return `原子力量效果的指數強 <b>${formatPercent(x.sub(1))}</b>。`.corrupt(tmp.c16active) },
         },{
             title: "熵蒸發",
 
@@ -95,11 +96,12 @@ const ENTROPY = {
             inc: E(2),
 
             eff(i) {
+                if (tmp.c16active) return [E(0),E(1)]
                 let x = i.div(QCs.active()?100:5).softcap(2,0.5,0)
                 let y = tmp.tickspeedEffect?tmp.tickspeedEffect.step.pow(x):E(1)
                 return [x,y]
             },
-            desc(x) { return `時間速度對黑洞壓縮器和宇宙射線力量給予 <b>^${x[0].format(2)}</b> 的加成。<br>目前：<b>${x[1].format()}x</b>` },
+            desc(x) { return `時間速度對黑洞壓縮器和宇宙射線力量給予 <b>^${x[0].format(2)}</b> 的加成。<br>目前：<b>${x[1].format()}x</b>`.corrupt(tmp.c16active) },
         },{
             title: "熵加成",
 
@@ -107,10 +109,11 @@ const ENTROPY = {
             inc: E(2),
 
             eff(i) {
+                if (tmp.c16active) return E(1)
                 let x = i.pow(2).div(20).add(1)
                 return x
             },
-            desc(x) { return `額外質量升級、時間速度、黑洞壓縮器和宇宙射線 <b>x${x.format(2)}</b>。` },
+            desc(x) { return `額外質量升級、時間速度、黑洞壓縮器和宇宙射線 <b>x${x.format(2)}</b>。`.corrupt(tmp.c16active) },
         },{
             title: "熵增幅",
 
@@ -198,10 +201,10 @@ const ENTROPY = {
         return x
     },
     getRewardEffect(i) {
-        if ((player.qu.rip.active || player.dark.run.active) && !tmp.en.reward_br.includes(i)) return E(0)
+        if ((player.qu.rip.active || tmp.c16active || player.dark.run.active) && !tmp.en.reward_br.includes(i)) return E(0)
         let x = player.qu.en.rewards[i]
 
-        if (hasElement(91) && (player.qu.rip.active || player.dark.run.active) && (i==1||i==4)) x = x.mul(0.1)
+        if (hasElement(91) && (player.qu.rip.active || tmp.c16active || player.dark.run.active) && (i==1||i==4)) x = x.mul(0.1)
 
         return x
     },

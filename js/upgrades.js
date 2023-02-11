@@ -868,7 +868,7 @@ const UPGS = {
                 },
                 effDesc(x=this.effect()) { return "便宜 x"+format(x) },
             },
-		},
+        },
     },
 }
 
