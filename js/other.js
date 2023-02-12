@@ -72,6 +72,7 @@ const POPUP_GROUPS = {
             <button class="btn" style="font-family: 'Lucida Handwriting';" onclick="player.options.font = 'Lucida Handwriting'">Lucida Handwriting</button>
             <button class="btn" style="color: yellow;font-family: 'LXGWNeoXiHei';" onclick="player.options.font = 'LXGWNeoXiHei'">霞鶩新晰黑</button>
             <button class="btn" style="color: yellow;font-family: 'LXGWWenKai';" onclick="player.options.font = 'LXGWWenKai'">霞鶩文楷</button>
+            <button class="btn" style="font-family: MisekiBitmap;" onclick="player.options.font = 'MisekiBitmap'">美績點陣體</button>
             <button class="btn" style="font-family: Monospace-Typewritter;" onclick="player.options.font = 'Monospace-Typewritter'">Monospace Typewritter</button>
 			<button class="btn" style="font-family: 'MS Sans Serif';" onclick="player.options.font = 'MS Sans Serif'">MS Sans Serif</button>
             <button class="btn" style="color: yellow;font-family: 'Noto Sans SC';" onclick="player.options.font = 'Noto Sans SC'">Noto Sans SC</button>

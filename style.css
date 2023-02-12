@@ -81,10 +81,10 @@
 	font-weight: bold;
 }
 
-/*@font-face {
+@font-face {
 	font-family: 'MisekiBitmap';
 	src: url('fonts/MisekiBitmap.ttf');
-}*/
+}
 
 @font-face {
 	font-family: 'Monospace-Typewritter';
