@@ -431,6 +431,7 @@ const PRESTIGES = {
         {
             "1": `之前重置的要求減少 10%。`,
             "2": `每擁有一個聲望，奇異級超新星推遲 x1.25。`,
+            "4": `每擁有一個聲望，腐蝕碎片獲得量提升 50%。`,
         },
     ],
     rewardEff: [
@@ -514,6 +515,10 @@ const PRESTIGES = {
                 let x = Decimal.pow(1.25,player.prestiges[3])
                 return x
             },x=>"推遲 x"+x.format()],
+            "4": [()=>{
+                let x = player.prestiges[3].div(2).add(1)
+                return x
+            },x=>"x"+x.format()],
         },
     ],
     reset(i, bulk = false) {
@@ -665,6 +670,7 @@ const BEYOND_RANKS = {
             1: `自動購買超·級別。超·級別提升重置底數。`,
             2: `超·級別不再重置任何東西。[元輕子] 的效果乘以 8。`,
             4: `加速器的效果影響時間速度、黑洞壓縮器和宇宙射線的力量。賦色子獲得量 ^1.1。`,
+            7: `七級層提升費米子（除了元費米子）的獲得量。`,
         },
     },
 
@@ -701,6 +707,14 @@ const BEYOND_RANKS = {
                     let x = player.ranks.beyond.pow(3).add(1)
 
                     return x
+                },
+                x=>"x"+format(x),
+            ],
+            7: [
+                ()=>{
+                    let x = player.ranks.beyond.add(1).log10().add(1).pow(2)
+
+                    return overflow(x,10,0.5)
                 },
                 x=>"x"+format(x),
             ],

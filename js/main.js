@@ -94,6 +94,8 @@ const FORMS = {
         let o = x
         let os = tmp.c16active ? E('ee5') : E('ee69').pow(tmp.chal.eff[15])
 
+        if (hasTree('ct6')) os = os.pow(treeEff('ct6'))
+
         x = overflow(x,os,0.5)
 
         tmp.overflowBefore.mass = o
@@ -254,7 +256,7 @@ const FORMS = {
             if (hasPrestige(0,6)) ss = ss.pow(100)
             if (hasElement(102)) ss = ss.pow(100)
             step = step.softcap(ss,p,0,hasUpgrade('rp',16))
-            
+
             if (hasBeyondRank(2,4)) step = step.pow(tmp.accelEffect.eff)
 
             let eff = step.pow(t.add(bonus).mul(hasElement(80)?25:1))
@@ -332,7 +334,7 @@ const FORMS = {
             return gain.floor()
         },
         reset() {
-                if (tmp.rp.can) {
+            if (tmp.rp.can) {
                 if (player.confirms.rp) createConfirm("你確定要重置嗎？",'rpReset',CONFIRMS_FUNCTION.rage)
                 else CONFIRMS_FUNCTION.rage()
             }
@@ -519,12 +521,12 @@ const FORMS = {
     },
     reset_msg: {
         msgs: {
-            rp: "到達 1e9 tonne 的質量後，可以重置以往功能，獲得暴怒點數。",
-            dm: "到達 1e20 暴怒點數後，可以重置以往功能，獲得暗物質。",
-            atom: "到達 1e100 uni 的黑洞後，可以重置以往所有功能，獲得原子和夸克。",
+            rp: "到達 1e9 tonne 的質量後，你可以重置以往功能，獲得暴怒點數。",
+            dm: "到達 1e20 暴怒點數後，你可以重置以往功能，獲得暗物質。",
+            atom: "到達 1e100 uni 的黑洞後，你可以重置以往所有功能，獲得原子和夸克。",
             md: "膨脹質量或取消之。",
             br: "將維度大撕裂或取消之。",
-            dark: "需要鿫（⿹气奧）-118 才能進入暗界。",
+            dark: "你需要購買鿫（⿹气奧）-118 才可以進入暗界。",
         },
         set(id) {
             if (id=="sn") {

@@ -58,7 +58,7 @@ const POPUP_GROUPS = {
     fonts: {
         // <button class="btn" style="font-family: Comic Sans MS;" onclick="player.options.font = 'Comic Sans MS'">Comic Sans MS</button>
         html: `
-            <b>注意</b>：支援漢字的字型以<span style="color: yellow;">黃色文字</span>標記。<br>
+            <b>提示</b>：支援漢字的字型以<span style="color: yellow;">黃色文字</span>標記。<br>
             <button class="btn" style="font-family: 'Andy Bold';" onclick="player.options.font = 'Andy Bold'">Andy Bold</button>
             <button class="btn" style="font-family: Arial, Helvetica, sans-ser;" onclick="player.options.font = 'Arial, Helvetica, sans-ser'">Arial</button>
             <button class="btn" style="font-family: Bahnschrift;" onclick="player.options.font = 'Bahnschrift'">Bahnschrift</button>

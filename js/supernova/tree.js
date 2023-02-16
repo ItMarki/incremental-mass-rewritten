@@ -23,7 +23,7 @@ const TREE_IDS = [
         ['chal2','chal4a','chal4b','chal3'],
         ['bs5','bs2','fn1','bs3','qf2','qf3','rad2','rad3'],
         ['qu1','qu2','qu3'],
-        ['ct2','ct3','ct4','ct5'],
+        ['ct2','ct3','ct4','ct5','ct6'],
     ],[
         ['s2','m2','t1','d1','bh2','gr1','sn2'],
         ['qol5','qol6','qol7','','','qu_qol7','',''],
@@ -1019,6 +1019,21 @@ const TREE_UPGS = {
                 return x
             },
             effDesc(x) { return "x"+format(x) },
+        },
+        ct6: {
+            branch: ['ct1'],
+
+            desc: `在挑戰 16 中，最佳黑洞質量推遲質量溢出。`,
+            cost: E(300),
+
+            req() { return tmp.c16active && player.atom.atomic.gte(1e8) },
+            reqDesc() { return `在挑戰 16 中到達 ${format(1e8)} 原子力量。` },
+
+            effect() {
+                let x = player.dark.c16.bestBH.add(1).log10().add(1).pow(2)
+                return overflow(x,10,0.5)
+            },
+            effDesc(x) { return "推遲 ^"+format(x) },
         },
 
         /*

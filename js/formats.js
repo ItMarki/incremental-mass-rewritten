@@ -23,7 +23,7 @@ const FORMATS = {
           return `${omegas.join("^")}^${lastLetter}`;
           } else if (omegaAmount.gt(3) && omegaAmount.lt(10)) {
           return `ω(${omegaAmount.toFixed(0)})^${lastLetter}`;
-        } else if (omegaOrder.lt(3)) {
+          } else if (omegaOrder.lt(3)) {
           return `ω(${this.format(omegaAmount)})^${lastLetter}`;
           } else if (omegaOrder.lt(6)) {
           return `ω(${this.format(omegaAmount)})`;

@@ -522,4 +522,4 @@ function overflow(number, start, power){
 		number=Decimal.pow(10,number);
 	}
 	return number;
-} 
+}
