@@ -44,6 +44,11 @@ const TOOLTIP_RES = {
             if (tmp.overflowBefore.bh.gte(tmp.overflow_start.bh))
             h += `<br>（相當於<b>溢出</b>前的 <b>${formatMass(tmp.overflowBefore.bh)}</b>）`;
 
+            if (hasCharger(1))
+            h += `
+            <br class='line'>你的不穩定黑洞質量時 <b class='corrupted_text'>${formatMass(player.bh.unstable)} ${formatGain(player.bh.unstable,UNSTABLE_BH.calcProduction(),true)}</b>。
+            `;
+
             if (quUnl())
             h += `
             <br class='line'>你有 <b class='cyan'>${player.atom.points.format(0)} ${player.atom.points.formatGain(tmp.atom.gain.mul(tmp.preQUGlobalSpeed))}</b> 個原子（量子後）。

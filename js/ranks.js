@@ -426,7 +426,7 @@ const PRESTIGES = {
             "4": `鈾砹混合體解鎖另一個效果。`,
             "5": `榮譽提升符文質量獲得量。`,
             "8": `榮譽減弱黑洞溢出。`,
-            //"19": `?!.`,
+            "22": `榮譽提升所有有色物質的獲得量。`,
         },
         {
             "1": `之前重置的要求減少 10%。`,
@@ -509,6 +509,10 @@ const PRESTIGES = {
                 let x = player.prestiges[2].root(3).div(10).add(1).pow(-1)
                 return x.toNumber()
             },x=>"弱 "+formatReduction(x)],
+            "22": [()=>{
+                let x = Decimal.pow(2,player.prestiges[2].pow(.5))
+                return x
+            },x=>"x"+format(x)],
         },
         {
             "2": [()=>{
@@ -519,6 +523,7 @@ const PRESTIGES = {
                 let x = player.prestiges[3].div(2).add(1)
                 return x
             },x=>"x"+x.format()],
+            
         },
     ],
     reset(i, bulk = false) {
@@ -671,6 +676,7 @@ const BEYOND_RANKS = {
             2: `超·級別不再重置任何東西。[元輕子] 的效果乘以 8。`,
             4: `加速器的效果影響時間速度、黑洞壓縮器和宇宙射線的力量。賦色子獲得量 ^1.1。`,
             7: `七級層提升費米子（除了元費米子）的獲得量。`,
+            10: `黑洞質量 ^1.2。`,
         },
     },
 

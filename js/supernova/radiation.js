@@ -6,9 +6,12 @@ const RADIATION = {
         x = x.mul(tmp.radiation.ds_eff[0])
         if (hasTree('rad1')) x = x.mul(tmp.supernova.tree_eff.rad1||1)
         if (player.ranks.pent.gte(2)) x = x.mul(RANKS.effect.pent[2]())
+
         if (QCs.active()) x = x.pow(tmp.qu.qc_eff[3])
 
         if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(4)[0])
+
+        if (hasTree('ct8')) x = x.mul(treeEff('ct8'))
 
         return x
     },
@@ -31,6 +34,8 @@ const RADIATION = {
 
         if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(4)[0])
         
+        if (hasTree('ct8')) x = x.mul(treeEff('ct8'))
+
         return x
     },
     ds_eff(i) {
@@ -127,6 +132,7 @@ const RADIATION = {
             title: `黑洞壓縮器加成`,
             eff(b) {
                 let x = b.add(1).pow(2)
+                if (tmp.c16active) x = x.root(2)
                 return x.softcap(100,0.5,0)
             },
             desc(x) { return `非獎勵黑洞壓縮器強 ${format(x)}x` },

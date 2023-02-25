@@ -210,7 +210,7 @@ const ELEMENTS = {
             cost: E(1e80),
         },
         {
-            desc: `基於已購買的元素，困難挑戰的增幅更弱。`,
+            desc: `已購買的元素減弱困難挑戰的增幅。`,
             cost: E(1e85),
             effect() {
                 let x = E(0.99).pow(E(player.atom.elements.length).softcap(30,2/3,0)).max(0.5)
@@ -274,13 +274,13 @@ const ELEMENTS = {
             cost: E(1e225),
         },
         {
-            desc: `基於層數，超級階增幅更慢。`,
+            desc: `層減弱超級階增幅。`,
             cost: E(1e245),
             effect() {
                 let x = E(0.9).pow(player.ranks.tetr.softcap(6,0.5,0))
                 return x
             },
-            effDesc(x) { return format(E(1).sub(x).mul(100))+"% weaker" },
+            effDesc(x) { return "弱 "+ format(E(1).sub(x).mul(100))+"%" },
         },
         {
             desc: `宇宙射線的免費時間速度適用於暴怒升級 7。`,
@@ -414,7 +414,7 @@ const ELEMENTS = {
             effDesc(x) { return format(x)+"x" },
         },
         {
-            desc: `基於階數，極高級等級和時間速度增幅更弱。`,
+            desc: `階減弱極高級等級和時間速度增幅。`,
             cost: E('e5.7e4'),
             effect() {
                 let x = E(0.975).pow(player.ranks.tier.pow(0.5))
@@ -544,7 +544,7 @@ const ELEMENTS = {
             cost: E('e3e14'),
         },
         {
-            desc: `基於宇宙射線的免費時間速度，減弱極高級前質量升級的價格增幅。`,
+            desc: `宇宙射線的免費時間速度減弱極高級前質量升級的價格增幅。`,
             cost: E('e7e14'),
             effect() {
                 let x = tmp.atom?E(0.9).pow(tmp.atom.atomicEff.add(1).log10().pow(2/3)):E(1)
@@ -611,7 +611,7 @@ const ELEMENTS = {
                 let s = player.supernova.times
                 if (!player.qu.rip.active) s = s.root(1.5)
                 let x = E(1.1).pow(s)
-                return x
+                return x.softcap(player.qu.rip.active?'1e130':'1e308',0.01,0)
             },
             effDesc(x) { return "x"+x.format() },
         },
@@ -897,7 +897,7 @@ const ELEMENTS = {
             desc: `挑戰 13 的完成上限增加 75 次。`,
             cost: E("1e68"),
         },{
-            desc: `基於夸克，暗束獲得量提升。`,
+            desc: `夸克提升暗束獲得量。`,
             cost: E("e3.6e61"),
             effect() {
                 let x = player.atom.quarks.add(1).log10().add(1).log10().add(1).pow(1.5)
@@ -1018,7 +1018,7 @@ const ELEMENTS = {
             },
             effDesc(x) { return "x"+format(x) },
         },{
-            desc: `基於元級等級的起點，奇異級等級增幅推遲。`,
+            desc: `元級等級的起點推遲奇異級等級增幅。`,
             cost: E("e4.8e79"),
             effect() {
                 if (!tmp.scaling_start.meta || !tmp.scaling_start.meta.rank) return E(1)
@@ -1186,7 +1186,7 @@ const ELEMENTS = {
             effDesc(x) { return "+^"+format(x) },
         },{
             br: true,
-            desc: `鈾砹混合體的第二個效果使用於六級階增幅，效果也更強。`,
+            desc: `鈾砹混合體的第二個效果適用於六級階增幅，效果也更強。`,
             cost: E("1e1.67e103"),
         },{
             desc: `解鎖超·級別。`,
@@ -1239,7 +1239,7 @@ const ELEMENTS = {
             cost: E('e4.9e130'),
         },{
             dark: true,
-            desc: `天樞碎片要求減少 20%。`,
+            desc: `FSS 要求減少 20%。`,
             cost: E('1e1480'),
         },{
             desc: `解鎖挑戰 16。`,

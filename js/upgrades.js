@@ -368,7 +368,7 @@ const UPGS = {
             },
             17: {
                 unl() { return tmp.mass4Unl },
-                desc: `過強器力量提升 0.005。`,
+                desc: `過強器力量 +0.005。`,
                 cost: E('e7.75e116'),
             },
             18: {
@@ -469,7 +469,7 @@ const UPGS = {
             },
             8: {
                 unl() { return player.chal.unl },
-                desc: "將暴怒點數獲得量提升 ^1.15。",
+                desc: "暴怒點數獲得量 ^1.15。",
                 cost: E(1e17),
             },
             9: {
@@ -760,9 +760,9 @@ const UPGS = {
                 cost: E(50),
                 effect() {
                     let x = player.qu.rip.amt.add(1).log10().div(25).add(1)
-                    return x
+                    return x.softcap(30,0.5,0)
                 },
-                effDesc(x=this.effect()) { return "^"+format(x) },
+                effDesc(x=this.effect()) { return "^"+format(x)+x.softcapHTML(30) },
             },
             4: {
                 desc: `開始大撕裂時各費米子解鎖 2 階。`,

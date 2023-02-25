@@ -54,6 +54,7 @@ function updateChalTemp() {
     let s = tmp.qu.chroma_eff[2], w = treeEff('ct5'), v = 12
 
     if (hasTree('ct5')) v++
+    if (hasTree('ct7')) v++
 
     for (let x = 1; x <= CHALS.cols; x++) {
         let data = CHALS.getChalData(x)
@@ -70,6 +71,7 @@ function updateChalTemp() {
 const CHALS = {
     choose(x) {
         if (player.chal.choosed == x) {
+            this.exit()
             this.enter()
         }
         player.chal.choosed = x
@@ -149,6 +151,7 @@ const CHALS = {
         if (hasElement(186) && (i==13||i==14||i==15))  x = x.add(100)
         if (hasElement(196) && (i==13||i==14))  x = x.add(200)
         if (hasPrestige(1,46) && (i==13||i==14||i==15))  x = x.add(200)
+        if (i==13||i==14||i==15) x = x.add(tmp.dark.rayEff.dChal||0)
         return x.floor()
     },
     getScaleName(i) {
@@ -505,7 +508,7 @@ const CHALS = {
         desc: `
         • 你不能獲得暴怒點數和暗物質。所有有色物質的公式失效，但它們會產生其他有色物質。紅物質會生產暗物質。<br>
         • 挑戰 16 前的內容都被腐蝕/禁用（包括級別和重置等級、主升級、元素、中子樹等）。<br>
-        • 你困在質量膨脹和黑暗試煉裏，每個符文都有 100 個。<br>
+        • 你困在質量膨脹和黑暗試煉裏，每個符文都有 100 個（斯洛伐克符文則有 10 個）。<br>
         • 禁用原始素粒子。<br>
         • 量子前全局運行速度一律定為 /100。<br>
         退出挑戰時，你會基於黑洞質量獲得腐蝕碎片。

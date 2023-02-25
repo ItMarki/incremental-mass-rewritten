@@ -285,8 +285,8 @@
                                 <img src="images/tickspeed.png">
                                 <span style="margin-left: 5px; text-align: left;"><span id="tickspeed_scale"></span>時間速度 [<span id="tickspeed_lvl">X</span>]</span>
                             </div>
-                                            </div><button id="tickspeed_btn" class="btn" style="width: 200px;" onclick="FORMS.tickspeed.buy()">價格：<span id="tickspeed_cost">X</span> 暴怒點數</button>
-                    <button class="btn" style="width: 120px;" onclick="FORMS.tickspeed.buyMax()">購買最大</button>
+                                            </div><button id="tickspeed_btn" class="btn" style="width: 300px;" onclick="FORMS.tickspeed.buy()">價格：<span id="tickspeed_cost">X</span> 暴怒點數</button>
+                    <button class="btn" style="width: 120px;" onclick="FORMS.tickspeed.buyMax()">購買最多</button>
                     <button id="tickspeed_auto" class="btn" style="width: 80px;" onclick="FORMS.tickspeed.autoSwitch()">關閉</button>
                     <div style="margin-left: 5px; text-align: left; width: 400px">
                         時間速度力量：<span id="tickspeed_step">X</span><br>
@@ -298,8 +298,8 @@
                             <img src="images/accelerator.png">
                             <span style="margin-left: 5px; text-align: left;"><span id="accel_scale"></span>加速器 [<span id="accel_lvl">X</span>]</span>
                         </div>
-                    </div><button id="accel_btn" class="btn" style="width: 200px;" onclick="FORMS.accel.buy()">價格：<span id="accel_cost">X</span> 暴怒點數</button>
-                    <button class="btn" style="width: 120px;" onclick="FORMS.accel.buyMax()">購買最大</button>
+                    </div><button id="accel_btn" class="btn" style="width: 300px;" onclick="FORMS.accel.buy()">價格：<span id="accel_cost">X</span> 暴怒點數</button>
+                    <button class="btn" style="width: 120px;" onclick="FORMS.accel.buyMax()">購買最多</button>
                     <button id="accel_auto" class="btn" style="width: 80px;" onclick="FORMS.accel.autoSwitch()">關閉</button>
                     <div style="margin-left: 5px; text-align: left; width: 400px">
                         加速器力量：<span id="accel_step">X</span><br>
@@ -318,20 +318,42 @@
                     <div id="strongerOverflow"></div>
                     </div>
                 </div><div id="stab_frame0_1">
-                你的黑洞質量是 <span id="bhMass2">X</span>，<br>
-                <span class="green">將質量獲得量提升 <span id="bhEffect">X</span></span><br><br>
-                黑洞對質量獲得量的加成公式：(x + 1)<sup id="bhMassPower">0.33</sup> * <span id="bhCondenserEffect">X</span><br><br>
+                    <div class="table_center">
+                        <div style="width: 50%; min-width: 600px;">
+                            你的黑洞質量是 <span id="bhMass2">X</span>，<br>
+                            <span class="green">將質量獲得量提升 <span id="bhEffect">X</span></span><br><br>
+                            黑洞對質量獲得量的加成公式：(x + 1)<sup id="bhMassPower">0.33</sup> * <span id="bhCondenserEffect">X</span><br><br>
+                        </div><div style="width: 50%; min-width: 600px;" id="unstable_bhUnl">
+                            你的不穩定黑洞質量是 <span id="bhUnstable" class="corrupted_text">X</span> ,<br>
+                            <span class="green">將黑洞質量獲得量提升 <span id="bhUnstableEffect">X</span></span><br><br>
+                            不穩定黑洞質量越大，生產速度越慢。
+                        </div>
+                    </div>
+                    <br><br>
                     <div style="width: 100%; margin-bottom: 5px;" class="table_center">
                         <div style="width: 400px">
                             <div class="resources">
                                 <img src="images/bhCondenser.png">
                                 <span style="margin-left: 5px; text-align: left;"><span id="bhCondenser_scale"></span>黑洞壓縮器 [<span id="bhCondenser_lvl">X</span>]</span>
                             </div>
-                        </div><button id="bhCondenser_btn" class="btn" style="width: 200px;" onclick="FORMS.bh.condenser.buy()">價格：<span id="bhCondenser_cost">X</span> 暗物質</button>
-                        <button class="btn" style="width: 120px;" onclick="FORMS.bh.condenser.buyMax()">購買最大</button>
+                        </div><button id="bhCondenser_btn" class="btn" style="width: 300px;" onclick="FORMS.bh.condenser.buy()">價格：<span id="bhCondenser_cost">X</span> 暗物質</button>
+                        <button class="btn" style="width: 120px;" onclick="FORMS.bh.condenser.buyMax()">購買最多</button>
                         <button id="bhCondenser_auto" class="btn" style="width: 80px;" onclick="FORMS.bh.condenser.autoSwitch()">OFF</button>
                         <div style="margin-left: 5px; text-align: left; width: 400px">
                             黑洞壓縮器力量：<span id="bhCondenser_pow">X</span>x<br>
+                        </div>
+                    </div><div style="width: 100%; margin-bottom: 5px;" class="table_center" id="falseVacuumDiv">
+                        <div style="width: 400px">
+                            <div class="resources">
+                                <img src="images/fvm.png">
+                                <span style="margin-left: 5px; text-align: left;"><span id="fvm_scale"></span>假真空操控器（FVM） [<span id="fvm_lvl">X</span>]</span>
+                            </div>
+                        </div><button id="fvm_btn" class="btn" style="width: 300px;" onclick="UNSTABLE_BH.fvm.buy()">價格：<span id="fvm_cost">X</span> 暗物質（挑戰 16）</button>
+                        <button class="btn" style="width: 120px;" onclick="UNSTABLE_BH.fvm.buyMax()">購買最多</button>
+                        <button id="fvm_auto" class="btn" style="width: 80px;" onclick="player.bh.autoFVM = !player.bh.autoFVM">關閉</button>
+                        <div style="margin-left: 5px; text-align: left; width: 400px">
+                            FVM 力量：<span id="fvm_pow">X</span>x<br>
+                            FVM 效果：不穩定黑洞生產速度 <span id="fvm_eff">X</span>x<br>
                         </div>
                     </div><br><div>
                         <span id="massSoft2" class="red">黑洞質量獲得量到達 <b id="massSoftStart2">X</b> 後會被軟上限！</span><br>
@@ -349,8 +371,8 @@
                                 <img src="images/gamma_ray.png">
                                 <span style="margin-left: 5px; text-align: left;"><span id="gamma_ray_scale"></span>宇宙射線 [<span id="gamma_ray_lvl">X</span>]</span>
                             </div>
-                        </div><button id="gamma_ray_btn" class="btn" style="width: 200px;" onclick="ATOM.gamma_ray.buy()">價格：<span id="gamma_ray_cost">X</span> 原子</button>
-                        <button class="btn" style="width: 120px;" onclick="ATOM.gamma_ray.buyMax()">購買最大</button>
+                        </div><button id="gamma_ray_btn" class="btn" style="width: 300px;" onclick="ATOM.gamma_ray.buy()">價格：<span id="gamma_ray_cost">X</span> 原子</button>
+                        <button class="btn" style="width: 120px;" onclick="ATOM.gamma_ray.buyMax()">購買最多</button>
                         <button id="gamma_ray_auto" class="btn" style="width: 80px;" onclick="player.atom.auto_gr = !player.atom.auto_gr">OFF</button>
                         <div style="margin-left: 5px; text-align: left; width: 400px">
                             宇宙射線力量：<span id="gamma_ray_pow">X</span>x<br>
@@ -374,8 +396,8 @@
                                 <img src="images/cosmic_string.png">
                                 <span style="margin-left: 5px; text-align: left;"><span id="cosmic_str_scale"></span>宇宙弦 [<span id="cosmic_str_lvl">X</span>]</span>
                             </div>
-                        </div><button id="cosmic_str_btn" class="btn" style="width: 200px;" onclick="QUANTUM.cosmic_str.buy()">價格：<span id="cosmic_str_cost">X</span> 量子泡沫</button>
-                        <button class="btn" style="width: 120px;" onclick="QUANTUM.cosmic_str.buyMax()">購買最大</button>
+                        </div><button id="cosmic_str_btn" class="btn" style="width: 300px;" onclick="QUANTUM.cosmic_str.buy()">價格：<span id="cosmic_str_cost">X</span> 量子泡沫</button>
+                        <button class="btn" style="width: 120px;" onclick="QUANTUM.cosmic_str.buyMax()">購買最多</button>
                         <button id="cosmic_str_auto" class="btn" style="width: 80px;" onclick="player.qu.auto_cr = !player.qu.auto_cr">關閉</button>
                         <div style="margin-left: 5px; text-align: left; width: 400px">
                             宇宙弦力量：<span id="cosmic_str_pow">X</span>x<br>
@@ -586,7 +608,7 @@
                 <h2>確認設定</h2><br>
                 <div id="confirm_table" class="table_center"></div>
                 <br><br>
-                增量質量（重寫版）v0.6.4.1 - 由 MrRedShark77 製作，ItMarki 翻譯<br>
+                增量質量（重寫版）v0.6.4.2 - 由 MrRedShark77 製作，ItMarki 翻譯<br>
                 本遊戲受到 <ruby>Distance Incremental<rt>距離增量</rt></ruby> 和 <ruby>Synergism<rt>協同放置</rt></ruby> 的啟發製作<br>
                 貢獻：<span style="cursor: pointer;" onclick='addNotify(`frfrfr<br><img src="https://5.imimg.com/data5/HO/DK/MY-8155364/lemon-500x500.jpg" style="width:100%">`)'>Lemon</span>、16777216 和 Aarex（繪畫）<br><br><br>
                 提示 1：把指標放在標籤上方的圖片上，即可查看描述……<br><br>
