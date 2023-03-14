@@ -82,8 +82,27 @@
 }
 
 @font-face {
+	font-family: 'LXGWWenKaiGB';
+	src: url('fonts/LXGWWenKaiGB-Regular.ttf');
+	size-adjust: 95%;
+}
+
+@font-face {
+	font-family: 'LXGWWenKaiGB';
+	src: url('fonts/LXGWWenKaiGB-Bold.ttf');
+	size-adjust: 95%;
+	font-weight: bold;
+}
+
+@font-face {
 	font-family: 'MisekiBitmap';
 	src: url('fonts/MisekiBitmap.ttf');
+}
+
+@font-face {
+	font-family: 'MisekiBitmap';
+	src: url('fonts/MisekiBitmap.ttf');
+	font-weight: bold;
 }
 
 @font-face {
@@ -604,8 +623,11 @@ button {
 	color: white;
 	box-shadow: 3px 3px 3px #ff5555, -3px -3px 3px #5555ff, 3px 3px 3px #ff5555 inset, -3px -3px 3px #5555ff inset;
 	z-index: 1;
-	transform: scale(1.1);
 	animation: corrupted_div 4s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+}
+
+.elements.corrupted {
+	transform: scale(1.1);
 }
 
 @keyframes corrupted_div {

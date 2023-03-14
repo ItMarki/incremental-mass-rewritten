@@ -30,7 +30,7 @@ const TREE_IDS = [
         ['chal4','chal7a'],
         ['fn4','fn3','fn9','fn2','fn5','qf4','rad4','rad5'],
         ['prim3','prim2','prim1','qu4','qc1','qc2','qc3'],
-        ['ct8','','','ct7',''],
+        ['ct8','ct9','','ct7',''],
     ],[
         ['s3','m3','gr2','sn3'],
         ['qol9','unl1','qol8','unl2','unl3','qu_qol8','qu_qol9','unl4'],
@@ -1056,6 +1056,22 @@ const TREE_UPGS = {
             },
             effDesc(x) { return "x"+format(x) },
         },
+        ct9: {
+            branch: ['ct3'],
+            icon: 'placeholder',
+
+            desc: `你在挑戰 16 中的最佳黑洞質量免費提供輻射加成。`,
+            cost: E(5000),
+
+            req() { return tmp.c16active && player.supernova.fermions.choosed == "16" && player.bh.mass.gte('1e400') && player.bh.condenser.lte(0) },
+            reqDesc() { return `在挑戰 16 和 [元輕子] 中，在不購買黑洞壓縮器的情況下到達 ${formatMass('1e400')} 的黑洞質量。` },
+
+            effect() {
+                let x = player.dark.c16.bestBH.add(1).log10().root(3)
+                return x
+            },
+            effDesc(x) { return "+"+format(x) },
+        },
 
         /*
         x: {
@@ -1079,12 +1095,11 @@ for (let i in CS_TREE) {
     if (!u) TREE_UPGS.ids[CS_TREE[i]] = {
         icon: `placeholder`,
         cs: true,
-        desc: `Placeholder.`,
+        desc: `待定。`,
         cost: EINF,
     }
     else {
-        u.icon = u.icon||`placeholder`
-        u.desc = u.desc||`Placeholder.`
+        u.desc = u.desc||`待定。`
         u.cs = true
         u.cost = u.cost||EINF
     }

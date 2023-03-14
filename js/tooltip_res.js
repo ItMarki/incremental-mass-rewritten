@@ -46,7 +46,7 @@ const TOOLTIP_RES = {
 
             if (hasCharger(1))
             h += `
-            <br class='line'>你的不穩定黑洞質量時 <b class='corrupted_text'>${formatMass(player.bh.unstable)} ${formatGain(player.bh.unstable,UNSTABLE_BH.calcProduction(),true)}</b>。
+            <br class='line'>你的不穩定黑洞質量是 <b class='corrupted_text'>${formatMass(player.bh.unstable)} ${formatGain(player.bh.unstable,UNSTABLE_BH.calcProduction(),true)}</b>。
             `;
 
             if (quUnl())
