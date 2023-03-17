@@ -11,6 +11,12 @@ const CHARGERS = [
         desc: `
         解鎖不穩定黑洞，作用是加強普通黑洞。（見黑洞標籤）
         `,
+    },{
+        req: E('e4500'),
+        cost: E(15000),
+        desc: `
+        不穩定黑洞的效果強 50%（在溢出之後）。
+        `,
     },
 ]
 
@@ -33,7 +39,11 @@ const UNSTABLE_BH = {
 
         if (tmp.c16active) x = x.root(3)
 
-        return overflow(x,10,0.5)
+        x = overflow(x,10,0.5)
+
+        if (hasCharger(2)) x = x.pow(1.5)
+
+        return x
     },
     fvm: {
         can() { return tmp.c16active && player.bh.dm.gte(tmp.unstable_bh.fvm_cost) },

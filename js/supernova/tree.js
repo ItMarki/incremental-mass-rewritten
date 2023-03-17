@@ -30,7 +30,7 @@ const TREE_IDS = [
         ['chal4','chal7a'],
         ['fn4','fn3','fn9','fn2','fn5','qf4','rad4','rad5'],
         ['prim3','prim2','prim1','qu4','qc1','qc2','qc3'],
-        ['ct8','ct9','','ct7',''],
+        ['ct8','ct9','ct10','ct7','ct11'],
     ],[
         ['s3','m3','gr2','sn3'],
         ['qol9','unl1','qol8','unl2','unl3','qu_qol8','qu_qol9','unl4'],
@@ -1058,7 +1058,6 @@ const TREE_UPGS = {
         },
         ct9: {
             branch: ['ct3'],
-            icon: 'placeholder',
 
             desc: `你在挑戰 16 中的最佳黑洞質量免費提供輻射加成。`,
             cost: E(5000),
@@ -1071,6 +1070,34 @@ const TREE_UPGS = {
                 return x
             },
             effDesc(x) { return "+"+format(x) },
+        },
+        ct10: {
+            branch: ['ct4'],
+
+            desc: `腐蝕碎片總數降低 FSS 要求。`,
+            cost: E(5e4),
+
+            effect() {
+                let x = Decimal.pow(0.95,overflow(player.dark.c16.totalS.add(1).log10(),2,0.5).root(2))
+                return x.toNumber()
+            },
+            effDesc(x) { return formatReduction(x) },
+        },
+        ct11: {
+            branch: ['ct6'],
+            icon: "placeholder",
+
+            desc: `在挑戰 16 外，你在挑戰 16 中的最佳黑洞質量推遲黑洞質量溢出。`,
+            cost: E(1e6),
+
+            req() { return tmp.c16active && player.atom.atomic.gte(1e20) },
+            reqDesc() { return `在挑戰 16 中到達 ${format(1e20)} 原子力量。` },
+
+            effect() {
+                let x = player.dark.c16.bestBH.add(1).log10().add(1).pow(3)
+                return overflow(x,10,0.5).pow(2)
+            },
+            effDesc(x) { return "推遲 ^"+format(x) },
         },
 
         /*
