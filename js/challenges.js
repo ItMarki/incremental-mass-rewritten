@@ -20,7 +20,7 @@ function updateChalHTML() {
             tmp.el["chal_div_"+x].setDisplay(unl)
             tmp.el["chal_btn_"+x].setClasses({img_chal: true, ch: CHALS.inChal(x), chal_comp: player.chal.comps[x].gte(tmp.chal.max[x])})
             if (unl) {
-                tmp.el["chal_comp_"+x].setTxt(format(player.chal.comps[x],0)+" / "+format(tmp.chal.max[x],0))
+                tmp.el["chal_comp_"+x].setTxt(format(player.chal.comps[x],0)+(tmp.chal.max[x].gte(EINF)?"":" / "+format(tmp.chal.max[x],0)))
             }
         }
         tmp.el.chal_enter.setVisible(player.chal.active != player.chal.choosed)
@@ -29,11 +29,11 @@ function updateChalHTML() {
         tmp.el.chal_desc_div.setDisplay(player.chal.choosed != 0)
         if (player.chal.choosed != 0) {
             let chal = CHALS[player.chal.choosed]
-            tmp.el.chal_ch_title.setTxt(`[${player.chal.choosed}]${CHALS.getScaleName(player.chal.choosed)}「${chal.title}」[已完成 ${format(player.chal.comps[player.chal.choosed],0)+"/"+format(tmp.chal.max[player.chal.choosed],0)} 次]`)
+            tmp.el.chal_ch_title.setTxt(`[${player.chal.choosed}]${CHALS.getScaleName(player.chal.choosed)} 「${chal.title}」[已完成 ${format(player.chal.comps[player.chal.choosed],0)+(tmp.chal.max[player.chal.choosed].gte(EINF)?"":"/"+format(tmp.chal.max[player.chal.choosed],0))} 次]`)
             tmp.el.chal_ch_desc.setHTML(chal.desc)
             tmp.el.chal_ch_reset.setTxt(CHALS.getReset(player.chal.choosed))
             tmp.el.chal_ch_goal.setTxt("目標："+CHALS.getFormat(player.chal.choosed)(tmp.chal.goal[player.chal.choosed])+CHALS.getResName(player.chal.choosed))
-            tmp.el.chal_ch_reward.setHTML("獎勵："+chal.reward)
+            tmp.el.chal_ch_reward.setHTML("獎勵："+(typeof chal.reward == 'function' ? chal.reward() : chal.reward))
             tmp.el.chal_ch_eff.setHTML("目前："+chal.effDesc(tmp.chal.eff[player.chal.choosed]))
         }
     }
@@ -55,6 +55,7 @@ function updateChalTemp() {
 
     if (hasTree('ct5')) v++
     if (hasTree('ct7')) v++
+    if (hasTree('ct13')) v++
 
     for (let x = 1; x <= CHALS.cols; x++) {
         let data = CHALS.getChalData(x)
@@ -100,6 +101,8 @@ const CHALS = {
         }
     },
     enter(ch=player.chal.choosed) {
+        if (ch<13 && player.dark.c16.first) return
+
         if (player.chal.active == 0) {
             if (ch == 16) {
                 player.dark.c16.first = true
@@ -133,8 +136,9 @@ const CHALS = {
         return "進入挑戰會強制執行 FSS 重置。"
     },
     getMax(i) {
+        if (i <= 12 && hasPrestige(2,25)) return EINF
         let x = this[i].max
-        if (i <= 4) x = x.add(tmp.chal?tmp.chal.eff[7]:0)
+        if (i <= 4 && !hasPrestige(2,25)) x = x.add(tmp.chal?tmp.chal.eff[7]:0)
         if (hasElement(13) && (i==5||i==6)) x = x.add(tmp.elements.effect[13])
         if (hasElement(20) && (i==7)) x = x.add(50)
         if (hasElement(41) && (i==7)) x = x.add(50)
@@ -168,6 +172,7 @@ const CHALS = {
         if (hasElement(2)) x = x.mul(0.75)
         if (hasElement(26)) x = x.mul(tmp.elements.effect[26])
         if (hasElement(180) && i <= 12) x = x.mul(.7)
+        if (i != 7 && hasPrestige(2,25)) x = x.mul(tmp.chal.eff[7])
         return x
     },
     getPower2(i) {
@@ -175,6 +180,7 @@ const CHALS = {
         if (hasElement(92)) x = x.mul(0.75)
         if (hasElement(120)) x = x.mul(0.75)
         if (hasElement(180) && i <= 12) x = x.mul(.7)
+        if (i != 7 && hasPrestige(2,25)) x = x.mul(tmp.chal.eff[7])
         return x
     },
     getPower3(i) {
@@ -276,17 +282,20 @@ const CHALS = {
     1: {
         title: "即時增幅",
         desc: "超級等級和超級質量升級在 25 個開始，超級時間速度在 50 個開始。",
-        reward: `推遲超級等級。基於完成次數，超級時間速度增幅更慢。`,
+        reward: ()=>hasBeyondRank(2,20)?`推遲超臨界等級和所有費米子階。完成次數減弱超級過強器增幅。`:`推遲超級等級。基於完成次數，超級時間速度增幅更慢。`,
         max: E(100),
         inc: E(5),
         pow: E(1.3),
         start: E(1.5e58),
         effect(x) {
-            let rank = x.softcap(20,4,1).floor()
-            let tick = E(0.96).pow(x.root(2))
-            return {rank: rank, tick: tick}
+            let c = hasBeyondRank(2,20)
+            let rank = c?E(0):x.softcap(20,4,1).floor()
+            let tick = c?E(1):E(0.96).pow(x.root(2))
+            let scrank = x.add(1).log10().div(10).add(1).root(3)
+            let over = Decimal.pow(0.99,x.add(1).log10().root(2))
+            return {rank: rank, tick: tick, scrank, over}
         },
-        effDesc(x) { return "超級等級推遲 "+format(x.rank,0)+" 個，超級時間速度的增幅弱 "+format(E(1).sub(x.tick).mul(100))+"%" },
+        effDesc(x) { return hasBeyondRank(2,20)?"超臨界等級和所有費米子階推遲 "+formatMult(x.scrank)+" 個，超級過強器增幅弱 "+formatReduction(x.over):"超級等級推遲 "+format(x.rank,0)+" 個，超級時間速度增幅弱 "+format(E(1).sub(x.tick).mul(100))+"%" },
     },
     2: {
         unl() { return player.chal.comps[1].gte(1) || player.atom.unl },
@@ -342,17 +351,18 @@ const CHALS = {
         unl() { return player.atom.unl },
         title: "無等級",
         desc: "你不能升等級。",
-        reward: `基於完成次數，等級要求更弱。`,
+        reward: ()=> hasCharger(3)?`完成次數減弱奇異級等級和階，以及超高級重置等級增幅。`:`基於完成次數，等級要求更弱。`,
         max: E(50),
         inc: E(50),
         pow: E(1.25),
         start: E(1.5e136),
         effect(x) {
-            if (hasPrestige(1,127)) return E(1)
-            let ret = E(0.97).pow(x.root(2).softcap(5,0.5,0))
+            let c = hasCharger(3)
+            if (!c && hasPrestige(1,127)) return E(1)
+            let ret = c?Decimal.pow(0.97,x.add(1).log10().root(4)):E(0.97).pow(x.root(2).softcap(5,0.5,0))
             return ret
         },
-        effDesc(x) { return "弱 "+format(E(1).sub(x).mul(100))+"%"+(x.log(0.97).gte(5)?"<span class='soft'>（軟上限）</span>":"") },
+        effDesc(x) { return hasCharger(3)?"弱 "+formatReduction(x):"弱 "+format(E(1).sub(x).mul(100))+"%"+(x.log(0.97).gte(5)?"<span class='soft'>（軟上限）</span>":"") },
     },
     6: {
         unl() { return player.chal.comps[5].gte(1) || player.supernova.times.gte(1) || quUnl() },
@@ -373,17 +383,18 @@ const CHALS = {
         unl() { return player.chal.comps[6].gte(1) || player.supernova.times.gte(1) || quUnl() },
         title: "無暴怒點數",
         desc: "你不能獲得暴怒點數，但你會基於質量獲得暗物質。質量獲得量軟上限更強。",
-        reward: `每完成一次，挑戰 1 - 4 的完成上限增加 2 次。<br><span class="yellow">完成 16 次時，解鎖元素</span>`,
+        reward: ()=>hasPrestige(2,25)?`完成次數減弱魔王前挑戰增幅，但不適用於挑戰 7。`:`每完成一次，挑戰 1 - 4 的完成上限增加 2 次。<br><span class="yellow">完成 16 次時，解鎖元素</span>`,
         max: E(50),
         inc: E(64),
         pow: E(1.25),
         start: E(1.5e76),
         effect(x) {
-            let ret = x.mul(2)
-            if (hasElement(5)) ret = ret.mul(2)
-            return ret.floor()
+            let c = hasPrestige(2,25)
+            let ret = c?Decimal.pow(0.987,x.add(1).log10().root(2)):x.mul(2)
+            if (hasElement(5)) ret = c?ret.pow(2):ret.mul(2)
+            return c?ret:ret.floor()
         },
-        effDesc(x) { return "+"+format(x,0) },
+        effDesc(x) { return hasPrestige(2,25)?"弱 "+formatReduction(x):"+"+format(x,0) },
     },
     8: {
         unl() { return player.chal.comps[7].gte(1) || player.supernova.times.gte(1) },

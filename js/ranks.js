@@ -263,7 +263,7 @@ const RANKS = {
         rank() {
             let f = E(1)
             if (player.ranks.tier.gte(1)) f = f.mul(1/0.8)
-            f = f.mul(tmp.chal.eff[5].pow(-1))
+            if (!hasCharger(3)) f = f.mul(tmp.chal.eff[5].pow(-1))
             return f
         },
         tier() {
@@ -429,6 +429,7 @@ const PRESTIGES = {
             "5": `榮譽提升符文質量獲得量。`,
             "8": `榮譽減弱黑洞溢出。`,
             "22": `榮譽提升所有有色物質的獲得量。`,
+            "25": `移除黑暗前挑戰的完成上限。更換挑戰 7 的獎勵。`,
         },
         {
             "1": `之前重置的要求減少 10%。`,
@@ -684,6 +685,11 @@ const BEYOND_RANKS = {
             7: `七級層提升費米子（除了元費米子）的獲得量。`,
             10: `黑洞質量 ^1.2。`,
             15: `移除質量 1-3 的所有增幅。`,
+            17: `黑洞質量加強 [qu9]。量子化次數推遲奇異級超新星。`,
+            20: `更換挑戰 1 的獎勵。`,
+        },
+        3: {
+            1: `普通質量的 arv 階數減弱質量和提重器溢出。`
         },
     },
 
@@ -731,6 +737,26 @@ const BEYOND_RANKS = {
                 },
                 x=>"x"+format(x),
             ],
+            17: [
+                ()=>{
+                    let x = player.bh.mass.add(1).log10().add(1).log10().add(1).pow(2)
+
+                    let y = player.qu.times.add(1).log10().root(2).div(8).add(1)
+
+                    return [x,y]
+                },
+                x=>"強 x"+format(x[0])+"；推遲 x"+format(x[1]),
+            ],
+        },
+        3: {
+            1: [
+                ()=>{
+                    let x = Decimal.pow(0.99,player.mass.div(1.5e56).max(1).log10().div(1e9).max(1).log10().div(15).root(3))
+
+                    return x
+                },
+                x=>"弱 "+formatReduction(x),
+            ],
         },
     },
 }
@@ -751,7 +777,8 @@ function getRankTierName(i) {
         let m = ''
         let h = Math.floor(i / 100), d = Math.floor(i / 10) % 10, o = i % 10
 
-        if (h == 0 && d == 1) m = '十' + RTNS2[o]
+        if (i == 10) return RTNS[1][1]
+        else if (h == 0 && d == 1) m = '十' + RTNS2[o]
         else if (h == 0 && d > 1) m = RTNS2[d] + '十' + RTNS2[o]
         else if (h > 0 && d == 0 && o == 0) m = RTNS2[h] + '百'
         else if (h > 0 && d == 0 && o > 0) m = RTNS2[h] + '百零' + RTNS2[o]
@@ -770,8 +797,6 @@ function beyondRankEffect(x,y,def=1) {
     let e = tmp.beyond_ranks.eff[x]
     return e?e[y]||def:def
 }
-
-
 
 function updateRanksHTML() {
     tmp.el.rank_tabs.setDisplay(hasUpgrade('br',9))

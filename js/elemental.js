@@ -765,9 +765,10 @@ const ELEMENTS = {
             desc: `進入暗界時保留量子樹。`,
             cost: E("1e7"),
         },{
-            desc: `挑戰 7 的效果以 10% 比率增加挑戰 9-12 的完成次數。`,
+            desc: `挑戰 7 的效果以 10% 的比率增加挑戰 9-12 的完成次數。`,
             cost: E("e9e24"),
             effect() {
+                if (hasPrestige(2,25)) return E(0)
                 let c = tmp.chal?tmp.chal.eff[7]:E(0)
                 let x = c.div(10).ceil()
                 return x
@@ -951,14 +952,14 @@ const ELEMENTS = {
             cost: E("1e96"),
         },{
             desc: `塌縮恆星升級提供稍弱的指數倍數。它也可以影響黑洞質量獲得量，但是鈀-46、鎘-48、銩-69 和鋨-76 失效。`,
-            cost: E("e4.20e69"), // nice
+            cost: E("e2e69"),
         },{
             desc: `空間膨脹稍微更弱。`,
             cost: E("e4.7e70"),
         },{
             br: true,
             desc: `大幅增強 [m1] 的效果。`,
-            cost: E("e4.20e69"), // nice x2
+            cost: E("e4.20e69"), // nice
         },{
             br: true,
             desc: `大幅增強 [rp1] 的效果。`,

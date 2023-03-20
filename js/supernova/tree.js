@@ -37,7 +37,7 @@ const TREE_IDS = [
         ['chal5','chal6','chal7','chal8'],
         ['fn12','fn11','fn6','fn10','rad6',""],
         ['en1','qu5','br1'],
-        [],
+        ['','ct12','','ct13',''],
     ],[
         ['s4','sn5','sn4'],
         ['','','','qu_qol8a'],
@@ -700,6 +700,7 @@ const TREE_UPGS = {
             cost: E(1e24),
             effect() {
                 let x = player.qu.prim.theorems.add(1)
+                if (hasBeyondRank(2,17)) x = x.mul(beyondRankEffect(2,17)[0])
                 return x
             },
             effDesc(x) { return format(x,0)+"x" },
@@ -1087,23 +1088,53 @@ const TREE_UPGS = {
             branch: ['ct6'],
             icon: "placeholder",
 
-            desc: `在挑戰 16 外，你在挑戰 16 中的最佳黑洞質量推遲黑洞質量溢出。`,
+            desc: `你在挑戰 16 中的最佳黑洞質量推遲黑洞質量溢出。（在挑戰 16 裏較弱）`,
             cost: E(1e6),
 
             req() { return tmp.c16active && player.atom.atomic.gte(1e20) },
             reqDesc() { return `在挑戰 16 中到達 ${format(1e20)} 原子力量。` },
 
             effect() {
-                let x = player.dark.c16.bestBH.add(1).log10().add(1).pow(3)
-                return overflow(x,10,0.5).pow(2)
+                let x = player.dark.c16.bestBH.add(1).log10().add(1)
+                x = tmp.c16active ? x.root(4) : x.pow(3)
+                x = overflow(x,10,0.5)
+                x = tmp.c16active ? x.root(3) : x.pow(2)
+                return x
             },
             effDesc(x) { return "推遲 ^"+format(x) },
+        },
+        ct12: {
+            branch: ['ct9'],
+            icon: "placeholder",
+
+            desc: `你在挑戰 16 中的最佳黑洞質量免費提供原始素粒子。`,
+            cost: E(5e7),
+
+            req() { return tmp.c16active && player.supernova.fermions.choosed == "06" && player.bh.mass.gte('1e2070') && player.bh.condenser.lte(0) },
+            reqDesc() { return `挑戰 16 和 [元夸克] 中，在不購買黑洞壓縮器的情況下到達 ${formatMass('1e2070')} 的黑洞質量。` },
+
+            effect() {
+                let x = player.dark.c16.bestBH.add(1).log10().root(2)
+                return x
+            },
+            effDesc(x) { return "+"+format(x) },
+        },
+        ct13: {
+            branch: ['ct7'],
+            icon: "placeholder",
+
+            desc: `中子元素-0 稍微加強挑戰 15（像 [ct5] 一樣）。挑戰 15 加強原子和夸克溢出。`,
+            cost: E(2.5e8),
+
+            req() { return player.chal.comps[14]&&player.chal.comps[14].gte(960) },
+            reqDesc() { return `Get ${format(960,0)} C14 completions.` },
         },
 
         /*
         x: {
             unl() { return true },
             req() { return true },
+            icon: "placeholder",
             reqDesc: ``,
             desc: `Placeholder.`,
             cost: EINF,

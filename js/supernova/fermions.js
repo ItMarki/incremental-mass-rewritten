@@ -352,11 +352,15 @@ const FERMIONS = {
                 },
                 eff(i, t) {
                     let m = i.add(1).log10().mul(t).root(4)
-                    let x = Math.min(hasElement(157)?m.div(150).add(1).softcap(5,0.5,0).pow(-1).toNumber():1,E(0.95).pow(m.softcap(27,0.5,0)).max(2/3).toNumber())
+                    let x = hasCharger(3)
+                    ?Decimal.pow(0.975,overflow(m.max(1).log10(),10,0.5))
+                    :Math.min(hasElement(157)?m.div(150).add(1).softcap(5,0.5,0).pow(-1).toNumber():1,E(0.95).pow(m.softcap(27,0.5,0)).max(2/3).toNumber())
                     return x
                 },
                 desc(x) {
-                    return `元級前超新星增幅弱 ${format(100-x*100)}%`
+                    let w = formatReduction(x)
+
+                    return hasCharger(3)?`元級和奇異級超新星增幅弱 ${w}`:`元級前超新星增幅弱 ${w}`
                 },
                 inc: "原子",
                 cons: "U-輕子和 Z<sup>0</sup> 玻色子無效",
