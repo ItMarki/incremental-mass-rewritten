@@ -72,11 +72,11 @@ const RANKS = {
             '5': "質量升級 2 加強自己。",
             '6': "質量獲得量獲得 (x+1)^2 x 的加成，其中 x 是等級數。",
             '13': "質量獲得量三倍。",
-            '14': "暴怒點數獲得量翻倍。",
+            '14': "暴怒力量獲得量翻倍。",
             '17': "第 6 等級的獎勵效果更好。[(x+1)^2 -> (x+1)^x^1/3]",
             '34': "質量升級 3 的軟上限推遲 1.2x 。",
             '40': "等級提升時間速度力量。",
-            '45': "等級提升暴怒點數獲得量。",
+            '45': "等級提升暴怒力量獲得量。",
             '90': "第 40 等級的獎勵更強。",
             '180': "質量獲得量 ^1.025。",
             '220': "第 40 等級的獎勵進一步加強。",
@@ -89,7 +89,7 @@ const RANKS = {
             '2': "質量獲得量 ^1.15。",
             '3': "所有質量升級的價格增幅弱 20%。",
             '4': "每擁有一個階，時間速度力量增加 5%，在 +40% 開始軟上限。",
-            '6': "階提升暴怒點數獲得量。",
+            '6': "階提升暴怒力量獲得量。",
             '8': "暗物質加強第 6 階的獎勵效果。",
             '12': "第 4 階的獎勵效果翻倍，並從中移除軟上限。",
             '30': "增強器的效果軟上限弱 10%。",
@@ -213,7 +213,7 @@ const RANKS = {
                 let ret = E(1.05).pow(player.ranks.pent.min(1500))
                 return ret
             },
-			'8'() {
+        '8'() {
                 let ret = E(1.1).pow(player.ranks.pent)
                 return ret
             },
@@ -319,7 +319,7 @@ const PRESTIGES = {
                 x = y.div(fp).scaleEvery('prestige1',false).pow(1.25).mul(3).add(4)
                 break;
             case 2:
-                x = hasElement(167)?y.div(fp).pow(1.25).mul(3.5).add(5):y.pow(1.3).mul(4).add(6)
+                x = hasElement(167)?y.div(fp).scaleEvery('prestige2',false).pow(1.25).mul(3.5).add(5):y.pow(1.3).mul(4).add(6)
                 break;
             case 3:
                 x = y.div(fp).pow(1.25).mul(3).add(9)
@@ -340,7 +340,7 @@ const PRESTIGES = {
                 if (y.gte(4)) x = y.sub(4).div(3).max(0).root(1.25).scaleEvery('prestige1',true).mul(fp).add(1)
                 break
             case 2:
-                if (y.gte(6)) x = hasElement(167)?y.sub(5).div(3.5).max(0).root(1.25).mul(fp).add(1):y.sub(6).div(4).max(0).root(1.3).mul(fp).add(1)
+                if (y.gte(6)) x = hasElement(167)?y.sub(5).div(3.5).max(0).root(1.25).scaleEvery('prestige2',true).mul(fp).add(1):y.sub(6).div(4).max(0).root(1.3).mul(fp).add(1)
                 break
             case 3:
                 if (y.gte(9)) x = y.sub(9).div(3).max(0).root(1.25).mul(fp).add(1)
@@ -421,6 +421,7 @@ const PRESTIGES = {
             "91": `FSS 底數 ^1.05。`,
             "127": `移除等級和階的所有奇異級前增幅，但是挑戰 5 的獎勵無效。`,
             "139": `每擁有一個 FSS，有色物質生產加快至 3x。FVM 稍微更便宜。`,
+            "167": `FFS 對深淵之漬的第四個獎勵提供指數倍數。`,
         },
         {
             "1": `重置等級和榮耀的要求減少 15%。`,
@@ -430,6 +431,7 @@ const PRESTIGES = {
             "8": `榮譽減弱黑洞溢出。`,
             "22": `榮譽提升所有有色物質的獲得量。`,
             "25": `移除黑暗前挑戰的完成上限。更換挑戰 7 的獎勵。`,
+            "28": `榮耀加強 FVM 力量。`,
         },
         {
             "1": `之前重置的要求減少 10%。`,
@@ -465,9 +467,9 @@ const PRESTIGES = {
                 return x
             },x=>"弱 "+formatReduction(x)],
             "607": [()=>{
-                let x = tmp.prestiges.base.max(1).pow(1.5)
+                let x = tmp.prestiges.base.max(1).pow(1.5).softcap('e7500',0.1,0)
                 return x
-            },x=>"x"+format(x)],
+            },x=>"x"+format(x)+softcapHTML(x,'e7500')],
             "1337": [()=>{
                 let x = tmp.preQUGlobalSpeed.max(1).log10().add(1).log10().div(10)
                 return x.toNumber()
@@ -518,6 +520,10 @@ const PRESTIGES = {
             },x=>"弱 "+formatReduction(x)],
             "22": [()=>{
                 let x = Decimal.pow(2,player.prestiges[2].pow(.5))
+                return x
+            },x=>"x"+format(x)],
+            "28": [()=>{
+                let x = player.prestiges[1].root(2).div(10).add(1)
                 return x
             },x=>"x"+format(x)],
         },
@@ -777,14 +783,15 @@ function getRankTierName(i) {
         let m = ''
         let h = Math.floor(i / 100), d = Math.floor(i / 10) % 10, o = i % 10
 
-        if (i == 10) return RTNS[1][1]
-        else if (h == 0 && d == 1) m = '十' + RTNS2[o]
+        if (h == 0 && d == 1) m = '十' + RTNS2[o]
         else if (h == 0 && d > 1) m = RTNS2[d] + '十' + RTNS2[o]
         else if (h > 0 && d == 0 && o == 0) m = RTNS2[h] + '百'
         else if (h > 0 && d == 0 && o > 0) m = RTNS2[h] + '百零' + RTNS2[o]
         else if (h > 0 && d > 0) m = RTNS2[h] + '百' + RTNS2[d] + '十' + RTNS2[o]
 
         m += '級層'
+
+        return m
     }
 }
 

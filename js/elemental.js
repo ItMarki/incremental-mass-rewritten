@@ -239,7 +239,7 @@ const ELEMENTS = {
             cost: E(1e130),
             effect() {
                 let x = player.md.mass.add(1).pow(0.0125)
-                return x.softcap('ee27',0.95,2)
+                return overflow(x.softcap('ee27',0.95,2),"ee110",0.25)
             },
             effDesc(x) { return format(x)+"x"+x.softcapHTML('ee27') },
         },
@@ -252,7 +252,7 @@ const ELEMENTS = {
             cost: E(1e155),
         },
         {
-            desc: `暴怒點數提升相對粒子獲得量。`,
+            desc: `暴怒力量提升相對粒子獲得量。`,
             cost: E(1e175),
             effect() {
                 let x = player.rp.points.max(1).log10().add(1).pow(0.75)

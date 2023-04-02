@@ -200,9 +200,11 @@ const UPGS = {
                 if (hasUpgrade('rp',17)) step = step.add(.005)
                 if (hasUpgrade('rp',19)) step = step.mul(upgEffect(1,19,0))
 
-                let x = step.mul(xx).add(1)
+                let ss = E(10)
 
-                return {step: step, eff: x, ss: EINF}
+                let x = step.mul(xx).add(1).softcap(ss,0.5,0)
+
+                return {step: step, eff: x, ss: ss}
             },
             effDesc(eff) {
                 return {
@@ -232,7 +234,7 @@ const UPGS = {
         reset() { player.main_upg_msg = [0,0] },
         1: {
             title: "暴怒升級",
-            res: "暴怒點數",
+            res: "暴怒力量",
 			getRes() { return player.rp.points },
             unl() { return player.rp.unl },
             can(x) { return player.rp.points.gte(this[x].cost) && !player.mainUpg.rp.includes(x) },
@@ -294,7 +296,7 @@ const UPGS = {
                 },
             },
             8: {
-                desc: "暴怒點數減弱超級和高級質量升級價格增幅。",
+                desc: "暴怒力量減弱超級和高級質量升級價格增幅。",
                 cost: E(1e15),
                 effect() {
                     let ret = E(0.9).pow(player.rp.points.max(1).log10().max(1).log10().pow(1.25).softcap(2.5,0.5,0))
@@ -316,7 +318,7 @@ const UPGS = {
             },
             11: {
                 unl() { return player.chal.unl },
-                desc: "暴怒點數加強黑洞質量獲得量。",
+                desc: "暴怒力量加強黑洞質量獲得量。",
                 cost: E(1e72),
                 effect() {
                     let ret = player.rp.points.add(1).root(10).softcap('e4000',0.1,0)
@@ -328,7 +330,7 @@ const UPGS = {
             },
             12: {
                 unl() { return player.chal.unl },
-                desc: "暴怒點數的數量級稍微加強增強器力量。",
+                desc: "暴怒力量的數量級稍微加強增強器力量。",
                 cost: E(1e120),
                 effect() {
                     let ret = player.rp.points.max(1).log10().softcap(200,0.75,0).div(1000)
@@ -379,7 +381,7 @@ const UPGS = {
             },
             18: {
                 unl() { return tmp.brUnl },
-                desc: `褪色物質的升級稍微提升暴怒點數獲得量。`,
+                desc: `褪色物質的升級稍微提升暴怒力量獲得量。`,
                 cost: E('e1.5e128'),
                 effect() {
                     let x = Decimal.pow(10,tmp.matters.upg[12].eff.max(1).log10().pow(.8))
@@ -447,11 +449,11 @@ const UPGS = {
                 cost: E(1e4),
             },
             5: {
-                desc: "你可以自動購買時間速度和暴怒點數升級。",
+                desc: "你可以自動購買時間速度和暴怒力量升級。",
                 cost: E(5e5),
             },
             6: {
-                desc: "每秒獲得重置時獲得的暴怒點數的 100%。黑洞質量加強暴怒點數獲得量。",
+                desc: "每秒獲得重置時獲得的暴怒力量的 100%。黑洞質量加強暴怒力量獲得量。",
                 cost: E(2e6),
                 effect() {
                     let ret = player.bh.mass.max(1).log10().add(1).pow(2)
@@ -475,7 +477,7 @@ const UPGS = {
             },
             8: {
                 unl() { return player.chal.unl },
-                desc: "暴怒點數獲得量 ^1.15。",
+                desc: "暴怒力量獲得量 ^1.15。",
                 cost: E(1e17),
             },
             9: {
@@ -614,7 +616,7 @@ const UPGS = {
                 cost: E(1),
             },
             2: {
-                desc: "你可以自動購買黑洞壓縮器和升級。時間速度不再花費暴怒點數。",
+                desc: "你可以自動購買黑洞壓縮器和升級。時間速度不再花費暴怒力量。",
                 cost: E(100),
             },
             3: {

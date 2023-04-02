@@ -195,9 +195,9 @@ const ATOM = {
                     player.rp.points.add(1).log10().add(10).log10().mul(x.add(1).log10().add(10).log10()).root(3).sub(1)
                 )
                 .mul(player.mass.add(1).log10().add(10).log10())
-                :hasElement(19)
+                :(hasElement(19)
                 ?player.mass.max(1).log10().add(1).pow(player.rp.points.max(1).log(10).mul(x.max(1).log(10)).root(2.75))
-                :player.mass.max(1).log10().add(1).pow(player.rp.points.max(1).log(100).mul(x.max(1).log(100)).root(3))
+                :player.mass.max(1).log10().add(1).pow(player.rp.points.max(1).log(100).mul(x.max(1).log(100)).root(3))).min('ee200')
                 return {eff1: a, eff2: b}
             },
             x=>{
@@ -212,8 +212,8 @@ const ATOM = {
                 時間速度力量增加 ${format(x.eff2.mul(100))}%
             ` },
             x=>{ return `
-                將暴怒點數獲得量提升 ${hasElement(105)?"^"+format(x.eff1):format(x.eff1)+"x"}<br><br>
-                暴怒點數將質量獲得量提升 ${hasUpgrade('atom',18)?"^"+format(x.eff2):format(x.eff2)+"x"}<br><br>
+                將暴怒力量獲得量提升 ${hasElement(105)?"^"+format(x.eff1):format(x.eff1)+"x"}<br><br>
+                暴怒力量將質量獲得量提升 ${hasUpgrade('atom',18)?"^"+format(x.eff2):format(x.eff2)+"x"}<br><br>
             ` },
             x=>{ return `
                 將暗物質獲得量提升 ${hasElement(105)?"^"+format(x.eff1):format(x.eff1)+"x"}<br><br>

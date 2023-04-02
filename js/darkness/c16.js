@@ -23,6 +23,12 @@ const CHARGERS = [
         desc: `
         移除超新星的所有元級前增幅。更換 [微中子] 的效果。重新啟動但更換挑戰 5 的獎勵。
         `,
+    },{
+        req: E('e45000'),
+        cost: E(5e8),
+        desc: `
+        大幅加強暗影的第一個獎勵。移除時間速度的所有增幅。
+        `,
     },
 ]
 
@@ -63,6 +69,8 @@ const UNSTABLE_BH = {
             let lvl = player.bh.fvm
 
             let pow = E(2)
+
+            if (hasPrestige(2,28)) pow = pow.mul(prestigeEff(2,28))
 
             let eff = pow.pow(lvl)
 

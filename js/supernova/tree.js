@@ -37,7 +37,7 @@ const TREE_IDS = [
         ['chal5','chal6','chal7','chal8'],
         ['fn12','fn11','fn6','fn10','rad6',""],
         ['en1','qu5','br1'],
-        ['','ct12','','ct13',''],
+        ['ct15','ct12','','ct13','ct14'],
     ],[
         ['s4','sn5','sn4'],
         ['','','','qu_qol8a'],
@@ -184,7 +184,7 @@ const TREE_UPGS = {
         },
         rp1: {
             branch: ["c"],
-            desc: `中子星提升暴怒點數獲得量。`,
+            desc: `中子星提升暴怒力量獲得量。`,
             cost: E(200),
             effect() {
                 let x = hasElement(165)
@@ -1105,7 +1105,6 @@ const TREE_UPGS = {
         },
         ct12: {
             branch: ['ct9'],
-            icon: "placeholder",
 
             desc: `你在挑戰 16 中的最佳黑洞質量免費提供原始素粒子。`,
             cost: E(5e7),
@@ -1121,13 +1120,41 @@ const TREE_UPGS = {
         },
         ct13: {
             branch: ['ct7'],
-            icon: "placeholder",
 
             desc: `中子元素-0 稍微加強挑戰 15（像 [ct5] 一樣）。挑戰 15 加強原子和夸克溢出。`,
             cost: E(2.5e8),
 
             req() { return player.chal.comps[14]&&player.chal.comps[14].gte(960) },
             reqDesc() { return `Get ${format(960,0)} C14 completions.` },
+        },
+        ct14: {
+            branch: ['ct11'],
+            icon: "placeholder",
+
+            desc: `你在挑戰 16 中的最佳黑洞質量推遲膨脹質量溢出。`,
+            cost: E(1e10),
+
+            req() { return tmp.c16active && player.atom.atomic.gte(1e180) },
+            reqDesc() { return `在挑戰 16 中到達 ${format(1e180)} 原子力量。` },
+
+            effect() {
+                let x = player.dark.c16.bestBH.add(1).log10().add(1).pow(2)
+                return x
+            },
+            effDesc(x) { return "推遲 ^"+format(x) },
+        },
+        ct15: {
+            branch: ['ct8'],
+            icon: "placeholder",
+
+            desc: `腐蝕碎片總數提升有色物質獲得量。`,
+            cost: E(2.5e10),
+
+            effect() {
+                let x = player.dark.c16.totalS.add(1).root(2)
+                return x
+            },
+            effDesc(x) { return "x"+format(x) },
         },
 
         /*

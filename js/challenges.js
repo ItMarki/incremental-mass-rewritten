@@ -1,7 +1,7 @@
 function setupChalHTML() {
     let chals_table = new Element("chals_table")
 	let table = ""
-	for (let x = Math.ceil(CHALS.cols/4)-1; x >= 0; x--) {
+	for (let x = 0; x < Math.ceil(CHALS.cols/4); x++) {
         table += `<div class="table_center" style="min-height: 160px;">`
         for (let y = 1; y <= Math.min(CHALS.cols-4*x,4); y++) {
             let i = 4*x+y
@@ -101,8 +101,6 @@ const CHALS = {
         }
     },
     enter(ch=player.chal.choosed) {
-        if (ch<13 && player.dark.c16.first) return
-
         if (player.chal.active == 0) {
             if (ch == 16) {
                 player.dark.c16.first = true

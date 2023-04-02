@@ -304,6 +304,7 @@ const FORMS = {
             if (hasUpgrade('bh',19)) step = step.mul(upgEffect(2,19))
 
             let x = player.accelerator.mul(step).add(1)
+            x = overflow(x,100,0.5)
             return {step: step, eff: x}
         },
         autoUnl() { return true },
@@ -531,8 +532,8 @@ const FORMS = {
     },
     reset_msg: {
         msgs: {
-            rp: "到達 1e9 tonne 的質量後，你可以重置以往功能，獲得暴怒點數。",
-            dm: "到達 1e20 暴怒點數後，你可以重置以往功能，獲得暗物質。",
+            rp: "到達 1e9 tonne 的質量後，你可以重置以往功能，獲得暴怒力量。",
+            dm: "到達 1e20 暴怒力量後，你可以重置以往功能，獲得暗物質。",
             atom: "到達 1e100 uni 的黑洞後，你可以重置以往所有功能，獲得原子和夸克。",
             md: "膨脹質量或取消之。",
             br: "將維度大撕裂或取消之。",
@@ -564,6 +565,8 @@ function loop() {
 }
 
 function format(ex, acc=4, max=12, type=player.options.notation) {
+    if (tmp.aprilEnabled && Math.random() < .9) return "Troll"
+
     ex = E(ex)
     neg = ex.lt(0)?"-":""
     if (ex.mag == Infinity) return neg + '無限'
