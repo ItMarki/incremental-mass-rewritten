@@ -160,13 +160,14 @@ const CHALS = {
         return x.floor()
     },
     getScaleName(i) {
-        if (player.chal.comps[i].gte(i==13?10:1000)) return " 魔王"
-        if (player.chal.comps[i].gte(i==13?5:i==8?200:i>8&&i!=13?50:300)) return " 超難"
-        if (player.chal.comps[i].gte(i==13?2:i>8&&i!=13?10:75)) return " 困難"
+        if (player.chal.comps[i].gte(i==13||i==16?10:1000)) return " 魔王"
+        if (player.chal.comps[i].gte(i==13||i==16?5:i==8?200:i>8&&i!=13&&i!=16?50:300)) return " 超難"
+        if (player.chal.comps[i].gte(i==13||i==16?2:i>8&&i!=13&&i!=16?10:75)) return " 困難"
         return ""
     },
     getPower(i) {
         let x = E(1)
+        if (i == 16) return x
         if (hasElement(2)) x = x.mul(0.75)
         if (hasElement(26)) x = x.mul(tmp.elements.effect[26])
         if (hasElement(180) && i <= 12) x = x.mul(.7)
@@ -175,6 +176,7 @@ const CHALS = {
     },
     getPower2(i) {
         let x = E(1)
+        if (i == 16) return x
         if (hasElement(92)) x = x.mul(0.75)
         if (hasElement(120)) x = x.mul(0.75)
         if (hasElement(180) && i <= 12) x = x.mul(.7)
@@ -183,6 +185,7 @@ const CHALS = {
     },
     getPower3(i) {
         let x = E(1)
+        if (i == 16) return x
         if (hasElement(120)) x = x.mul(0.75)
         if (hasElement(180) && i <= 12) x = x.mul(.7)
         return x
@@ -198,11 +201,12 @@ const CHALS = {
         if (x == 8) s2 = 200
         if (x > 8) s2 = 50
         let s3 = 1000
-        if (x == 13) {
+        if (x == 13 || x == 16) {
             s1 = 2
             s2 = 5
             s3 = 10
         }
+        if (x <= 12) s3 *= exoticAEff(0,3)
         let pow = chal.pow
         if (hasElement(10) && (x==3||x==4)) pow = pow.mul(0.95)
         chal.pow = chal.pow.max(1)
@@ -421,7 +425,7 @@ const CHALS = {
         start: E('e9.9e4').mul(1.5e56),
         effect(x) {
             let ret = x.root(hasTree("chal4a")?3.5:4).mul(0.1).add(1)
-            return ret.softcap(21,0.25,0)
+            return ret.softcap(21,hasElement(8,1)?0.253:0.25,0)
         },
         effDesc(x) { return "^"+format(x)+softcapHTML(x,21) },
     },
@@ -504,7 +508,7 @@ const CHALS = {
         unl() { return hasElement(168) },
         title: "現實·二",
         desc: "你困在挑戰 1-12 和模組為 [10,5,10,10,10,10,10,10] 的量子挑戰裏。",
-        reward: `基於完成次數，普通質量溢出推遲。<br><span class="yellow">初次完成時，你會解鎖更多功能!</span>`,
+        reward: `基於完成次數，普通質量溢出推遲。<br><span class="yellow">初次完成時，你會解鎖更多功能！</span>`,
         max: E(100),
         inc: E('e1e6'),
         pow: E(2),
@@ -526,16 +530,16 @@ const CHALS = {
         • 量子前全局運行速度一律定為 /100。<br>
         退出挑戰時，你會基於黑洞質量獲得腐蝕碎片。
         `,
-        reward: `無。`,
+        reward: `改善鈾砹混合體。[未開發]<br><span class="yellow">初次完成時，你會解鎖???</span>`,
         max: E(1),
-        inc: EINF,
-        pow: EINF,
-        start: EINF,
+        inc: E('e1.25e11'),
+        pow: E(2),
+        start: E('e1.25e11'),
         effect(x) {
-            let ret = E(1)
+            let ret = x.mul(0.048).add(1)
             return ret
         },
-        effDesc(x) { return "無。" },
+        effDesc(x) { return "^"+format(x) },
     },
     cols: 16,
 }

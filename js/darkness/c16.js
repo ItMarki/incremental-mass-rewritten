@@ -24,10 +24,28 @@ const CHARGERS = [
         移除超新星的所有元級前增幅。更換 [微中子] 的效果。重新啟動但更換挑戰 5 的獎勵。
         `,
     },{
-        req: E('e45000'),
+        req: E('e33000'),
         cost: E(5e8),
         desc: `
-        大幅加強暗影的第一個獎勵。移除時間速度的所有增幅。
+        大幅加強暗影的第一個獎勵。移除時間速度的所有增幅，但是移除 [陶子] 的效果。
+        `,
+    },{
+        req: E('e89000'),
+        cost: E(5e10),
+        desc: `
+        在元素標籤裏解鎖奇異元素，並解鎖新的元素層。
+        `,
+    },{
+        req: E('ee6'),
+        cost: E(1e26),
+        desc: `
+        移除黑洞壓縮器的所有元級前增幅，[陶微中子] 的效果不再減少黑洞壓縮器的價格。在挑戰 16 裏，黑洞壓縮器便宜 1,000,000x。
+        `,
+    },{
+        req: E('e1.6e6'),
+        cost: E(5e30),
+        desc: `
+        移除宇宙射線的所有增幅。[陶微中子] 恢復減少黑洞壓縮器的價格的效果，但效果大幅減弱。
         `,
     },
 ]
@@ -35,6 +53,8 @@ const CHARGERS = [
 const UNSTABLE_BH = {
     gain() {
         let x = tmp.unstable_bh.fvm_eff.eff||E(1)
+
+        x = x.mul(exoticAEff(1,0))
 
         return x
     },
@@ -131,6 +151,8 @@ function corruptedShardGain() {
 
     if (hasPrestige(3,4)) x = x.mul(prestigeEff(3,4))
     
+    x = x.mul(exoticAEff(0,0))
+
     return x.floor()
 }
 
@@ -159,3 +181,5 @@ function updateC16HTML() {
         tmp.el[id+"_div"].setClasses({btn: true, full: true, charger: true, locked: !req || cs.lt(c.cost) || hasCharger(i)})
     }
 }
+
+const CORRUPTED_ELEMENTS = [40,64,67,150,162,187,199,200,204]

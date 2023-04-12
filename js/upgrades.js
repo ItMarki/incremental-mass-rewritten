@@ -245,7 +245,7 @@ const UPGS = {
                 }
             },
             auto_unl() { return player.mainUpg.bh.includes(5) },
-            lens: 19,
+            lens: 20,
             1: {
                 desc: "提升器增加提重器。",
                 cost: E(1),
@@ -401,6 +401,18 @@ const UPGS = {
                 },
                 effDesc(x=this.effect()) {
                     return "x"+format(x)
+                },
+            },
+            20: {
+                unl() { return player.dark.exotic_atom.tier>0 },
+                desc: `腐蝕碎片提升普通質量獲得量。`,
+                cost: E('e2e357'),
+                effect() {
+                    let x = player.dark.c16.totalS.add(1)
+                    return overflow(x,10,0.5).pow(2)
+                },
+                effDesc(x=this.effect()) {
+                    return "^"+format(x)
                 },
             },
         },

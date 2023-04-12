@@ -52,11 +52,13 @@ Decimal.prototype.scaleEvery = function (id, rev=false, fp=SCALE_FP[id]?SCALE_FP
         let s = rev?i:SCALE_TYPE.length-1-i
         let sc = SCALE_TYPE[s]
 
-        if (tmp.no_scalings[sc].includes(id)) continue
-
         let f = fp[s]||1
 
-        x = rev?x.mul(f).scaleName(sc,id,rev):x.scaleName(sc,id,rev).div(f)
+        // if (Decimal.gt(f,1)) console.log(id,format(f))
+
+        // if (tmp.no_scalings[sc].includes(id)) continue
+
+        x = tmp.no_scalings[sc].includes(id) ? rev?x.mul(f):x.div(f) : rev?x.mul(f).scaleName(sc,id,rev):x.scaleName(sc,id,rev).div(f)
     }
     return x
 }
@@ -211,7 +213,9 @@ function getPlayerData() {
             ratio: 0,
             dRatio: [1,1,1],
             elements: [],
-            elemTier: 1,
+            muonic_el: [],
+            elemTier: [1,1],
+            elemLayer: 0,
         },
         md: {
             active: false,
@@ -327,6 +331,7 @@ function loadPlayer(load) {
         let f = FERMIONS.types[i][x]
         player.supernova.fermions.tiers[i][x] = player.supernova.fermions.tiers[i][x].min(typeof f.maxTier == "function" ? f.maxTier() : f.maxTier||1/0)
     }
+    if (typeof player.atom.elemTier == "number") player.atom.elemTier = [player.atom.elemTier,1]
     let off_time = (Date.now() - player.offline.current)/1000
     if (off_time >= 60 && player.offline.active) player.offline.time += off_time
 }
@@ -490,18 +495,19 @@ function loadGame(start=true, gotNaN=false) {
             tmp.cx = e.clientX
             tmp.cy = e.clientY
         }
+        updateMuonSymbol(true)
         setInterval(loop, 50)
         setInterval(updateStarsScreenHTML, 50)
         treeCanvas()
         setInterval(drawTreeHTML, 10)
         setInterval(checkNaN,1000)
 
-        if (tmp.april) createConfirm("Do you want to disable softcap everywhere?",'april',()=>{
-            createPopup(`You trolled! I can't disable softcap! April Fools! <br><br> <img src="https://media.tenor.com/GryShD35-psAAAAM/troll-face-creepy-smile.gif">`,'troll','Dammit!')
+        if (tmp.april) createConfirm("你想要移除所有軟上限嗎？",'april',()=>{
+            createPopup(`你上當了！我取消不了軟限制！愚人節快樂！<br><br> <img src="https://media.tenor.com/GryShD35-psAAAAM/troll-face-creepy-smile.gif">`,'troll','你幹嘛！')
             document.body.style.background = `url(https://usagif.com/wp-content/uploads/2021/4fh5wi/troll-face-26.gif)`
             tmp.aprilEnabled = true
         },()=>{
-            createPopup(`<img style="width: 200px; height: 200px" src="https://media.tenor.com/U1dgzSAQk8wAAAAd/kys.gif">`,'kys','die')
+            createPopup(`<img style="width: 200px; height: 200px" src="https://media.tenor.com/U1dgzSAQk8wAAAAd/kys.gif">`,'kys','死')
         })
     }
 }

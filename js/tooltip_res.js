@@ -4,7 +4,7 @@ const TOOLTIP_RES = {
         desc() {
             let h = `你已經推了 <b>${formatMass(player.mass)}</b> 的質量。`;
 
-            if (tmp.overflowBefore.mass.gte(tmp.overflow_start.mass))
+            if (tmp.overflowBefore.mass.gte(tmp.overflow_start.mass[0]))
             h += `<br>（相當於<b>溢出</b>前的 <b>${formatMass(tmp.overflowBefore.mass)}</b>）`;
 
             if (quUnl())
@@ -41,7 +41,7 @@ const TOOLTIP_RES = {
         desc() {
             let h = `你的黑洞質量是 <b>${formatMass(player.bh.mass)}</b>。`;
 
-            if (tmp.overflowBefore.bh.gte(tmp.overflow_start.bh))
+            if (tmp.overflowBefore.bh.gte(tmp.overflow_start.bh[0]))
             h += `<br>（相當於<b>溢出</b>前的 <b>${formatMass(tmp.overflowBefore.bh)}</b>）`;
 
             if (hasCharger(1))
@@ -172,7 +172,7 @@ const TOOLTIP_RES = {
         full: "天樞碎片（FSS）",
         desc() {
             let h = `
-            你的天樞碎片指數是 <b>${tmp.matters.FSS_base.format(0)}</b>。
+            你的天樞碎片底數是 <b>${tmp.matters.FSS_base.format(0)}</b>。
             <br class='line'>
             <i>
             你需要到達 <b>${tmp.matters.FSS_req.format(0)}</b> 的 FSS 底數才可以獲得天樞碎片。
@@ -195,6 +195,20 @@ const TOOLTIP_RES = {
             • 禁用原始素粒子。<br>
             • 量子前全局運行速度一律定為 /100。<br>
             </i>`
+
+            return h
+        },
+    },
+    idk: {
+        full: "???",
+        desc() {
+            let h = `
+            我要幹啥？
+            <br class='line'>
+            <i>
+            到達 <b>???</b> 的質量。
+            </i>
+            `
 
             return h
         },

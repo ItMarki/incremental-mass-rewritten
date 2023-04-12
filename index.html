@@ -24,6 +24,7 @@
     <script src="js/saves.js"></script>
     <script src="js/challenges.js"></script>
 
+    <script src="js/darkness/exotic_atoms.js"></script>
     <script src="js/darkness/c16.js"></script>
     <script src="js/darkness/matter.js"></script>
     <script src="js/darkness/dark_run.js"></script>
@@ -235,6 +236,13 @@
                         </div>
                         <span style="margin-left: 5px; text-align: left;" id="preQGSpeed">X</span>
                     </div>
+
+                    <div class="resources sml idk" id="idk_div">
+                        <div id="idk_tooltip" class="tooltip" tooltip-pos="bottom" tooltip-align="left" tooltip-text-align="left" tooltip-html="???">
+                            <img class="res_img" src="images/mark.png">
+                        </div>
+                        <span style="margin-left: 5px; text-align: left; visibility: hidden;">X<br>X</span>
+                    </div>
                 </div>
             </div>
         </div><br><div style="min-height: 30px">
@@ -315,6 +323,7 @@
                     <span id="massSoft8" style="color: rgb(0, 255, 149)">質量獲得量到達 <b id="massSoftStart8">X</b> 後會被軟上限^7！<br></span>
                     <span id="massSoft9" style="color: rgb(0, 225, 255)">質量獲得量到達 <b id="massSoftStart9">X</b> 後會被軟上限^8！</span>
                     <div id="massOverflow"></div>
+                    <div id="massOverflow2" style="color: rgb(255, 197, 215)"></div>
                     <div id="strongerOverflow"></div>
                     </div>
                 </div><div id="stab_frame0_1">
@@ -361,6 +370,7 @@
                             (x + 1)<sup id="bhMassPower2">0.33</sup> 的公式會在 <b id="bhFSoftStart1">X</b> 被軟上限
                         </span><br>
                         <span id="bhOverflow"></span>
+                        <div id="bhOverflow2" style="color: rgb(255, 197, 215)"></div>
                     </div>
                 </div><div id="stab_frame0_2">
                     你有 <span id="atomicAmt">X</span> 原子力量，<br>
@@ -430,7 +440,7 @@
                         </div><div style="width: calc(50% - 36px); margin: 0 15px;">
                             <button class="btn" id="chal_exit" onclick="CHALS.exit()">退出挑戰</button><br><br>
                             <div id="chal_desc_div">
-                                <button class="btn" id="chal_enter" onclick="CHALS.enter()">進入挑戰</button>
+                                <button class="btn" id="chal_enter" onclick="enterChal()">進入挑戰</button>
                                 <p id="chal_ch_title"></p>
                                 <span class="red" id="chal_ch_desc"></span><br>
                                 <span class="red" id="chal_ch_reset"></span>
@@ -479,9 +489,8 @@
                         <span id="quarkOverflow"></span>
                     </div>
                 </div><div id="stab_frame4_1">
-                    <div id="elemTierDiv">
-                        <button onclick="player.atom.elemTier = Math.max(1,player.atom.elemTier-1)" class="btn"><--</button><span id="elemTier" style="margin: 0px 10px">元素第 1 階</span><button onclick="player.atom.elemTier = Math.min(MAX_ELEM_TIERS,player.atom.elemTier+1)" class="btn">--></button><br><br>
-                    </div>
+                    <button class="btn" id="elemLayer" onclick="changeElemLayer()">元素層：普通</button>
+                    <div id="elemTierDiv"></div><br>
                     <div id="elem_ch_div" style="min-height: 70px;">
                         <span id="elem_desc" class='sky'>X</span><br>
                         價格：<span id="elem_cost">X</span><br>
@@ -503,6 +512,25 @@
                     <button onclick="MASS_DILATION.break.toggle()" id="bd_btn" class="btn half_full bd tooltip" tooltip-html="當你在大撕裂裏打破膨脹時，黑洞壓縮器和宇宙射線不再受到 QC 模組 8 的影響，QC 模組 7 失效，而你可以基於膨脹質量獲得<b>相對能量</b>。相對能量會生產<b>相對質量</b>。修補膨脹會重置你的相對能量和相對質量，並且強制執行量子重置。">打破膨脹</button><br><br>
                     <div class="table_center">
                         <div id="bd_upg_table" class="table_center" style="width: 1000px;"></div>
+                    </div>
+                </div><div id="stab_frame4_4">
+                    <button class="btn half_full tooltip" id="mcf_btn" tooltip-html="升階會強制執行 FSS 重置。" onclick="EXOTIC_ATOM.tier()">
+                        緲子催化聚合（MCF）第 0 階<br>
+                        要求：??? 奇異原子
+                    </button>
+                    <div id="ea_div">
+                        <br>
+                        <div>你有 <span id="ext_atom">0</span> 個奇異原子（基於 K 介子和 π 介子）。</div>
+                        <div class="table_center">
+                            <div style="width: 50%; min-width: 500px;">
+                                你有 <span id="ea_amt0">0</span> 個 K 介子。<br><br>
+                                <div class="sky" id="ea_milestone_table0"></div>
+                            </div>
+                            <div style="width: 50%; min-width: 500px;">
+                                你有 <span id="ea_amt1">0</span> 個 π 介子。<br><br>
+                                <div class="sky" id="ea_milestone_table1"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div><div id="tab_frame6">
@@ -608,7 +636,7 @@
                 <h2>確認設定</h2><br>
                 <div id="confirm_table" class="table_center"></div>
                 <br><br>
-                增量質量（重寫版）v0.6.4.5 - 由 MrRedShark77 製作，ItMarki 翻譯<br>
+                增量質量（重寫版）v0.6.5.2 - 由 MrRedShark77 製作，ItMarki 翻譯<br>
                 本遊戲受到 <ruby>Distance Incremental<rt>距離增量</rt></ruby> 和 <ruby>Synergism<rt>協同放置</rt></ruby> 的啟發製作<br>
                 貢獻：<span style="cursor: pointer;" onclick='addNotify(`frfrfr<br><img src="https://5.imimg.com/data5/HO/DK/MY-8155364/lemon-500x500.jpg" style="width:100%">`)'>Lemon</span>、16777216 和 Aarex（繪畫）<br><br><br>
                 提示 1：把指標放在標籤上方的圖片上，即可查看描述……<br><br>

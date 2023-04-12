@@ -47,6 +47,7 @@ const TABS = {
             { id: "元素", unl() { return player.chal.comps[7].gte(16) || player.supernova.times.gte(1) } },
             { id: "質量膨脹", unl() { return MASS_DILATION.unlocked() }, style: "dilation" },
             { id: "打破膨脹", unl() { return hasUpgrade("br",9) }, style: "break_dilation" },
+            { id: "奇異原子", unl() { return tmp.eaUnl } },
         ],
         5: [
             { id: "中子樹" },

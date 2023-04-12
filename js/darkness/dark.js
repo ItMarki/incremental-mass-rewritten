@@ -2,7 +2,7 @@ const DARK = {
     nextEffectAt: [
         [0,1e12,1e22,1e130],
         [1e6,1e11,1e25,1e130],
-        [1e120,1e180,'e345','e800','e2500','e56000','e125500'],
+        [1e120,1e180,'e345','e800','e2500','e56000','e125500','ee7'],
     ],
     gain() {
         let x = E(1)
@@ -120,7 +120,7 @@ const DARK = {
         x.mass = hasCharger(4) ? overflow(a.add(1),10,0.25) : a.add(1).log10().add(1).root(2)
 
         if (a.gte(1e6)) x.bp = a.div(1e6).pow(10)
-        if (a.gte(1e11)) x.sn = a.div(1e11).add(1).log10().div(10).add(1).softcap(7.5,0.25,0)
+        if (a.gte(1e11)) x.sn = a.div(1e11).add(1).log10().div(10).add(1).softcap(7.5,0.25,0,hasElement(9,1))
         if (a.gte(1e25)) x.en = a.div(1e25).pow(3)
         if (tmp.chal14comp) x.ab = a.add(1).pow(2)
         if (!tmp.c16active && a.gte(1e130)) x.bhp = a.div(1e130).log10().div(5)
@@ -143,12 +143,18 @@ const DARK = {
         x.shadow = a.add(1).log10().add(1).pow(2)
         x.msoftcap = a.add(1).log10().root(2).div(2).add(1)
         if (a.gte(1e120)) x.hr = a.div(1e120).log10().add(1).pow(2)
-        if (a.gte(1e180)) x.pb = a.div(1e180).log10().add(1).pow(hasPrestige(1,167)?(player.dark.matters.final+1)**.5:1)
+        if (a.gte(1e180)) {
+            x.pb = a.div(1e180).log10().add(1).pow(hasPrestige(1,167)?player.dark.matters.final.add(1).root(2):1)
+            // x.pb = overflow(x.pb,1e20,0.5)
+        }
         if (a.gte('e345')) x.csp = a.div('e345').log10().add(1).pow(2)
         if (a.gte('e800') && tmp.matterUnl) x.mexp = a.div('e800').log10().div(10).add(1).root(2.5)
         if (a.gte('e2500') && hasElement(199)) x.accelPow = a.div('e2500').log10().add(1).log10().add(1).pow(1.5).softcap(5,0.2,0)
         if (a.gte('e56000') && !tmp.c16active) x.ApQ_Overflow = Decimal.pow(10,a.div('e56000').log10().add(1).log10())
         if (a.gte('e125500')) x.fss = a.div('e56000').log10().add(1).log10().div(10).add(1).toNumber()
+        if (a.gte('ee7')) {
+            x.ea = a.div('ee7').log10().div(1e6).add(1).root(2).softcap(1.75,0.25,0)
+        }
 
         return x
     },
@@ -178,11 +184,16 @@ function calcDark(dt, dt_offline) {
     if (hasCharger(1)) {
         player.bh.unstable = UNSTABLE_BH.getProduction(player.bh.unstable,tmp.unstable_bh.gain.mul(dt))
     }
+
+    if (tmp.eaUnl && player.dark.exotic_atom.tier>0) {
+        for (let i = 0; i < 2; i++) player.dark.exotic_atom.amount[i] = player.dark.exotic_atom.amount[i].add(tmp.exotic_atom.gain[i].mul(dt))
+    }
 }
 
 function updateDarkTemp() {
     let dtmp = tmp.dark
 
+    updateExoticAtomsTemp()
     updateMattersTemp()
     updateDarkRunTemp()
 
@@ -209,7 +220,7 @@ function updateDarkHTML() {
 	if (unl) tmp.el.darkAmt.setHTML(player.dark.rays.format(0)+"<br>"+(og?dtmp.rayEff.passive?player.dark.rays.formatGain(dtmp.gain.mul(dtmp.rayEff.passive)):"（+"+dtmp.gain.format(0)+"）":"（需要 Og-118）"))
     let c16 = tmp.c16active
 
-    unl = player.dark.matters.final>0
+    unl = player.dark.matters.final.gt(0)
 	tmp.el.fss_div.setDisplay(unl)
 	if (unl) tmp.el.FSS2.setHTML(format(player.dark.matters.final,0)+"<br>（+"+(tmp.matters.FSS_base.gte(tmp.matters.FSS_req)?1:0)+"）")
 
@@ -217,6 +228,9 @@ function updateDarkHTML() {
 	tmp.el.corrupt_div.setDisplay(unl)
 	if (unl) tmp.el.corruptShard1.setHTML(format(player.dark.c16.shard,0)+"<br>（+"+tmp.c16.shardGain.format(0)+"）")
 
+    unl = player.chal.comps[16].gte(1)
+	tmp.el.idk_div.setDisplay(unl)
+    
     if (tmp.tab == 7) {
         if (tmp.stab[7] == 0) {
             tmp.el.darkRay.setHTML(player.dark.rays.format(0))
@@ -230,7 +244,7 @@ function updateDarkHTML() {
             `
 
             if (eff.bp) e += `<br>將藍圖粒子獲得量提升 <b>x${eff.bp.format(3)}</b>`
-            if (eff.sn) e += `<br>額外給予 <b>x${eff.sn.format(3)}</b> 個超新星`+eff.sn.softcapHTML(7.5)
+            if (eff.sn) e += `<br>額外給予 <b>x${eff.sn.format(3)}</b> 個超新星`+eff.sn.softcapHTML(7.5,hasElement(9,1))
             if (eff.en) e += `<br>將所得熵提升 <b>x${eff.en.format(3)}</b>`
             if (eff.ab) e += `<br>將深淵之漬獲得量提升 <b>x${eff.ab.format(3)}</b>`
             if (eff.bhp) e += `<br>將黑洞加成公式的指數增加 <b>+${eff.bhp.format(3)}</b><br>移除黑洞指數加成效果的上限`.corrupt(c16)
@@ -255,6 +269,7 @@ function updateDarkHTML() {
                 if (eff.accelPow) e += `<br>將加速器力量提升 <b>x${eff.accelPow.format(3)}</b>`+eff.accelPow.softcapHTML(5)
                 if (eff.ApQ_Overflow) e += `<br>原子力量和夸克的溢出推遲 <b>^${eff.ApQ_Overflow.format(3)}</b>`.corrupt(c16)
                 if (eff.fss) e += `<br>天樞碎片強 <b>${formatPercent(eff.fss-1)}</b>`
+                if (eff.ea) e += `<br>將奇異原子的公式提升 ^<b>${format(eff.ea)}</b>`+eff.ea.softcapHTML(1.75)
 
                 tmp.el.abEff.setHTML(e)
             }
@@ -309,7 +324,7 @@ function getDarkSave() {
             amt: [],
             upg: [],
             unls: 3,
-            final: 0,
+            final: E(0),
         },
 
         c16: {
@@ -319,6 +334,11 @@ function getDarkSave() {
             bestBH: E(0),
             charger: [],
             tree: [],
+        },
+
+        exotic_atom: {
+            tier: 0,
+            amount: [E(0),E(0)],
         },
     }
     for (let x = 0; x < MATTERS_LEN; x++) {

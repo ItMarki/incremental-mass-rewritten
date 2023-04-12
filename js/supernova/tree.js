@@ -37,7 +37,7 @@ const TREE_IDS = [
         ['chal5','chal6','chal7','chal8'],
         ['fn12','fn11','fn6','fn10','rad6',""],
         ['en1','qu5','br1'],
-        ['ct15','ct12','','ct13','ct14'],
+        ['ct15','ct12','ct16','ct13','ct14'],
     ],[
         ['s4','sn5','sn4'],
         ['','','','qu_qol8a'],
@@ -1004,7 +1004,9 @@ const TREE_UPGS = {
             reqDesc() { return `在挑戰 16 中到達 ${format(1e300)} 暗物質。` },
 
             effect() {
-                let x = player.dark.c16.bestBH.add(1).log10().add(1).log10().div(tmp.c16active?8:30)
+                let p = hasPrestige(2,40), c = tmp.c16active
+                let x = player.dark.c16.bestBH.add(1).log10().add(1).log10().div(c?8:30)
+                if (p) x = x.mul(c?3:1.2)
                 return x.toNumber()
             },
             effDesc(x) { return "+"+format(x) },
@@ -1080,7 +1082,8 @@ const TREE_UPGS = {
 
             effect() {
                 let x = Decimal.pow(0.95,overflow(player.dark.c16.totalS.add(1).log10(),2,0.5).root(2))
-                return x.toNumber()
+                // if (hasElement(11,1)) x = x.pow(2)
+                return x
             },
             effDesc(x) { return formatReduction(x) },
         },
@@ -1129,7 +1132,6 @@ const TREE_UPGS = {
         },
         ct14: {
             branch: ['ct11'],
-            icon: "placeholder",
 
             desc: `你在挑戰 16 中的最佳黑洞質量推遲膨脹質量溢出。`,
             cost: E(1e10),
@@ -1145,13 +1147,25 @@ const TREE_UPGS = {
         },
         ct15: {
             branch: ['ct8'],
-            icon: "placeholder",
 
             desc: `腐蝕碎片總數提升有色物質獲得量。`,
             cost: E(2.5e10),
 
             effect() {
                 let x = player.dark.c16.totalS.add(1).root(2)
+                return x
+            },
+            effDesc(x) { return "x"+format(x) },
+        },
+        ct16: {
+            unl: ()=>tmp.eaUnl,
+            branch: ['ct10'],
+
+            desc: `你在挑戰 16 中的最佳黑洞質量提升 K 介子和 π 介子獲得量。`,
+            cost: E(5e16),
+
+            effect() {
+                let x = player.dark.c16.bestBH.add(1).log10().div(1e5).add(1).pow(2)
                 return x
             },
             effDesc(x) { return "x"+format(x) },

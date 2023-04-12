@@ -419,9 +419,10 @@ const PRESTIGES = {
             "46": `挑戰 11 到 13 的完成上限增加 500 次。`,
             "66": `所有費米子的增幅弱 20%。`,
             "91": `FSS 底數 ^1.05。`,
-            "127": `移除等級和階的所有奇異級前增幅，但是挑戰 5 的獎勵無效。`,
+            "127": `移除等級和階的所有奇異級前增幅，但是挑戰 5 的獎勵以及鈾砹混合體對等級和階的第一個效果無效。`,
             "139": `每擁有一個 FSS，有色物質生產加快至 3x。FVM 稍微更便宜。`,
             "167": `FFS 對深淵之漬的第四個獎勵提供指數倍數。`,
+            "247": `MCF 階數提升 K 介子獲得量。`,
         },
         {
             "1": `重置等級和榮耀的要求減少 15%。`,
@@ -432,11 +433,15 @@ const PRESTIGES = {
             "22": `榮譽提升所有有色物質的獲得量。`,
             "25": `移除黑暗前挑戰的完成上限。更換挑戰 7 的獎勵。`,
             "28": `榮耀加強 FVM 力量。`,
+            "34": `π 介子稍微提升 K 介子獲得量。`,
+            "40": `加強 [ct4] 的效果。`,
+            
         },
         {
             "1": `之前重置的要求減少 10%。`,
             "2": `每擁有一個聲望，奇異級超新星推遲 x1.25。`,
             "4": `每擁有一個聲望，腐蝕碎片獲得量提升 50%。`,
+            "6": `奇異原子提升其他資源。`,
         },
     ],
     rewardEff: [
@@ -508,6 +513,10 @@ const PRESTIGES = {
                 let x = Decimal.pow(3,player.dark.matters.final)
                 return x
             },x=>"x"+x.format(0)],
+            "247": [()=>{
+                let x = Decimal.pow(player.dark.exotic_atom.tier+1,1.5)
+                return x
+            },x=>"x"+x.format()],
         },
         {
             "5": [()=>{
@@ -526,6 +535,10 @@ const PRESTIGES = {
                 let x = player.prestiges[1].root(2).div(10).add(1)
                 return x
             },x=>"x"+format(x)],
+            "34": [()=>{
+                let x = player.dark.exotic_atom.amount[1].add(1).log10().add(1).pow(1.5)
+                return x
+            },x=>"x"+format(x)],
         },
         {
             "2": [()=>{
@@ -534,6 +547,10 @@ const PRESTIGES = {
             },x=>"推遲 x"+x.format()],
             "4": [()=>{
                 let x = player.prestiges[3].div(2).add(1)
+                return x
+            },x=>"x"+x.format()],
+            "6": [()=>{
+                let x = tmp.exotic_atom.amount.add(1).log10().add(1)
                 return x
             },x=>"x"+x.format()],
             
@@ -566,20 +583,21 @@ function prestigeEff(x,y,def=E(1)) { return tmp.prestiges.eff[x][y] || def }
 function updateRanksTemp() {
     if (!tmp.ranks) tmp.ranks = {}
     for (let x = 0; x < RANKS.names.length; x++) if (!tmp.ranks[RANKS.names[x]]) tmp.ranks[RANKS.names[x]] = {}
+    let rt_fp2 = hasPrestige(1,127) ? 1 : fp2
     let fp2 = tmp.qu.chroma_eff[1][0]
     let ffp = E(1)
     let ffp2 = 1
     if (tmp.c16active || player.dark.run.active) ffp2 /= mgEff(5)
 
     let fp = RANKS.fp.rank().mul(ffp)
-    tmp.ranks.rank.req = E(10).pow(player.ranks.rank.div(ffp2).scaleEvery('rank',false,[1,1,1,1,fp2]).div(fp).pow(1.15)).mul(10)
+    tmp.ranks.rank.req = E(10).pow(player.ranks.rank.div(ffp2).scaleEvery('rank',false,[1,1,1,1,rt_fp2]).div(fp).pow(1.15)).mul(10)
     tmp.ranks.rank.bulk = E(0)
-    if (player.mass.gte(10)) tmp.ranks.rank.bulk = player.mass.div(10).max(1).log10().root(1.15).mul(fp).scaleEvery('rank',true,[1,1,1,1,fp2]).mul(ffp2).add(1).floor();
+    if (player.mass.gte(10)) tmp.ranks.rank.bulk = player.mass.div(10).max(1).log10().root(1.15).mul(fp).scaleEvery('rank',true,[1,1,1,1,rt_fp2]).mul(ffp2).add(1).floor();
     tmp.ranks.rank.can = player.mass.gte(tmp.ranks.rank.req) && !CHALS.inChal(5) && !CHALS.inChal(10) && !FERMIONS.onActive("03")
 
     fp = RANKS.fp.tier().mul(ffp)
-    tmp.ranks.tier.req = player.ranks.tier.div(ffp2).scaleEvery('tier',false,[1,1,1,fp2]).div(fp).add(2).pow(2).floor()
-    tmp.ranks.tier.bulk = player.ranks.rank.max(0).root(2).sub(2).mul(fp).scaleEvery('tier',true,[1,1,1,fp2]).mul(ffp2).add(1).floor();
+    tmp.ranks.tier.req = player.ranks.tier.div(ffp2).scaleEvery('tier',false,[1,1,1,rt_fp2]).div(fp).add(2).pow(2).floor()
+    tmp.ranks.tier.bulk = player.ranks.rank.max(0).root(2).sub(2).mul(fp).scaleEvery('tier',true,[1,1,1,rt_fp2]).mul(ffp2).add(1).floor();
 
     fp = E(1).mul(ffp)
     let pow = 2
@@ -695,7 +713,9 @@ const BEYOND_RANKS = {
             20: `更換挑戰 1 的獎勵。`,
         },
         3: {
-            1: `普通質量的 arv 階數減弱質量和提重器溢出。`
+            1: `普通質量的 arv 階數減弱質量和提重器溢出。`,
+            2: `超級 FSS 推遲 1 個。`,
+            4: `超·級別提升 K 介子和 π 介子獲得量。`,
         },
     },
 
@@ -711,7 +731,7 @@ const BEYOND_RANKS = {
             ],
             4: [
                 ()=>{
-                    let x = player.dark.matters.final**0.75/10+1
+                    let x = player.dark.matters.final.pow(.75).div(10).add(1)
 
                     return x
                 },
@@ -762,6 +782,14 @@ const BEYOND_RANKS = {
                     return x
                 },
                 x=>"弱 "+formatReduction(x),
+            ],
+            4: [
+                ()=>{
+                    let x = player.ranks.beyond.add(1).log10().add(1).pow(2)
+
+                    return x
+                },
+                x=>"x"+format(x),
             ],
         },
     },
