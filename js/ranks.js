@@ -583,8 +583,8 @@ function prestigeEff(x,y,def=E(1)) { return tmp.prestiges.eff[x][y] || def }
 function updateRanksTemp() {
     if (!tmp.ranks) tmp.ranks = {}
     for (let x = 0; x < RANKS.names.length; x++) if (!tmp.ranks[RANKS.names[x]]) tmp.ranks[RANKS.names[x]] = {}
-    let rt_fp2 = hasPrestige(1,127) ? 1 : fp2
     let fp2 = tmp.qu.chroma_eff[1][0]
+    let rt_fp2 = hasPrestige(1,127) ? 1 : fp2
     let ffp = E(1)
     let ffp2 = 1
     if (tmp.c16active || player.dark.run.active) ffp2 /= mgEff(5)
