@@ -20,7 +20,7 @@ const DARK = {
         x = x.mul(glyphUpgEff(6))
 
         if (hasUpgrade('br',20)) x = x.mul(upgEffect(4,20))
-        
+
         return x.floor()
     },
     rayEffect() {
@@ -31,7 +31,7 @@ const DARK = {
 
         if (a.gte(1e12)) x.passive = a.div(1e12).max(1).log10().add(1).pow(2).div(1e3)
         if (a.gte(1e22)) x.glyph = a.div(1e22).max(1).log10().add(1).root(2).sub(1).div(10).add(1).toNumber()
-        if (a.gte(1e130)) x.dChal = a.div(1e130).max(1).log10().mul(20).softcap(100,0.5,0).floor()
+        if (a.gte(1e130)) x.dChal = a.div(1e130).max(1).log10().mul(20).softcap(100,0.5,0,hasBeyondRank(3,12)).floor()
 
         return x
     },
@@ -65,14 +65,14 @@ const DARK = {
 
         let k = []
 
-        if (hasElement(127)) k.push(8,9,11)
+        if (hasElement(127) || hasInfUpgrade(11)) k.push(8,9,11)
         else bmd.active = false
         bmd.energy = E(0)
         bmd.mass = E(0)
         for (let x = 0; x < 10; x++) bmd.upgs[x] = E(0)
 
         if (!hasElement(204)) resetMainUpgs(4,k)
-
+        
         if (!hasElement(124) || (force && !hasElement(136))) {
             let qk = ["qu_qol1", "qu_qol2", "qu_qol3", "qu_qol4", "qu_qol5", "qu_qol6", "qu_qol7", "qu_qol8", "qu_qol9", "qu_qol8a", "unl1", "unl2", "unl3", "unl4",
             "qol1", "qol2", "qol3", "qol4", "qol5", "qol6", "qol7", "qol8", "qol9", 'qu_qol10', 'qu_qol11']
@@ -110,6 +110,8 @@ const DARK = {
 
         if (hasPrestige(1,22)) x = x.pow(1.1)
 
+        if (tmp.inf_unl) x = x.pow(theoremEff('time',2))
+
         return x
     },
     shadowEff() {
@@ -133,6 +135,8 @@ const DARK = {
         x = x.mul(tmp.dark.shadowEff.ab||1)
         if (hasElement(189)) x = x.mul(elemEffect(189))
         if (hasElement(153)) x = x.pow(elemEffect(153))
+
+        if (tmp.inf_unl) x = x.pow(theoremEff('time',2))
 
         return x
     },
@@ -160,7 +164,7 @@ const DARK = {
     },
 }
 
-function calcDark(dt, dt_offline) {
+function calcDark(dt) {
     if (player.dark.unl) {
         player.dark.shadow = player.dark.shadow.add(tmp.dark.shadowGain.mul(dt))
 
@@ -176,6 +180,8 @@ function calcDark(dt, dt_offline) {
                 if (hasElement(195)) getMatterUpgrade(x)
             }
             if (player.dark.matters.unls<MATTERS_LEN+1 && player.dark.matters.amt[mu-2].gte(tmp.matters.req_unl)) player.dark.matters.unls++
+
+            if (hasInfUpgrade(10)) player.dark.matters.final = player.dark.matters.final.max(MATTERS.final_star_shard.bulk())
         }
     }
 
@@ -185,8 +191,16 @@ function calcDark(dt, dt_offline) {
         player.bh.unstable = UNSTABLE_BH.getProduction(player.bh.unstable,tmp.unstable_bh.gain.mul(dt))
     }
 
-    if (tmp.eaUnl && player.dark.exotic_atom.tier>0) {
-        for (let i = 0; i < 2; i++) player.dark.exotic_atom.amount[i] = player.dark.exotic_atom.amount[i].add(tmp.exotic_atom.gain[i].mul(dt))
+    if (tmp.eaUnl) {
+        if (hasInfUpgrade(14)) {
+            for (let i = 1; i <= tmp.elements.unl_length[1]; i++) buyElement(i,1)
+
+            EXOTIC_ATOM.tier()
+        }
+
+        if (player.dark.exotic_atom.tier>0) {
+            for (let i = 0; i < 2; i++) player.dark.exotic_atom.amount[i] = player.dark.exotic_atom.amount[i].add(tmp.exotic_atom.gain[i].mul(dt))
+        }
     }
 }
 
@@ -213,12 +227,17 @@ function setupDarkHTML() {
 }
 
 function updateDarkHTML() {
+    let dtmp = tmp.dark
+    let c16 = tmp.c16active
+
+    let inf_gs = tmp.preInfGlobalSpeed
+
+    /*
     let og = hasElement(118)
     let unl = og || player.dark.unl
-    let dtmp = tmp.dark
+
 	tmp.el.dark_div.setDisplay(unl)
 	if (unl) tmp.el.darkAmt.setHTML(player.dark.rays.format(0)+"<br>"+(og?dtmp.rayEff.passive?player.dark.rays.formatGain(dtmp.gain.mul(dtmp.rayEff.passive)):"（+"+dtmp.gain.format(0)+"）":"（需要 Og-118）"))
-    let c16 = tmp.c16active
 
     unl = player.dark.matters.final.gt(0)
 	tmp.el.fss_div.setDisplay(unl)
@@ -230,11 +249,12 @@ function updateDarkHTML() {
 
     unl = player.chal.comps[16].gte(1)
 	tmp.el.idk_div.setDisplay(unl)
-    
+    */
+
     if (tmp.tab == 7) {
         if (tmp.stab[7] == 0) {
             tmp.el.darkRay.setHTML(player.dark.rays.format(0))
-            tmp.el.darkShadow.setHTML(player.dark.shadow.format(0)+" "+player.dark.shadow.formatGain(tmp.dark.shadowGain))
+            tmp.el.darkShadow.setHTML(player.dark.shadow.format(0)+" "+player.dark.shadow.formatGain(tmp.dark.shadowGain.mul(inf_gs)))
 
             let eff = dtmp.shadowEff
 
@@ -253,13 +273,13 @@ function updateDarkHTML() {
 
             tmp.el.ab_div.setDisplay(tmp.chal14comp)
             if (tmp.chal14comp) {
-                tmp.el.abyssalBlot.setHTML(player.dark.abyssalBlot.format(0)+" "+player.dark.abyssalBlot.formatGain(tmp.dark.abGain))
+                tmp.el.abyssalBlot.setHTML(player.dark.abyssalBlot.format(0)+" "+player.dark.abyssalBlot.formatGain(tmp.dark.abGain.mul(inf_gs)))
 
                 eff = dtmp.abEff
 
                 e = getNextDarkEffectFromID(2) + `
-                將暗影獲得量提升 <b>x${eff.shadow.format(3)}</b>
-                <br>將質量軟上限^4-${hasElement(159)?8:6} 推遲 <b>^${eff.msoftcap.format(3)}</b>
+                    將暗影獲得量提升 <b>x${eff.shadow.format(3)}</b>
+                    <br>將質量軟上限^4-${hasElement(159)?8:6} 推遲 <b>^${eff.msoftcap.format(3)}</b>
                 `
 
                 if (eff.hr) e += `<br>將霍金輻射獲得量提升 <b>x${eff.hr.format(3)}</b>`
@@ -282,9 +302,9 @@ function updateDarkHTML() {
 
             if (eff.passive) e += `<br>每秒獲得重置時獲得的暗束的 <b>${formatPercent(eff.passive)}</b>`
             if (eff.glyph) e += `<br>將符文質量獲得量提升 <b>x${format(eff.glyph,3)}</b>`
-            if (eff.dChal) e += `<br>將挑戰 13-15 完成上限增加 <b>${format(eff.dChal,0)}</b> 次`+eff.dChal.softcapHTML(100)
+            if (eff.dChal) e += `<br>將挑戰 13-15 完成上限增加 <b>${format(eff.dChal,0)}</b> 次`+eff.dChal.softcapHTML(100,hasBeyondRank(3,12))
 
-        tmp.el.drEff.setHTML(e)
+            tmp.el.drEff.setHTML(e)
         } else if (tmp.stab[7] == 1) {
             updateDarkRunHTML()
         } else if (tmp.stab[7] == 2) {

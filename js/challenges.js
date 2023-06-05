@@ -42,6 +42,11 @@ function updateChalHTML() {
     }
 }
 
+function enterChal() {
+    if (player.chal.choosed == 16) startC16()
+    else CHALS.enter()
+}
+
 function updateChalTemp() {
     if (!tmp.chal) tmp.chal = {
         goal: {},
@@ -523,20 +528,20 @@ const CHALS = {
         unl() { return hasElement(218) },
         title: "混沌物質湮滅",
         desc: `
-        • 你不能獲得暴怒點數和暗物質。所有有色物質的公式失效，但它們會產生其他有色物質。紅物質會生產暗物質。<br>
-        • 挑戰 16 前的內容都被腐蝕/禁用（包括級別和重置等級、主升級、元素、中子樹等）。<br>
+        • 你不能獲得暴怒點數。所有有色物質的公式失效，但它們會產生其他有色物質。紅物質會生產暗物質。<br>
+        • 挑戰 16 前的部分內容，例如級別和重置等級、主升級、元素、中子樹等，會被腐化（禁用）。<br>
         • 你困在質量膨脹和黑暗試煉裏，每個符文都有 100 個（斯洛伐克符文則有 10 個）。<br>
         • 禁用原始素粒子。<br>
         • 量子前全局運行速度一律定為 /100。<br>
-        退出挑戰時，你會基於黑洞質量獲得腐蝕碎片。
+        退出挑戰時，你會基於黑洞質量獲得腐化碎片。
         `,
-        reward: `改善鈾砹混合體。[未開發]<br><span class="yellow">初次完成時，你會解鎖???</span>`,
+        reward: `改善鈾砹混合體。<br><span class="yellow">初次完成時，你會解鎖???</span>`,
         max: E(1),
         inc: E('e1.25e11'),
         pow: E(2),
         start: E('e1.25e11'),
         effect(x) {
-            let ret = x.mul(0.048).add(1)
+            let ret = x.mul(0.05).add(1)
             return ret
         },
         effDesc(x) { return "^"+format(x) },

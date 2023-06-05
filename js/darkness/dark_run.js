@@ -78,6 +78,7 @@ const DARK_RUN = {
             eff(i) { return 1.5**i },
             effDesc: x=>"^"+format(x,2),
         },{
+            max: 100,
             desc: `暗束獲得量增至 3x。`,
             cost(i) {
                 i *= Math.max(1,i-4)**0.5
@@ -214,7 +215,7 @@ function updateDarkRunHTML() {
         let desc = "<span class='sky'>"+(typeof u.desc == "function" ? u.desc() : u.desc)+"</span>"
 
         if (c16 && gum == 14) desc = desc.corrupt()
-        
+
         msg = "[等級 "+format(ua,0)+(isFinite(max)?" / "+format(max,0):"")+"]<br>"+desc+"<br>"
 
         if (ua<max) {
@@ -225,7 +226,7 @@ function updateDarkRunHTML() {
             }
             msg +=  "<span>價格："+cr+"</span><br>"
         }
-
+        
 		if (u.effDesc !== undefined) msg += "<span class='green'>目前："+u.effDesc(tmp.glyph_upg_eff[gum])+"</span>"
     }
     tmp.el.glyph_upg_msg.setHTML(msg)
@@ -260,19 +261,23 @@ function updateDarkRunTemp() {
     dtmp.glyph_mult = dtmp.rayEff.glyph||1
     if (hasPrestige(2,5)) dtmp.glyph_mult *= prestigeEff(2,5,1)
     dtmp.glyph_mult *= tmp.matters.FSS_eff[1]
-
+    
     let w = 1
+
+    if (tmp.inf_unl) w /= theoremEff('time',3)
+
     dtmp.glyph_weak = w
 
     let dp = 0
     if (hasElement(7,1)) dp += 3
-    
+
     for (let x = 0; x < MASS_GLYPHS_LEN; x++) {
         dtmp.mass_glyph_eff[x] = DARK_RUN.mass_glyph_eff(x)
         let gain = DARK_RUN.mass_glyph_gain[x]()
         let mg = Math.max(0,(dra ? gain : 0)-player.dark.run.glyphs[x])
         if (player.dark.run.gmode == 1) mg = Math.min(player.dark.run.gamount,mg)
         dtmp.mass_glyph_gain[x] = mg
+
         dtmp.mg_passive[x] = x < dp ? gain : 0
     }
 
@@ -290,7 +295,7 @@ function setupDarkRunHTML() {
     for (let x = 0; x < MASS_GLYPHS_LEN; x++) {
         html += `
         <div style="margin: 5px; width: 100px">
-        <div id="mass_glyph_tooltip${x}" class="tooltip" style="margin-bottom: 5px;" onclick="glyphButton(${x})" tooltip-html="${DARK_RUN.mass_glyph_name[x]}"><img style="cursor: pointer" src="images/glyphs/glyph${x}.png"></div>
+            <div id="mass_glyph_tooltip${x}" class="tooltip" style="margin-bottom: 5px;" onclick="glyphButton(${x})" tooltip-html="${DARK_RUN.mass_glyph_name[x]}"><img style="cursor: pointer" src="images/glyphs/glyph${x}.png"></div>
             <div id="mass_glyph${x}">0</div>
         </div>
         `

@@ -13,23 +13,25 @@ const TABS = {
         }
     },
     1: [
-        { id: "主標籤" },
-        { id: "統計" },
-        { id: "升級", unl() { return player.rp.unl } },
-        { id: "挑戰", unl() { return player.chal.unl } },
-        { id: "原子", unl() { return player.atom.unl }, style: "atom" },
-        { id: "超新星", unl() { return player.supernova.times.gte(1) || quUnl() }, style: "sn" },
-		{ id: "量子", unl() { return quUnl() }, style: "qu" },
-        { id: "暗界", unl() { return player.dark.unl }, style: "dark" },
-        { id: "選項" },
+        { id: "主標籤", icon: "pajamas:weight" },
+        { id: "統計", icon: "material-symbols:query-stats" },
+        { id: "升級", icon: "carbon:upgrade", unl() { return player.rp.unl } },
+        { id: "挑戰", icon: "material-symbols:star", unl() { return player.chal.unl } },
+        { id: "原子", icon: "eos-icons:atom-electron", color: "cyan", unl() { return player.atom.unl }, style: "atom" },
+        { id: "超新星", icon: "material-symbols:explosion-outline", color: "magenta", unl() { return player.supernova.times.gte(1) || quUnl() }, style: "sn" },
+        { id: "量子", icon: "material-symbols:grid-4x4-rounded", color: "lightgreen", unl() { return quUnl() }, style: "qu" },
+        { id: "暗界", icon: "ic:baseline-remove-red-eye", color: "grey", unl() { return player.dark.unl }, style: "dark" },
+        { id: "無限", icon: "game-icons:infinity", color: "orange", unl() { return tmp.inf_unl }, style: "inf" },
+        { id: "選項", icon: "mdi:gear" },
     ],
     2: {
         0: [
             { id: "質量" },
             { id: "黑洞", unl() { return player.bh.unl }, style: "bh" },
             { id: "原子生產器", unl() { return player.atom.unl }, style: "atom" },
-            { id: "恆星", unl() { return STARS.unlocked() } },
-			{ id: "不可描述的物質", unl() { return quUnl() } },
+            { id: "恆星", unl() { return STARS.unlocked() }, style: "sn" },
+            { id: "不可描述的物質", unl() { return quUnl() }, style: "qu" },
+            { id: "平行維度", unl() { return hasInfUpgrade(9) }, style: "inf" },
         ],
         1: [
             { id: "等級獎勵" },
@@ -66,7 +68,16 @@ const TABS = {
             { id: "黑暗效果" },
             { id: "黑暗試煉", unl() { return tmp.darkRunUnlocked } },
             { id: "有色物質", unl() { return tmp.matterUnl } },
-            { id: "腐蝕", unl() { return player.dark.c16.first } },
-        ]
+            { id: "腐化", unl() { return player.dark.c16.first } },
+        ],
+        8: [
+            { id: "核心" },
+            { id: "核心效果" },
+            { id: "無限升級", style: "inf" },
+        ],
+        9: [
+            { id: "選項" },
+            { id: "隱藏資源" },
+        ],
     },
 }

@@ -26,7 +26,7 @@ const MUONIC_ELEM = {
             cost: E(1e10),
         },
         {
-            desc: `挑戰 16 裏，有色物質獲得量 ^1.1。挑戰 16 外，有色物質獲得量 ^1.05。`,
+            desc: `在挑戰 16 中，有色物質獲得量 ^1.1。挑戰 16 外，有色物質獲得量 ^1.05。`,
             cost: E(1e13),
         },
         {
@@ -67,13 +67,60 @@ const MUONIC_ELEM = {
             effDesc: x=>formatMult(x),
         },
         {
-            desc: `移除第 187 個元素的腐蝕。`,
+            desc: `移除第 187 個元素的腐化。`,
             cost: E(1e46),
         },
         {
-            desc: `移除 FSS 對有色物質的獎勵的腐蝕。`,
+            desc: `移除 FSS 對有色物質的獎勵的腐化。`,
             cost: E(1e54),
         },
+        {
+            desc: `π 介子的第一個獎勵更強。第 247 榮耀的獎勵提升 π 介子獲得量。`,
+            cost: E(1e64),
+        },
+        {
+            desc: `熾熱放射性等離子體更強。`,
+            cost: E(1e81),
+        },
+        {
+            desc: `天樞碎片加強有色物質公式。`,
+            cost: E(1e100),
+            eff() {
+                let x = player.dark.matters.final.root(2).div(5)
+                return x.toNumber()
+            },
+            effDesc: x=>"+"+format(x),
+        },
+        {
+            desc: `挑戰 15 的獎勵推遲質量溢出^2。`,
+            cost: E(1e111),
+            eff() {
+                if (!tmp.chal) return E(1)
+                let x = overflow(tmp.chal.eff[15],10,0.5).pow(2)
+                return x
+            },
+            effDesc: x=>"^"+format(x),
+        },{
+            desc: `維度質量影響預選理論的等級。`,
+            cost: E(1e130),
+        },{
+            desc: `量子化次數提升無限點數獲得量。恢復 [陶子] 的效果，但改變它的公式。`,
+            cost: E(1e150),
+            eff() {
+                let x = player.qu.times.add(1).log10().add(1)
+                return x
+            },
+            effDesc: x=>formatMult(x),
+        },{
+            desc: `加速器對氬-18 的效果提供極弱的指數加成（在第一個溢出後）。`,
+            cost: E(1e170),
+            eff() {
+                let x = player.accelerator.add(10).log10()
+                return x
+            },
+            effDesc: x=>"^"+format(x),
+        },
+
         /*
         {
             desc: `Placeholder.`,
@@ -88,6 +135,8 @@ const MUONIC_ELEM = {
     ],
     getUnlLength() {
         let u = 11
+        if (tmp.inf_unl) u += 4
+        if (hasInfUpgrade(9)) u += 3
         return u
     },
 }
@@ -122,7 +171,7 @@ function updateMuonSymbol(start=false) {
 }
 
 const EXOTIC_ATOM = {
-    requirement: [E(0),E(5e4),E(1e8),E(1e12),E(1e25),E(1e34),E(1e44)],
+    requirement: [E(0),E(5e4),E(1e6),E(1e12),E(1e25),E(1e34),E(1e44),E(1e66),E(1e88),E(1e121),E(1e222)],
     req() {
         let t = player.dark.exotic_atom.tier
         let r = this.requirement[t]||EINF
@@ -152,6 +201,7 @@ const EXOTIC_ATOM = {
         if (hasPrestige(3,6)) xy = xy.mul(prestigeEff(3,6))
         if (hasElement(5,1)) xy = xy.mul(muElemEff(5))
         if (hasBeyondRank(3,4)) xy = xy.mul(beyondRankEffect(3,4))
+        if (hasInfUpgrade(13)) xy = xy.mul(infUpgEffect(13))
 
         let x = xy.div(10)
         if (hasPrestige(2,34)) x = x.mul(prestigeEff(2,34))
@@ -160,6 +210,7 @@ const EXOTIC_ATOM = {
         let y = xy.div(20)
         if (hasElement(1,1)) y = y.mul(muElemEff(1))
         if (hasElement(9,1)) y = y.mul(muElemEff(9))
+        if (hasElement(12,1)&&hasPrestige(1,247)) y = y.mul(prestigeEff(1,247))
 
         return [x,y]
     },
@@ -168,7 +219,7 @@ const EXOTIC_ATOM = {
             [a=>{
                 let x = overflow(a.add(1).root(2),100,0.5)
                 return x
-            },x=>`將腐蝕碎片獲得量提升 <b>${formatMult(x)}</b>`],
+            },x=>`將腐化碎片獲得量提升 <b>${formatMult(x)}</b>`],
             [a=>{
                 let x = a.add(1).log10().div(10).add(1).root(2)
                 return x
@@ -181,9 +232,17 @@ const EXOTIC_ATOM = {
                 let x = a.add(1).log10().add(1).pow(2)
                 return x.toNumber()
             },x=>`魔王挑戰 1-12 增幅推遲 <b>${formatMult(x)}</b>`],
+            [a=>{
+                let x = Decimal.pow(0.8725,a.add(1).log10().softcap(20,0.25,0).root(2))
+                return x.toNumber()
+            },x=>`原子力量效果的軟上限減弱 <b>${formatReduction(x)}</b>`],
+            [a=>{
+                let x = a.add(10).log10().pow(2).sub(1).div(5e3)
+                return x.toNumber()
+            },x=>`將第 382 個重置等級的獎勵中對塌縮恆星的加成底數，以及第 201 個元素對黑洞效果的加成底數增加 <b>+${format(x)}</b>`],
         ],[
             [a=>{
-                let x = a.add(1).pow(2)
+                let x = hasElement(12,1) ? expMult(a.add(1),2.5) : a.add(1).pow(2)
                 return x
             },x=>`不穩定黑洞質量獲得量提升 <b>${formatMult(x)}</b>`],
             [a=>{
@@ -194,6 +253,14 @@ const EXOTIC_ATOM = {
                 let x = a.add(1).log10().div(80).add(1).root(2)
                 return x
             },x=>`FSS 的底數提升 ^<b>${format(x)}</b>`],
+            [a=>{
+                let x = a.add(1).log10().div(10).add(1).root(2)
+                return x
+            },x=>`宇宙弦力量提升 ^<b>${format(x)}</b>`],
+            [a=>{
+                let x = a.add(1).ssqrt().div(50)
+                return isNaN(x)?E(0):x
+            },x=>`平行擠壓器的力量提升 <b>+${format(x)}</b>`],
         ],
     ],
 }
@@ -223,6 +290,7 @@ function exoticAEff(i,j,def=1) { return tmp.exotic_atom.eff[i][j]||def }
 
 function updateExoticAtomsHTML() {
     let ea = player.dark.exotic_atom, tea = tmp.exotic_atom, t = ea.tier
+    let inf_gs = tmp.preInfGlobalSpeed
 
     tmp.el.mcf_btn.setHTML(`
     緲子催化聚合（MCF）第 <b>${format(t,0)}</b> 階<br>
@@ -232,12 +300,12 @@ function updateExoticAtomsHTML() {
 
     tmp.el.ea_div.setDisplay(t>0)
     if (t>0) {
-        let g = EXOTIC_ATOM.getAmount(ea.amount[0].add(tea.gain[0]),ea.amount[1].add(tea.gain[1])).sub(tea.amount)
+        let g = EXOTIC_ATOM.getAmount(ea.amount[0].add(tea.gain[0].mul(inf_gs)),ea.amount[1].add(tea.gain[1].mul(inf_gs))).sub(tea.amount)
 
         tmp.el.ext_atom.setHTML(tea.amount.format(0)+" "+tea.amount.formatGain(g))
 
         for (let i = 0; i < 2; i++) {
-            tmp.el['ea_amt'+i].setHTML(ea.amount[i].format(2)+" "+ea.amount[i].formatGain(tea.gain[i]))
+            tmp.el['ea_amt'+i].setHTML(ea.amount[i].format(2)+" "+ea.amount[i].formatGain(tea.gain[i].mul(inf_gs)))
 
             let h = ""
 

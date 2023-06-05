@@ -4,6 +4,7 @@ const ELEMENTS = {
     ],
     la: [null,'*','**','*','**'],
     exp: [0,118,218,362,558,814,1138],
+    max_hsize: [19],
     names: [
         null,
         'H','He','Li','Be','B','C','N','O','F','Ne',
@@ -22,7 +23,7 @@ const ELEMENTS = {
     fullNames: [
         null,
         '氫','氦','鋰','鈹','硼','碳','氮','氧','氟','氖',
-        '鈉','鎂','鋁','硅','磷','硫','氯','氬','鉀','鈣',
+        '鈉','鎂','鋁','矽','磷','硫','氯','氬','鉀','鈣',
         '鈧','鈦','釩','鉻','錳','鐵','鈷','鎳','銅','鋅',
         '鎵','鍺','砷','硒','溴','氪','銣','鍶','釔','鋯',
         '鈮','鉬','鍀','釕','銠','鈀','銀','鎘','銦','錫', // 鍀 ~ 鎝
@@ -37,7 +38,7 @@ const ELEMENTS = {
     canBuy(x) {
         if (tmp.c16active && isElemCorrupted(x)) return false
         let res = this.upgs[x].dark ? player.dark.shadow : player.atom.quarks
-        return res.gte(this.upgs[x].cost) && !hasElement(x) && (player.qu.rip.active ? true : !BR_ELEM.includes(x)) && !tmp.elements.cannot.includes(x) && !(CHALS.inChal(14) && x < 118)
+        return res.gte(this.upgs[x].cost) && !hasElement(x) && (hasInfUpgrade(6) && x <= 218 || (player.qu.rip.active ? true : !BR_ELEM.includes(x))) && !tmp.elements.cannot.includes(x) && !(CHALS.inChal(14) && x < 118)
     },
     buyUpg(x) {
         if (this.canBuy(x)) {
@@ -80,7 +81,7 @@ const ELEMENTS = {
             cost: E(2.5e16),
             effect() {
                 let x = player.atom?player.atom.powers[0].max(1).log10().pow(0.8).div(50).add(1):E(1)
-                return x.softcap(1e45,0.1,0)
+                return overflow(x.softcap(1e45,0.1,0),'e60000',0.5)
             },
             effDesc(x) { return "加強 "+format(x)+"x" },
         },
@@ -150,7 +151,7 @@ const ELEMENTS = {
             cost: E(1e34),
         },
         {
-            desc: `每購買一個元素，硅的效果增加 2%。`,
+            desc: `每購買一個元素，矽的效果增加 2%。`,
             cost: E(5e38),
             effect() {
                 let x = player.atom.elements.length*0.02
@@ -166,8 +167,9 @@ const ELEMENTS = {
             desc: `你可以自動購買宇宙射線。宇宙射線極稍微加強時間速度效果。`,
             cost: E(1e44),
             effect() {
-                let x = hasElement(129) ? player.atom.gamma_ray.pow(0.5).mul(0.02).add(1) : player.atom.gamma_ray.pow(0.35).mul(0.01).add(1)
-                return overflow(x,1000,0.5)
+                let x = overflow(hasElement(129) ? player.atom.gamma_ray.pow(0.5).mul(0.02).add(1) : player.atom.gamma_ray.pow(0.35).mul(0.01).add(1),1000,0.5)
+                if (hasElement(18,1)) x = x.pow(muElemEff(18))
+                return x
             },
             effDesc(x) { return "^"+format(x) },
         },
@@ -293,7 +295,7 @@ const ELEMENTS = {
             effDesc(x) { return "暴怒升級 7 +"+format(x,0)+"" },
         },
         {
-            desc: `從挑戰 2 和 6 的效果中移除軟上限。`,
+            desc: `移除挑戰 2 和 6 的效果軟上限。`,
             cost: E(1e285),
         },
         {
@@ -1262,33 +1264,36 @@ const ELEMENTS = {
     getUnlLength() {
         let u = 4
 
-        if (player.dark.unl) u = 118+14
+        if (tmp.inf_unl) u = 218
         else {
-            if (quUnl()) u = 77+3
+            if (player.dark.unl) u = 118+14
             else {
-                if (player.supernova.times.gte(1)) u = 49+5
+                if (quUnl()) u = 77+3
                 else {
-                    if (player.chal.comps[8].gte(1)) u += 14
-                    if (hasElement(18)) u += 3
-                    if (MASS_DILATION.unlocked()) u += 15
-                    if (STARS.unlocked()) u += 18
+                    if (player.supernova.times.gte(1)) u = 49+5
+                    else {
+                        if (player.chal.comps[8].gte(1)) u += 14
+                        if (hasElement(18)) u += 3
+                        if (MASS_DILATION.unlocked()) u += 15
+                        if (STARS.unlocked()) u += 18
+                    }
+                    if (player.supernova.post_10) u += 3
+                    if (player.supernova.fermions.unl) u += 10
+                    if (tmp.radiation.unl) u += 10
                 }
-                if (player.supernova.post_10) u += 3
-                if (player.supernova.fermions.unl) u += 10
-                if (tmp.radiation.unl) u += 10
+                if (PRIM.unl()) u += 3
+                if (hasTree('unl3')) u += 3
+                if (player.qu.rip.first) u += 9
+                if (hasUpgrade("br",9)) u += 23 // 23
             }
-            if (PRIM.unl()) u += 3
-            if (hasTree('unl3')) u += 3
-            if (player.qu.rip.first) u += 9
-            if (hasUpgrade("br",9)) u += 23 // 23
+            if (tmp.chal13comp) u += 10 + 2
+            if (tmp.chal14comp) u += 6 + 11
+            if (tmp.chal15comp) u += 16 + 4
+            if (tmp.darkRunUnlocked) u += 7
+            if (tmp.matterUnl) u += 14
+            if (tmp.mass4Unl) u += 6
+            if (tmp.brUnl) u += 10
         }
-        if (tmp.chal13comp) u += 10 + 2
-        if (tmp.chal14comp) u += 6 + 11
-        if (tmp.chal15comp) u += 16 + 4
-        if (tmp.darkRunUnlocked) u += 7
-        if (tmp.matterUnl) u += 14
-        if (tmp.mass4Unl) u += 6
-        if (tmp.brUnl) u += 10
 
         return u
     },
@@ -1325,6 +1330,8 @@ for (let x = 1; x <= MAX_ELEM_TIERS; x++) {
     let [ts,te] = [ELEMENTS.exp[x-1],ELEMENTS.exp[x]]
 
     if (x > 1) {
+        ELEMENTS.max_hsize[x-1] = 11 + 4*x
+
         let m = 'xx1xxxxxxxxxxxxxxxxvxx2xxxxxxxxxxxxxxxxv_v'
 
         for (let y = x; y >= 1; y--) {
@@ -1372,11 +1379,12 @@ function setupElementsHTML() {
 	let table = ""
     let num = 0
     for (let k = 1; k <= MAX_ELEM_TIERS; k++) {
+        let hs = `style="width: ${50*ELEMENTS.max_hsize[k-1]}px; margin: auto"`
         let n = 0, p = (k+3)**2*2, xs = ELEMENTS.exp[k-1], xe = ELEMENTS.exp[k]
-        table += `<div id='elemTier${k}_div'><div class='table_center'>`
+        table += `<div id='elemTier${k}_div'><div ${hs}><div class='table_center'>`
         for (let i = 0; i < ELEMENTS.map[k-1].length; i++) {
             let m = ELEMENTS.map[k-1][i]
-            if (m=='v') table += '</div><div class="table_center">'
+            if (m=='v') table += `</div><div class="table_center">`
             else if (m=='_' || !isNaN(Number(m))) table += `<div ${ELEMENTS.la[m]!==undefined&&k==1?`id='element_la_${m}'`:""} style="width: 50px; height: 50px">${ELEMENTS.la[m]!==undefined?"<br>"+ELEMENTS.la[m]:""}</div>`
             else if (m=='x') {
                 num++
@@ -1408,7 +1416,7 @@ function setupElementsHTML() {
                 }
             }
         }
-        table += "</div></div>"
+        table += "</div></div></div>"
     }
 	elements_table.setHTML(table)
 
@@ -1442,7 +1450,7 @@ function updateElementsHTML() {
     tmp.el.elem_ch_div.setVisible(ch>0)
     if (ch) {
         let eu = elem_const.upgs[ch]
-        let res = [eu.dark?" 暗影":" 夸克"," 奇異原子"][elayer]
+        let res = [eu.dark?" 個暗影":" 個夸克"," 個奇異原子"][elayer]
         let eff = tElem[["effect","mu_effect"][elayer]]
 
         tmp.el.elem_desc.setHTML("<b>["+["","緲子"][elayer]+ELEMENTS.fullNames[ch]+"]</b> "+eu.desc)
@@ -1497,6 +1505,7 @@ function updateElementsTemp() {
 
     let decor = []
     if (hasElement(10,1)) decor.push(187)
+    if (hasCharger(9)) decor.push(40,64,67,150,199,200,204)
     tElem.deCorrupt = decor
 
     let cannot = []

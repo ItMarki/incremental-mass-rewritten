@@ -228,7 +228,7 @@ const FERMIONS = {
                 },
                 eff(i, t) {
                     let x = i.add(1).log10().add(1).log10().div(200).mul(t.softcap(8,0.5,0)).add(1)
-                    return x.softcap(15,0.5,0)
+                    return x.softcap(15,hasPrestige(1,300)?0.55:0.5,0)
                 },
                 desc(x) {
                     return `暗束效果強 ^${x.format()}`.corrupt(tmp.c16active)
@@ -299,7 +299,8 @@ const FERMIONS = {
                     return FERMIONS.getTierScaling(x, true)
                 },
                 eff(i, t) {
-                    let x = t.pow(0.8).mul(0.025).add(1).pow(i.add(1).log10())
+                    let x = hasElement(17,1) ? t.pow(2).mul(i.add(1).log10().add(1)).add(1) : t.pow(0.8).mul(0.025).add(1).pow(i.add(1).log10())
+                    if (hasBeyondRank(4,40)) x = x.pow(3)
                     return x
                 },
                 desc(x) {
@@ -401,7 +402,7 @@ const FERMIONS = {
                 eff(i, t) {
                     let x = i.add(1).log10().add(1).log10().div(2000).mul(t.softcap(8,0.5,0))
                     if (hasBeyondRank(2,2)) x = x.mul(8)
-                    return x.softcap(20,0.5,0).toNumber()
+                    return x.softcap(20,hasPrestige(1,300)?0.55:0.5,0).toNumber()
                 },
                 desc(x) {
                     return `將重置底數的指數增加 ${format(x)}`

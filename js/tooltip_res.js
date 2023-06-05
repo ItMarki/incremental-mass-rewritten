@@ -7,11 +7,13 @@ const TOOLTIP_RES = {
             if (tmp.overflowBefore.mass.gte(tmp.overflow_start.mass[0]))
             h += `<br>（相當於<b>溢出</b>前的 <b>${formatMass(tmp.overflowBefore.mass)}</b>）`;
 
+            /*
             if (quUnl())
             h += `
             <br class='line'>你有 <b class='red'>${player.rp.points.format(0)} ${player.rp.points.formatGain(tmp.rp.gain.mul(tmp.preQUGlobalSpeed))}</b> 暴怒力量（量子後）。
             <br class='line'>你有 <b class='yellow'>${player.bh.dm.format(0)} ${player.bh.dm.formatGain(tmp.bh.dm_gain.mul(tmp.preQUGlobalSpeed))}</b> 暗物質（量子後）。
             `;
+            */
 
             return h
         },
@@ -49,10 +51,12 @@ const TOOLTIP_RES = {
             <br class='line'>你的不穩定黑洞質量是 <b class='corrupted_text'>${formatMass(player.bh.unstable)} ${formatGain(player.bh.unstable,UNSTABLE_BH.calcProduction(),true)}</b>。
             `;
 
+            /*
             if (quUnl())
             h += `
             <br class='line'>你有 <b class='cyan'>${player.atom.points.format(0)} ${player.atom.points.formatGain(tmp.atom.gain.mul(tmp.preQUGlobalSpeed))}</b> 個原子（量子後）。
             `;
+            */
 
             return h
         },
@@ -74,6 +78,11 @@ const TOOLTIP_RES = {
 
             if (tmp.overflowBefore.quark.gte(tmp.overflow_start.quark))
             h += `<br>（相當於<b>溢出</b>前的 <b>${format(tmp.overflowBefore.quark,0)}</b>）`;
+
+            if (tmp.eaUnl) h += `
+            <br class='line'>
+            你有 <b class='orange'>${tmp.exotic_atom.amount.format(0)}</b> 個奇異原子。
+            `
 
             return h
         },
@@ -107,7 +116,10 @@ const TOOLTIP_RES = {
         full: "超新星",
         desc() {
             let h = `
+            你已經變成了 <b>${player.supernova.times.format(0)}</b> 次${getScalingName('supernova')}超新星。
+            <br class='line'>
             你有 <b>${player.stars.points.format(0)} ${player.stars.points.formatGain(tmp.stars.gain.mul(tmp.preQUGlobalSpeed))}</b> 個塌縮恆星。
+            你有 <b>${player.supernova.stars.format(0)} ${player.supernova.stars.formatGain(tmp.supernova.star_gain.mul(tmp.preQUGlobalSpeed))}</b> 個中子星。
             <br class='line'>
             <i>
             ${"你需要到達 <b>"+format(tmp.supernova.maxlimit)+"</b> 個塌縮恆星才可以變成超新星"}。
@@ -132,9 +144,7 @@ const TOOLTIP_RES = {
             let h = `<i>
             將維度大撕裂或取消之。
             <br><br>
-            你將維度大撕裂時，熵獎勵失效，所有原始素效果都弱 50%（Ε 粒子則失效），[qu2, qu10] 樹升級失效，而且你困在模組為 [10,2,10,10,5,0,2,10] 的量子挑戰中。
-            你在大撕裂中會基於你的質量獲得死亡碎片。
-            你可以在大撕裂中解鎖各種升級。
+            你將維度大撕裂時，熵獎勵失效，所有原始素效果都弱 50%（Ε 粒子則失效），[qu2, qu10] 樹升級失效，而且你困在模組為 [10,2,10,10,5,0,2,10] 的量子挑戰中。你在大撕裂中會基於你的質量獲得死亡碎片。你可以在大撕裂中解鎖各種升級。
             </i>`
 
             return h
@@ -162,8 +172,15 @@ const TOOLTIP_RES = {
         full: "量子前全局運行速度",
         desc() {
             let h = `<i>
-            加快量子前資源生產速度（在膨脹等後適用）。
+            加快量子前資源生產速度（在指數、膨脹等後適用）。
             </i>`
+
+            if (tmp.inf_unl) h += `
+            <br class='line'>
+            <i>
+            無限前：加快無限前資源生產速度。與量子前全局運行速度並用。（在指數、膨脹等後適用）。
+            </i>
+            `
 
             return h
         },
@@ -182,16 +199,16 @@ const TOOLTIP_RES = {
         },
     },
     corrupt: {
-        full: "腐蝕碎片",
+        full: "腐化碎片",
         desc() {
             let h = `
             你在挑戰 16 中的最佳黑洞質量是 <b>${formatMass(player.dark.c16.bestBH)}</b>。
             <br class='line'>
             <i>
-            開始挑戰 16。退出挑戰時，你會基於黑洞質量獲得<b>腐蝕碎片</b>，門檻為 <b>${formatMass('e100')}</b>。<br><br>
-            • 你不能獲得暴怒力量和暗物質。所有有色物質的公式失效，但它們會產生其他有色物質。紅物質會生產暗物質。<br>
-            • 挑戰 16 前的內容都被腐蝕/禁用（包括級別和重置等級、主升級、元素、中子樹等）。<br>
-            • 你困在質量膨脹和黑暗試煉裏，每個符文都有 100 個。<br>
+            開始挑戰 16。退出挑戰時，你會基於黑洞質量獲得<b>腐化碎片</b>，門檻為 <b>${formatMass('e100')}</b>。<br><br>
+            • 你不能獲得暴怒點數。所有有色物質的公式失效，但它們會產生其他有色物質。紅物質會生產暗物質。<br>
+            • 挑戰 16 前的部分內容，例如級別和重置等級、主升級、元素、中子樹等，會被腐化（禁用）。<br>
+            • 你困在質量膨脹和黑暗試煉裏，每個符文都有 100 個（斯洛伐克符文則有 10 個）。<br>
             • 禁用原始素粒子。<br>
             • 量子前全局運行速度一律定為 /100。<br>
             </i>`
@@ -199,16 +216,19 @@ const TOOLTIP_RES = {
             return h
         },
     },
-    idk: {
-        full: "???",
+    inf: {
+        full: "無限",
         desc() {
             let h = `
-            我要幹啥？
+            你有 <b class="yellow">${player.inf.theorem.format(0)}</b> 個無限定理。
             <br class='line'>
             <i>
-            到達 <b>???</b> 的質量。
-            </i>
-            `
+            你需要到達 <b>${formatMass(INF.req)}</b> 的普通質量才能獲得無限點數並為核心選擇定理。
+            <br><br>
+            你的普通質量上限是 <b>${formatMass(tmp.inf_limit)}</b>
+            <br><br>
+            變成無限也會重置所有暗界層次的東西！
+            </i>`
 
             return h
         },
@@ -217,10 +237,11 @@ const TOOLTIP_RES = {
     /**
      * desc() {
             let h = ``
+
             return h
         },
     */
-}
+    }
 
 function updateTooltipResHTML(start=false) {
     for (let id in TOOLTIP_RES) {
@@ -229,6 +250,6 @@ function updateTooltipResHTML(start=false) {
         let tr_data = TOOLTIP_RES[id]
         let tr = tmp.el[id+'_tooltip']
 
-        tr.setTooltip(`<h3>【${tr_data.full}】</h3>`+(tr_data.desc?"<br class='line'>"+tr_data.desc():""))
+        if (tr) tr.setTooltip(`<h3>【${tr_data.full}】</h3>`+(tr_data.desc?"<br class='line'>"+tr_data.desc():""))
     }
 }

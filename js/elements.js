@@ -1,29 +1,25 @@
 function setupHTML() {
-	let sn_stabs = new Element("sn_stabs")
 	let tabs = new Element("tabs")
 	let stabs = new Element("stabs")
 	let table = ""
 	let table2 = ""
-	let table3 = ""
 	for (let x = 0; x < TABS[1].length; x++) {
-		table += `<div style="width: 145px">
-			<button onclick="TABS.choose(${x})" class="btn_tab" id="tab${x}">${TABS[1][x].id}</button>
+		table += `<div>
+			<button onclick="TABS.choose(${x})" class="btn_tab" id="tab${x}">${TABS[1][x].icon ? `<iconify-icon icon="${TABS[1][x].icon}" width="72" style="color: ${TABS[1][x].color||"white"}"></iconify-icon>` : ""}<div>${TABS[1][x].id}</div></button>
 		</div>`
 		if (TABS[2][x]) {
 			let a = `<div id="stabs${x}" class="table_center">`
 			for (let y = 0; y < TABS[2][x].length; y++) {
-				a += `<div style="width: 145px">
+				a += `<div style="width: 160px">
 					<button onclick="TABS.choose(${y}, true)" class="btn_tab" id="stab${x}_${y}">${TABS[2][x][y].id}</button>
 				</div>`
 			}
 			a += `</div>`
-			if (x == 5) table3 += a
-			else table2 += a
+			table2 += a
 		}
 	}
 	tabs.setHTML(table)
 	stabs.setHTML(table2)
-	sn_stabs.setHTML(table3)
 
 	let ranks_table = new Element("ranks_table")
 	table = ""
@@ -58,8 +54,8 @@ function setupHTML() {
 	table = ""
 	for (let x = 1; x <= UPGS.mass.cols; x++) {
 		let upg = UPGS.mass[x]
-		table += `<div style="width: 100%; margin-bottom: 5px;" class="table_center" id="massUpg_div_${x}">
-			<div style="width: 400px">
+		table += `<div style="width: 100%; margin-bottom: 5px;" class="table_center upgrade" id="massUpg_div_${x}">
+						<div style="width: 300px">
 				<div class="resources">
 					<img src="images/mass_upg${x}.png">
 					<span style="margin-left: 5px; text-align: left;"><span id="massUpg_scale_${x}"></span>${upg.title} [<span id="massUpg_lvl_${x}">X</span>]</span>
@@ -120,9 +116,9 @@ function setupHTML() {
 		for (let y = 1; y <= UPGS.main[x].lens; y++) {
 			let key = UPGS.main[x][y]
 			table += `<img onclick="UPGS.main[${x}].buy(${y})" onmouseover="UPGS.main.over(${x},${y})" onmouseleave="UPGS.main.reset()"
-			style="margin: 3px;" class="img_btn" id="main_upg_${x}_${y}" src="images/upgrades/main_upg_${id+y}.png">`
-				}
-		table += `</div><br><button id="main_upg_${x}_auto" class="btn" style="width: 80px;" onclick="player.auto_mainUpg.${id} = !player.auto_mainUpg.${id}">OFF</button></div>`
+			 style="margin: 3px;" class="img_btn" id="main_upg_${x}_${y}" src="images/upgrades/main_upg_${id+y}.png">`
+		}
+		table += `</div><br><button id="main_upg_${x}_auto" class="btn" style="width: 80px;" onclick="player.auto_mainUpg.${id} = !player.auto_mainUpg.${id}">關閉</button></div>`
 	}
 	main_upgs_table.setHTML(table)
 
@@ -138,6 +134,8 @@ function setupHTML() {
 	}
 	scaling_table.setHTML(table)
 
+	setupStatsHTML()
+	setupResourcesHTML()
 	setupChalHTML()
 	setupAtomHTML()
 	setupElementsHTML()
@@ -149,6 +147,7 @@ function setupHTML() {
 	setupRadiationHTML()
 	setupQuantumHTML()
 	setupDarkHTML()
+	setupInfHTML()
 
 	/*
 	function setupTestHTML() {
@@ -179,11 +178,15 @@ function setupHTML() {
 }
 
 function updateTabsHTML() {
+	let s = !player.options.nav_hide[0]
+	tmp.el.stabs_div.setDisplay(TABS[2][tmp.tab])
+	
 	for (let x = 0; x < TABS[1].length; x++) {
-		if (x != 5 && tmp.tab == 5) continue
 		let tab = TABS[1][x]
-		tmp.el["tab"+x].setDisplay(tab.unl ? tab.unl() : true)
-		tmp.el["tab"+x].setClasses({btn_tab: true, [tab.style ? tab.style : "normal"]: true, choosed: x == tmp.tab})
+		if (s) {
+			tmp.el["tab"+x].setDisplay(tab.unl ? tab.unl() : true)
+			tmp.el["tab"+x].setClasses({btn_tab: true, [tab.style ? tab.style : "normal"]: true, choosed: x == tmp.tab})
+		}
 
 		if (tmp.el["tab_frame"+x]) tmp.el["tab_frame"+x].setDisplay(x == tmp.tab)
 		if (TABS[2][x]) {
@@ -199,10 +202,19 @@ function updateTabsHTML() {
 }
 
 function updateUpperHTML() {
+	let chal_unl = player.chal.active > 0
+	tmp.el.chal_upper.setVisible(chal_unl)
+	if (chal_unl) {
+		let data = CHALS.getChalData(player.chal.active, tmp.chal.bulk[player.chal.active].max(player.chal.comps[player.chal.active]))
+		tmp.el.chal_upper.setHTML(`你現在進行 [${CHALS[player.chal.active].title}] 挑戰！達到 ${tmp.chal.format(tmp.chal.goal[player.chal.active])+CHALS.getResName(player.chal.active)} 質量即可完成挑戰，
+		<br>+${tmp.chal.gain} 完成次數（下一個在 ${tmp.chal.format(data.goal)+CHALS.getResName(player.chal.active)}）`)
+	}
+
+	/*
 	let gs = tmp.preQUGlobalSpeed
 
 	//tmp.el.reset_desc.setHTML(player.reset_msg)
-	
+
 	let unl = true
 	tmp.el.mass_div.setDisplay(unl)
 	if (unl) tmp.el.mass.setHTML(formatMass(player.mass)+"<br>"+formatGain(player.mass, tmp.massGain.mul(gs), true))
@@ -222,15 +234,7 @@ function updateUpperHTML() {
 		tmp.el.bhMass.setHTML(formatMass(player.bh.mass)+"<br>"+formatGain(player.bh.mass, tmp.bh.mass_gain.mul(gs), true))
 		tmp.el.atomAmt.setHTML(format(player.atom.points,0)+"<br>"+(hasElement(24)?formatGain(player.atom.points,tmp.atom.gain.mul(gs)):"（+"+format(tmp.atom.gain,0)+"）"))
 	}
-
-	unl = player.chal.active > 0
-	tmp.el.chal_upper.setVisible(unl)
-	if (unl) {
-		let data = CHALS.getChalData(player.chal.active, tmp.chal.bulk[player.chal.active].max(player.chal.comps[player.chal.active]))
-		tmp.el.chal_upper.setHTML(`你目前在進行 [${CHALS[player.chal.active].title}] 挑戰！到達 ${tmp.chal.format(tmp.chal.goal[player.chal.active])+CHALS.getResName(player.chal.active)} 以完成。
-		<br>+${tmp.chal.gain} 完成次數（${tmp.chal.format(data.goal)+CHALS.getResName(player.chal.active)} 時完成次數 +1）`)
-	}
-
+	
 	unl = player.atom.unl
 	tmp.el.quark_div.setDisplay(unl)
 	if (unl) tmp.el.quarkAmt.setHTML(format(player.atom.quarks,0)+"<br>"+(hasElement(14)?formatGain(player.atom.quarks,tmp.atom?tmp.atom.quarkGain.mul(tmp.atom.quarkGainSec).mul(gs):0):"（+"+format(tmp.atom.quarkGain,0)+"）"))
@@ -247,7 +251,7 @@ function updateUpperHTML() {
 
     unl = (quUnl() || player.chal.comps[12].gte(1))
     tmp.el.qu_div.setDisplay(unl)
-    if (unl) tmp.el.quAmt.setHTML(format(player.qu.points,0)+"<br>"+(gain2?player.qu.points.formatGain(tmp.qu.gain.div(10)):"(+"+format(tmp.qu.gain,0)+")"))
+    if (unl) tmp.el.quAmt.setHTML(format(player.qu.points,0)+"<br>"+(gain2?player.qu.points.formatGain(tmp.qu.gain.div(10)):"（+"+format(tmp.qu.gain,0)+"）"))
 
     unl = (quUnl())
     tmp.el.gs1_div.setDisplay(unl)
@@ -255,7 +259,8 @@ function updateUpperHTML() {
 
     unl = hasTree("unl4")
     tmp.el.br_div.setDisplay(unl)
-    if (unl) tmp.el.brAmt.setHTML(player.qu.rip.amt.format(0)+"<br>"+(player.qu.rip.active||hasElement(147)?gain2?player.qu.rip.amt.formatGain(tmp.rip.gain.div(10)):`(+${tmp.rip.gain.format(0)})`:"（未啟動）"))
+    if (unl) tmp.el.brAmt.setHTML(player.qu.rip.amt.format(0)+"<br>"+(player.qu.rip.active||hasElement(147)?gain2?player.qu.rip.amt.formatGain(tmp.rip.gain.div(10)):`（+${tmp.rip.gain.format(0)}）`:"（未啟動）"))
+	*/
 }
 
 function updateMassUpgradesHTML() {
@@ -288,7 +293,7 @@ function updateTickspeedHTML() {
 		+(teff.step.gte(teff.ss)&&!hasUpgrade('rp',16)?"<span class='soft'>（軟上限）</span>":""))
 		if(hasElement(199) && !CHALS.inChal(15)) tmp.el.tickspeed_eff.setTxt("^"+format(teff.eff))
 		else tmp.el.tickspeed_eff.setTxt(format(teff.eff)+"x")
-
+		
 
 		tmp.el.tickspeed_auto.setDisplay(FORMS.tickspeed.autoUnl())
 		tmp.el.tickspeed_auto.setTxt(player.autoTickspeed?"開啟":"關閉")
@@ -309,7 +314,7 @@ function updateTickspeedHTML() {
 }
 
 function updateRanksRewardHTML() {
-	tmp.el["ranks_reward_name"].setTxt(RANKS.fullNames[player.ranks_reward])
+	// tmp.el["ranks_reward_name"].setTxt(RANKS.fullNames[player.ranks_reward])
 	for (let x = 0; x < RANKS.names.length; x++) {
 		let rn = RANKS.names[x]
 		tmp.el["ranks_reward_div_"+x].setDisplay(player.ranks_reward == x)
@@ -326,8 +331,7 @@ function updateRanksRewardHTML() {
 
 function updatePrestigesRewardHTML() {
 	let c16 = tmp.c16active
-	
-	tmp.el["pres_reward_name"].setTxt(PRESTIGES.fullNames[player.pres_reward])
+	// tmp.el["pres_reward_name"].setTxt(PRESTIGES.fullNames[player.pres_reward])
 	for (let x = 0; x < PRES_LEN; x++) {
 		tmp.el["pres_reward_div_"+x].setDisplay(player.pres_reward == x)
 		if (player.pres_reward == x) {
@@ -416,13 +420,11 @@ function updateBlackHoleHTML() {
 	tmp.el.bhCondenser_auto.setDisplay(FORMS.bh.condenser.autoUnl())
 	tmp.el.bhCondenser_auto.setTxt(player.bh.autoCondenser?"開啟":"關閉")
 
-	tmp.el.bhOverflow.setDisplay(player.bh.mass.gte(tmp.overflow_start.bh))
-    tmp.el.bhOverflow.setHTML(`由於你的黑洞質量在 <b>${formatMass(tmp.overflow_start.bh[0])}</b> 溢出，它已經${overflowFormat(tmp.overflow.bh[0]||1)}！`)
-
+	tmp.el.bhOverflow.setDisplay(player.bh.mass.gte(tmp.overflow_start.bh[0]))
+    tmp.el.bhOverflow.setHTML(`由於你的黑洞質量在 <b>${formatMass(tmp.overflow_start.bh[0])}</b> 溢出，它已經${overflowFormat(tmp.overflow.bh||1)}！`)
 
 	tmp.el.bhOverflow2.setDisplay(player.bh.mass.gte(tmp.overflow_start.bh[1]))
     tmp.el.bhOverflow2.setHTML(`由於你的黑洞質量在 <b>${formatMass(tmp.overflow_start.bh[1])}</b> 溢出，你的黑洞溢出變得更強了！`)
-	
 	// Unstable 
 
 	let unl = hasCharger(1)
@@ -443,26 +445,30 @@ function updateBlackHoleHTML() {
 }
 
 function updateOptionsHTML() {
-	for (let x = 0; x < CONFIRMS.length; x++) {
-		let unl = 
-		CONFIRMS[x] == "sn"
-		?(player.supernova.times.gte(1) || quUnl())
-		:CONFIRMS[x] == "qu"
-		?quUnl()
-		:CONFIRMS[x] == "br"
-		?player.qu.rip.first
-		:player[CONFIRMS[x]].unl
-
-		tmp.el["confirm_div_"+x].setDisplay(unl)
-		tmp.el["confirm_btn_"+x].setTxt(player.confirms[CONFIRMS[x]] ? "開啟":"關閉")
-	}
-	tmp.el.total_time.setTxt(formatTime(player.time))
-	tmp.el.offline_active.setTxt(player.offline.active?"開啟":"關閉")
-	tmp.el.tree_anim_btn.setDisplay(player.supernova.times.gte(1) || quUnl())
-	tmp.el.tree_anim.setTxt(TREE_ANIM[player.options.tree_animation])
-	tmp.el.mass_dis.setTxt(["預設",'一律顯示 g','一律顯示 mlt','只顯示重要單位'][player.options.massDis])
+	if (tmp.stab[9] == 0) {
+		for (let x = 0; x < CONFIRMS.length; x++) {
+			let unl = 
+			CONFIRMS[x] == "sn"
+			?(player.supernova.times.gte(1) || quUnl())
+			:CONFIRMS[x] == "qu"
+			?quUnl()
+			:CONFIRMS[x] == "br"
+			?player.qu.rip.first
+			:player[CONFIRMS[x]].unl
 	
-	tmp.el.omega_badge.setDisplay(localStorage.getItem("imr_secret_badge1") == "1")
+			tmp.el["confirm_div_"+x].setDisplay(unl)
+			tmp.el["confirm_btn_"+x].setTxt(player.confirms[CONFIRMS[x]] ? "開啟":"關閉")
+		}
+        tmp.el.total_time.setTxt(formatTime(player.time))
+        tmp.el.offline_active.setTxt(player.offline.active?"開啟":"關閉")
+        tmp.el.tree_anim_btn.setDisplay(player.supernova.times.gte(1) || quUnl())
+        tmp.el.tree_anim.setTxt(TREE_ANIM[player.options.tree_animation])
+        tmp.el.mass_dis.setTxt(["預設",'一律顯示 g','一律顯示 mlt','只顯示重要單位'][player.options.massDis])
+        
+        tmp.el.omega_badge.setDisplay(localStorage.getItem("imr_secret_badge1") == "1")
+	} else if (tmp.stab[9] == 1) {
+		updateResourcesHiderHTML()
+	}
 }
 
 function updateHTML() {
@@ -470,18 +476,21 @@ function updateHTML() {
 	document.documentElement.style.setProperty('--cx', tmp.cx)
 	document.documentElement.style.setProperty('--cy', tmp.cy)
 
-	let displayMainTab = tmp.tab != 5
+	tmp.mobile = window.innerWidth < 1200
+
+	let displayMainTab = true
 	
-	tmp.el.offlineSpeed.setTxt(format(tmp.offlineMult))
-	tmp.el.loading.setDisplay(tmp.offlineActive)
-    tmp.el.app.setDisplay(tmp.offlineActive ? false : ((player.supernova.times.lte(0) && !player.supernova.post_10 ? !tmp.supernova.reached : true) && displayMainTab))
+	tmp.el.loading.setDisplay(!tmp.start)
+    tmp.el.app.setDisplay(tmp.inf_time != 2 && tmp.inf_time != 3 && tmp.start && (player.supernova.times.lte(0) && !player.supernova.post_10 ? !tmp.supernova.reached : true) && displayMainTab)
 	updateSupernovaEndingHTML()
 	updateTabsHTML()
+	if (!player.options.nav_hide[1]) updateResourcesHTML()
 	if (hover_tooltip) updateTooltipResHTML()
 	updateUpperHTML()
-	if ((!tmp.supernova.reached || player.supernova.post_10) && displayMainTab) {
+	if (tmp.start && (!tmp.supernova.reached || player.supernova.post_10) && displayMainTab) {
 		updateQuantumHTML()
 		updateDarkHTML()
+		updateInfHTML()
 		if (tmp.tab == 0) {
 			if (tmp.stab[0] == 0) {
 				updateRanksHTML()
@@ -506,13 +515,16 @@ function updateHTML() {
 				tmp.el.massSoftStart9.setTxt(formatMass(tmp.massSoftGain8))
 
 				tmp.el.massOverflow.setDisplay(player.mass.gte(tmp.overflow_start.mass[0]))
-    			tmp.el.massOverflow.setHTML(`由於你的質量在 <b>${formatMass(tmp.overflow_start.mass[0])}</b> 溢出，你的質量已經 ${overflowFormat(tmp.overflow.mass||1)}！`)
+    			tmp.el.massOverflow.setHTML(`由於你的質量在 <b>${formatMass(tmp.overflow_start.mass[0])}</b> 溢出，你的質量已經${overflowFormat(tmp.overflow.mass||1)}！`)
 
 				tmp.el.massOverflow2.setDisplay(player.mass.gte(tmp.overflow_start.mass[1]))
     			tmp.el.massOverflow2.setHTML(`由於你的質量在 <b>${formatMass(tmp.overflow_start.mass[1])}</b> 溢出^2，你的質量溢出變得更強了！`)
 
 				tmp.el.strongerOverflow.setDisplay(tmp.upgs.mass[3].eff.eff.gte(tmp.overflow_start.stronger))
     			tmp.el.strongerOverflow.setHTML(`由於你的增強器在 <b>${format(tmp.overflow_start.stronger)}</b> 溢出，它的效果已經${overflowFormat(tmp.overflow.stronger||1)}！`)
+
+				tmp.el.strongerOverflow2.setDisplay(tmp.upgs.mass[3].eff.eff.gte(tmp.overflow_start.stronger[1]))
+    			tmp.el.strongerOverflow2.setHTML(`由於你的增強器在 <b>${format(tmp.overflow_start.stronger[1])}</b>，你的增強器溢出變得更強了！`)
 			}
 			else if (tmp.stab[0] == 1) {
 				updateBlackHoleHTML()
@@ -525,6 +537,8 @@ function updateHTML() {
 			}
 		}
 		else if (tmp.tab == 1) {
+			updateStatsHTML()
+
 			if (tmp.stab[1] == 0) updateRanksRewardHTML()
 			else if (tmp.stab[1] == 1) updateScalingHTML()
 			else if (tmp.stab[1] == 2) updatePrestigesRewardHTML()
@@ -545,7 +559,7 @@ function updateHTML() {
 				updateExoticAtomsHTML()
 			}
 		}
-		else if (tmp.tab == 8) {
+		else if (tmp.tab == 9) {
 			updateOptionsHTML()
 		}
 	}

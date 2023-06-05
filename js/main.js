@@ -17,10 +17,18 @@ const ST_NAMES = [
 const CONFIRMS = ['rp', 'bh', 'atom', 'sn', 'qu', 'br', 'dark']
 
 const FORMS = {
-	getPreQUGlobalSpeed() {
-        if (tmp.c16active) return E(0.01)
-        
+        getPreInfGlobalSpeed() {
         let x = E(1)
+        
+        if (tmp.inf_unl) x = x.mul(10).mul(theoremEff('time',0))
+
+        return x
+    },
+    getPreQUGlobalSpeed() {
+        let x = E(1), inf = tmp.preInfGlobalSpeed
+
+        if (tmp.c16active) return inf.div(100)
+
         if (tmp.qu.mil_reached[1]) x = x.mul(10)
         if (quUnl()) x = x.mul(tmp.qu.bpEff)
         if (hasElement(103)) x = x.mul(tmp.elements.effect[103])
@@ -28,8 +36,11 @@ const FORMS = {
         if (player.mainUpg.br.includes(3)) x = x.pow(tmp.upgs.main[4][3].effect)
         if (hasPrestige(0,5)) x = x.pow(2)
 
+        if (tmp.inf_unl) x = x.pow(theoremEff('time',1))
+
         if (QCs.active()) x = x.div(tmp.qu.qc_eff[1])
-        return x
+
+        return x.mul(inf)
     },
     massGain() {
         let x = E(1)
@@ -65,13 +76,13 @@ const FORMS = {
         x = x.pow(tmp.dark.shadowEff.mass)
 
         if (CHALS.inChal(9) || FERMIONS.onActive("12")) x = expMult(x,0.9)
-
+        
         x = x.softcap(tmp.massSoftGain,tmp.massSoftPower,0)
         .softcap(tmp.massSoftGain2,tmp.massSoftPower2,0)
         .softcap(tmp.massSoftGain3,tmp.massSoftPower3,0)
         .softcap(tmp.massSoftGain4,tmp.massSoftPower4,0)
         .softcap(tmp.massSoftGain5,tmp.massSoftPower5,0)
-        
+
         //console.log(x.format())
 
         if (hasElement(117)) x = x.pow(10)
@@ -91,6 +102,9 @@ const FORMS = {
 
         if (hasUpgrade('rp',20)) x = x.pow(upgEffect(1,20))
 
+        if (tmp.inf_unl) x = x.pow(theoremEff('mass',0))
+        if (hasInfUpgrade(1)) x = x.pow(infUpgEffect(1)[0])
+
         if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(0))
 
         let o = x
@@ -100,8 +114,13 @@ const FORMS = {
         let op2 = E(.25)
 
         if (hasTree('ct6')) os = os.pow(treeEff('ct6'))
+        if (tmp.inf_unl) os = os.pow(theoremEff('mass',1))
+
+        os = os.min(os2)
 
         if (hasBeyondRank(3,1)) op = op.pow(beyondRankEffect(3,1))
+
+        if (hasElement(15,1)) os2 = os2.pow(muElemEff(15))
 
         x = overflow(x,os,op)
 
@@ -269,6 +288,8 @@ const FORMS = {
 
             if (hasBeyondRank(2,4)) step = step.pow(tmp.accelEffect.eff)
 
+            if (hasBeyondRank(3,32)) step = step.pow(tmp.elements.effect[18])
+
             let eff = step.pow(t.add(bonus).mul(hasElement(80)?25:1))
 
             if (!hasElement(199) || CHALS.inChal(15)) {
@@ -305,6 +326,7 @@ const FORMS = {
         },
         effect() {
             let step = E(0.0004)
+            if (tmp.inf_unl) step = step.add(theoremEff('atom',3,0))
             step = step.mul(tmp.dark.abEff.accelPow||1)
             if (hasElement(205)) step = step.mul(elemEffect(205))
             if (hasUpgrade('bh',19)) step = step.mul(upgEffect(2,19))
@@ -418,6 +440,9 @@ const FORMS = {
             if (hasBeyondRank(2,10)) x = x.pow(1.2)
 
             x = x.pow(tmp.unstable_bh.effect)
+
+            if (tmp.inf_unl) x = x.pow(theoremEff('bh',0))
+            if (hasInfUpgrade(1)) x = x.pow(infUpgEffect(1)[1])
             
             if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(0))
 
@@ -433,7 +458,12 @@ const FORMS = {
             if (hasElement(187)) os = os.pow(elemEffect(187))
             if (hasElement(200)) os = os.pow(tmp.chal.eff[15])
             if (hasTree('ct11')) os = os.pow(treeEff('ct11'))
+            if (tmp.inf_unl) os = os.pow(theoremEff('bh',1))
 
+            if (hasPrestige(2,45)) os2 = os2.pow(prestigeEff(2,45))
+            
+            os = os.min(os2)
+            
             if (hasPrestige(2,8)) op = op.pow(prestigeEff(2,8))
 
             x = overflow(x,os,op)
@@ -491,7 +521,7 @@ const FORMS = {
             let x = (player.mainUpg.atom.includes(12)?player.bh.mass.add(1).pow(1.25):player.bh.mass.add(1).root(4))
             if (hasElement(89)) x = x.pow(tmp.elements.effect[89])
 
-            if (hasElement(201)) x = Decimal.pow(1.1,x.max(1).log10().add(1).log10().pow(.8))
+            if (hasElement(201)) x = Decimal.pow(1.1+exoticAEff(0,5,0),x.max(1).log10().add(1).log10().pow(.8))
 
             if (hasUpgrade('bh',18)) x = x.pow(2.5)
             
@@ -526,8 +556,8 @@ const FORMS = {
                     pow = pow.mul(getEnRewardEff(3)[1])
                     if (hasTree('bs5')) pow = pow.mul(tmp.bosons.effect.z_boson[0])
                     if (hasTree("bh2")) pow = pow.pow(1.15)
-                    if (hasElement(129)) pow = pow.pow(elemEffect(18))
-                    if (hasBeyondRank(2,4)) pow = pow.pow(tmp.accelEffect.eff)
+                if (hasElement(129)) pow = pow.pow(elemEffect(18))
+                if (hasBeyondRank(2,4)) pow = pow.pow(tmp.accelEffect.eff)
                 
                 let eff = pow.pow(t.add(tmp.bh.condenser_bonus))
                 return {pow: pow, eff: eff}
@@ -569,7 +599,7 @@ function loop() {
     ssf[1]()
     updateTemp()
     updateHTML()
-    calc(diff/1000*tmp.offlineMult,diff/1000);
+    calc(diff/1000);
     date = Date.now();
     player.offline.current = date
 }
@@ -666,7 +696,7 @@ function formatMass(ex) {
     if (ex.gte(1.989e33)) return format(ex.div(1.989e33)) + ' M☉'
     if (ex.gte(5.972e27)) return format(ex.div(5.972e27)) + ' M⊕'
     if (ex.gte(1.619e20)) return format(ex.div(1.619e20)) + ' MME'
-    if (ex.gte(1e6)) return format(ex.div(1e6)) + ' tonne'
+    if (ex.gte(1e6)) return format(ex.div(1e6)) + ' t'
     if (ex.gte(1e3)) return format(ex.div(1e3)) + ' kg'
     return format(ex) + ' g'
 }

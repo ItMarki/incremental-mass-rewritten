@@ -4,7 +4,7 @@ const TREE_TAB = [
     {title: "挑戰"},
     {title: "超新星後", unl() { return player.supernova.post_10 } },
     {title: "量子", unl() { return quUnl() } },
-    {title: "腐蝕", unl() { return player.dark.c16.first } },
+    {title: "腐化", unl() { return player.dark.c16.first || hasInfUpgrade(8) } },
 ]
 
 const CORRUPTED_TREE = ['s1']
@@ -68,7 +68,7 @@ const NO_REQ_QU = ['qol1','qol2','qol3','qol4','qol5',
 'c','s2','s3','s4','sn3',
 'sn4','t1','bh2','gr1','chal1',
 'chal2','chal3','bs1','fn2','fn3',
-'fn5','fn6']
+'fn5','fn6','fn10']
 
 const TREE_UPGS = {
     buy(x, auto=false) {
@@ -79,6 +79,8 @@ const TREE_UPGS = {
             
             if (CS_TREE.includes(x)) player.dark.c16.tree.push(x)
             else  player.supernova.tree.push(x)
+
+            if (x == 'unl1') addQuote(6)
         }
     },
     ids: {
@@ -252,7 +254,7 @@ const TREE_UPGS = {
         qol1: {
             req() { return player.supernova.times.gte(2) },
             reqDesc: `2 個超新星。`,
-            desc: `開始時解鎖硅-14 和 氬-18。你可以自動購買元素和原子升級。`,
+            desc: `開始時解鎖矽-14 和 氬-18。你可以自動購買元素和原子升級。`,
             cost: E(1500),
         },
         qol2: {
@@ -1044,8 +1046,8 @@ const TREE_UPGS = {
             desc: `中子元素-0 稍微加強挑戰 14 的獎勵（如 [ct5]）。`,
             cost: E(1500),
 
-            req() { return player.chal.comps[14]&&player.chal.comps[14].gte(777) },
-            reqDesc() { return `將挑戰 14 完成 ${format(777,0)} 次。` },
+            req() { return player.chal.comps[14]&&player.chal.comps[14].gte(750) },
+            reqDesc() { return `將挑戰 14 完成 ${format(750,0)} 次。` },
         },
         ct8: {
             branch: ['ct2'],
@@ -1077,7 +1079,7 @@ const TREE_UPGS = {
         ct10: {
             branch: ['ct4'],
 
-            desc: `腐蝕碎片總數降低 FSS 要求。`,
+            desc: `腐化碎片總數降低 FSS 要求。`,
             cost: E(5e4),
 
             effect() {
@@ -1089,9 +1091,8 @@ const TREE_UPGS = {
         },
         ct11: {
             branch: ['ct6'],
-            icon: "placeholder",
 
-            desc: `你在挑戰 16 中的最佳黑洞質量推遲黑洞質量溢出。（在挑戰 16 裏較弱）`,
+            desc: `你在挑戰 16 中的最佳黑洞質量推遲黑洞質量溢出。（在挑戰 16 中較弱）`,
             cost: E(1e6),
 
             req() { return tmp.c16active && player.atom.atomic.gte(1e20) },
@@ -1112,8 +1113,8 @@ const TREE_UPGS = {
             desc: `你在挑戰 16 中的最佳黑洞質量免費提供原始素粒子。`,
             cost: E(5e7),
 
-            req() { return tmp.c16active && player.supernova.fermions.choosed == "06" && player.bh.mass.gte('1e2070') && player.bh.condenser.lte(0) },
-            reqDesc() { return `挑戰 16 和 [元夸克] 中，在不購買黑洞壓縮器的情況下到達 ${formatMass('1e2070')} 的黑洞質量。` },
+            req() { return tmp.c16active && player.supernova.fermions.choosed == "06" && player.bh.mass.gte('1e1960') && player.bh.condenser.lte(0) },
+            reqDesc() { return `挑戰 16 和 [元夸克] 中，在不購買黑洞壓縮器的情況下到達 ${formatMass('1e1960')} 的黑洞質量。` },
 
             effect() {
                 let x = player.dark.c16.bestBH.add(1).log10().root(2)
@@ -1124,11 +1125,11 @@ const TREE_UPGS = {
         ct13: {
             branch: ['ct7'],
 
-            desc: `中子元素-0 稍微加強挑戰 15（像 [ct5] 一樣）。挑戰 15 加強原子和夸克溢出。`,
+            desc: `中子元素-0 稍微加強挑戰 15（像 [ct5] 一樣）。挑戰 15 推遲原子和夸克溢出。`,
             cost: E(2.5e8),
 
-            req() { return player.chal.comps[14]&&player.chal.comps[14].gte(960) },
-            reqDesc() { return `Get ${format(960,0)} C14 completions.` },
+            req() { return player.chal.comps[14]&&player.chal.comps[14].gte(940) },
+            reqDesc() { return `將挑戰 14 完成 ${format(940,0)} 次。` },
         },
         ct14: {
             branch: ['ct11'],
@@ -1136,8 +1137,8 @@ const TREE_UPGS = {
             desc: `你在挑戰 16 中的最佳黑洞質量推遲膨脹質量溢出。`,
             cost: E(1e10),
 
-            req() { return tmp.c16active && player.atom.atomic.gte(1e180) },
-            reqDesc() { return `在挑戰 16 中到達 ${format(1e180)} 原子力量。` },
+            req() { return tmp.c16active && player.atom.atomic.gte(1e144) },
+            reqDesc() { return `在挑戰 16 中到達 ${format(1e144)} 原子力量。` },
 
             effect() {
                 let x = player.dark.c16.bestBH.add(1).log10().add(1).pow(2)
@@ -1148,7 +1149,7 @@ const TREE_UPGS = {
         ct15: {
             branch: ['ct8'],
 
-            desc: `腐蝕碎片總數提升有色物質獲得量。`,
+            desc: `腐化碎片總數提升有色物質獲得量。`,
             cost: E(2.5e10),
 
             effect() {
@@ -1203,6 +1204,20 @@ for (let i in CS_TREE) {
         u.cost = u.cost||EINF
     }
 }
+
+const TREE_TYPES = (()=>{
+    let t = {
+        normal: [],
+        qu: [],
+        cs: [],
+    }
+    for (let x in TREE_UPGS.ids) {
+        if (TREE_UPGS.ids[x].qf) t.qu.push(x)
+        else if (TREE_UPGS.ids[x].cs) t.cs.push(x)
+        else t.normal.push(x)
+    }
+    return t
+})()
 
 function hasTree(id) { return (player.supernova.tree.includes(id) || player.dark.c16.tree.includes(id)) && !(tmp.c16active && CORRUPTED_TREE.includes(id)) }
 
@@ -1336,7 +1351,7 @@ function updateTreeHTML() {
         tmp.supernova.tree_choosed == "" ? `<div style="font-size: 12px; font-weight: bold;"><span class="gray">（點擊任意升級以顯示）</span></div>`
         : `<div style="font-size: 12px; font-weight: bold;"><span class="gray">（再次點擊以購買）</span>${req}</div>
         ${`<span class="sky"><b>[${tmp.supernova.tree_choosed}]</b> ${t_ch.desc}</span>`.corrupt(c16 && CORRUPTED_TREE.includes(tmp.supernova.tree_choosed))}<br>
-        <span>價格：${format(t_ch.cost,2)} ${t_ch.qf?'量子泡沫':t_ch.cs?'<span class="corrupted_text">腐蝕碎片</span>':'中子星'}</span><br>
+        <span>價格：${format(t_ch.cost,2)} ${t_ch.qf?'量子泡沫':t_ch.cs?'<span class="corrupted_text">腐化碎片</span>':'中子星'}</span><br>
         <span class="green">${t_ch.effDesc?"目前："+t_ch.effDesc(tmp.supernova.tree_eff[tmp.supernova.tree_choosed]):""}</span>
         `
     )

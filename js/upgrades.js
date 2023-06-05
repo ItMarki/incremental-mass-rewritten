@@ -45,7 +45,7 @@ const UPGS = {
             let cost, bulk = E(0), fp
 
             if (i==4) {
-                //if (hasCharger(2)) start = E(10)
+                if (hasInfUpgrade(2)) start = E(1e10)
                 let pow = 1.5
                 cost = Decimal.pow(10,Decimal.pow(inc,lvl.scaleEvery('massUpg4').pow(pow)).mul(start))
                 if (player.mass.gte('ee100')) bulk = player.mass.max(1).log10().div(start).max(1).log(inc).max(0).root(pow).scaleEvery('massUpg4',true).add(1).floor()
@@ -160,8 +160,8 @@ const UPGS = {
                 if (!player.ranks.pent.gte(15)) ret = ret.softcap(ss2,sp2,0)
 
                 let o = ret
-                let os = E('e115')
-                let op = E(.5)
+                let os = E('e115'), os2 = E('e1555')
+                let op = E(.5), op2 = E(0.25)
 
                 if (hasElement(210)) os = os.mul(elemEffect(210))
 
@@ -169,9 +169,11 @@ const UPGS = {
 
                 ret = overflow(ret,os,op)
 
+                ret = overflow(ret,os2,op2)
+
                 tmp.overflow.stronger = calcOverflow(o,ret,os)
-                tmp.overflow_start.stronger = os
-                tmp.overflow_power.stronger = op
+                tmp.overflow_start.stronger = [os,os2]
+                tmp.overflow_power.stronger = [op,op2]
 
                 return {step: step, eff: ret, ss: ss}
             },
@@ -189,21 +191,23 @@ const UPGS = {
             },
         },
         4: {
-            unl() { return hasElement(202) },
+            unl() { return hasElement(202) || hasInfUpgrade(2) },
             title: "過強器",
             start: E(1e100),
             inc: E(1.5),
             effect(i) {
                 let xx = i.add(tmp.upgs.mass[4].bonus)
-
+                
                 let step = E(.005)
                 if (hasUpgrade('rp',17)) step = step.add(.005)
+                if (tmp.inf_unl) step = step.add(theoremEff('atom',2,0))
+
                 if (hasUpgrade('rp',19)) step = step.mul(upgEffect(1,19,0))
 
                 let ss = E(10)
 
                 let x = step.mul(xx).add(1).softcap(ss,0.5,0)
-
+                
                 return {step: step, eff: x, ss: ss}
             },
             effDesc(eff) {
@@ -244,7 +248,7 @@ const UPGS = {
                     player.mainUpg.rp.push(x)
                 }
             },
-            auto_unl() { return player.mainUpg.bh.includes(5) },
+            auto_unl() { return player.mainUpg.bh.includes(5) || tmp.inf_unl  },
             lens: 20,
             1: {
                 desc: "提升器增加提重器。",
@@ -370,17 +374,17 @@ const UPGS = {
                 },
             },
             16: {
-                unl() { return tmp.moreUpgs },
+                unl() { return tmp.moreUpgs || tmp.inf_unl },
                 desc: `移除時間速度力量的軟上限。`,
                 cost: E('e1.8e91'),
             },
             17: {
-                unl() { return tmp.mass4Unl },
+                unl() { return tmp.mass4Unl || tmp.inf_unl },
                 desc: `過強器力量 +0.005。`,
                 cost: E('e7.75e116'),
             },
             18: {
-                unl() { return tmp.brUnl },
+                unl() { return tmp.brUnl || tmp.inf_unl },
                 desc: `褪色物質的升級稍微提升暴怒力量獲得量。`,
                 cost: E('e1.5e128'),
                 effect() {
@@ -392,7 +396,7 @@ const UPGS = {
                 },
             },
             19: {
-                unl() { return tmp.brUnl },
+                unl() { return tmp.brUnl || tmp.inf_unl },
                 desc: `超新星加強過強器力量。`,
                 cost: E('e6e144'),
                 effect() {
@@ -404,8 +408,8 @@ const UPGS = {
                 },
             },
             20: {
-                unl() { return player.dark.exotic_atom.tier>0 },
-                desc: `腐蝕碎片提升普通質量獲得量。`,
+                unl() { return player.dark.exotic_atom.tier>0 || tmp.inf_unl },
+                desc: `腐化碎片提升普通質量獲得量。`,
                 cost: E('e2e357'),
                 effect() {
                     let x = player.dark.c16.totalS.add(1)
@@ -421,7 +425,7 @@ const UPGS = {
             res: "暗物質",
 			getRes() { return player.bh.dm },
             unl() { return player.bh.unl },
-            auto_unl() { return player.mainUpg.atom.includes(2) },
+            auto_unl() { return player.mainUpg.atom.includes(2) || tmp.inf_unl  },
             can(x) { return player.bh.dm.gte(this[x].cost) && !player.mainUpg.bh.includes(x) },
             buy(x) {
                 if (this.can(x)) {
@@ -556,7 +560,7 @@ const UPGS = {
                 },
             },
             16: {
-                unl() { return tmp.moreUpgs },
+                unl() { return tmp.moreUpgs || tmp.inf_unl },
                 desc: `紅物質升級稍微影響質量獲得量。`,
                 cost: E('e5e101'),
                 effect() {
@@ -568,7 +572,7 @@ const UPGS = {
                 },
             },
             17: {
-                unl() { return tmp.moreUpgs },
+                unl() { return tmp.moreUpgs || tmp.inf_unl },
                 desc: `靛物質的升級稍微提升塌縮恆星獲得量。`,
                 cost: E('e4e113'),
                 effect() {
@@ -580,12 +584,12 @@ const UPGS = {
                 },
             },
             18: {
-                unl() { return tmp.brUnl },
+                unl() { return tmp.brUnl || tmp.inf_unl },
                 desc: `黑洞效果更強。`,
                 cost: E('e1.5e156'),
             },
             19: {
-                unl() { return tmp.brUnl },
+                unl() { return tmp.brUnl || tmp.inf_unl },
                 desc: `黑洞質量極微提升加速器力量。`,
                 cost: E('e3e201'),
                 effect() {
@@ -597,8 +601,8 @@ const UPGS = {
                 },
             },
             20: {
-                unl() { return player.dark.c16.first },
-                desc: `腐蝕碎片提升黑洞質量獲得量。`,
+                unl() { return player.dark.c16.first || tmp.inf_unl  },
+                desc: `腐化碎片提升黑洞質量獲得量。`,
                 cost: E('e1e273'),
                 effect() {
                     let x = player.dark.c16.totalS.add(1)
@@ -621,7 +625,7 @@ const UPGS = {
                     player.mainUpg.atom.push(x)
                 }
             },
-            auto_unl() { return hasTree("qol1") },
+            auto_unl() { return hasTree("qol1") || tmp.inf_unl  },
             lens: 20,
             1: {
                 desc: "開始時解鎖質量升級。",
@@ -731,12 +735,12 @@ const UPGS = {
                 cost: E('e3.4e14'),
             },
             16: {
-                unl() { return tmp.moreUpgs },
+                unl() { return tmp.moreUpgs || tmp.inf_unl },
                 desc: `夸克溢出推遲 ^10。`,
                 cost: E('e3e96'),
             },
             17: {
-                unl() { return tmp.moreUpgs },
+                unl() { return tmp.moreUpgs || tmp.inf_unl },
                 desc: `粉紅物質稍微提升夸克獲得量。`,
                 cost: E('e7.45e98'),
                 effect() {
@@ -748,12 +752,12 @@ const UPGS = {
                 },
             },
             18: {
-                unl() { return tmp.mass4Unl },
+                unl() { return tmp.mass4Unl || tmp.inf_unl },
                 desc: `中子力量的第二個效果提供指數加成，而且會影響黑洞質量。`,
                 cost: E('e4.2e120'),
             },
             19: {
-                unl() { return tmp.brUnl },
+                unl() { return tmp.brUnl || tmp.inf_unl },
                 desc: `黃色物質的升級稍微推遲膨脹質量的溢出。`,
                 cost: E('e8e139'),
                 effect() {
@@ -765,7 +769,7 @@ const UPGS = {
                 },
             },
             20: {
-                unl() { return player.dark.c16.first },
+                unl() { return player.dark.c16.first || tmp.inf_unl },
                 desc: `原子力量極微提供過強器。`,
                 cost: E('e2.7e186'),
                 effect() {
@@ -789,7 +793,7 @@ const UPGS = {
                     player.mainUpg.br.push(x)
                 }
             },
-            auto_unl() { return hasElement(132) },
+            auto_unl() { return hasElement(132) || tmp.inf_unl  },
             lens: 20,
             1: {
                 desc: `開始大撕裂時解鎖氫-1。`,
@@ -838,17 +842,17 @@ const UPGS = {
                 cost: E(1e7),
             },
             10: {
-                unl() { return player.md.break.active },
+                unl() { return player.md.break.active || tmp.inf_unl },
                 desc: `賦色子強 10%。`,
                 cost: E(2.5e8),
             },
             11: {
-                unl() { return player.md.break.active },
+                unl() { return player.md.break.active || tmp.inf_unl },
                 desc: `重置等級不再重置任何東西。`,
                 cost: E(1e10),
             },
             12: {
-                unl() { return player.md.break.active },
+                unl() { return player.md.break.active || tmp.inf_unl },
                 desc: `原子推遲質量軟上限^5。`,
                 cost: E(1e16),
                 effect() {
@@ -858,7 +862,7 @@ const UPGS = {
                 effDesc(x=this.effect()) { return "推遲 ^"+format(x) },
             },
             13: {
-                unl() { return player.md.break.active },
+                unl() { return player.md.break.active || tmp.inf_unl },
                 desc: `重置底數增加死亡碎片獲得量。`,
                 cost: E(1e17),
                 effect() {
@@ -868,22 +872,22 @@ const UPGS = {
                 effDesc(x=this.effect()) { return "x"+format(x) },
             },
             14: {
-                unl() { return player.md.break.active },
+                unl() { return player.md.break.active || tmp.inf_unl },
                 desc: `超級費米子階推遲 10 個開始（在應用第 8 個量子挑戰模組後）。`,
                 cost: E(1e22),
             },
             15: {
-                unl() { return player.md.break.active },
+                unl() { return player.md.break.active || tmp.inf_unl },
                 desc: `藍圖粒子稍微更強加快量子前全局運行速度。`,
                 cost: E(1e24),
             },
             16: {
-                unl() { return tmp.moreUpgs },
+                unl() { return tmp.moreUpgs || tmp.inf_unl },
                 desc: `移除 Α、Ω 和 Σ 粒子第一個效果的軟上限，並且加強它們。`,
                 cost: E(1e273),
             },
             17: {
-                unl() { return tmp.mass4Unl },
+                unl() { return tmp.mass4Unl || tmp.inf_unl },
                 desc: `暗物質對原子獲得量提供稍弱的指數加成。`,
                 cost: E('e386'),
                 effect() {
@@ -893,7 +897,7 @@ const UPGS = {
                 effDesc(x=this.effect()) { return "^"+format(x) },
             },
             18: {
-                unl() { return tmp.brUnl },
+                unl() { return tmp.brUnl || tmp.inf_unl },
                 desc: `質量提升賦色子。`,
                 cost: E('e408'),
                 effect() {
@@ -903,7 +907,7 @@ const UPGS = {
                 effDesc(x=this.effect()) { return "x"+format(x) },
             },
             19: {
-                unl() { return tmp.brUnl },
+                unl() { return tmp.brUnl || tmp.inf_unl },
                 desc: `紅物質稍微減少聲望前要求。`,
                 cost: E('e463'),
                 effect() {
@@ -913,8 +917,8 @@ const UPGS = {
                 effDesc(x=this.effect()) { return "便宜 x"+format(x) },
             },
             20: {
-                unl() { return player.dark.c16.first },
-                desc: `腐蝕碎片總數提升暗束獲得量。`,
+                unl() { return player.dark.c16.first || tmp.inf_unl },
+                desc: `腐化碎片總數提升暗束獲得量。`,
                 cost: E('e784'),
                 effect() {
                     let x = player.dark.c16.totalS.add(1)
