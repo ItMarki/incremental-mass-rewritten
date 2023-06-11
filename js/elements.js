@@ -206,7 +206,7 @@ function updateUpperHTML() {
 	tmp.el.chal_upper.setVisible(chal_unl)
 	if (chal_unl) {
 		let data = CHALS.getChalData(player.chal.active, tmp.chal.bulk[player.chal.active].max(player.chal.comps[player.chal.active]))
-		tmp.el.chal_upper.setHTML(`你現在進行 [${CHALS[player.chal.active].title}] 挑戰！達到 ${tmp.chal.format(tmp.chal.goal[player.chal.active])+CHALS.getResName(player.chal.active)} 質量即可完成挑戰，
+		tmp.el.chal_upper.setHTML(`你現在進行 [${CHALS[player.chal.active].title}] 挑戰！到達 ${tmp.chal.format(tmp.chal.goal[player.chal.active])+CHALS.getResName(player.chal.active)} 質量即可完成挑戰，
 		<br>+${tmp.chal.gain} 完成次數（下一個在 ${tmp.chal.format(data.goal)+CHALS.getResName(player.chal.active)}）`)
 	}
 

@@ -119,6 +119,34 @@ const MUONIC_ELEM = {
                 return x
             },
             effDesc: x=>"^"+format(x),
+        },{
+            desc: `原子力量的免費時間速度以對數關係加強宇宙弦。`,
+            cost: E(1e270),
+            eff() {
+                if (!tmp.atom) return E(0)
+                let x = tmp.atom.atomicEff.max(1).log10().floor()
+                return x
+            },
+            effDesc: x=>"+"+format(x,0),
+        },{
+            desc: `由 1.798e308 開始，奇異原子提升無限點數獲得量。`,
+            cost: E(Number.MAX_VALUE),
+            eff() {
+                let x = tmp.exotic_atom.amount.div(Number.MAX_VALUE).max(1).log(1.1).add(1)
+                return x
+            },
+            effDesc: x=>formatMult(x),
+        },{
+            desc: `紅物質的升級更強。`,
+            cost: E('e420'),
+        },{
+            desc: `無限點數總數提升 K 介子和 π 介子的獲得量。`,
+            cost: E('e470'),
+            eff() {
+                let x = player.inf.total.add(1).root(4)
+                return x
+            },
+            effDesc: x=>formatMult(x),
         },
 
         /*
@@ -135,8 +163,13 @@ const MUONIC_ELEM = {
     ],
     getUnlLength() {
         let u = 11
+
         if (tmp.inf_unl) u += 4
         if (hasInfUpgrade(9)) u += 3
+
+        if (tmp.brokenInf) u += 2
+        if (tmp.tfUnl) u += 2
+
         return u
     },
 }
@@ -171,7 +204,7 @@ function updateMuonSymbol(start=false) {
 }
 
 const EXOTIC_ATOM = {
-    requirement: [E(0),E(5e4),E(1e6),E(1e12),E(1e25),E(1e34),E(1e44),E(1e66),E(1e88),E(1e121),E(1e222)],
+    requirement: [E(0),E(5e4),E(1e6),E(1e12),E(1e25),E(1e34),E(1e44),E(1e66),E(1e88),E(1e121),E(1e222),E('e321')],
     req() {
         let t = player.dark.exotic_atom.tier
         let r = this.requirement[t]||EINF
@@ -182,8 +215,11 @@ const EXOTIC_ATOM = {
         if (tmp.exotic_atom.amount.gte(tmp.exotic_atom.req)) {
             player.dark.exotic_atom.tier++
 
-            player.dark.exotic_atom.amount = [E(0),E(0)]
-            MATTERS.final_star_shard.reset(true)
+            if (!hasElement(225)) {
+                player.dark.exotic_atom.amount = [E(0),E(0)]
+
+                MATTERS.final_star_shard.reset(true)
+            }
 
             updateExoticAtomsTemp()
         }
@@ -202,6 +238,9 @@ const EXOTIC_ATOM = {
         if (hasElement(5,1)) xy = xy.mul(muElemEff(5))
         if (hasBeyondRank(3,4)) xy = xy.mul(beyondRankEffect(3,4))
         if (hasInfUpgrade(13)) xy = xy.mul(infUpgEffect(13))
+        if (hasElement(22,1)) xy = xy.mul(muElemEff(22))
+
+        xy = xy.mul(getFragmentEffect('atom'))
 
         let x = xy.div(10)
         if (hasPrestige(2,34)) x = x.mul(prestigeEff(2,34))
@@ -212,6 +251,8 @@ const EXOTIC_ATOM = {
         if (hasElement(9,1)) y = y.mul(muElemEff(9))
         if (hasElement(12,1)&&hasPrestige(1,247)) y = y.mul(prestigeEff(1,247))
 
+        if (hasPrestige(1,510)) [x,y] = [x.pow(1.1),y.pow(1.1)]
+
         return [x,y]
     },
     milestones: [
@@ -219,7 +260,7 @@ const EXOTIC_ATOM = {
             [a=>{
                 let x = overflow(a.add(1).root(2),100,0.5)
                 return x
-            },x=>`將腐化碎片獲得量提升 <b>${formatMult(x)}</b>`],
+            },x=>`腐化碎片獲得量提升 <b>${formatMult(x)}</b>`],
             [a=>{
                 let x = a.add(1).log10().div(10).add(1).root(2)
                 return x
@@ -239,7 +280,7 @@ const EXOTIC_ATOM = {
             [a=>{
                 let x = a.add(10).log10().pow(2).sub(1).div(5e3)
                 return x.toNumber()
-            },x=>`將第 382 個重置等級的獎勵中對塌縮恆星的加成底數，以及第 201 個元素對黑洞效果的加成底數增加 <b>+${format(x)}</b>`],
+            },x=>`第 382 個重置等級的獎勵中對塌縮恆星的加成底數，以及第 201 個元素對黑洞效果的加成底數增加 <b>+${format(x)}</b>`],
         ],[
             [a=>{
                 let x = hasElement(12,1) ? expMult(a.add(1),2.5) : a.add(1).pow(2)
@@ -261,6 +302,10 @@ const EXOTIC_ATOM = {
                 let x = a.add(1).ssqrt().div(50)
                 return isNaN(x)?E(0):x
             },x=>`平行擠壓器的力量提升 <b>+${format(x)}</b>`],
+            [a=>{
+                let x = a.add(1).log10().div(50)
+                return x.toNumber()
+            },x=>`有色物質指數增加 <b>+${format(x)}</b>`],
         ],
     ],
 }

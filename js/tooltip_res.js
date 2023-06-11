@@ -220,7 +220,7 @@ const TOOLTIP_RES = {
         full: "無限",
         desc() {
             let h = `
-            你有 <b class="yellow">${player.inf.theorem.format(0)}</b> 個無限定理。
+            你有 <b class="yellow">${player.inf.theorem.format(0)}</b> 個${getScalingName('inf_theorem')}無限定理。
             <br class='line'>
             <i>
             你需要到達 <b>${formatMass(INF.req)}</b> 的普通質量才能獲得無限點數並為核心選擇定理。

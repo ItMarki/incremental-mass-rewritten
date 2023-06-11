@@ -430,7 +430,8 @@ const PRESTIGES = {
             "167": `FFS 對深淵之漬的第四個獎勵提供指數倍數。`,
             "247": `MCF 階數提升 K 介子獲得量。`,
             "300": `[元夸克] 和 [元輕子] 的軟上限稍微更弱。`,
-            400: `每個粒子力量的第 1 個效果更強。`,
+            400: `每個粒子力量的第一個效果更強。`,
+            510: `K 介子和 π 介子的獲得量 ^1.1。`,
         },
         {
             "1": `重置等級和榮耀的要求減少 15%。`,
@@ -549,9 +550,9 @@ const PRESTIGES = {
                 return x
             },x=>"x"+format(x)],
             "45": [()=>{
-                let x = player.bh.unstable.add(1)
+                let x = hasElement(224) ? Decimal.pow(1.1,player.bh.unstable.root(4)) : player.bh.unstable.add(1)
                 if (tmp.c16active) x = overflow(x.log10().add(1).root(2),10,0.5)
-                return x
+                return overflow(x,1e100,0.5)
             },x=>"推遲 ^"+format(x)],
         },
         {
@@ -668,6 +669,13 @@ function updateRanksTemp() {
 
     // Beyond
 
+    let p = 1
+
+    if (hasElement(221)) p /= 0.95
+    p /= getFragmentEffect('time')
+
+    tmp.beyond_ranks.tier_power = p
+
     tmp.beyond_ranks.max_tier = BEYOND_RANKS.getTier()
     tmp.beyond_ranks.latestRank = BEYOND_RANKS.getRankFromTier(tmp.beyond_ranks.max_tier)
 
@@ -691,16 +699,16 @@ const BEYOND_RANKS = {
         return x
     },
     getTier() {
-        let x = player.ranks.beyond.gt(0)?player.ranks.beyond.log10().max(0).pow(.8).add(1).floor().toNumber():1
+        let x = player.ranks.beyond.gt(0)?player.ranks.beyond.log10().max(0).pow(.8).mul(tmp.beyond_ranks.tier_power).add(1).floor().toNumber():1
         return x
     },
     getRankFromTier(i) {
-        let hp = Decimal.pow(10,(i-1)**(1/.8)).ceil()
+        let hp = Decimal.pow(10,Math.pow((i-1)/tmp.beyond_ranks.tier_power,1/.8)).ceil()
 
         return player.ranks.beyond.div(hp).floor()
     },
     getRequirementFromTier(i,t=tmp.beyond_ranks.latestRank,mt=tmp.beyond_ranks.max_tier) {
-        return Decimal.pow(10,(mt)**(1/.8)-(mt-i)**(1/.8)).mul(Decimal.add(t,1)).ceil()
+        return Decimal.pow(10,Math.pow(mt/tmp.beyond_ranks.tier_power,1/.8)-Math.pow((mt-i)/tmp.beyond_ranks.tier_power,1/.8)).mul(Decimal.add(t,1)).ceil()
     },
 
     reset(auto=false) {
@@ -741,8 +749,15 @@ const BEYOND_RANKS = {
         },
         4: {
             1: `Β 粒子稍微推遲超臨界超新星。`,
-            2: `超·級別每達到一個級數，重置底數的指數增加 15%，由十級層開始。`,
+            2: `由十級層開始，超·級別每達到一個級數，重置底數的指數增加 15%。`,
             40: `[陶子] 的獎勵提升至 3 次方。`,
+        },
+        5: {
+            2: `由十級層開始，超·級別每達到一個級數，超級 FSS 推遲 +1 個。`,
+            7: `移除重置等級的元級前增幅。`,
+        },
+        6: {
+            1: `「自我無限」和「奇異速度」升級的公式從 2 改為以 3 作為底數。`
         },
     },
 
@@ -843,6 +858,16 @@ const BEYOND_RANKS = {
                     return Math.max(1,x)
                 },
                 x=>"x"+format(x,1),
+            ],
+        },
+        5: {
+            2: [
+                ()=>{
+                    let x = tmp.beyond_ranks.max_tier-3
+
+                    return Math.max(1,x)
+                },
+                x=>"推遲 +"+format(x,0),
             ],
         },
     },
