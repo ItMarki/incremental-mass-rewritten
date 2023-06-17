@@ -313,7 +313,7 @@ const ELEMENTS = {
             effect() {
                 let x = player.stars.points.add(1).pow(0.5)
                 let y = hasPrestige(0,190)?player.stars.points.add(1).log10().add(1).log10().add(1):E(1)
-                return [x.softcap('e4e66',0.95,2),y]
+                return [x.softcap('e4e66',0.95,2).min('eee3'),y]
             },
             effDesc(x) { return format(x[0])+"x"+(hasPrestige(0,190)?", ^"+format(x[1]):"") },
         },
@@ -474,10 +474,11 @@ const ELEMENTS = {
             desc: `塌縮恆星提升夸克獲得量。`,
             cost: E('e1.7e6'),
             effect() {
-                let x = player.stars.points.add(1)
-                return overflow(x.softcap('e3e15',0.85,2),'ee100',0.5)
+                let x
+                x = hasElement(236) ? Decimal.pow(1.1,player.stars.points.add(1).log10().add(1).log10()) : overflow(player.stars.points.add(1).softcap('e3e15',0.85,2),'ee100',0.5)
+                return x
             },
-            effDesc(x) { return format(x)+"x" },
+            effDesc(x) { return hasElement(236) ? "^"+format(x) : format(x)+"x" },
         },
         {
             desc: `元級時間速度推遲 2x。`,
@@ -1297,8 +1298,9 @@ const ELEMENTS = {
             desc: `FSS 提升量子碎片的底數。`,
             cost: E('e640000'),
             effect() {
-                let x = player.dark.matters.final.div(10).add(1)
-                return x
+                let x = player.dark.matters.final.div(10)
+                if (hasElement(28)) x = x.pow(3)
+                return x.add(1)
             },
             effDesc(x) { return "^"+format(x,1) },
         },{
@@ -1328,6 +1330,7 @@ const ELEMENTS = {
             cost: E('e1e26'),
             effect() {
                 let x = player.bh.mass.add(10).log10().root(20)
+                if (hasBeyondRank(6,12)) x = x.pow(3)
                 return x
             },
             effDesc(x) { return "推遲 ^"+format(x) },
@@ -1342,6 +1345,49 @@ const ELEMENTS = {
             dark: true,
             desc: `移除深淵之漬的第 7 個獎勵的軟上限。`,
             cost: E('e1800000'),
+        },{
+            inf: true,
+            desc: `每秒獲得無限時的最佳無限點數的 1%。定理等級的軟上限再次推遲 +5 個。`,
+            cost: E('5e22'),
+        },{
+            desc: `鈥-67 的效果改為指數加成。`,
+            cost: E('ee613'),
+        },{
+            c16: true,
+            desc: `[ct5] 稍微更強。`,
+            cost: E('e5e34'),
+        },{
+            dark: true,
+            desc: `深淵之漬的第 8 個獎勵更強。`,
+            cost: E('e6e6'),
+        },{
+            inf: true,
+            desc: `如果變為無限時你不選擇任何定理，所有可選擇的定理會分解為所對應碎片的 25%。`,
+            cost: E('1e24'),
+        },{
+            inf: true,
+            desc: `解鎖挑戰 17。`,
+            cost: E('1e25'),
+        },{
+            c16: true,
+            desc: `[ct10] 效果翻倍。`,
+            cost: E('ee38'),
+        },{
+            desc: `如果目前定理等級大於任何核心定理的等級，則自動將該定理的等級改為目前定理等級。變為無限時保留 FVM。`,
+            cost: E('ee888'),
+        },{
+            dark: true,
+            desc: `移除五級層的所有增幅。鈾砹混合體的第 1 個效果適用於等級，但它的效果會改變。`,
+            cost: E('e9.2e6'),
+        },{
+            desc: `無限定理提升維度質量獲得量。它的公式稍微更好。`,
+            cost: E('ee1155'),
+            effect() {
+                let x = player.inf.theorem.add(1).tetrate(1.75)
+
+                return x
+            },
+            effDesc(x) { return formatMult(x) },
         },
     ],
     /*
@@ -1390,7 +1436,8 @@ const ELEMENTS = {
         }
 
         if (tmp.brokenInf) u += 12
-        if (tmp.tfUnl) u += 4
+        if (tmp.tfUnl) u += 12
+        if (tmp.ascensions_unl) u += 2
 
         return u
     },

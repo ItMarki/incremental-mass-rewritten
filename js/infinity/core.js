@@ -134,10 +134,14 @@ const CORE = {
             s => {
                 let x = s**0.25/10000
 
+                if (hasAscension(0,1)) x*=10
+
                 return x
             },
             s => {
                 let x = s**0.25/10000
+
+                if (hasAscension(0,1)) x*=10
 
                 return x
             },
@@ -327,6 +331,18 @@ debug.addRandomTheorem = (level=1,power=1,max_chance=CORE_CHANCE_MIN) => {
     addTheorem(CORE_TYPE[Math.floor(Math.random() * CORE_TYPE.length)],c,level,power,max_chance)
 }
 
+var changeCoreFromBestLevel = () => {
+    let lvl = Math.floor(tmp.core_lvl), power = Math.round(100+getPowerMult(tmp.core_lvl)*100)/100
+
+    for (let i = 0; i < MAX_CORE_LENGTH; i++) if (player.inf.core[i] && lvl > player.inf.core[i].level) {
+        player.inf.core[i].level=lvl
+        player.inf.core[i].power=power
+    }
+
+    updateTheoremCore()
+    updateCoreHTML()
+}
+
 function theoremEff(t,i,def=1) { return tmp.core_eff[t][i]||def }
 
 // setInterval(debug.generateTheorem,1000)
@@ -362,7 +378,7 @@ function getTheoremPreEffects(data,s,p,level) {
     let e = ""
     for (let i = 0; i < 4; i++) if (s[i]) e += CORE[t].preEff[i]+"<br>"
     e += `（基於<b>${CORE[t].res}</b>）`
-    if (tmp.tfUnl) e += `<br class='line'><b>+${format(calcFragmentBase(data,s,p,level),0)}</b> 碎片底數`
+    if (tmp.tfUnl) e += `<br class='line'>可形成 <b>+${format(calcFragmentBase(data,s,p,level),0)}</b> 碎片底數`
     return e
 }
 
@@ -401,7 +417,7 @@ function setupCoreHTML() {
 }
 
 function getCoreChance() { return 1-CORE_CHANCE_BASE**Math.floor(tmp.core_lvl)**0.4 }
-function getPowerMult() { return Math.floor(tmp.core_lvl-1)**0.5/100 }
+function getPowerMult(lvl=tmp.core_lvl) { return Math.floor(lvl-1)**0.5/100 }
 
 function updateCoreHTML() {
     let reached = player.inf.reached
@@ -635,4 +651,8 @@ function updateCoreTemp() {
 
         tmp.fragment_eff[i] = t.fragment[0](player.inf.fragment[i])
     }
+}
+
+function updateOneSec() {
+    if (hasElement(242)) changeCoreFromBestLevel()
 }

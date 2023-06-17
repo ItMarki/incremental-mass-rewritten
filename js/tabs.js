@@ -38,6 +38,7 @@ const TABS = {
             { id: "價格增幅", unl() { return tmp.scaling ? tmp.scaling.super.length>0 : false } },
             { id: "重置獎勵", unl() { return hasUpgrade("br",9) } },
             { id: "超·級別獎勵", unl() { return tmp.brUnl } },
+            { id: "升華獎勵", unl() { return tmp.ascensions_unl } },
         ],
         3: [
             { id: "挑戰" },

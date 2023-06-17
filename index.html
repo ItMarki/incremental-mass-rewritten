@@ -55,6 +55,7 @@
     <script src="js/tabs.js"></script>
     <script src="js/scaling.js"></script>
     <script src="js/upgrades.js"></script>
+    <script src="js/ascensions.js"></script>
     <script src="js/ranks.js"></script>
     <script src="js/temp.js"></script>
 
@@ -183,6 +184,8 @@
                                     <button onclick="tmp.rank_tab = 0" class="btn_tab">級別</button>
                                 </div><div style="width: 145px">
                                     <button onclick="tmp.rank_tab = 1" class="btn_tab">重置</button>
+                                </div><div style="width: 145px">
+                                    <button onclick="tmp.rank_tab = 2" class="btn_tab" id="asc_btn">升華</button>
                                 </div>
                             </div>
                             <div id="rank_tab0">
@@ -205,8 +208,11 @@
                                     </div>
                                 </div>
                             </div><div id="rank_tab1">
-                                你的重置底數是 <span id="pres_base"></span>（基於各級別的乘積）<br><br>
+                                你的重置底數是 <span id="pres_base"></span>（基於各級別的乘積 + 1）<br><br>
                                 <div id="pres_table" class="table_center" style="min-height: 180px;"></div>
+                            </div><div id="rank_tab2">
+                                你的升華底數是 <span id="asc_base"></span>（基於 ln[各級別 + 1] 的乘積 + 1）<br><br>
+                                <div id="asc_table" class="table_center" style="min-height: 180px;"></div>
                             </div>
                             <br><br>
                             <div id="mass_upgs_table"></div><br><br>
@@ -369,6 +375,9 @@
                             <div id="pres_rewards_table"></div>
                         </div><div id="stab_frame1_3">
                             <div id="br_rewards_table"></div>
+                        </div><div id="stab_frame1_4">
+                            <div id="asc_reward_btn" class="table_center"></div><br>
+                            <div id="asc_rewards_table"></div>
                         </div>
                     </div><div id="tab_frame2">
                         <div id="main_upg_msg" style="min-height: 100px;"></div>
@@ -465,6 +474,8 @@
                             <div id="ea_div">
                                 <br>
                                 <div>你有 <h4 id="ext_atom">0</h4> 個奇異原子（基於 K 介子和 π 介子）。</div>
+                                <div>獎勵強度：<span id="ea_strength">100%</span></div>
+                                <br>
                                 <div class="table_center">
                                     <div style="width: 50%; min-width: 500px;">
                                         你有 <span id="ea_amt0">0</span> 個 K 介子。<br><br>
@@ -620,7 +631,7 @@
                             <h2>確認設定</h2><br>
                             <div id="confirm_table" class="table_center"></div>
                             <br><br>
-                            增量質量（重寫版）v0.7.0.2 - 由 MrRedShark77 製作，ItMarki 翻譯<br>
+                            增量質量（重寫版）v0.7.0.4 - 由 MrRedShark77 製作，ItMarki 翻譯<br>
                             本遊戲受到 <ruby>Distance Incremental<rt>距離增量</rt></ruby> 和 <ruby>Synergism<rt>協同放置</rt></ruby> 的啟發製作<br>
                             貢獻：<span style="cursor: pointer;" onclick='addNotify(`frfrfr<br><img src="https://5.imimg.com/data5/HO/DK/MY-8155364/lemon-500x500.jpg" style="width:100%">`)'>Lemon</span>、16777216 和 Aarex（繪畫）<br><br><br>
                             提示 1：把指標放在標籤上方的圖片上，即可查看描述……<br><br>

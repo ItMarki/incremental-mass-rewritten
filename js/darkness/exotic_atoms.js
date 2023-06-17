@@ -33,7 +33,7 @@ const MUONIC_ELEM = {
             desc: `每購買一個緲子元素，K 介子和 π 介子獲得量翻倍。`,
             cost: E(1e15),
             eff() {
-                let x = Decimal.pow(2,player.atom.muonic_el.length)
+                let x = Decimal.pow(hasElement(26,1)?3:2,player.atom.muonic_el.length)
                 return x
             },
             effDesc: x=>formatMult(x),
@@ -96,7 +96,7 @@ const MUONIC_ELEM = {
             cost: E(1e111),
             eff() {
                 if (!tmp.chal) return E(1)
-                let x = overflow(tmp.chal.eff[15],10,0.5).pow(2)
+                let x = hasElement(26,1)?tmp.chal.eff[15].root(2):overflow(tmp.chal.eff[15],10,0.5).pow(2)
                 return x
             },
             effDesc: x=>"^"+format(x),
@@ -147,6 +147,34 @@ const MUONIC_ELEM = {
                 return x
             },
             effDesc: x=>formatMult(x),
+        },{
+            desc: `移除 [奇] 獎勵的上限，並恢復它對光子升級 4 的效果。`,
+            cost: E('e600'),
+        },{
+            desc: `質量溢出^1-2 弱 5%。`,
+            cost: E('e640'),
+        },{
+            desc: `每擁有一個無限定理，奇異原子的獎勵強度 +1.25%。`,
+            cost: E('e778').mul(7/9),
+            eff() {
+                let x = player.inf.theorem.mul(.0125).toNumber()
+                return x
+            },
+            effDesc: x=>"+"+formatPercent(x),
+        },{
+            desc: `緲子硼-5 的底數增加 1。緲子磷-15 更強。`,
+            cost: E('e830'),
+        },{
+            desc: `增強器溢出^1-2 起點乘以重置底數。`,
+            cost: E('e1050'),
+            eff() {
+                let x = overflow(tmp.prestiges.base.add(1),1e10,0.5,2)
+                return x
+            },
+            effDesc: x=>"推遲 "+formatMult(x),
+        },{
+            desc: `第 226 個元素加強至 3x。`,
+            cost: E('e1500'),
         },
 
         /*
@@ -168,7 +196,8 @@ const MUONIC_ELEM = {
         if (hasInfUpgrade(9)) u += 3
 
         if (tmp.brokenInf) u += 2
-        if (tmp.tfUnl) u += 2
+        if (tmp.tfUnl) u += 6
+        if (tmp.ascensions_unl) u += 2
 
         return u
     },
@@ -206,8 +235,10 @@ function updateMuonSymbol(start=false) {
 const EXOTIC_ATOM = {
     requirement: [E(0),E(5e4),E(1e6),E(1e12),E(1e25),E(1e34),E(1e44),E(1e66),E(1e88),E(1e121),E(1e222),E('e321')],
     req() {
-        let t = player.dark.exotic_atom.tier
-        let r = this.requirement[t]||EINF
+        let t = player.dark.exotic_atom.tier, r = EINF
+
+        if (t < 12) r = this.requirement[t]
+        else r = Decimal.pow('e1000',Decimal.pow(1.25,t-12))
 
         return r
     },
@@ -323,10 +354,17 @@ function updateExoticAtomsTemp() {
     tea.amount = EXOTIC_ATOM.getAmount()
     tea.gain = EXOTIC_ATOM.gain()
 
+    let s = 1 + Math.max(t-12)*0.1
+
+    if (hasPrestige(2,58)) s += prestigeEff(2,58,0)
+    if (hasElement(25,1)) s += muElemEff(25,0)
+
+    tea.strength = s
+
     tea.eff = [[],[]]
     for (let i = 0; i < 2; i++) {
         let m = EXOTIC_ATOM.milestones[i]
-        let a = player.dark.exotic_atom.amount[i]
+        let a = player.dark.exotic_atom.amount[i].pow(s)
         for (let j = 0; j < m.length; j++) if (m[j] && j < Math.floor((t+1-i)/2)) tea.eff[i][j] = m[j][0](a)
     }
 }
@@ -339,6 +377,7 @@ function updateExoticAtomsHTML() {
 
     tmp.el.mcf_btn.setHTML(`
     緲子催化聚合（MCF）第 <b>${format(t,0)}</b> 階<br>
+    ${t>=12?`獎勵強度增加 +10%<br>`:''}
     要求：<b>${tea.req.format(0)}</b> 個奇異原子
     `)
     tmp.el.mcf_btn.setClasses({btn: true, half_full: true, locked: tea.amount.lt(tea.req)})
@@ -348,6 +387,7 @@ function updateExoticAtomsHTML() {
         let g = EXOTIC_ATOM.getAmount(ea.amount[0].add(tea.gain[0].mul(inf_gs)),ea.amount[1].add(tea.gain[1].mul(inf_gs))).sub(tea.amount)
 
         tmp.el.ext_atom.setHTML(tea.amount.format(0)+" "+tea.amount.formatGain(g))
+        tmp.el.ea_strength.setHTML(formatPercent(tea.strength))
 
         for (let i = 0; i < 2; i++) {
             tmp.el['ea_amt'+i].setHTML(ea.amount[i].format(2)+" "+ea.amount[i].formatGain(tea.gain[i].mul(inf_gs)))

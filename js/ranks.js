@@ -296,7 +296,7 @@ const PRESTIGES = {
         x += 1
 
         if (hasBeyondRank(4,2)) x *= beyondRankEffect(4,2)
-        if (tmp.c16active || player.dark.run.active) x /= mgEff(5)
+        if (tmp.c16active || inDarkRun()) x /= mgEff(5)
 
         return x
     },
@@ -445,6 +445,7 @@ const PRESTIGES = {
             "34": `π 介子稍微提升 K 介子獲得量。`,
             "40": `加強 [ct4] 的效果。`,
             "45": `不穩定黑洞影響黑洞溢出^2。`,
+            58: `超·級別每到達一個新的最高級別，奇異原子的獎勵強度增加 5%。`,
             
         },
         {
@@ -452,6 +453,7 @@ const PRESTIGES = {
             "2": `每擁有一個聲望，奇異級超新星推遲 x1.25。`,
             "4": `每擁有一個聲望，腐化碎片獲得量提升 50%。`,
             "6": `奇異原子提升其他資源。`,
+            10: `第 388 個重置等級的獎勵也影響榮譽增幅。`,
         },
     ],
     rewardEff: [
@@ -482,7 +484,7 @@ const PRESTIGES = {
                 return x
             },x=>"弱 "+formatReduction(x)],
             "607": [()=>{
-                let x = tmp.prestiges.base.max(1).pow(1.5).softcap('e7500',0.1,0)
+                let x = tmp.prestiges.base.max(1).pow(1.5).softcap('e7500',0.1,0).min('e50000')
                 return x
             },x=>"x"+format(x)+softcapHTML(x,'e7500')],
             "1337": [()=>{
@@ -554,6 +556,10 @@ const PRESTIGES = {
                 if (tmp.c16active) x = overflow(x.log10().add(1).root(2),10,0.5)
                 return overflow(x,1e100,0.5)
             },x=>"推遲 ^"+format(x)],
+            58: [()=>{
+                let x = tmp.beyond_ranks.max_tier*0.05
+                return x
+            },x=>"+"+formatPercent(x)],
         },
         {
             "2": [()=>{
@@ -602,12 +608,12 @@ function updateRanksTemp() {
     if (tmp.inf_unl) ifp = ifp.mul(theoremEff('mass',2))
     let fp2 = tmp.qu.chroma_eff[1][0]
     
-    let tetr_fp2 = hasCharger(8) ? 1 : fp2
+    let tetr_fp2 = !hasElement(243) && hasCharger(8) ? 1 : fp2
 
-    let rt_fp2 = hasPrestige(1,127) ? tmp.c16active ? 5e2 : 1 : fp2
+    let rt_fp2 = !hasElement(243) && hasPrestige(1,127) ? tmp.c16active ? 5e2 : 1 : fp2
     let ffp = E(1)
     let ffp2 = 1
-    if (tmp.c16active || player.dark.run.active) ffp2 /= mgEff(5)
+    if (tmp.c16active || inDarkRun()) ffp2 /= mgEff(5)
 
     let fp = RANKS.fp.rank().mul(ffp)
     tmp.ranks.rank.req = E(10).pow(player.ranks.rank.div(ifp).div(ffp2).scaleEvery('rank',false,[1,1,1,1,rt_fp2]).div(fp).pow(1.15)).mul(10)
@@ -666,6 +672,10 @@ function updateRanksTemp() {
             if (PRESTIGES.rewardEff[x][y]) tmp.prestiges.eff[x][y] = PRESTIGES.rewardEff[x][y][0]()
         }
     }
+
+    // Ascension
+
+    updateAscensionsTemp()
 
     // Beyond
 
@@ -757,7 +767,8 @@ const BEYOND_RANKS = {
             7: `移除重置等級的元級前增幅。`,
         },
         6: {
-            1: `「自我無限」和「奇異速度」升級的公式從 2 改為以 3 作為底數。`
+            1: `「自我無限」和「奇異速度」升級的公式從 2 改為以 3 作為底數。`,
+            12: `第 231 個元素的效果提升至 3 次方。`,
         },
     },
 
@@ -845,7 +856,7 @@ const BEYOND_RANKS = {
         4: {
             1: [
                 ()=>{
-                    let x = overflow(tmp.prim.eff[7].div(5),1e6,0.5)
+                    let x = overflow(tmp.prim.eff[7].div(5),1e6,0.5).softcap(1e7,1/3,0)
 
                     return x
                 },
@@ -913,7 +924,8 @@ function beyondRankEffect(x,y,def=1) {
 
 function updateRanksHTML() {
     tmp.el.rank_tabs.setDisplay(hasUpgrade('br',9))
-    for (let x = 0; x < 2; x++) {
+    tmp.el.asc_btn.setDisplay(tmp.ascensions_unl)
+    for (let x = 0; x < 3; x++) {
         tmp.el["rank_tab"+x].setDisplay(tmp.rank_tab == x)
     }
 
@@ -997,7 +1009,7 @@ function updateRanksHTML() {
             tmp.el.br_desc.setClasses({btn: true, reset: true, locked: player.ranks.hex.lt(tmp.beyond_ranks.req)})
         }
     }
-    if (tmp.rank_tab == 1) {
+    else if (tmp.rank_tab == 1) {
         tmp.el.pres_base.setHTML(`${tmp.prestiges.baseMul.format(0)}<sup>${format(tmp.prestiges.baseExp)}</sup> = ${tmp.prestiges.base.format(0)}`)
 
         for (let x = 0; x < PRES_LEN; x++) {
@@ -1020,11 +1032,14 @@ function updateRanksHTML() {
                 tmp.el["pres_amt_"+x].setTxt(format(p,0))
                 tmp.el["pres_"+x].setClasses({btn: true, reset: true, locked: x==0?tmp.prestiges.base.lt(tmp.prestiges.req[x]):player.prestiges[x-1].lt(tmp.prestiges.req[x])})
                 tmp.el["pres_desc_"+x].setTxt(desc)
-                tmp.el["pres_req_"+x].setTxt(x==0?"重置底數到達 "+format(tmp.prestiges.req[x],0):PRESTIGES.fullNames[x-1]+" "+format(tmp.prestiges.req[x],0))
+                tmp.el["pres_req_"+x].setTxt(x==0?"重置底數到達 "+format(tmp.prestiges.req[x],0):"第 "+format(tmp.prestiges.req[x],0)+" 個"+PRESTIGES.fullNames[x-1])
                 tmp.el["pres_auto_"+x].setDisplay(PRESTIGES.autoUnl[x]())
                 tmp.el["pres_auto_"+x].setTxt(player.auto_pres[x]?"開啟":"關閉")
             }
         }
+    }
+    else if (tmp.rank_tab == 2) {
+        updateAscensionsHTML()
     }
 }
 

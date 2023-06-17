@@ -11,7 +11,7 @@ const FERMIONS = {
         for (let j = 0; j < FERMIONS.types[i].length; j++) x = x.mul(base.pow(player.supernova.fermions.tiers[i][j]))
         if (hasTree("fn1") && tmp.supernova) x = x.mul(tmp.supernova.tree_eff.fn1)
 
-        if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(4)[0])
+        if (tmp.c16active || inDarkRun()) x = expMult(x,mgEff(4)[0])
 
         return x
     },
@@ -150,7 +150,8 @@ const FERMIONS = {
                     return FERMIONS.getTierScaling(x, true)
                 },
                 eff(i, t) {
-                    let x = i.max(1).log10().add(1).mul(t).pow(0.9).div(100).add(1).softcap(1.5,0.5,0).softcap(5,1/3,0).min(6.5)
+                    let x = i.max(1).log10().add(1).mul(t).pow(0.9).div(100).add(1).softcap(1.5,0.5,0).softcap(5,1/3,0)
+                    if (!hasElement(23,1)) x = x.min(6.5)
                     return x
                 },
                 desc(x) {

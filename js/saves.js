@@ -173,6 +173,8 @@ function getPlayerData() {
         },
         auto_pres: [],
         prestiges: [],
+        auto_asc: [],
+        ascensions: new Array(ASCENSIONS.names.length).fill(E(0)),
         auto_mainUpg: {
             
         },
@@ -185,6 +187,7 @@ function getPlayerData() {
         },
         ranks_reward: 0,
         pres_reward: 0,
+        asc_reward: 0,
         scaling_ch: 0,
         rp: {
             points: E(0),
@@ -552,6 +555,7 @@ function loadGame(start=true, gotNaN=false) {
         treeCanvas()
         setInterval(drawTreeHTML, 10)
         setInterval(checkNaN,1000)
+        setInterval(updateOneSec,1000)
 
         setTimeout(()=>{
             tmp.start = true
@@ -591,12 +595,25 @@ function findNaN(obj, str=false, data=getPlayerData()) {
     return false
 }
 
-function overflow(number, start, power){
+function overflow(number, start, power, meta=1){
 	if(isNaN(number.mag))return new Decimal(0);
 	start=E(start);
 	if(number.gte(start)){
-		number=number.log10().div(start.log10()).pow(power).mul(start.log10());
-		number=Decimal.pow(10,number);
+        let s = start.iteratedlog(10,meta)
+		number=Decimal.iteratedexp(10,meta,number.iteratedlog(10,meta).div(s).pow(power).mul(s));
+	}
+	return number;
+}
+
+Decimal.prototype.overflow = function (start, power, meta) { return overflow(this.clone(), start, power, meta) }
+
+function tetraflow(number,start,power) { // EXPERIMENTAL FUNCTION - x => 10^^((slog10(x)-slog10(s))*p+slog10(s))
+    if(isNaN(number.mag))return new Decimal(0);
+	start=E(start);
+	if(number.gte(start)){
+        let s = start.slog(10)
+        // Fun Fact: if 0 < number.slog(10) - start.slog(10) < 1, such like overflow(number,start,power,start.slog(10).sub(1).floor())
+		number=Decimal.tetrate(10,number.slog(10).sub(s).mul(power).add(s))
 	}
 	return number;
 }

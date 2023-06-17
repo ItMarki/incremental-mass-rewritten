@@ -67,7 +67,9 @@ function updateChalTemp() {
         tmp.chal.max[x] = CHALS.getMax(x)
         tmp.chal.goal[x] = data.goal
         tmp.chal.bulk[x] = data.bulk
-        tmp.chal.eff[x] = CHALS[x].effect(FERMIONS.onActive("05")?E(0):player.chal.comps[x].mul(x<=8?s:hasElement(174)&&x<=12?s.root(5):hasTree('ct5')&&x<=v?w:1))
+        let q = x<=8?s:hasElement(174)&&x<=12?s.root(5):hasTree('ct5')&&x<=v?w:1
+        if (x == 9) q = Decimal.min(q,'e150')
+        tmp.chal.eff[x] = CHALS[x].effect(FERMIONS.onActive("05")?E(0):player.chal.comps[x].mul(q))
     }
     tmp.chal.format = player.chal.active != 0 ? CHALS.getFormat() : format
     tmp.chal.gain = player.chal.active != 0 ? tmp.chal.bulk[player.chal.active].min(tmp.chal.max[player.chal.active]).sub(player.chal.comps[player.chal.active]).max(0).floor() : E(0)
@@ -88,7 +90,8 @@ const CHALS = {
         else if (x < 9) ATOM.doReset(chal_reset)
         else if (x < 13) SUPERNOVA.reset(true, true)
         else if (x < 16) DARK.doReset(true)
-        else MATTERS.final_star_shard.reset(true)
+        else if (x == 16) MATTERS.final_star_shard.reset(true)
+        else INF.doReset()
     },
     exit(auto=false) {
         if (!player.chal.active == 0) {
@@ -136,41 +139,47 @@ const CHALS = {
         else if (x < 9) return "進入挑戰會強制執行原子重置。"
         else if (x < 13) return "進入挑戰會強制執行超新星重置。"
         else if (x < 16) return "進入挑戰會強制執行暗界重置。"
-        return "進入挑戰會強制執行 FSS 重置。"
+        else if (x == 16) return "進入挑戰會強制執行 FSS 重置。"
+        return "進入挑戰會強制執行無限重置。"
     },
     getMax(i) {
         if (i <= 12 && hasPrestige(2,25)) return EINF
         let x = this[i].max
         if (i==16 && hasElement(229)) x = E(100)
 
-        if (i <= 4 && !hasPrestige(2,25)) x = x.add(tmp.chal?tmp.chal.eff[7]:0)
-        if (hasElement(13) && (i==5||i==6)) x = x.add(tmp.elements.effect[13])
-        if (hasElement(20) && (i==7)) x = x.add(50)
-        if (hasElement(41) && (i==7)) x = x.add(50)
-        if (hasElement(60) && (i==7)) x = x.add(100)
-        if (hasElement(33) && (i==8)) x = x.add(50)
-        if (hasElement(56) && (i==8)) x = x.add(200)
-        if (hasElement(65) && (i==7||i==8)) x = x.add(200)
-        if (hasElement(70) && (i==7||i==8)) x = x.add(200)
-        if (hasElement(73) && (i==5||i==6||i==8)) x = x.add(tmp.elements.effect[73])
-        if (hasTree("chal1") && (i==7||i==8))  x = x.add(100)
-        if (hasTree("chal4b") && (i==9))  x = x.add(100)
-        if (hasTree("chal8") && (i>=9 && i<=12))  x = x.add(200)
-        if (hasElement(104) && (i>=9 && i<=12))  x = x.add(200)
-        if (hasElement(125) && (i>=9 && i<=12))  x = x.add(elemEffect(125,0))
-        if (hasElement(151) && (i==13))  x = x.add(75)
-        if (hasElement(171) && (i==13||i==14))  x = x.add(100)
-        if (hasElement(186) && (i==13||i==14||i==15))  x = x.add(100)
-        if (hasElement(196) && (i==13||i==14))  x = x.add(200)
-        if (hasPrestige(1,46) && (i==13||i==14||i==15))  x = x.add(200)
-        if (i==13||i==14||i==15) x = x.add(tmp.dark.rayEff.dChal||0)
+        if (i < 16) {
+            if (i <= 4 && !hasPrestige(2,25)) x = x.add(tmp.chal?tmp.chal.eff[7]:0)
+            if (hasElement(13) && (i==5||i==6)) x = x.add(tmp.elements.effect[13])
+            if (hasElement(20) && (i==7)) x = x.add(50)
+            if (hasElement(41) && (i==7)) x = x.add(50)
+            if (hasElement(60) && (i==7)) x = x.add(100)
+            if (hasElement(33) && (i==8)) x = x.add(50)
+            if (hasElement(56) && (i==8)) x = x.add(200)
+            if (hasElement(65) && (i==7||i==8)) x = x.add(200)
+            if (hasElement(70) && (i==7||i==8)) x = x.add(200)
+            if (hasElement(73) && (i==5||i==6||i==8)) x = x.add(tmp.elements.effect[73])
+            if (hasTree("chal1") && (i==7||i==8))  x = x.add(100)
+            if (hasTree("chal4b") && (i==9))  x = x.add(100)
+            if (hasTree("chal8") && (i>=9 && i<=12))  x = x.add(200)
+            if (hasElement(104) && (i>=9 && i<=12))  x = x.add(200)
+            if (hasElement(125) && (i>=9 && i<=12))  x = x.add(elemEffect(125,0))
+            if (hasElement(151) && (i==13))  x = x.add(75)
+            if (hasElement(171) && (i==13||i==14))  x = x.add(100)
+            if (hasElement(186) && (i==13||i==14||i==15))  x = x.add(100)
+            if (hasElement(196) && (i==13||i==14))  x = x.add(200)
+            if (hasPrestige(1,46) && (i==13||i==14||i==15))  x = x.add(200)
+            if (i==13||i==14||i==15)  x = x.add(tmp.dark.rayEff.dChal||0)
+        }
+
         return x.floor()
     },
     getScaleName(i) {
-        if (i < 16) {
+        if (i < 16 && i != 16) {
             if (player.chal.comps[i].gte(i==13?10:1000)) return " 魔王"
             if (player.chal.comps[i].gte(i==13?5:i==8?200:i>8&&i!=13&&i!=16?50:300)) return " 超難"
             if (player.chal.comps[i].gte(i==13?2:i>8&&i!=13&&i!=16?10:75)) return " 困難"
+        } else {
+            if (player.chal.comps[i].gte(10)) return " 困難"
         }
         return ""
     },
@@ -204,7 +213,10 @@ const CHALS = {
         let lvl = r.lt(0)?player.chal.comps[x]:r
         let chal = this[x], fp = 1, goal = EINF, bulk = E(0)
 
-        if (x == 16) {
+        if (x > 16) {
+            goal = chal.start.pow(Decimal.pow(chal.inc,lvl.scale(10,2,0).pow(chal.pow)))
+            if (res.gte(chal.start)) bulk = res.log(chal.start).log(chal.inc).root(chal.pow).scale(10,2,0,true).add(1).floor()
+        } else if (x == 16) {
             goal = lvl.gt(0) ? Decimal.pow('ee23',Decimal.pow(2,lvl.sub(1).pow(1.5))) : chal.start
             if (res.gte(chal.start)) bulk = res.log('ee23').max(1).log(2).root(1.5).add(1).floor()
             if (res.gte('ee23')) bulk = bulk.add(1)
@@ -401,7 +413,7 @@ const CHALS = {
         unl() { return player.chal.comps[6].gte(1) || player.supernova.times.gte(1) || quUnl() },
         title: "無暴怒點數",
         desc: "你不能獲得暴怒點數，但你會基於質量獲得暗物質。質量獲得量軟上限更強。",
-        reward: ()=>hasPrestige(2,25)?`完成次數減弱魔王前挑戰增幅，但不適用於挑戰 7。`:`每完成一次，挑戰 1 - 4 的完成上限增加 2 次。<br><span class="yellow">完成 16 次時，解鎖元素</span>`,
+        reward: ()=>hasPrestige(2,25)?`完成次數減弱魔王前挑戰增幅，但不適用於挑戰 7。`:`每完成一次，挑戰 1 - 4 的完成上限增加 2 次。<br><span class="yellow">完成 16 次時，你會解鎖元素</span>`,
         max: E(50),
         inc: E(64),
         pow: E(1.25),
@@ -487,7 +499,7 @@ const CHALS = {
         start: uni('e8.4e8'),
         effect(x) {
             let ret = x.root(hasTree("chal7a")?1.5:2)
-            return ret.softcap(50,0.5,0)
+            return overflow(ret.softcap(50,0.5,0),1e50,0.5)
         },
         effDesc(x) { return "+"+format(x)+softcapHTML(x,50) },
     },
@@ -542,12 +554,12 @@ const CHALS = {
         desc: `
         • 你不能獲得暴怒點數。所有有色物質的公式失效，但它們會產生其他有色物質。紅物質會生產暗物質。<br>
         • 挑戰 16 前的部分內容，例如級別和重置等級、主升級、元素、中子樹等，會被腐化（禁用）。<br>
-        • 你困在質量膨脹和黑暗試煉裏，每個符文都有 100 個（斯洛伐克符文則有 10 個）。<br>
+        • 你困在質量膨脹和黑暗試煉裏，每種符文都有 100 個（斯洛伐克符文則有 10 個）。<br>
         • 禁用原始素粒子。<br>
         • 量子前全局運行速度一律定為 /100。<br>
         退出挑戰時，你會基於黑洞質量獲得腐化碎片。
         `,
-        reward: `改善鈾砹混合體。<br><span class="yellow">初次完成時，你會解鎖???</span>`,
+        reward: `加強鈾砹混合體。<br><span class="yellow">初次完成時，你會解鎖新的重置層次</span>`,
         max: E(1),
         start: E('e1.25e11'),
         effect(x) {
@@ -556,7 +568,24 @@ const CHALS = {
         },
         effDesc(x) { return "^"+format(x) },
     },
-    cols: 16,
+    17: {
+        unl() { return hasElement(240) },
+        title: "不自然時間速度",
+        desc: `
+        時間速度、加速器、黑洞壓縮器、FVM、宇宙射線、恆星提升器和宇宙弦（包括加成）無效，且不可購買或不可獲得。第 2 個中子效果在購買原子升級 18 前無效。黑洞效果在購買第 201 個元素前無效。你困在黑暗試煉裏，每種符文都有 250 個（不受削弱影響）。
+        `,
+        reward: `每完成一次，定理等級的軟上限推遲 +3 個。<br><span class="yellow">完成 4 次時，你會解鎖升華和更多的元素。</span>`,
+        max: E(100),
+        start: E('ee92'),
+        inc: E(2),
+        pow: E(2),
+        effect(x) {
+            let ret = x.mul(3)
+            return ret.toNumber()
+        },
+        effDesc(x) { return "推遲 +"+format(x,0) },
+    },
+    cols: 17,
 }
 
 /*

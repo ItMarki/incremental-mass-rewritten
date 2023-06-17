@@ -16,8 +16,8 @@ const ATOM = {
         x = x.pow(glyphUpgEff(5))
         if (hasUpgrade('br',17)) x = x.pow(upgEffect(4,17))
 
-        if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(2))
-
+        if (tmp.c16active || inDarkRun()) x = expMult(x,mgEff(2))
+        
         return x.floor()
     },
     quarkGain() {
@@ -29,9 +29,10 @@ const ATOM = {
         if (player.ranks.rank.gte(300)) x = x.mul(RANKS.effect.rank[300]())
         if (hasElement(6)) x = x.mul(tmp.elements.effect[6])
         if (hasElement(42)) x = x.mul(tmp.elements.effect[42])
-        if (hasElement(67)) x = x.mul(tmp.elements.effect[67])
         if (player.md.upgs[6].gte(1)) x = x.mul(tmp.md.upgs[6].eff)
         x = x.mul(tmp.md.upgs[9].eff)
+
+        if (hasElement(67)) x = hasElement(236) ? x.pow(elemEffect(67)) : x.mul(tmp.elements.effect[67])
         if (hasElement(47)) x = x.pow(1.1)
         if (hasPrestige(1,7)) x = x.pow(prestigeEff(1,7))
 
@@ -39,7 +40,7 @@ const ATOM = {
 
         if (tmp.inf_unl) x = x.pow(theoremEff('atom',0))
 
-        if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(2))
+        if (tmp.c16active || inDarkRun()) x = expMult(x,mgEff(2))
 
         let o = x
         let os = tmp.c16active ? E('ee6') : E('ee90').pow(tmp.dark.abEff.ApQ_Overflow||1).pow(treeEff('ct13')?tmp.chal.eff[15]:1)
@@ -87,7 +88,7 @@ const ATOM = {
 
             if (hasGlyphUpg(12)) x = x.pow(greff.exp)
 
-            if (tmp.c16active || player.dark.run.active) x = expMult(x,mgEff(2))
+            if (tmp.c16active || inDarkRun()) x = expMult(x,mgEff(2))
 
             let o = x
             let os = tmp.c16active ? E('e500') : E('ee82').pow(tmp.dark.abEff.ApQ_Overflow||1).pow(treeEff('ct13')?tmp.chal.eff[15]:1)
@@ -146,6 +147,11 @@ const ATOM = {
             if (hasBeyondRank(2,4)) pow = pow.pow(tmp.accelEffect.eff)
 
             let eff = pow.pow(t.add(tmp.atom.gamma_ray_bonus)).sub(1)
+
+            if (CHALS.inChal(17)) {
+                pow = E(1)
+                eff = E(1)
+            }
 
             let exp = E(1)
             if (hasGlyphUpg(12)) exp = Decimal.pow(1.1,eff.max(1).log10().add(1).log10())
@@ -213,6 +219,8 @@ const ATOM = {
                 :(hasElement(19)
                 ?player.mass.max(1).log10().add(1).pow(player.rp.points.max(1).log(10).mul(x.max(1).log(10)).root(2.75))
                 :player.mass.max(1).log10().add(1).pow(player.rp.points.max(1).log(100).mul(x.max(1).log(100)).root(3))).min('ee200')
+
+                if (CHALS.inChal(17) && !hasUpgrade('atom',18)) b = E(1)
 
                 // if (hasPrestige(1,400)) a = overflow(a,1e100,0.5)
                 if (hasUpgrade('atom',18)) b = overflow(b,1e120,0.5)
