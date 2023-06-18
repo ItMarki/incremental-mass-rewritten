@@ -583,7 +583,7 @@ const CHALS = {
             let ret = x.mul(3)
             return ret.toNumber()
         },
-        effDesc(x) { return "推遲 +"+format(x,0) },
+        effDesc(x) { return "推遲 +"+format(x,0)+" 個" },
     },
     cols: 17,
 }
