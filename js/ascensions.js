@@ -59,13 +59,22 @@ const ASCENSIONS = {
     autoSwitch(x) { player.auto_asc[x] = !player.auto_asc[x] },
     rewards: [
         {
-            1: `時間速度和各質量升級的加成（除了溢出）會以乘法疊加效果。道爾頓定理更強。`,
+            1: `時間速度和各質量升級的加成（除了過強器）會以乘法疊加效果。道爾頓定理更強。`,
             2: `元費米子推遲 ^2。`,
+            3: `大撕裂升級 19 效果翻倍，並移除不穩定黑洞效果的溢出。`,
+            4: `每擁有一個升華，K 介子和 π 介子獲得量提升至 5 倍。`,
         },
     ],
     rewardEff: [
         {
+            4: [
+                ()=>{
+                    let x = Decimal.pow(5,player.ascensions[0])
 
+                    return x
+                },
+                x=>formatMult(x),
+            ],
         },
     ],
     reset(i, bulk = false) {
@@ -87,6 +96,7 @@ const ASCENSIONS = {
 }
 
 function hasAscension(i,x) { return player.ascensions[i].gte(x) }
+function ascensionEff(i,x,def=1) { return tmp.ascensions.eff[i][x]||def }
 
 function setupAscensionsHTML() {
     let new_table = new Element("asc_table")
@@ -128,7 +138,7 @@ function updateAscensionsHTML() {
             let desc = ""
             for (let i = 0; i < keys.length; i++) {
                 if (p.lt(keys[i]) && (tmp.chal13comp || p.lte(Infinity))) {
-                    desc = ` At ${ASCENSIONS.fullNames[x]} ${format(keys[i],0)} - ${ASCENSIONS.rewards[x][keys[i]]}`
+                    desc = `在第 ${format(keys[i],0)} 個${ASCENSIONS.fullNames[x]}，${ASCENSIONS.rewards[x][keys[i]]}`
                     break
                 }
             }
@@ -136,7 +146,7 @@ function updateAscensionsHTML() {
             tmp.el["asc_amt_"+x].setTxt(format(p,0))
             tmp.el["asc_"+x].setClasses({btn: true, reset: true, locked: x==0?tmp.ascensions.base.lt(tmp.ascensions.req[x]):player.ascensions[x-1].lt(tmp.ascensions.req[x])})
             tmp.el["asc_desc_"+x].setTxt(desc)
-            tmp.el["asc_req_"+x].setTxt(x==0?format(tmp.ascensions.req[x],0)+" 的升華底數":ASCENSIONS.fullNames[x-1]+" "+format(tmp.ascensions.req[x],0))
+            tmp.el["asc_req_"+x].setTxt(x==0?"升華底數到達 "+format(tmp.ascensions.req[x],0):ASCENSIONS.fullNames[x-1]+" "+format(tmp.ascensions.req[x],0))
             tmp.el["asc_auto_"+x].setDisplay(ASCENSIONS.autoUnl[x]())
             tmp.el["asc_auto_"+x].setTxt(player.auto_pres[x]?"開啟":"關閉")
         }

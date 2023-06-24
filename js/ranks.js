@@ -446,6 +446,7 @@ const PRESTIGES = {
             "40": `加強 [ct4] 的效果。`,
             "45": `不穩定黑洞影響黑洞溢出^2。`,
             58: `超·級別每到達一個新的最高級別，奇異原子的獎勵強度增加 5%。`,
+            121: `第 1 個八級層的獎勵 ^4。`,
             
         },
         {
@@ -552,9 +553,10 @@ const PRESTIGES = {
                 return x
             },x=>"x"+format(x)],
             "45": [()=>{
-                let x = hasElement(224) ? Decimal.pow(1.1,player.bh.unstable.root(4)) : player.bh.unstable.add(1)
+                let y = player.bh.unstable//.overflow(1e24,0.5,0)
+                let x = hasElement(224) ? Decimal.pow(1.1,y.root(4)) : y.add(1)
                 if (tmp.c16active) x = overflow(x.log10().add(1).root(2),10,0.5)
-                return overflow(x,1e100,0.5)
+                return overflow(x,1e100,0.5).min('e1750')
             },x=>"推遲 ^"+format(x)],
             58: [()=>{
                 let x = tmp.beyond_ranks.max_tier*0.05
@@ -759,7 +761,7 @@ const BEYOND_RANKS = {
         },
         4: {
             1: `Β 粒子稍微推遲超臨界超新星。`,
-            2: `由十級層開始，超·級別每達到一個級數，重置底數的指數增加 15%。`,
+            2: `由十級層開始，超·級別的級數提升重置底數的指數。`,
             40: `[陶子] 的獎勵提升至 3 次方。`,
         },
         5: {
@@ -802,9 +804,11 @@ const BEYOND_RANKS = {
         2: {
             1: [
                 ()=>{
-                    let x = player.ranks.beyond.pow(3).add(1)
+                    let x = player.ranks.beyond.pow(3)
 
-                    return x
+                    if (hasPrestige(2,121)) x = x.pow(4)
+
+                    return x.add(1)
                 },
                 x=>"x"+format(x),
             ],
@@ -868,7 +872,7 @@ const BEYOND_RANKS = {
 
                     return Math.max(1,x)
                 },
-                x=>"x"+format(x,1),
+                x=>"x"+format(x),
             ],
         },
         5: {

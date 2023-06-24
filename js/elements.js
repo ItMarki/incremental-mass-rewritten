@@ -524,8 +524,8 @@ function updateHTML() {
 				tmp.el.massOverflow2.setDisplay(player.mass.gte(tmp.overflow_start.mass[1]))
     			tmp.el.massOverflow2.setHTML(`由於你的質量在 <b>${formatMass(tmp.overflow_start.mass[1])}</b> 溢出^2，你的質量溢出變得更強了！`)
 
-				tmp.el.strongerOverflow.setDisplay(tmp.upgs.mass[3].eff.eff.gte(tmp.overflow_start.stronger))
-    			tmp.el.strongerOverflow.setHTML(`由於你的增強器在 <b>${format(tmp.overflow_start.stronger)}</b> 溢出，它的效果已經${overflowFormat(tmp.overflow.stronger||1)}！`)
+				tmp.el.strongerOverflow.setDisplay(tmp.upgs.mass[3].eff.eff.gte(tmp.overflow_start.stronger[0]))
+    			tmp.el.strongerOverflow.setHTML(`由於你的增強器在 <b>${format(tmp.overflow_start.stronger[0])}</b> 溢出，它的效果已經 ${overflowFormat(tmp.overflow.stronger||1)}!`)
 
 				tmp.el.strongerOverflow2.setDisplay(tmp.upgs.mass[3].eff.eff.gte(tmp.overflow_start.stronger[1]))
     			tmp.el.strongerOverflow2.setHTML(`由於你的增強器在 <b>${format(tmp.overflow_start.stronger[1])}</b>，你的增強器溢出變得更強了！`)

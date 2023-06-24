@@ -175,6 +175,18 @@ const MUONIC_ELEM = {
         },{
             desc: `第 226 個元素加強至 3x。`,
             cost: E('e1500'),
+        },{
+            desc: `奇異原子的獎勵強度稍微影響有色物質升級。`,
+            cost: E('e1600'),
+        },{
+            desc: `緲子氫-1 也適用於 K 介子獲得量。`,
+            cost: E('e1750'),
+        },{
+            desc: `挑戰 16 的獎勵也適用於挑戰 9 的獎勵。`,
+            cost: E('e1970'),
+        },{
+            desc: `K 介子的第 1 個獎勵更強。`,
+            cost: E('e2200'),
         },
 
         /*
@@ -197,7 +209,7 @@ const MUONIC_ELEM = {
 
         if (tmp.brokenInf) u += 2
         if (tmp.tfUnl) u += 6
-        if (tmp.ascensions_unl) u += 2
+        if (tmp.ascensions_unl) u += 10 - 4
 
         return u
     },
@@ -270,12 +282,14 @@ const EXOTIC_ATOM = {
         if (hasBeyondRank(3,4)) xy = xy.mul(beyondRankEffect(3,4))
         if (hasInfUpgrade(13)) xy = xy.mul(infUpgEffect(13))
         if (hasElement(22,1)) xy = xy.mul(muElemEff(22))
+        if (hasAscension(0,4)) xy = xy.mul(ascensionEff(0,4))
 
         xy = xy.mul(getFragmentEffect('atom'))
 
         let x = xy.div(10)
         if (hasPrestige(2,34)) x = x.mul(prestigeEff(2,34))
         if (hasPrestige(1,247)) x = x.mul(prestigeEff(1,247))
+        if (hasElement(1,1) && hasElement(30,1)) x = x.mul(muElemEff(1))
 
         let y = xy.div(20)
         if (hasElement(1,1)) y = y.mul(muElemEff(1))
@@ -289,7 +303,7 @@ const EXOTIC_ATOM = {
     milestones: [
         [
             [a=>{
-                let x = overflow(a.add(1).root(2),100,0.5)
+                let x = hasElement(32,1) ? expMult(a.add(1),1.4) : overflow(a.add(1).root(2),100,0.5)
                 return x
             },x=>`腐化碎片獲得量提升 <b>${formatMult(x)}</b>`],
             [a=>{

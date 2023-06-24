@@ -1215,6 +1215,8 @@ const ELEMENTS = {
                 let m = player.massUpg[1]||E(0)
                 let x = m.add(10).log10().pow(0.8);
 
+                if (hasElement(245)) x = x.mul(Decimal.pow(1.1,m.max(1).log10()))
+
 				return x
             },
             effDesc(x) { return "^"+format(x) },
@@ -1388,6 +1390,32 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { return formatMult(x) },
+        },{
+            desc: `大幅增強第 209 個元素。`,
+            cost: E('ee1291'),
+        },{
+            dark: true,
+            desc: `每擁有 2 個無限定理，超級 FSS 推遲 +1 個。`,
+            cost: E('e4.15e7'),
+            effect() {
+                let x = player.inf.theorem.div(2).floor()
+                return x
+            },
+            effDesc(x) { return "推遲 +"+format(x,0) },
+        },{
+            c16: true,
+            desc: `FSS 的第 1 個獎勵在挑戰 16 中稍微更強。`,
+            cost: E('e2e55'),
+        },{
+            desc: `熵倍數不會推遲起點，而會減少價格。`,
+            cost: E('ee1680'),
+        },{
+            dark: true,
+            desc: `深淵之漬的第 10 個獎勵的第 1 個軟上限稍微更弱。`,
+            cost: E('e8.1e7'),
+        },{
+            desc: `W+ 玻色子提供指數加成。`,
+            cost: E('ee2081'),
         },
     ],
     /*
@@ -1437,7 +1465,7 @@ const ELEMENTS = {
 
         if (tmp.brokenInf) u += 12
         if (tmp.tfUnl) u += 12
-        if (tmp.ascensions_unl) u += 2
+        if (tmp.ascensions_unl) u += 10 - 2
 
         return u
     },
