@@ -28,6 +28,7 @@
     
     <script src="js/infinity/core.js"></script>
     <script src="js/infinity/inf.js"></script>
+    <script src="js/infinity/corrupted_star.js"></script>
 
     <script src="js/darkness/exotic_atoms.js"></script>
     <script src="js/darkness/c16.js"></script>
@@ -303,6 +304,7 @@
                                 </span><br>
                                 <span id="bhOverflow"></span>
                                 <div id="bhOverflow2" style="color: rgb(255, 197, 215)"></div>
+                                <br><div id="bhcEffectOverflow" style="color: rgb(194, 177, 255)"></div>
                             </div>
                         </div><div id="stab_frame0_2">
                             你有 <h4 id="atomicAmt">X</h4> 原子力量，<br>
@@ -325,7 +327,7 @@
                             </div>
                         </div><div id="stab_frame0_3">
                             你塌縮了 <h4 id="stars_Amt">X</h4> 個恆星，基於各級別的效果提升質量獲得量。<br>
-                            <span class="green">目前：<h4 id="stars_Eff">X</h4></span><br><br>
+                            <span class="green">目前：<span id="stars_Eff">X</span></span><br><br>
                             <button id="star_btn" class="btn" onclick="STARS.generators.unl()">X</button><br><br>
                             <div id="stars_table" class="table_center"></div><br><br>
                             <span id="starSoft1" class="red">塌縮恆星獲得量到達 <b id="starSoftStart1">X</b> 後會被軟上限！</span><br>
@@ -564,7 +566,7 @@
                             <div id="glyph_upg_msg"></div>
                         </div><div id="stab_frame7_2">
                             <div>
-                                某一種物質基於前一種物質的獲得量公式：10<sup>lg(lg(x))<sup id="matter_exponent">2</sup></sup>
+                                某一種物質基於前一種物質的獲得量公式：<span id="matter_formula">10<sup>lg(lg(x))<sup id="matter_exponent">2</sup></sup></span>
                                 <div id="matter_req_div">提示：到達 <span id="matter_req">???</span> 的最新一種物質以獲得下一種物質！</div>
                                 <div id="FSS_eff1"></div><br>
                                 <button class="btn" onclick="buyMaxMatters()">購買最多升級</button>
@@ -591,8 +593,10 @@
                                 </div>
                                 -->
                             </div>
-                            <h2 class="tooltip" tooltip-html="點擊任何定理即可選擇它。被選擇定理會在你變成無限後加入物品欄裏。">定理選擇器</h2>（懸浮）
-                            <div id="pre_theorem" class="table_center"></div>
+                            <div id="pt_selector">
+                                <h2 class="tooltip" tooltip-html="點擊任何定理即可選擇它。被選擇定理會在你變成無限後加入物品欄裏。">定理選擇器</h2>（懸浮）
+                                <div id="pre_theorem" class="table_center"></div>
+                            </div>
                             你的定理等級是 <span id="pt_lvl" class="tooltip" tooltip-html="基於普通質量和在挑戰 16 的最佳黑洞質量">???</span><br>
                             <div class="table_center">
                                 <div style="width: 50%; min-width: 500px;">
@@ -611,6 +615,21 @@
                         </div><div id="stab_frame8_2">
                             <p>你有 <b id="ip_amt">???</b> 個無限點數。在升級上懸浮指標即可查看描述。</p>
                             <div id="inf_upg_table"></div>
+                        </div><div id="stab_frame8_3">
+                            <div class="table_center">
+                                <div style="width: 50%; min-width: 500px;">
+                                    你有 <h4 id="cs_amount">0</h4> 個腐化之星。<br>
+                                    腐化之星的增長速度是 <b id="cs_speed">X</b>。
+                                    <br><br>
+                                    <button id="cs_upg1" class="btn full" onclick="buyCSUpg(0)">X</button>
+                                    <button id="cs_upg2" class="btn full" onclick="buyCSUpg(1)">X</button>
+                                    <br><br>
+                                    <div id="cs_overflow" style="color: red"></div>
+                                </div><div style="width: 50%; min-width: 500px;">
+                                    <h2>腐化之星的效果：</h2>
+                                    <div id="cs_effect" class="sky"></div>
+                                </div>
+                            </div>
                         </div>
                     </div><div id="tab_frame9">
                         <div id="stab_frame9_0">
@@ -633,7 +652,7 @@
                             <h2>確認設定</h2><br>
                             <div id="confirm_table" class="table_center"></div>
                             <br><br>
-                            增量質量（重寫版）v0.7.0.5 - 由 MrRedShark77 製作，ItMarki 翻譯<br>
+                            增量質量（重寫版）v0.7.1 - 由 MrRedShark77 製作，ItMarki 翻譯<br>
                             本遊戲受到 <ruby>Distance Incremental<rt>距離增量</rt></ruby> 和 <ruby>Synergism<rt>協同放置</rt></ruby> 的啟發製作<br>
                             貢獻：<span style="cursor: pointer;" onclick='addNotify(`frfrfr<br><img src="https://5.imimg.com/data5/HO/DK/MY-8155364/lemon-500x500.jpg" style="width:100%">`)'>Lemon</span>、16777216 和 Aarex（繪畫）<br><br><br>
                             提示 1：把指標放在標籤上方的圖片上，即可查看描述……<br><br>

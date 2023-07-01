@@ -1,10 +1,18 @@
 const MUONIC_ELEM = {
     canBuy(x) {
         if (player.atom.muonic_el.includes(x)) return false
-        return tmp.exotic_atom.amount.gte(this.upgs[x].cost||EINF)
+        let upg = this.upgs[x], amt = upg.cs ? player.inf.cs_amount : tmp.exotic_atom.amount
+
+        return amt.gte(upg.cost||EINF)
     },
     buyUpg(x) {
-        if (this.canBuy(x)) player.atom.muonic_el.push(x)
+        if (this.canBuy(x)) {
+            let upg = this.upgs[x]
+
+            if (upg.cs) player.inf.cs_amount = player.inf.cs_amount.sub(upg.cost)
+
+            player.atom.muonic_el.push(x)
+        }
     },
     upgs: [
         null,
@@ -187,6 +195,42 @@ const MUONIC_ELEM = {
         },{
             desc: `K 介子的第 1 個獎勵更強。`,
             cost: E('e2200'),
+        },{
+            desc: `無限前全局運行速度稍微提升腐化之星的速度。`,
+            cost: E('e2600'),
+            eff() {
+                let x = tmp.preInfGlobalSpeed.max(1).log10().add(1).pow(2)
+                return x
+            },
+            effDesc: x=>formatMult(x),
+        },{
+            cs: true,
+            desc: `緲子催化聚合提升腐化之星的速度。`,
+            cost: E('e20'),
+            eff() {
+                let x = Decimal.pow(1.5,player.dark.exotic_atom.tier)
+                return x
+            },
+            effDesc: x=>formatMult(x),
+        },{
+            desc: `挑戰 17 的獎勵的底數增加 1。`,
+            cost: E('e3000'),
+        },{
+            cs: true,
+            desc: `超新星不再有塌縮恆星的要求，但它們能自動生產超新星。`,
+            cost: E('e34'),
+        },{
+            desc: `超新星推遲腐化之星速度減慢的起點。`,
+            cost: E('e3500'),
+            eff() {
+                let x = player.supernova.times.add(1).overflow(10,0.5)
+                return x
+            },
+            effDesc: x=>"推遲 "+formatMult(x),
+        },{
+            cs: true,
+            desc: `解鎖腐化之星的另一個效果。`,
+            cost: E('e56'),
         },
 
         /*
@@ -209,7 +253,8 @@ const MUONIC_ELEM = {
 
         if (tmp.brokenInf) u += 2
         if (tmp.tfUnl) u += 6
-        if (tmp.ascensions_unl) u += 10 - 4
+        if (tmp.ascensions_unl) u += 6
+        if (tmp.CS_unl) u += 6
 
         return u
     },

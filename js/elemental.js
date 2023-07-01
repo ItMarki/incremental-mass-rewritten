@@ -55,6 +55,11 @@ const ELEMENTS = {
                 updateTheoremInv()
             }
 
+            if (x==251) {
+                tmp.tab=8
+                tmp.stab[8]=3
+            }
+
             tmp.pass = 2
         }
     },
@@ -620,7 +625,7 @@ const ELEMENTS = {
             desc: `每變成一次超新星，死亡碎片獲得量增加 10%。`,
             cost: E("e32000"),
             effect() {
-                let s = player.supernova.times
+                let s = player.supernova.times.overflow(1e8,0.5)
                 if (!player.qu.rip.active) s = s.root(1.5)
                 let x = E(1.1).pow(s)
                 return x.softcap(player.qu.rip.active?'1e130':'1e308',0.01,0)
@@ -1232,7 +1237,7 @@ const ELEMENTS = {
             effDesc(x) { return "推遲 x"+format(x) },
         },{
             br: true,
-            desc: `元級等級稍微影響元級四級層的增幅門檻，並加強第 155 個元素。`,
+            desc: `元級等級稍微影響元級四級層的增幅起點，並加強第 155 個元素。`,
             cost: E("1e5e110"),
             effect() {
                 let x = tmp.radiation.bs.eff[14].max(1).log10().add(1)
@@ -1401,7 +1406,7 @@ const ELEMENTS = {
                 let x = player.inf.theorem.div(2).floor()
                 return x
             },
-            effDesc(x) { return "推遲 +"+format(x,0) },
+            effDesc(x) { return "推遲 +"+format(x,0)+' 個' },
         },{
             c16: true,
             desc: `FSS 的第 1 個獎勵在挑戰 16 中稍微更強。`,
@@ -1416,6 +1421,43 @@ const ELEMENTS = {
         },{
             desc: `W+ 玻色子提供指數加成。`,
             cost: E('ee2081'),
+        },{
+            inf: true,
+            desc: `解鎖腐化之星。`,
+            cost: E('e35'),
+        },{
+            desc: `黑洞質量溢出^2 的指數 ^1.5。`,
+            cost: E('ee2256'),
+        },{
+            inf: true,
+            desc: `每秒獲得核心中定理能形成的碎片的 1%。`,
+            cost: E('e41'),
+        },{
+            c16: true,
+            desc: `移除第 162 個元素的腐化。`,
+            cost: E('e1e77'),
+        },{
+            dark: true,
+            desc: `挑戰 17 的完成次數推遲超級平行擠壓器。`,
+            cost: E('e1.9e8'),
+            effect() {
+                let x = (player.chal.comps[17]||E(0)).pow(2).div(4).floor()
+                return x
+            },
+            effDesc(x) { return "推遲 +"+format(x,0)+' 個' },
+        },{
+            c16: true,
+            desc: `加強有色物質的生產公式。`,
+            cost: E('e1e92'),
+        },{
+            desc: `褪色物質推遲質量溢出^2。`,
+            cost: E('e3e3003'),
+            effect() {
+                let x = overflow(tmp.matters.upg[12].eff.max(1),'ee3',0.5).root(4)
+                if (tmp.c16active) x = x.log10().add(1)
+                return x
+            },
+            effDesc(x) { return "推遲 ^"+format(x) },
         },
     ],
     /*
@@ -1465,7 +1507,8 @@ const ELEMENTS = {
 
         if (tmp.brokenInf) u += 12
         if (tmp.tfUnl) u += 12
-        if (tmp.ascensions_unl) u += 10 - 2
+        if (tmp.ascensions_unl) u += 9
+        if (tmp.CS_unl) u += 6
 
         return u
     },
@@ -1628,7 +1671,7 @@ function updateElementsHTML() {
     tmp.el.elem_ch_div.setVisible(ch>0)
     if (ch) {
         let eu = elem_const.upgs[ch]
-        let res = [eu.inf?" 個無限點數":eu.dark?" 個暗影":" 個夸克"," 個奇異原子"][elayer]
+        let res = [eu.inf?" 個無限點數":eu.dark?" 個暗影":" 個夸克",eu.cs?" 個腐化之星":" 個奇異原子"][elayer]
         let eff = tElem[["effect","mu_effect"][elayer]]
 
         tmp.el.elem_desc.setHTML("<b>["+["","緲子"][elayer]+ELEMENTS.fullNames[ch]+"]</b> "+eu.desc)
@@ -1662,7 +1705,7 @@ function updateElementsHTML() {
                         upg.setClasses(
                             c16 && isElemCorrupted(x,elayer)
                             ?{elements: true, locked: true, corrupted: true}
-                            :{elements: true, locked: !elem_const.canBuy(x), bought: hasElement(x,elayer), muon: elayer == 1, br: elayer == 0 && BR_ELEM.includes(x), final: elayer == 0 && x == 118, dark: elayer == 0 && eu.dark, c16: elayer == 0 && eu.c16, inf: elayer == 0 && eu.inf}
+                            :{elements: true, locked: !elem_const.canBuy(x), bought: hasElement(x,elayer), muon: elayer == 1, br: elayer == 0 && BR_ELEM.includes(x), final: elayer == 0 && x == 118, dark: elayer == 0 && eu.dark, c16: elayer == 0 && eu.c16, inf: elayer == 0 && eu.inf, cs: elayer == 1 && eu.cs}
                         )
                     }
                 }
@@ -1684,6 +1727,7 @@ function updateElementsTemp() {
     let decor = []
     if (hasElement(10,1)) decor.push(187)
     if (hasCharger(9)) decor.push(40,64,67,150,199,200,204)
+    if (hasElement(254)) decor.push(162)
     tElem.deCorrupt = decor
 
     let cannot = []

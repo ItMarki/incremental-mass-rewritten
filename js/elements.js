@@ -427,6 +427,10 @@ function updateBlackHoleHTML() {
 
 	tmp.el.bhOverflow2.setDisplay(player.bh.mass.gte(tmp.overflow_start.bh[1]))
     tmp.el.bhOverflow2.setHTML(`由於你的黑洞質量在 <b>${formatMass(tmp.overflow_start.bh[1])}</b> 溢出，你的黑洞溢出變得更強了！`)
+
+
+	tmp.el.bhcEffectOverflow.setDisplay(tmp.bh.condenser_eff.eff.gte(tmp.overflow_start.BHCEffect[0]))
+    tmp.el.bhcEffectOverflow.setHTML(`由於黑洞壓縮器在 <b>${format(tmp.overflow_start.BHCEffect[0])}</b> 積聚，黑洞壓縮器效果的指數已經${overflowFormat(tmp.overflow.BHCEffect||1)}！`)
 	// Unstable 
 
 	let unl = hasCharger(1)

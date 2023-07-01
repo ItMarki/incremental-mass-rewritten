@@ -119,7 +119,7 @@ function setupAscensionsHTML() {
 		table += `<div id="asc_reward_div_${x}">`
 		let keys = Object.keys(ASCENSIONS.rewards[x])
 		for (let y = 0; y < keys.length; y++) {
-			table += `<span id="asc_reward_${x}_${y}"><b>${ASCENSIONS.fullNames[x]} ${keys[y]}：</b> ${ASCENSIONS.rewards[x][keys[y]]}${ASCENSIONS.rewardEff[x][keys[y]]?` 目前：<span id='asc_eff_${x}_${y}'></span>`:""}</span><br>`
+			table += `<span id="asc_reward_${x}_${y}"><b>第 ${keys[y]} 個${ASCENSIONS.fullNames[x]}：</b> ${ASCENSIONS.rewards[x][keys[y]]}${ASCENSIONS.rewardEff[x][keys[y]]?` 目前：<span id='asc_eff_${x}_${y}'></span>`:""}</span><br>`
 		}
 		table += `</div>`
 	}
