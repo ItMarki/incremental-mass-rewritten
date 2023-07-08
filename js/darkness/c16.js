@@ -27,7 +27,7 @@ const CHARGERS = [
         req: E('e33000'),
         cost: E(5e8),
         desc: `
-        大幅加強暗影的第一個獎勵。移除時間速度的所有增幅，但是移除 [陶子] 的效果。
+        大幅加強暗影的第 1 個獎勵。移除時間速度的所有增幅，但是移除 [陶子] 的效果。
         `,
     },{
         req: E('e89000'),
@@ -51,7 +51,7 @@ const CHARGERS = [
         req: E('e3.9e9'),
         cost: E(1e270),
         desc: `
-        移除層的所有增幅，但鈾砹混合體的第一個效果不再影響它。層在挑戰 16 中便宜 500x。
+        移除層的所有增幅，但鈾砹混合體的第 1 個效果不再影響它。層在挑戰 16 中便宜 500x。
         `,
     },{
         req: E('e4e10'),
@@ -66,9 +66,12 @@ const UNSTABLE_BH = {
     gain() {
         let x = tmp.unstable_bh.fvm_eff.eff||E(1)
 
-        x = x.mul(exoticAEff(1,0))
+        let ea=exoticAEff(1,0)
+
+        x = x.mul(ea[0])
 
         x = x.pow(getFragmentEffect('bh'))
+        if (hasElement(39,1)) x = x.pow(ea[1])
 
         return x
     },
@@ -87,6 +90,8 @@ const UNSTABLE_BH = {
         if (tmp.c16active) x = x.root(3)
 
         if (!hasAscension(0,3)) x = overflow(x,10,0.5)
+
+        x = x.pow(theoremEff('bh',4))
 
         if (hasCharger(2)) x = x.pow(1.5)
 

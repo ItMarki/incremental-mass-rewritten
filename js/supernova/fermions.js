@@ -126,7 +126,7 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `Z<sup>0</sup> 玻色子的第一個效果強 ${format(x.sub(1).mul(100))}%`+(x.gte(5)?"<span class='soft'>（軟上限）</span>":"")
+                    return `Z<sup>0</sup> 玻色子的第 1 個效果強 ${format(x.sub(1).mul(100))}%`+(x.gte(5)?"<span class='soft'>（軟上限）</span>":"")
                 },
                 inc: "質量",
                 cons: "你困在效果翻倍的質量膨脹裏",

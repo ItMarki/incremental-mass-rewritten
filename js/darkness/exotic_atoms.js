@@ -66,7 +66,7 @@ const MUONIC_ELEM = {
             cost: E(1e32),
         },
         {
-            desc: `移除暗影的第四個獎勵的軟上限。超新星提升 π 介子獲得量。`,
+            desc: `移除暗影的第 4 個獎勵的軟上限。超新星提升 π 介子獲得量。`,
             cost: E(1e42),
             eff() {
                 let x = player.supernova.times.div(1e6).add(1)
@@ -75,7 +75,7 @@ const MUONIC_ELEM = {
             effDesc: x=>formatMult(x),
         },
         {
-            desc: `移除第 187 個元素的腐化。`,
+            desc: `移除 187 號元素的腐化。`,
             cost: E(1e46),
         },
         {
@@ -83,7 +83,7 @@ const MUONIC_ELEM = {
             cost: E(1e54),
         },
         {
-            desc: `π 介子的第一個獎勵更強。第 247 榮耀的獎勵提升 π 介子獲得量。`,
+            desc: `π 介子的第 1 個獎勵更強。第 247 榮耀的獎勵提升 π 介子獲得量。`,
             cost: E(1e64),
         },
         {
@@ -120,7 +120,7 @@ const MUONIC_ELEM = {
             },
             effDesc: x=>formatMult(x),
         },{
-            desc: `加速器對氬-18 的效果提供極弱的指數加成（在第一個溢出後）。`,
+            desc: `加速器對氬-18 的效果提供極弱的指數加成（在第 1 個溢出後）。`,
             cost: E(1e170),
             eff() {
                 let x = player.accelerator.add(10).log10()
@@ -181,7 +181,7 @@ const MUONIC_ELEM = {
             },
             effDesc: x=>"推遲 "+formatMult(x),
         },{
-            desc: `第 226 個元素加強至 3x。`,
+            desc: `226 號元素加強至 3x。`,
             cost: E('e1500'),
         },{
             desc: `奇異原子的獎勵強度稍微影響有色物質升級。`,
@@ -220,7 +220,7 @@ const MUONIC_ELEM = {
             desc: `超新星不再有塌縮恆星的要求，但它們能自動生產超新星。`,
             cost: E('e34'),
         },{
-            desc: `超新星推遲腐化之星速度減慢的起點。`,
+            desc: `超新星推遲腐化之星速度的減慢。`,
             cost: E('e3500'),
             eff() {
                 let x = player.supernova.times.add(1).overflow(10,0.5)
@@ -231,11 +231,27 @@ const MUONIC_ELEM = {
             cs: true,
             desc: `解鎖腐化之星的另一個效果。`,
             cost: E('e56'),
+        },{
+            desc: `π 介子的第 1 個獎勵提供指數加成。`,
+            cost: E('e7300'),
+        },{
+            cs: true,
+            desc: `塌縮恆星推遲腐蝕之星速度的減慢。`,
+            cost: E('e72'),
+            eff() {
+                let x = player.stars.points.add(1).log10().add(1).log10().add(1)
+                return x
+            },
+            effDesc: x=>"推遲 "+formatMult(x),
+        },{
+            cs: true,
+            desc: `移除挑戰 9 的獎勵的第 1 個軟上限。`,
+            cost: E('e110'),
         },
 
         /*
         {
-            desc: `Placeholder.`,
+            desc: `待定、`,
             cost: EINF,
             eff() {
                 let x = E(1)
@@ -255,6 +271,7 @@ const MUONIC_ELEM = {
         if (tmp.tfUnl) u += 6
         if (tmp.ascensions_unl) u += 6
         if (tmp.CS_unl) u += 6
+        if (tmp.c18reward) u += 10
 
         return u
     },
@@ -317,6 +334,8 @@ const EXOTIC_ATOM = {
 
         x = x.pow(tmp.dark.abEff.ea||1)
 
+        if (tmp.inf_unl) x = x.pow(theoremEff('atom',4))
+
         return x
     },
     gain() {
@@ -356,7 +375,7 @@ const EXOTIC_ATOM = {
                 return x
             },x=>`超高級和元級重置等級推遲 <b>${formatMult(x)}</b>`],
             [a=>{
-                let x = a.add(1).log10().div(5).add(1).root(2)
+                let x = a.add(1).log10().div(5).add(1).root(2).softcap(10,0.25,0)
                 return x
             },x=>`熵獲得量提升 <b>^${format(x)}</b>`],
             [a=>{
@@ -370,12 +389,13 @@ const EXOTIC_ATOM = {
             [a=>{
                 let x = a.add(10).log10().pow(2).sub(1).div(5e3)
                 return x.toNumber()
-            },x=>`第 382 個重置等級的獎勵中對塌縮恆星的加成底數，以及第 201 個元素對黑洞效果的加成底數增加 <b>+${format(x)}</b>`],
+            },x=>`第 382 個重置等級的獎勵中對塌縮恆星的加成底數，以及 201 號元素對黑洞效果的加成底數增加 <b>+${format(x)}</b>`],
         ],[
             [a=>{
-                let x = hasElement(12,1) ? expMult(a.add(1),2.5) : a.add(1).pow(2)
-                return x
-            },x=>`不穩定黑洞質量獲得量提升 <b>${formatMult(x)}</b>`],
+                let x = hasElement(12,1) ? expMult(a.add(1),2.5) : a.add(1).pow(2), y = E(1)
+                if (hasElement(39,1)) y = a.add(1).log10().add(1).root(3)
+                return [x,y]
+            },x=>`不穩定黑洞質量獲得量提升 <b>${formatMult(x[0])}</b>`+(hasElement(39,1)?`，<b>^${format(x[1])}</b>`:'')],
             [a=>{
                 let x = a.add(1).pow(3)
                 return x
@@ -413,10 +433,12 @@ function updateExoticAtomsTemp() {
     tea.amount = EXOTIC_ATOM.getAmount()
     tea.gain = EXOTIC_ATOM.gain()
 
-    let s = 1 + Math.max(t-12)*0.1
+    let s = Decimal.add(1,Math.max(t-12,0)*0.1)
 
-    if (hasPrestige(2,58)) s += prestigeEff(2,58,0)
-    if (hasElement(25,1)) s += muElemEff(25,0)
+    if (hasPrestige(2,58)) s = s.add(prestigeEff(2,58,0))
+    if (hasElement(25,1)) s = s.add(muElemEff(25,0))
+
+    if (tmp.inf_unl) s = s.add(theoremEff('time',4))
 
     tea.strength = s
 

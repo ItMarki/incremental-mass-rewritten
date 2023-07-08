@@ -188,7 +188,7 @@ const ELEMENTS = {
             effDesc(x) { return "^"+format(x) },
         },
         {
-            desc: `加強中子的第二個效果。`,
+            desc: `加強中子的第 2 個效果。`,
             cost: E(1e50),
         },
         {
@@ -204,7 +204,7 @@ const ELEMENTS = {
             cost: E(1e61),
             effect() {
                 let x = E(1.25).pow(player.tickspeed.pow(0.55))
-                return x
+                return x.min('ee11000')
             },
             effDesc(x) { return format(x)+"x" },
         },
@@ -628,7 +628,7 @@ const ELEMENTS = {
                 let s = player.supernova.times.overflow(1e8,0.5)
                 if (!player.qu.rip.active) s = s.root(1.5)
                 let x = E(1.1).pow(s)
-                return x.softcap(player.qu.rip.active?'1e130':'1e308',0.01,0)
+                return x.softcap(player.qu.rip.active?'1e130':'1e308',0.01,0).min('e2e4')
             },
             effDesc(x) { return "x"+x.format() },
         },
@@ -658,7 +658,7 @@ const ELEMENTS = {
             effect() {
                 let pent = player.ranks.pent
                 let x = hasElement(195) ? pent.softcap(2e5,0.25,0).root(1.5).div(400) : pent.root(2).div(1e3)
-                return x.toNumber()
+                return x.min(1e4)
             },
             effDesc(x) { return "+^"+format(x) },
         },
@@ -686,7 +686,7 @@ const ELEMENTS = {
             cost: E('e1.2e9'),
         },
         {
-            desc: `每個粒子能量的第一個效果獲得過強指數提升。`,
+            desc: `每個粒子能量的第 1 個效果獲得過強指數提升。`,
             cost: E('e2.2e9'),
         },
         {
@@ -872,7 +872,7 @@ const ELEMENTS = {
             cost: E("2e26"),
         },{
             dark: true,
-            desc: `加強暗影的第二個效果。進入暗界時保留第 118 個或以前的大撕裂元素。`,
+            desc: `加強暗影的第 2 個效果。進入暗界時保留第 118 個或以前的大撕裂元素。`,
             cost: E("1e27"),
         },{
             dark: true,
@@ -957,7 +957,7 @@ const ELEMENTS = {
             desc: `元級時間速度增幅推遲 ^2。`,
             cost: E("e2.5e53"),
         },{
-            desc: `深淵之漬的第二個效果也適用於質量軟上限^7-8。這些上限弱 20%。`,
+            desc: `深淵之漬的第 2 個效果也適用於質量軟上限^7-8。這些上限弱 20%。`,
             cost: E("e2.2e69"),
         },{
             br: true,
@@ -1027,7 +1027,7 @@ const ELEMENTS = {
             effDesc(x) { return "x"+format(x) },
         },{
             dark: true,
-            desc: `暗影的第五個效果稍微提升熵上限。`,
+            desc: `暗影的第 5 個效果稍微提升熵上限。`,
             cost: E("1e141"),
             effect() {
                 let e = tmp.dark.shadowEff.en||E(1)
@@ -1070,11 +1070,11 @@ const ELEMENTS = {
             cost: E("e9.5e80"),
             effect() {
                 let x = Decimal.pow(1.1,player.qu.en.amt.add(1).log10().pow(.9))
-                return x
+                return x.overflow('ee5',0.5,0)
             },
             effDesc(x) { return "x"+format(x) },
         },{
-            desc: `鈾砹混合體的第一個效果推遲超級五級階和六級階增幅。`,
+            desc: `鈾砹混合體的第 1 個效果推遲超級五級階和六級階增幅。`,
             cost: E("e3e85"),
             effect() {
                 let x = tmp.qu.chroma_eff[1][0].max(1).log10().div(2).add(1)
@@ -1115,7 +1115,7 @@ const ELEMENTS = {
             desc: `賦色子獲得量 ^1.1。`,
             cost: E("e1.8e91"),
         },{
-            desc: `Z0 玻色子的第一個效果稍微加強時間速度力量。`,
+            desc: `Z0 玻色子的第 1 個效果稍微加強時間速度力量。`,
             cost: E("e3.5e92"),
             effect() {
                 let x = tmp.bosons.effect.z_boson[0].add(1).log10().add(1).log10().add(1)
@@ -1132,7 +1132,7 @@ const ELEMENTS = {
             },
             effDesc(x) { return "x"+format(x) },
         },{
-            desc: `鈾砹混合體的第一個效果推遲奇異級等級和元級階，效率為 ^0.5。`,
+            desc: `鈾砹混合體的第 1 個效果推遲奇異級等級和元級階，效率為 ^0.5。`,
             cost: E("e3.3e93"),
             effect() {
                 let x = tmp.qu.chroma_eff[1][0].max(1).root(2)
@@ -1155,10 +1155,10 @@ const ELEMENTS = {
             desc: `奇異級等級和極高級重置等級增幅弱 10%。`,
             cost: E('e435'),
         },{
-            desc: `粒子力量的第一個效果更強。`,
+            desc: `粒子力量的第 1 個效果更強。`,
             cost: E("e1.6e94"),
         },{
-            desc: `解鎖加速器，時間速度會提供指數加成，但是氬-18 和第 150 個元素失效（在挑戰 15 裏除外）。`,
+            desc: `解鎖加速器，時間速度會提供指數加成，但是氬-18 和 150 號元素失效（在挑戰 15 裏除外）。`,
             cost: E("e8.6e95"),
         },{
             br: true,
@@ -1169,7 +1169,7 @@ const ELEMENTS = {
             cost: E("e3.65e99"),
         },{
             br: true,
-            desc: `解鎖加強增強器的第四個質量升級。`,
+            desc: `解鎖加強增強器的第 4 個質量升級。`,
             cost: E("1e4.9e98"),
         },{
             desc: `提升器加強自己。`,
@@ -1208,7 +1208,7 @@ const ELEMENTS = {
             effDesc(x) { return "+^"+format(x) },
         },{
             br: true,
-            desc: `鈾砹混合體的第二個效果適用於六級階增幅，效果也更強。`,
+            desc: `鈾砹混合體的第 2 個效果適用於六級階增幅，效果也更強。`,
             cost: E("1e1.67e103"),
         },{
             desc: `解鎖超·級別。`,
@@ -1237,7 +1237,7 @@ const ELEMENTS = {
             effDesc(x) { return "推遲 x"+format(x) },
         },{
             br: true,
-            desc: `元級等級稍微影響元級四級層的增幅起點，並加強第 155 個元素。`,
+            desc: `元級等級稍微影響元級四級層的增幅起點，並加強 155 號元素。`,
             cost: E("1e5e110"),
             effect() {
                 let x = tmp.radiation.bs.eff[14].max(1).log10().add(1)
@@ -1260,7 +1260,7 @@ const ELEMENTS = {
             desc: `熵蒸發^2 和熵濃縮^2 增幅弱 15%。`,
             cost: E('e3.1e123'),
         },{
-            desc: `稍微加強第 178 個元素。`,
+            desc: `稍微加強 178 號元素。`,
             cost: E('e4.9e130'),
         },{
             dark: true,
@@ -1321,7 +1321,7 @@ const ELEMENTS = {
             },
             effDesc(x) { return (tmp.c16active?'':'指數')+"^"+format(x) },
         },{
-            desc: `大幅加強第 203 個元素。`,
+            desc: `大幅加強 203 號元素。`,
             cost: E('ee448'),
         },{
             dark: true,
@@ -1333,7 +1333,7 @@ const ELEMENTS = {
             cost: E('5e17'),
         },{
             c16: true,
-            desc: `黑洞質量推遲質量溢出^1-2 的起點。`,
+            desc: `黑洞質量推遲質量溢出^1-2。`,
             cost: E('e1e26'),
             effect() {
                 let x = player.bh.mass.add(10).log10().root(20)
@@ -1396,7 +1396,7 @@ const ELEMENTS = {
             },
             effDesc(x) { return formatMult(x) },
         },{
-            desc: `大幅增強第 209 個元素。`,
+            desc: `大幅增強 209 號元素。`,
             cost: E('ee1291'),
         },{
             dark: true,
@@ -1434,7 +1434,7 @@ const ELEMENTS = {
             cost: E('e41'),
         },{
             c16: true,
-            desc: `移除第 162 個元素的腐化。`,
+            desc: `移除 162 號元素的腐化。`,
             cost: E('e1e77'),
         },{
             dark: true,
@@ -1458,6 +1458,21 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { return "推遲 ^"+format(x) },
+        },{
+            inf: true,
+            desc: `解鎖挑戰 18。`,
+            cost: E('e45'),
+        },{
+            desc: `加速器效果的軟上限稍微更弱。`,
+            cost: E('ee6366'),
+        },{
+            dark: true,
+            desc: `深淵之漬的第 8 個獎勵在挑戰 16 中有效。`,
+            cost: E('e1.3e10'),
+        },{
+            c16: true,
+            desc: `挑戰 16 的完成上限增加 100 次。`,
+            cost: E('ee219'),
         },
     ],
     /*
@@ -1508,7 +1523,8 @@ const ELEMENTS = {
         if (tmp.brokenInf) u += 12
         if (tmp.tfUnl) u += 12
         if (tmp.ascensions_unl) u += 9
-        if (tmp.CS_unl) u += 6
+        if (tmp.CS_unl) u += 7
+        if (tmp.c18reward) u += 10
 
         return u
     },
@@ -1542,7 +1558,7 @@ function getElementId(x) {
 
 function getElementName(x) {
     if (x <= 118) return ELEMENTS.fullNames[x]
-    return "第 " + x + " 個元素"
+    return x + " 號元素"
 }
 
 function WE(a,b) { return 2*(a**2-(a-b)**2) }
@@ -1659,6 +1675,7 @@ function setupElementsHTML() {
 function updateElementsHTML() {
     let tElem = tmp.elements, c16 = tmp.c16active
     let et = player.atom.elemTier, elayer = player.atom.elemLayer
+    let infU7 = hasInfUpgrade(6)
 
     tmp.el.elemLayer.setDisplay(tmp.eaUnl)
     tmp.el.elemLayer.setHTML("元素層："+["普通","緲子"][elayer])
@@ -1676,7 +1693,7 @@ function updateElementsHTML() {
 
         tmp.el.elem_desc.setHTML("<b>["+["","緲子"][elayer]+ELEMENTS.fullNames[ch]+"]</b> "+eu.desc)
         tmp.el.elem_desc.setClasses({sky: true, corrupted_text2: c16 && isElemCorrupted(ch,elayer)})
-        tmp.el.elem_cost.setTxt(format(eu.cost,0)+res+(eu.c16?"（挑戰 16）":BR_ELEM.includes(ch)?"（大撕裂）":"")+(player.qu.rip.active&&tElem.cannot.includes(ch)?"（不能在大撕裂中購買）":""))
+        tmp.el.elem_cost.setTxt(format(eu.cost,0)+res+(eu.c16?"（挑戰 16）":!infU7&&BR_ELEM.includes(ch)?"（大撕裂）":"")+(player.qu.rip.active&&tElem.cannot.includes(ch)?"（不能在大撕裂中購買）":""))
         tmp.el.elem_eff.setHTML(eu.effDesc?"目前："+eu.effDesc(eff[ch]):"")
     }
 
@@ -1705,7 +1722,7 @@ function updateElementsHTML() {
                         upg.setClasses(
                             c16 && isElemCorrupted(x,elayer)
                             ?{elements: true, locked: true, corrupted: true}
-                            :{elements: true, locked: !elem_const.canBuy(x), bought: hasElement(x,elayer), muon: elayer == 1, br: elayer == 0 && BR_ELEM.includes(x), final: elayer == 0 && x == 118, dark: elayer == 0 && eu.dark, c16: elayer == 0 && eu.c16, inf: elayer == 0 && eu.inf, cs: elayer == 1 && eu.cs}
+                            :{elements: true, locked: !elem_const.canBuy(x), bought: hasElement(x,elayer), muon: elayer == 1, br: !infU7 && elayer == 0 && BR_ELEM.includes(x), final: elayer == 0 && x == 118, dark: elayer == 0 && eu.dark, c16: elayer == 0 && eu.c16, inf: elayer == 0 && eu.inf, cs: elayer == 1 && eu.cs}
                         )
                     }
                 }

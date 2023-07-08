@@ -73,6 +73,7 @@ const POPUP_GROUPS = {
             <button class="btn" style="font-family: Inconsolata;" onclick="player.options.font = 'Inconsolata'">Inconsolata</button>
             <button class="btn" style="font-family: 'Lato';" onclick="player.options.font = 'Lato'">Lato</button>
             <button class="btn" style="font-family: 'Lucida Handwriting';" onclick="player.options.font = 'Lucida Handwriting'">Lucida Handwriting</button>
+            <button class="btn" style="color: yellow;font-family: 'LXGWMarkerGothic';" onclick="player.options.font = 'LXGWMarkerGothic'">霞鶩漫黑</button>
             <button class="btn" style="color: yellow;font-family: 'LXGWNeoXiHei';" onclick="player.options.font = 'LXGWNeoXiHei'">霞鶩新晰黑</button>
             <button class="btn" style="color: yellow;font-family: 'LXGWWenKai';" onclick="player.options.font = 'LXGWWenKai'">霞鶩文楷</button>
             <button class="btn" style="color: yellow;font-family: 'LXGWWenKaiGB';" onclick="player.options.font = 'LXGWWenKaiGB'">霞鶩文楷 GB</button>

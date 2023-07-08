@@ -636,7 +636,7 @@ const TREE_UPGS = {
         qu2: {
             qf: true,
             branch: ["qu0"],
-            desc: `大幅增強 W<sup>+</sup> 玻色子的第一個效果。`,
+            desc: `大幅增強 W<sup>+</sup> 玻色子的第 1 個效果。`,
             cost: E(1),
         },
         qu3: {
@@ -829,14 +829,14 @@ const TREE_UPGS = {
         prim2: {
             qf: true,
             branch: ["prim1"],
-            desc: `Θ 粒子增加第二個效果。`,
+            desc: `Θ 粒子增加第 2 個效果。`,
             cost: E(500),
         },
         prim3: {
             qf: true,
             unl() { return hasTree("unl3") },
             branch: ["prim2"],
-            desc: `Ε 粒子增加第二個效果。這個效果在量子挑戰中更強。`,
+            desc: `Ε 粒子增加第 2 個效果。這個效果在量子挑戰中更強。`,
             cost: E(1e16),
         },
         qc1: {
@@ -1355,7 +1355,7 @@ function updateTreeHTML() {
         tmp.supernova.tree_choosed == "" ? `<div style="font-size: 12px; font-weight: bold;"><span class="gray">（點擊任意升級以顯示）</span></div>`
         : `<div style="font-size: 12px; font-weight: bold;"><span class="gray">（再次點擊以購買）</span>${req}</div>
         ${`<span class="sky"><b>[${tmp.supernova.tree_choosed}]</b> ${t_ch.desc}</span>`.corrupt(c16 && CORRUPTED_TREE.includes(tmp.supernova.tree_choosed))}<br>
-        <span>價格：${format(t_ch.cost,2)} ${t_ch.qf?'量子泡沫':t_ch.cs?'<span class="corrupted_text">腐化碎片</span>':'中子星'}</span><br>
+        <span>價格：${format(t_ch.cost,2)} 個${t_ch.qf?'量子泡沫':t_ch.cs?'<span class="corrupted_text">腐化碎片</span>':'中子星'}</span><br>
         <span class="green">${t_ch.effDesc?"目前："+t_ch.effDesc(tmp.supernova.tree_eff[tmp.supernova.tree_choosed]):""}</span>
         `
     )

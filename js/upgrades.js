@@ -521,7 +521,7 @@ const UPGS = {
                 cost: E(1e33),
                 effect() {
                     let ret = E(2).pow(player.bh.dm.add(1).log10().softcap(11600,0.5,0))
-                    return ret
+                    return ret.min('ee7000')
                 },
                 effDesc(x=this.effect()) {
                     return format(x)+"x"+(x.max(1).log2().gte(11600)?"<span class='soft'>（軟上限）</span>":"")
@@ -760,7 +760,7 @@ const UPGS = {
             },
             18: {
                 unl() { return tmp.mass4Unl || tmp.inf_unl },
-                desc: `中子力量的第二個效果提供指數加成，而且會影響黑洞質量。`,
+                desc: `中子力量的第 2 個效果提供指數加成，而且會影響黑洞質量。`,
                 cost: E('e4.2e120'),
             },
             19: {
@@ -874,7 +874,7 @@ const UPGS = {
                 cost: E(1e17),
                 effect() {
                     let x = (tmp.prestiges.base||E(1)).add(1).log10().tetrate(1.5).add(1)
-                    return x
+                    return x.min('e2.5e4')
                 },
                 effDesc(x=this.effect()) { return "x"+format(x) },
             },
@@ -890,7 +890,7 @@ const UPGS = {
             },
             16: {
                 unl() { return tmp.moreUpgs || tmp.inf_unl },
-                desc: `移除 Α、Ω 和 Σ 粒子第一個效果的軟上限，並且加強它們。`,
+                desc: `移除 Α、Ω 和 Σ 粒子第 1 個效果的軟上限，並且加強它們。`,
                 cost: E(1e273),
             },
             17: {

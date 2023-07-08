@@ -235,7 +235,7 @@ const INF = {
                 effectDesc: x => "普通質量 ^"+x[0].format(0)+x[0].softcapHTML(1e3)+"；黑洞質量 ^"+x[1].format(0),
             },{
                 title: "舊版質量升級 4",
-                desc: "開始時解鎖過強器，而它的起始價格大幅降低（同樣，開始時解鎖第 202 個元素）。",
+                desc: "開始時解鎖過強器，而它的起始價格大幅降低（同樣，開始時解鎖 202 號元素）。",
                 cost: E(1),
             },{
                 title: "暗界靜止",
@@ -276,7 +276,7 @@ const INF = {
                 cost: E(100),
             },{
                 title: "暗界被動技",
-                desc: "開始時有更多暗束（解鎖第一個暗束獎勵的程度）。",
+                desc: "開始時有更多暗束（解鎖第 1 個暗束獎勵的程度）。",
                 cost: E(100),
             },
         ],[
@@ -580,7 +580,7 @@ function updateInfHTML() {
                     if (s[i] > 0) hh += "元得分 "+format(s[i],2)+" | "+(ct.preEff[i] || '???.')+` <b class='sky'>(${ct.effDesc[i](ctmp[i])})</b><br>`
                 }
                 let f = player.inf.fragment[t]
-                if (f.gt(0)) hh += `<br>${f.format(0)} ${ct.title.substring(0,ct.title.search("定理"))}碎片 | ${ct.fragment[1](tmp.fragment_eff[t])}<br>`
+                if (f.gt(0)) hh += `<br>${f.format(0)} 個${ct.title.substring(0,ct.title.search("定理"))}碎片 | ${ct.fragment[1](tmp.fragment_eff[t])}<br>`
                 if (hh != '') h += `<h2>${ct.title}<b>（${format(core_tmp[t].total_p*100,0)}%）</b></h2><br>`+hh+'<br>'
             }
             tmp.el.core_eff_div.setHTML(h||"將任何定理放入核心以顯示其效果！")

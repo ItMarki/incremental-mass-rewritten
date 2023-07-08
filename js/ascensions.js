@@ -1,7 +1,7 @@
 const ASCENSIONS = {
-    names: ['ascension'],
-    fullNames: ["升華"],
-    resetName: ['升華'],
+    names: ['ascension','transcension'],
+    fullNames: ["升華",'超越'],
+    resetName: ['升華','超越'],
     baseExponent() {
         let x = 0
 
@@ -25,6 +25,9 @@ const ASCENSIONS = {
             case 0:
                 x = Decimal.pow(1.1,y.div(fp).pow(1.1)).mul(1600)
                 break;
+            case 1:
+                    x = y.div(fp).pow(1.1).mul(2).add(6)
+                    break;
             default:
                 x = EINF
                 break;
@@ -37,6 +40,9 @@ const ASCENSIONS = {
             case 0:
                 if (y.gte(1600)) x = y.div(1600).max(1).log(1.1).max(0).root(1.1).mul(fp).add(1)
                 break;
+            case 1:
+                    if (y.gte(6)) x = y.sub(6).div(2).root(1.1).mul(fp).add(1)
+                    break;
             default:
                 x = E(0)
                 break;
@@ -49,11 +55,14 @@ const ASCENSIONS = {
     },
     unl: [
         ()=>true,
+        ()=>tmp.c18reward,
     ],
     noReset: [
         ()=>false,
+        ()=>false,
     ],
     autoUnl: [
+        ()=>false,
         ()=>false,
     ],
     autoSwitch(x) { player.auto_asc[x] = !player.auto_asc[x] },
@@ -63,6 +72,10 @@ const ASCENSIONS = {
             2: `元費米子推遲 ^2。`,
             3: `大撕裂升級 19 效果翻倍，並移除不穩定黑洞效果的溢出。`,
             4: `每擁有一個升華，K 介子和 π 介子獲得量提升至 5 倍。`,
+            7: `移除膨脹質量的溢出。`,
+        },{
+            1: `重置底數的指數翻倍。大撕裂升級 19 會影響聲望。`,
+            2: `超級無限定理弱 10%。`,
         },
     ],
     rewardEff: [
@@ -75,6 +88,7 @@ const ASCENSIONS = {
                 },
                 x=>formatMult(x),
             ],
+        },{
         },
     ],
     reset(i, bulk = false) {
@@ -119,7 +133,7 @@ function setupAscensionsHTML() {
 		table += `<div id="asc_reward_div_${x}">`
 		let keys = Object.keys(ASCENSIONS.rewards[x])
 		for (let y = 0; y < keys.length; y++) {
-			table += `<span id="asc_reward_${x}_${y}"><b>第 ${keys[y]} 個${ASCENSIONS.fullNames[x]}：</b> ${ASCENSIONS.rewards[x][keys[y]]}${ASCENSIONS.rewardEff[x][keys[y]]?` 目前：<span id='asc_eff_${x}_${y}'></span>`:""}</span><br>`
+			table += `<span id="asc_reward_${x}_${y}"><b>第 ${keys[y]} 個${ASCENSIONS.fullNames[x]}：</b> ${ASCENSIONS.rewards[x][keys[y]]}${ASCENSIONS.rewardEff[x][keys[y]]?`目前：<span id='asc_eff_${x}_${y}'></span>`:""}</span><br>`
 		}
 		table += `</div>`
 	}
@@ -146,7 +160,7 @@ function updateAscensionsHTML() {
             tmp.el["asc_amt_"+x].setTxt(format(p,0))
             tmp.el["asc_"+x].setClasses({btn: true, reset: true, locked: x==0?tmp.ascensions.base.lt(tmp.ascensions.req[x]):player.ascensions[x-1].lt(tmp.ascensions.req[x])})
             tmp.el["asc_desc_"+x].setTxt(desc)
-            tmp.el["asc_req_"+x].setTxt(x==0?"升華底數到達 "+format(tmp.ascensions.req[x],0):ASCENSIONS.fullNames[x-1]+" "+format(tmp.ascensions.req[x],0))
+            tmp.el["asc_req_"+x].setTxt(x==0?"升華底數到達 "+format(tmp.ascensions.req[x],0):"第 "+format(tmp.ascensions.req[x],0)+" 個"+ASCENSIONS.fullNames[x-1])
             tmp.el["asc_auto_"+x].setDisplay(ASCENSIONS.autoUnl[x]())
             tmp.el["asc_auto_"+x].setTxt(player.auto_pres[x]?"開啟":"關閉")
         }

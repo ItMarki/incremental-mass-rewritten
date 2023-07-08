@@ -292,7 +292,7 @@ function updateMassTemp() {
 
 function updateTickspeedTemp() {
     tmp.tickspeedFP = hasCharger(4) && !hasElement(17,1) ? 1 : tmp.fermions.effs[1][2]
-    
+
     let fp = E(1)
 
     if (hasElement(248)) fp = fp.mul(getEnRewardEff(0))
@@ -364,6 +364,7 @@ function updateBlackHoleTemp() {
     t.fvm_cost = E(10).pow(player.bh.fvm.scale(1e11,10,0).pow(p)).mul(1e300).floor()
     t.fvm_bulk = E(0)
     if (player.bh.dm.gte(10)) t.fvm_bulk = player.bh.dm.div(1e300).max(1).log(10).root(p).scale(1e11,10,0,true).add(1).floor()
+    t.fvm_eff = UNSTABLE_BH.fvm.effect()
 }
 
 function updateTemp() {
@@ -371,6 +372,7 @@ function updateTemp() {
     tmp.offlineMult = tmp.offlineActive?player.offline.time+1:1
 
     tmp.c16active = CHALS.inChal(16)
+    tmp.c18active = CHALS.inChal(18)
 
     tmp.inf_unl = player.inf.theorem.gte(1)
 
@@ -387,6 +389,7 @@ function updateTemp() {
     tmp.tfUnl = hasElement(230)
     tmp.ascensions_unl = player.chal.comps[17].gte(4)
     tmp.CS_unl = hasElement(251)
+    tmp.c18reward = player.chal.comps[18].gte(4)
 
     tmp.SN_passive = hasElement(36,1)
 

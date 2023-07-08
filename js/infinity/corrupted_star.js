@@ -52,6 +52,13 @@ function updateCSTemp() {
         tmp.cs_reduce_start2 = tmp.cs_reduce_start1.mul(x)
     }
 
+    if (hasElement(40,1)) {
+        let x = muElemEff(40)
+
+        tmp.cs_reduce_start1 = tmp.cs_reduce_start1.mul(x)
+        tmp.cs_reduce_start2 = tmp.cs_reduce_start1.mul(x)
+    }
+
     let s = Decimal.pow(2,player.inf.cs_double[0].add(player.inf.cs_double[1]))
 
     if (hasElement(33,1)) s = s.mul(muElemEff(33))
@@ -88,7 +95,7 @@ function buyCSUpg(i) {
 function updateCSHTML() {
     let cs = player.inf.cs_amount, cs_growth = CORRUPTED_STAR.calcNextGain(cs,tmp.cs_speed.div(FPS)).div(cs).pow(FPS)
 
-    tmp.el.cs_amount.setHTML(cs.format(2) + (cs.gt(1) ? ` (×${cs_growth.format()}/sec)` : ''))
+    tmp.el.cs_amount.setHTML(cs.format(2) + (cs.gt(1) ? `（×${cs_growth.format()}/秒）` : ''))
     tmp.el.cs_speed.setHTML(formatMult(tmp.cs_speed))
 
     let cost = [Decimal.pow(1e3, player.inf.cs_double[0].add(1)),Decimal.pow(10, player.inf.cs_double[1]).mul(1e36)]

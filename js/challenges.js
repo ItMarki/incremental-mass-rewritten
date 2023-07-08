@@ -145,9 +145,11 @@ const CHALS = {
     getMax(i) {
         if (i <= 12 && hasPrestige(2,25)) return EINF
         let x = this[i].max
-        if (i==16 && hasElement(229)) x = E(100)
-
-        if (i < 16) {
+        if (i == 16) {
+            if (hasElement(229)) x = E(100)
+            if (hasElement(261)) x = x.add(100)
+        }
+        else if (i < 16) {
             if (i <= 4 && !hasPrestige(2,25)) x = x.add(tmp.chal?tmp.chal.eff[7]:0)
             if (hasElement(13) && (i==5||i==6)) x = x.add(tmp.elements.effect[13])
             if (hasElement(20) && (i==7)) x = x.add(50)
@@ -453,11 +455,12 @@ const CHALS = {
         start: E('e9.9e4').mul(1.5e56),
         effect(x) {
             let ret = x.root(hasTree("chal4a")?3.5:4).mul(0.1).add(1)
-            ret = ret.softcap(21,hasElement(8,1)?0.253:0.25,0)
+            
+            if (!hasElement(41,1)) ret = ret.softcap(21,hasElement(8,1)?0.253:0.25,0)
             
             if (hasElement(31,1) && tmp.chal) ret = ret.pow(tmp.chal.eff[16]||1)
 
-            ret = overflow(ret,5e8,0.5)
+            ret = overflow(ret,5e8,0.5).softcap(1e12,0.1,0)
 
             return ret
         },
@@ -568,6 +571,7 @@ const CHALS = {
         max: E(1),
         start: E('e1.25e11'),
         effect(x) {
+            x = x.mul(tmp.chal.eff[18])
             let ret = x.root(3).mul(0.05).add(1)
             return ret
         },
@@ -577,7 +581,7 @@ const CHALS = {
         unl() { return hasElement(240) },
         title: "不自然時間速度",
         desc: `
-        時間速度、加速器、黑洞壓縮器、FVM、宇宙射線、恆星提升器和宇宙弦（包括加成）無效，且不可購買或不可獲得。第 2 個中子效果在購買原子升級 18 前無效。黑洞效果在購買第 201 個元素前無效。你困在黑暗試煉裏，每種符文都有 250 個（不受削弱影響）。
+        時間速度、加速器、黑洞壓縮器、FVM、宇宙射線、恆星提升器和宇宙弦（包括加成）無效，且不可購買或不可獲得。第 2 個中子效果在購買原子升級 18 前無效。黑洞效果在購買 201 號元素前無效。你困在黑暗試煉裏，每種符文都有 250 個（不受削弱影響）。
         `,
         reward: `每完成一次，定理等級的軟上限推遲 +3 個。<br><span class="yellow">完成 4 次時，你會解鎖升華和更多的元素。</span>`,
         max: E(100),
@@ -594,7 +598,25 @@ const CHALS = {
         },
         effDesc(x) { return "推遲 +"+format(x,0)+" 個" },
     },
-    cols: 17,
+    18: {
+        unl() { return hasElement(258) },
+        title: "強化增幅",
+        desc: `
+        你不能減弱或移除無限前資源的增幅。你困在黑暗試煉裏，每種符文都有 500 個（不受削弱影響）。
+        `,
+        reward: `鈾砹混合體會影響奇異級增幅，而且加強挑戰 16 的獎勵。<br><span class="yellow">完成 4 次時，你會解鎖定理的第 5 種獎勵和更多功能。</span>`,
+        max: E(100),
+        start: E('ee340'),
+        inc: E(10),
+        pow: E(3),
+        effect(x) {
+            let ret = x.pow(1.5).div(2).add(1)
+
+            return ret
+        },
+        effDesc(x) { return "強 "+formatPercent(x.sub(1)) },
+    },
+    cols: 18,
 }
 
 /*
