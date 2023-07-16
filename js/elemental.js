@@ -60,6 +60,12 @@ const ELEMENTS = {
                 tmp.stab[8]=3
             }
 
+            if (x==262) {
+                tmp.tab=0
+                tmp.stab[0]=0
+                tmp.rank_tab=1
+            }
+
             tmp.pass = 2
         }
     },
@@ -334,7 +340,7 @@ const ELEMENTS = {
 
                 x = overflow(x,'ee112',0.5)
 
-                return x
+                return x.min('ee3000')
             },
             effDesc(x) { return format(x)+"x" },
         },
@@ -1423,7 +1429,7 @@ const ELEMENTS = {
             cost: E('ee2081'),
         },{
             inf: true,
-            desc: `解鎖腐化之星。`,
+            desc: `解鎖腐化恆星。`,
             cost: E('e35'),
         },{
             desc: `黑洞質量溢出^2 的指數 ^1.5。`,
@@ -1473,6 +1479,27 @@ const ELEMENTS = {
             c16: true,
             desc: `挑戰 16 的完成上限增加 100 次。`,
             cost: E('ee219'),
+        },{
+            inf: true,
+            desc: `解鎖星系重置。`,
+            cost: E('e59'),
+        },{
+            desc: `無限前全局運行速度稍微影響星系重置資源。`,
+            cost: E('ee7676'),
+            effect() {
+                let x = tmp.preInfGlobalSpeed.max(1).root(2)
+                return x
+            },
+            effDesc(x) { return formatMult(x) },
+        },{
+            c16: true,
+            desc: `重置質量的效果稍微影響增強器溢出^1-2。`,
+            cost: E('ee294'),
+            effect() {
+                let x = GPEffect(1,E(1)).root(2)
+                return x
+            },
+            effDesc(x) { return '弱 '+formatReduction(x) },
         },
     ],
     /*
@@ -1688,7 +1715,7 @@ function updateElementsHTML() {
     tmp.el.elem_ch_div.setVisible(ch>0)
     if (ch) {
         let eu = elem_const.upgs[ch]
-        let res = [eu.inf?" 個無限點數":eu.dark?" 個暗影":" 個夸克",eu.cs?" 個腐化之星":" 個奇異原子"][elayer]
+        let res = [eu.inf?" 個無限點數":eu.dark?" 個暗影":" 個夸克",eu.cs?" 個腐化恆星":" 個奇異原子"][elayer]
         let eff = tElem[["effect","mu_effect"][elayer]]
 
         tmp.el.elem_desc.setHTML("<b>["+["","緲子"][elayer]+ELEMENTS.fullNames[ch]+"]</b> "+eu.desc)

@@ -29,8 +29,12 @@ Decimal.prototype.scale = function (s, p, mode, rev=false) {
     p = E(p)
     var x = this.clone()
     if (x.gte(s)) {
-        if ([0, "pow"].includes(mode)) x = rev ? x.mul(s.pow(p.sub(1))).root(p) : x.pow(p).div(s.pow(p.sub(1)))
+        if ([0, "pow"].includes(mode)) x = rev ? x.div(s).root(p).mul(s) : x.div(s).pow(p).mul(s)
         if ([1, "exp"].includes(mode)) x = rev ? x.div(s).max(1).log(p).add(s) : Decimal.pow(p,x.sub(s)).mul(s)
+        if ([2, "dil"].includes(mode)) {
+            let s10 = s.log10()
+            x = rev ? Decimal.pow(10,x.log10().div(s10).root(p).mul(s10)) : Decimal.pow(10,x.log10().div(s10).pow(p).mul(s10))
+        }
     }
     return x
 }
@@ -124,6 +128,9 @@ function calc(dt) {
                 for (let y = 0; y < BOSONS.upgs[id].length; y++) BOSONS.upgs.buy(id,y)
             }
         }
+
+        for (let i = 0; i < GAL_PRESTIGE.res_length; i++) player.gp_resources[i] = player.gp_resources[i].add(tmp.gp.res_gain[i].mul(dt))
+
         RADIATION.autoBuyBoosts()
         calcStars(du_gs)
         calcSupernova(dt)
@@ -176,6 +183,8 @@ function getPlayerData() {
         prestiges: [],
         auto_asc: [],
         ascensions: new Array(ASCENSIONS.names.length).fill(E(0)),
+        gal_prestige: E(0),
+        gp_resources: new Array(GAL_PRESTIGE.res_length).fill(E(0)),
         auto_mainUpg: {
             
         },

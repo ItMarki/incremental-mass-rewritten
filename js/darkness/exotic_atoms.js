@@ -196,7 +196,7 @@ const MUONIC_ELEM = {
             desc: `K 介子的第 1 個獎勵更強。`,
             cost: E('e2200'),
         },{
-            desc: `無限前全局運行速度稍微提升腐化之星的速度。`,
+            desc: `無限前全局運行速度稍微提升腐化恆星的速度。`,
             cost: E('e2600'),
             eff() {
                 let x = tmp.preInfGlobalSpeed.max(1).log10().add(1).pow(2)
@@ -205,7 +205,7 @@ const MUONIC_ELEM = {
             effDesc: x=>formatMult(x),
         },{
             cs: true,
-            desc: `緲子催化聚合提升腐化之星的速度。`,
+            desc: `緲子催化聚合提升腐化恆星的速度。`,
             cost: E('e20'),
             eff() {
                 let x = Decimal.pow(1.5,player.dark.exotic_atom.tier)
@@ -220,7 +220,7 @@ const MUONIC_ELEM = {
             desc: `超新星不再有塌縮恆星的要求，但它們能自動生產超新星。`,
             cost: E('e34'),
         },{
-            desc: `超新星推遲腐化之星速度的減慢。`,
+            desc: `超新星推遲腐化恆星速度的減慢。`,
             cost: E('e3500'),
             eff() {
                 let x = player.supernova.times.add(1).overflow(10,0.5)
@@ -229,7 +229,7 @@ const MUONIC_ELEM = {
             effDesc: x=>"推遲 "+formatMult(x),
         },{
             cs: true,
-            desc: `解鎖腐化之星的另一個效果。`,
+            desc: `解鎖腐化恆星的另一個效果。`,
             cost: E('e56'),
         },{
             desc: `π 介子的第 1 個獎勵提供指數加成。`,
@@ -247,6 +247,29 @@ const MUONIC_ELEM = {
             cs: true,
             desc: `移除挑戰 9 的獎勵的第 1 個軟上限。`,
             cost: E('e110'),
+        },{
+            desc: `每擁有一個無限定理，腐化恆星的速度翻倍。`,
+            cost: E('e8100'),
+            eff() {
+                let x = Decimal.pow(2,player.inf.theorem)
+                return x
+            },
+            effDesc: x=>formatMult(x),
+        },{
+            cs: true,
+            desc: `解鎖腐化恆星的另一個效果。`,
+            cost: E('e130'),
+        },{
+            desc: `聲望稍微提升升華底數的指數。`,
+            cost: E('e8600'),
+            eff() {
+                let x = player.prestiges[3].root(2).div(100)
+                return x
+            },
+            effDesc: x=>"+^"+format(x),
+        },{
+            desc: `夸克溢出弱 25%。`,
+            cost: E('e9200'),
         },
 
         /*
@@ -439,6 +462,7 @@ function updateExoticAtomsTemp() {
     if (hasElement(25,1)) s = s.add(muElemEff(25,0))
 
     if (tmp.inf_unl) s = s.add(theoremEff('time',4))
+    s = s.add(tmp.cs_effect.ea_reward||0)
 
     tea.strength = s
 

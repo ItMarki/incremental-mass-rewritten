@@ -49,7 +49,7 @@ const UPGS = {
                 if (hasInfUpgrade(2)) start = E(1e10)
                 let pow = 1.5
                 cost = Decimal.pow(10,Decimal.pow(inc,lvl.scaleEvery('massUpg4').pow(pow)).mul(start))
-                if (player.mass.gte('ee100')) bulk = player.mass.max(1).log10().div(start).max(1).log(inc).max(0).root(pow).scaleEvery('massUpg4',true).add(1).floor()
+                if (player.mass.gte(Decimal.pow(10,start))) bulk = player.mass.max(1).log10().div(start).max(1).log(inc).max(0).root(pow).scaleEvery('massUpg4',true).add(1).floor()
             } else {
                 fp = tmp.massFP
                 
@@ -173,6 +173,12 @@ const UPGS = {
                 }
 
                 if (hasBeyondRank(3,1)) op = op.pow(beyondRankEffect(3,1))
+
+                if (hasElement(264)) {
+                    let w = elemEffect(264)
+                    op = op.pow(w)
+                    op2 = op2.pow(w)
+                }
 
                 ret = overflow(ret,os,op)
 
@@ -613,7 +619,7 @@ const UPGS = {
                 cost: E('e1e273'),
                 effect() {
                     let x = player.dark.c16.totalS.add(1)
-                    return overflow(x,10,0.5).pow(3)
+                    return overflow(x,10,0.5).pow(3).overflow(x,'e3500',0.25)
                 },
                 effDesc(x=this.effect()) {
                     return "^"+format(x)

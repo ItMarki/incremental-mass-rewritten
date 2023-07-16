@@ -36,6 +36,7 @@ const CORRUPTED_STAR = {
         x.inf_speed = cs.add(1).log10().add(1)
 
         if (hasElement(38,1)) x.sn_speed = cs.add(1).log10().add(1).pow(1.5)
+        if (hasElement(43,1)) x.ea_reward = cs.add(1).log10().root(2).div(20)
 
         return x
     },
@@ -63,6 +64,7 @@ function updateCSTemp() {
 
     if (hasElement(33,1)) s = s.mul(muElemEff(33))
     if (hasElement(34,1)) s = s.mul(muElemEff(34))
+    if (hasElement(42,1)) s = s.mul(muElemEff(42))
 
     tmp.cs_speed = s
 
@@ -101,14 +103,14 @@ function updateCSHTML() {
     let cost = [Decimal.pow(1e3, player.inf.cs_double[0].add(1)),Decimal.pow(10, player.inf.cs_double[1]).mul(1e36)]
 
     tmp.el.cs_upg1.setHTML(`
-    腐化之星的速度翻倍。（${player.inf.cs_double[0].format(0)}）
+    腐化恆星的速度翻倍。（${player.inf.cs_double[0].format(0)}）
     <br><br>
-    價格：${cost[0].format(0)} 個腐化之星
+    價格：${cost[0].format(0)} 個腐化恆星
     `)
     tmp.el.cs_upg1.setClasses({btn: true, full: true, locked: player.inf.cs_amount.lt(cost[0])})
 
     tmp.el.cs_upg2.setHTML(`
-    腐化之星的速度翻倍。（${player.inf.cs_double[1].format(0)}）
+    腐化恆星的速度翻倍。（${player.inf.cs_double[1].format(0)}）
     <br><br>
     價格：${cost[1].format(0)} 個無限點數
     `)
@@ -116,7 +118,7 @@ function updateCSHTML() {
 
     tmp.el.cs_overflow.setHTML(
         cs.gte(tmp.cs_reduce_start1)
-        ? `腐化之星的速度已經經過 <b>${Decimal.log(2,cs_growth).mul(tmp.cs_speed).format()}</b> 次方根的運算！`
+        ? `腐化恆星的速度已經經過 <b>${Decimal.log(2,cs_growth).mul(tmp.cs_speed).format()}</b> 次方根的運算！`
         : ""
     )
 
@@ -129,6 +131,7 @@ function updateCSHTML() {
     `
 
     if (eff.sn_speed) h += `<br>超新星生產速度提升 <b>${formatMult(eff.sn_speed)}</b>`
+    if (eff.ea_reward) h += `<br>奇異原子的獎勵強度增加 <b>+${formatPercent(eff.ea_reward)}</b>`
 
     tmp.el.cs_effect.setHTML(h)
 }

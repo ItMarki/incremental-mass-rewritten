@@ -210,54 +210,66 @@
                                         </button>
                                     </div>
                                 </div>
+                                <br><br>
+                                <div id="mass_upgs_table"></div><br><br>
+                                <div style="width: 100%; margin-bottom: 5px;" class="table_center upgrade" id="tickspeed_div">
+                                    <div style="width: 300px">
+                                        <div class="resources">
+                                            <img src="images/tickspeed.png">
+                                            <span style="margin-left: 5px; text-align: left;"><span id="tickspeed_scale"></span>時間速度 [<span id="tickspeed_lvl">X</span>]</span>
+                                        </div>
+                                    </div><button id="tickspeed_btn" class="btn" style="width: 300px;" onclick="FORMS.tickspeed.buy()">價格：<span id="tickspeed_cost">X</span> 暴怒力量</button>
+                                    <button class="btn" style="width: 120px;" onclick="FORMS.tickspeed.buyMax()">購買最多</button>
+                                    <button id="tickspeed_auto" class="btn" style="width: 80px;" onclick="FORMS.tickspeed.autoSwitch()">關閉</button>
+                                    <div style="margin-left: 5px; text-align: left; width: 400px">
+                                        時間速度力量：<span id="tickspeed_step">X</span><br>
+                                        時間速度效果：質量獲得量 <span id="tickspeed_eff">X</span>x
+                                    </div>
+                                </div><div style="width: 100%; margin-bottom: 5px;" class="table_center upgrade" id="accel_div">
+                                    <div style="width: 300px">
+                                        <div class="resources">
+                                            <img src="images/accelerator.png">
+                                            <span style="margin-left: 5px; text-align: left;"><span id="accel_scale"></span>加速器 [<span id="accel_lvl">X</span>]</span>
+                                        </div>
+                                    </div><button id="accel_btn" class="btn" style="width: 300px;" onclick="FORMS.accel.buy()">價格：<span id="accel_cost">X</span> 暴怒力量</button>
+                                    <button class="btn" style="width: 120px;" onclick="FORMS.accel.buyMax()">購買最多</button>
+                                    <button id="accel_auto" class="btn" style="width: 80px;" onclick="FORMS.accel.autoSwitch()">關閉</button>
+                                    <div style="margin-left: 5px; text-align: left; width: 400px">
+                                        加速器力量：<span id="accel_step">X</span><br>
+                                        加速器效果：<span id="accel_eff">X</span>
+                                    </div>
+                                </div><br><div>
+                                    <span id="massSoft1" class="red">質量獲得量到達 <b id="massSoftStart1">X</b> 後會被軟上限！<br></span>
+                                    <span id="massSoft3" style="color: rgb(121, 0, 0)">質量獲得量到達 <b id="massSoftStart3">X</b> 後會被軟上限^2！<br></span>
+                                    <span id="massSoft4" style="color: rgb(122, 0, 86)">質量獲得量到達 <b id="massSoftStart4">X</b> 後會被軟上限^3！<br></span>
+                                    <span id="massSoft5" style="color: rgb(255, 94, 0)">質量獲得量到達 <b id="massSoftStart5">X</b> 後會被軟上限^4！<br></span>
+                                    <span id="massSoft6" style="color: rgb(255, 238, 0)">質量獲得量到達 <b id="massSoftStart6">X</b> 後會被軟上限^5！<br></span>
+                                    <span id="massSoft7" style="color: rgb(166, 255, 0)">質量獲得量到達 <b id="massSoftStart7">X</b> 後會被軟上限^6！<br></span>
+                                    <span id="massSoft8" style="color: rgb(0, 255, 149)">質量獲得量到達 <b id="massSoftStart8">X</b> 後會被軟上限^7！<br></span>
+                                    <span id="massSoft9" style="color: rgb(0, 225, 255)">質量獲得量到達 <b id="massSoftStart9">X</b> 後會被軟上限^8！</span>
+                                    <div id="massOverflow"></div>
+                                    <div id="massOverflow2" style="color: rgb(255, 197, 215)"></div>
+                                    <div id="strongerOverflow"></div>
+                                    <div id="strongerOverflow2" style="color: rgb(255, 197, 215)"></div>
+                                    <div id="rankCollapse"></div>
+                                </div>
                             </div><div id="rank_tab1">
                                 你的重置底數是 <span id="pres_base"></span>（基於各級別的乘積 + 1）<br><br>
                                 <div id="pres_table" class="table_center" style="min-height: 180px;"></div>
+                                <br><br>
+                                <div id="galactic_prestige_div">
+                                    <div>
+                                        星系重置 <h4 id="gal_prestige">0</h4><br>
+                                        <button id="gp_btn" class="btn galactic" onclick="GAL_PRESTIGE.reset()">Reset Supernova for that what do you mean?</button>
+                                    </div>
+                                    <br>
+                                    <div id="gp_rewards">
+
+                                    </div>
+                                </div>
                             </div><div id="rank_tab2">
                                 你的升華底數是 <span id="asc_base"></span>（基於 ln[各級別 + 1] 的乘積 + 1）<br><br>
                                 <div id="asc_table" class="table_center" style="min-height: 180px;"></div>
-                            </div>
-                            <br><br>
-                            <div id="mass_upgs_table"></div><br><br>
-                            <div style="width: 100%; margin-bottom: 5px;" class="table_center upgrade" id="tickspeed_div">
-                                <div style="width: 300px">
-                                    <div class="resources">
-                                        <img src="images/tickspeed.png">
-                                        <span style="margin-left: 5px; text-align: left;"><span id="tickspeed_scale"></span>時間速度 [<span id="tickspeed_lvl">X</span>]</span>
-                                    </div>
-                                </div><button id="tickspeed_btn" class="btn" style="width: 300px;" onclick="FORMS.tickspeed.buy()">價格：<span id="tickspeed_cost">X</span> 暴怒力量</button>
-                                <button class="btn" style="width: 120px;" onclick="FORMS.tickspeed.buyMax()">購買最多</button>
-                                <button id="tickspeed_auto" class="btn" style="width: 80px;" onclick="FORMS.tickspeed.autoSwitch()">關閉</button>
-                                <div style="margin-left: 5px; text-align: left; width: 400px">
-                                    時間速度力量：<span id="tickspeed_step">X</span><br>
-                                    時間速度效果：質量獲得量 <span id="tickspeed_eff">X</span>x
-                                </div>
-                            </div><div style="width: 100%; margin-bottom: 5px;" class="table_center upgrade" id="accel_div">
-                                <div style="width: 300px">
-                                    <div class="resources">
-                                        <img src="images/accelerator.png">
-                                        <span style="margin-left: 5px; text-align: left;"><span id="accel_scale"></span>加速器 [<span id="accel_lvl">X</span>]</span>
-                                    </div>
-                                </div><button id="accel_btn" class="btn" style="width: 300px;" onclick="FORMS.accel.buy()">價格：<span id="accel_cost">X</span> 暴怒力量</button>
-                                <button class="btn" style="width: 120px;" onclick="FORMS.accel.buyMax()">購買最多</button>
-                                <button id="accel_auto" class="btn" style="width: 80px;" onclick="FORMS.accel.autoSwitch()">關閉</button>
-                                <div style="margin-left: 5px; text-align: left; width: 400px">
-                                    加速器力量：<span id="accel_step">X</span><br>
-                                    加速器效果：<span id="accel_eff">X</span>
-                                </div>
-                            </div><br><div>
-                                <span id="massSoft1" class="red">質量獲得量到達 <b id="massSoftStart1">X</b> 後會被軟上限！<br></span>
-                                <span id="massSoft3" style="color: rgb(121, 0, 0)">質量獲得量到達 <b id="massSoftStart3">X</b> 後會被軟上限^2！<br></span>
-                                <span id="massSoft4" style="color: rgb(122, 0, 86)">質量獲得量到達 <b id="massSoftStart4">X</b> 後會被軟上限^3！<br></span>
-                                <span id="massSoft5" style="color: rgb(255, 94, 0)">質量獲得量到達 <b id="massSoftStart5">X</b> 後會被軟上限^4！<br></span>
-                                <span id="massSoft6" style="color: rgb(255, 238, 0)">質量獲得量到達 <b id="massSoftStart6">X</b> 後會被軟上限^5！<br></span>
-                                <span id="massSoft7" style="color: rgb(166, 255, 0)">質量獲得量到達 <b id="massSoftStart7">X</b> 後會被軟上限^6！<br></span>
-                                <span id="massSoft8" style="color: rgb(0, 255, 149)">質量獲得量到達 <b id="massSoftStart8">X</b> 後會被軟上限^7！<br></span>
-                                <span id="massSoft9" style="color: rgb(0, 225, 255)">質量獲得量到達 <b id="massSoftStart9">X</b> 後會被軟上限^8！</span>
-                                <div id="massOverflow"></div>
-                                <div id="massOverflow2" style="color: rgb(255, 197, 215)"></div>
-                                <div id="strongerOverflow"></div>
-                                <div id="strongerOverflow2" style="color: rgb(255, 197, 215)"></div>
                             </div>
                         </div><div id="stab_frame0_1">
                             <div class="table_center">
@@ -328,7 +340,8 @@
                         </div><div id="stab_frame0_3">
                             你塌縮了 <h4 id="stars_Amt">X</h4> 個恆星，基於各級別的效果提升質量獲得量。<br>
                             <span class="green">目前：<span id="stars_Eff">X</span></span><br><br>
-                            <button id="star_btn" class="btn" onclick="STARS.generators.unl()">X</button><br><br>
+                            <button id="star_btn" class="btn" onclick="STARS.generators.unl()">X</button>
+                            <br><br>
                             <div id="stars_table" class="table_center"></div><br><br>
                             <span id="starSoft1" class="red">塌縮恆星獲得量到達 <b id="starSoftStart1">X</b> 後會被軟上限！</span><br>
                         </div><div id="stab_frame0_4">
@@ -618,15 +631,15 @@
                         </div><div id="stab_frame8_3">
                             <div class="table_center">
                                 <div style="width: 50%; min-width: 500px;">
-                                    你有 <h4 id="cs_amount">0</h4> 個腐化之星。<br>
-                                    腐化之星的增長速度是 <b id="cs_speed">X</b>。
+                                    你有 <h4 id="cs_amount">0</h4> 個腐化恆星。<br>
+                                    腐化恆星的增長速度是 <b id="cs_speed">X</b>。
                                     <br><br>
                                     <button id="cs_upg1" class="btn full" onclick="buyCSUpg(0)">X</button>
                                     <button id="cs_upg2" class="btn full" onclick="buyCSUpg(1)">X</button>
                                     <br><br>
                                     <div id="cs_overflow" style="color: red"></div>
                                 </div><div style="width: 50%; min-width: 500px;">
-                                    <h2>腐化之星的效果：</h2>
+                                    <h2>腐化恆星的效果：</h2>
                                     <div id="cs_effect" class="sky"></div>
                                 </div>
                             </div>
@@ -652,7 +665,7 @@
                             <h2>確認設定</h2><br>
                             <div id="confirm_table" class="table_center"></div>
                             <br><br>
-                            增量質量（重寫版）v0.7.1.1 - 由 MrRedShark77 製作，ItMarki 翻譯<br>
+                            增量質量（重寫版）v0.7.1.2 - 由 MrRedShark77 製作，ItMarki 翻譯<br>
                             本遊戲受到 <ruby>Distance Incremental<rt>距離增量</rt></ruby> 和 <ruby>Synergism<rt>協同放置</rt></ruby> 的啟發製作<br>
                             貢獻：<span style="cursor: pointer;" onclick='addNotify(`where lemon<br><img src="https://i.imgflip.com/57cc98.jpg" style="width:100%">`)'>Bézier</span>, 16777216 & Aarex（繪製）<br><br><br>
                             提示 1：把指標放在標籤上方的圖片上，即可查看描述……<br><br>

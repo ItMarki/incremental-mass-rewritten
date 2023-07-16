@@ -324,7 +324,7 @@ const CHALS = {
             let rank = c?E(0):x.softcap(20,4,1).floor()
             let tick = c?E(1):E(0.96).pow(x.root(2))
             let scrank = x.add(1).log10().div(10).add(1).root(3)
-            let over = Decimal.pow(0.99,x.add(1).log10().root(2))
+            let over = Decimal.pow(0.99,x.add(1).log10().root(2)).max(.5)
             return {rank: rank, tick: tick, scrank, over}
         },
         effDesc(x) { return hasBeyondRank(2,20)?"超臨界等級和所有費米子階推遲 "+formatMult(x.scrank)+" 個，超級過強器增幅弱 "+formatReduction(x.over):"超級等級推遲 "+format(x.rank,0)+" 個，超級時間速度增幅弱 "+format(E(1).sub(x.tick).mul(100))+"%" },

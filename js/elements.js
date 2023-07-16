@@ -27,7 +27,7 @@ function setupHTML() {
 		let rn = RANKS.names[x]
 		table += `<div style="width: 300px" id="ranks_div_${x}">
 			<button id="ranks_auto_${x}" class="btn" style="width: 80px;" onclick="RANKS.autoSwitch('${rn}')">關閉</button>
-			第 <span id="ranks_amt_${x}">X</span> <span id="ranks_scale_${x}""></span>${RANKS.fullNames[x]}<br><br>
+			第 <h4 id="ranks_amt_${x}">X</h4> <span id="ranks_scale_${x}""></span>${RANKS.fullNames[x]}<br><br>
 			<button onclick="RANKS.reset('${rn}')" class="btn reset" id="ranks_${x}">
 				重置${x>0?RANKS.fullNames[x-1]:'質量和升級'}，但你會升${RANKS.fullNames[x]}。<span id="ranks_desc_${x}"></span><br>
 				要求：<span id="ranks_req_${x}">X</span>
@@ -41,7 +41,7 @@ function setupHTML() {
 	for (let x = 0; x < PRES_LEN; x++) {
 		table += `<div style="width: 300px" id="pres_div_${x}">
 			<button id="pres_auto_${x}" class="btn" style="width: 80px;" onclick="PRESTIGES.autoSwitch(${x})">關閉</button>
-			第 <span id="pres_amt_${x}">X</span> 個<span id="pres_scale_${x}""></span>${PRESTIGES.fullNames[x]}<br><br>
+			第 <h4 id="pres_amt_${x}">X</h4> 個<span id="pres_scale_${x}""></span>${PRESTIGES.fullNames[x]}<br><br>
 			<button onclick="PRESTIGES.reset(${x})" class="btn reset" id="pres_${x}">
 				${x>0?"重置你的"+PRESTIGES.fullNames[x-1]:'強制執行量子重置'}，但你會升${PRESTIGES.fullNames[x]}。<span id="pres_desc_${x}"></span><br>
 				要求：<span id="pres_req_${x}">X</span>
@@ -502,37 +502,40 @@ function updateHTML() {
 		if (tmp.tab == 0) {
 			if (tmp.stab[0] == 0) {
 				updateRanksHTML()
-				updateMassUpgradesHTML()
-				updateTickspeedHTML()
-				
-				tmp.el.massSoft1.setDisplay(tmp.massGain.gte(tmp.massSoftGain))
-				tmp.el.massSoftStart1.setTxt(formatMass(tmp.massSoftGain))
-				tmp.el.massSoft3.setDisplay(tmp.massGain.gte(tmp.massSoftGain2))
-				tmp.el.massSoftStart3.setTxt(formatMass(tmp.massSoftGain2))
-				tmp.el.massSoft4.setDisplay(tmp.massGain.gte(tmp.massSoftGain3))
-				tmp.el.massSoftStart4.setTxt(formatMass(tmp.massSoftGain3))
-				tmp.el.massSoft5.setDisplay(tmp.massGain.gte(tmp.massSoftGain4))
-				tmp.el.massSoftStart5.setTxt(formatMass(tmp.massSoftGain4))
-				tmp.el.massSoft6.setDisplay(tmp.massGain.gte(tmp.massSoftGain5))
-				tmp.el.massSoftStart6.setTxt(formatMass(tmp.massSoftGain5))
-				tmp.el.massSoft7.setDisplay(tmp.massGain.gte(tmp.massSoftGain6))
-				tmp.el.massSoftStart7.setTxt(formatMass(tmp.massSoftGain6))
-				tmp.el.massSoft8.setDisplay(tmp.massGain.gte(tmp.massSoftGain7))
-				tmp.el.massSoftStart8.setTxt(formatMass(tmp.massSoftGain7))
-				tmp.el.massSoft9.setDisplay(tmp.massGain.gte(tmp.massSoftGain8))
-				tmp.el.massSoftStart9.setTxt(formatMass(tmp.massSoftGain8))
 
-				tmp.el.massOverflow.setDisplay(player.mass.gte(tmp.overflow_start.mass[0]))
-    			tmp.el.massOverflow.setHTML(`由於你的質量在 <b>${formatMass(tmp.overflow_start.mass[0])}</b> 溢出，你的質量已經${overflowFormat(tmp.overflow.mass||1)}！`)
+				if (tmp.rank_tab == 0) {
+					updateMassUpgradesHTML()
+					updateTickspeedHTML()
 
-				tmp.el.massOverflow2.setDisplay(player.mass.gte(tmp.overflow_start.mass[1]))
-    			tmp.el.massOverflow2.setHTML(`由於你的質量在 <b>${formatMass(tmp.overflow_start.mass[1])}</b> 溢出^2，你的質量溢出變得更強了！`)
+					tmp.el.massSoft1.setDisplay(tmp.massGain.gte(tmp.massSoftGain))
+					tmp.el.massSoftStart1.setTxt(formatMass(tmp.massSoftGain))
+					tmp.el.massSoft3.setDisplay(tmp.massGain.gte(tmp.massSoftGain2))
+					tmp.el.massSoftStart3.setTxt(formatMass(tmp.massSoftGain2))
+					tmp.el.massSoft4.setDisplay(tmp.massGain.gte(tmp.massSoftGain3))
+					tmp.el.massSoftStart4.setTxt(formatMass(tmp.massSoftGain3))
+					tmp.el.massSoft5.setDisplay(tmp.massGain.gte(tmp.massSoftGain4))
+					tmp.el.massSoftStart5.setTxt(formatMass(tmp.massSoftGain4))
+					tmp.el.massSoft6.setDisplay(tmp.massGain.gte(tmp.massSoftGain5))
+					tmp.el.massSoftStart6.setTxt(formatMass(tmp.massSoftGain5))
+					tmp.el.massSoft7.setDisplay(tmp.massGain.gte(tmp.massSoftGain6))
+					tmp.el.massSoftStart7.setTxt(formatMass(tmp.massSoftGain6))
+					tmp.el.massSoft8.setDisplay(tmp.massGain.gte(tmp.massSoftGain7))
+					tmp.el.massSoftStart8.setTxt(formatMass(tmp.massSoftGain7))
+					tmp.el.massSoft9.setDisplay(tmp.massGain.gte(tmp.massSoftGain8))
+					tmp.el.massSoftStart9.setTxt(formatMass(tmp.massSoftGain8))
 
-				tmp.el.strongerOverflow.setDisplay(tmp.upgs.mass[3].eff.eff.gte(tmp.overflow_start.stronger[0]))
-    			tmp.el.strongerOverflow.setHTML(`由於你的增強器在 <b>${format(tmp.overflow_start.stronger[0])}</b> 溢出，它的效果已經 ${overflowFormat(tmp.overflow.stronger||1)}!`)
-
-				tmp.el.strongerOverflow2.setDisplay(tmp.upgs.mass[3].eff.eff.gte(tmp.overflow_start.stronger[1]))
-    			tmp.el.strongerOverflow2.setHTML(`由於你的增強器在 <b>${format(tmp.overflow_start.stronger[1])}</b>，你的增強器溢出變得更強了！`)
+					tmp.el.massOverflow.setDisplay(player.mass.gte(tmp.overflow_start.mass[0]))
+					tmp.el.massOverflow.setHTML(`由於你的質量在 <b>${formatMass(tmp.overflow_start.mass[0])}</b> 溢出，你的質量已經${overflowFormat(tmp.overflow.mass||1)}！`)
+	
+					tmp.el.massOverflow2.setDisplay(player.mass.gte(tmp.overflow_start.mass[1]))
+					tmp.el.massOverflow2.setHTML(`由於你的質量在 <b>${formatMass(tmp.overflow_start.mass[1])}</b> 溢出^2，你的質量溢出變得更強了！`)
+	
+					tmp.el.strongerOverflow.setDisplay(tmp.upgs.mass[3].eff.eff.gte(tmp.overflow_start.stronger[0]))
+					tmp.el.strongerOverflow.setHTML(`由於你的增強器在 <b>${format(tmp.overflow_start.stronger[0])}</b> 溢出，它的效果已經 ${overflowFormat(tmp.overflow.stronger||1)}!`)
+	
+					tmp.el.strongerOverflow2.setDisplay(tmp.upgs.mass[3].eff.eff.gte(tmp.overflow_start.stronger[1]))
+					tmp.el.strongerOverflow2.setHTML(`由於你的增強器在 <b>${format(tmp.overflow_start.stronger[1])}</b>，你的增強器溢出變得更強了！`)
+				}
 			}
 			else if (tmp.stab[0] == 1) {
 				updateBlackHoleHTML()

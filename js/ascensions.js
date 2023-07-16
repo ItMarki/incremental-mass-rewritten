@@ -3,9 +3,11 @@ const ASCENSIONS = {
     fullNames: ["升華",'超越'],
     resetName: ['升華','超越'],
     baseExponent() {
-        let x = 0
+        let x = E(0)
 
-        x += 1
+        if (hasElement(44,1)) x = x.add(muElemEff(44,0))
+
+        x = x.add(1)
 
         return x
     },
@@ -73,9 +75,13 @@ const ASCENSIONS = {
             3: `大撕裂升級 19 效果翻倍，並移除不穩定黑洞效果的溢出。`,
             4: `每擁有一個升華，K 介子和 π 介子獲得量提升至 5 倍。`,
             7: `移除膨脹質量的溢出。`,
+            13: `移除原子力量的溢出。`,
+            15: `移除奇異級等級、奇異級階，以及超級和高級六級層。`,
         },{
             1: `重置底數的指數翻倍。大撕裂升級 19 會影響聲望。`,
             2: `超級無限定理弱 10%。`,
+            3: `超級和高級過強器推遲 +50 個。`,
+            4: `元級重置等級推遲 2x。`,
         },
     ],
     rewardEff: [
@@ -89,6 +95,7 @@ const ASCENSIONS = {
                 x=>formatMult(x),
             ],
         },{
+
         },
     ],
     reset(i, bulk = false) {
@@ -118,7 +125,7 @@ function setupAscensionsHTML() {
 	for (let x = 0; x < ASCENSIONS.names.length; x++) {
 		table += `<div style="width: 300px" id="asc_div_${x}">
 			<button id="asc_auto_${x}" class="btn" style="width: 80px;" onclick="ASCENSIONS.autoSwitch(${x})">關閉</button>
-			第 <span id="asc_amt_${x}">X</span> 個<span id="asc_scale_${x}""></span>${ASCENSIONS.fullNames[x]} <br><br>
+			第 <h4 id="asc_amt_${x}">X</h4> 個<span id="asc_scale_${x}""></span>${ASCENSIONS.fullNames[x]} <br><br>
 			<button onclick="ASCENSIONS.reset(${x})" class="btn reset" id="asc_${x}">
 				${ASCENSIONS.resetName[x]}（強制執行無限重置），但你會${ASCENSIONS.fullNames[x]}。<span id="asc_desc_${x}"></span><br>
 				要求：<span id="asc_req_${x}">X</span>
@@ -171,7 +178,7 @@ function updateAscensionsTemp() {
     tmp.ascensions.baseMul = ASCENSIONS.base()
     tmp.ascensions.baseExp = ASCENSIONS.baseExponent()
     tmp.ascensions.base = tmp.ascensions.baseMul.pow(tmp.ascensions.baseExp)
-    for (let x = 0; x < PRES_LEN; x++) {
+    for (let x = 0; x < ASCENSIONS.names.length; x++) {
         tmp.ascensions.req[x] = ASCENSIONS.req(x)
         for (let y in ASCENSIONS.rewardEff[x]) {
             if (ASCENSIONS.rewardEff[x][y]) tmp.ascensions.eff[x][y] = ASCENSIONS.rewardEff[x][y][0]()
