@@ -25,7 +25,7 @@ const ASCENSIONS = {
         let x = EINF, fp = this.fp(i), y = player.ascensions[i]
         switch (i) {
             case 0:
-                x = Decimal.pow(1.1,y.div(fp).pow(1.1)).mul(1600)
+                x = Decimal.pow(1.1,y.div(fp).scaleEvery('ascension0',false).pow(1.1)).mul(1600)
                 break;
             case 1:
                     x = y.div(fp).pow(1.1).mul(2).add(6)
@@ -40,7 +40,7 @@ const ASCENSIONS = {
         let x = E(0), y = i==0?tmp.ascensions.base:player.ascensions[i-1], fp = this.fp(i)
         switch (i) {
             case 0:
-                if (y.gte(1600)) x = y.div(1600).max(1).log(1.1).max(0).root(1.1).mul(fp).add(1)
+                if (y.gte(1600)) x = y.div(1600).max(1).log(1.1).max(0).root(1.1).scaleEvery('ascension0',true).mul(fp).add(1)
                 break;
             case 1:
                     if (y.gte(6)) x = y.sub(6).div(2).root(1.1).mul(fp).add(1)
@@ -60,11 +60,11 @@ const ASCENSIONS = {
         ()=>tmp.c18reward,
     ],
     noReset: [
-        ()=>false,
+        ()=>hasElement(267),
         ()=>false,
     ],
     autoUnl: [
-        ()=>false,
+        ()=>hasElement(267),
         ()=>false,
     ],
     autoSwitch(x) { player.auto_asc[x] = !player.auto_asc[x] },
@@ -77,11 +77,13 @@ const ASCENSIONS = {
             7: `移除膨脹質量的溢出。`,
             13: `移除原子力量的溢出。`,
             15: `移除奇異級等級、奇異級階，以及超級和高級六級層。`,
+            22: `再次改變挑戰 5 的獎勵。`,
         },{
             1: `重置底數的指數翻倍。大撕裂升級 19 會影響聲望。`,
             2: `超級無限定理弱 10%。`,
             3: `超級和高級過強器推遲 +50 個。`,
             4: `元級重置等級推遲 2x。`,
+            7: `MCF 階的要求減少 10%。`,
         },
     ],
     rewardEff: [
@@ -140,7 +142,7 @@ function setupAscensionsHTML() {
 		table += `<div id="asc_reward_div_${x}">`
 		let keys = Object.keys(ASCENSIONS.rewards[x])
 		for (let y = 0; y < keys.length; y++) {
-			table += `<span id="asc_reward_${x}_${y}"><b>第 ${keys[y]} 個${ASCENSIONS.fullNames[x]}：</b> ${ASCENSIONS.rewards[x][keys[y]]}${ASCENSIONS.rewardEff[x][keys[y]]?`目前：<span id='asc_eff_${x}_${y}'></span>`:""}</span><br>`
+			table += `<span id="asc_reward_${x}_${y}"><b>第 ${keys[y]} 個${ASCENSIONS.fullNames[x]}：</b>${ASCENSIONS.rewards[x][keys[y]]}${ASCENSIONS.rewardEff[x][keys[y]]?`目前：<span id='asc_eff_${x}_${y}'></span>`:""}</span><br>`
 		}
 		table += `</div>`
 	}
@@ -169,7 +171,7 @@ function updateAscensionsHTML() {
             tmp.el["asc_desc_"+x].setTxt(desc)
             tmp.el["asc_req_"+x].setTxt(x==0?"升華底數到達 "+format(tmp.ascensions.req[x],0):"第 "+format(tmp.ascensions.req[x],0)+" 個"+ASCENSIONS.fullNames[x-1])
             tmp.el["asc_auto_"+x].setDisplay(ASCENSIONS.autoUnl[x]())
-            tmp.el["asc_auto_"+x].setTxt(player.auto_pres[x]?"開啟":"關閉")
+            tmp.el["asc_auto_"+x].setTxt(player.auto_asc[x]?"開啟":"關閉")
         }
     }
 }
