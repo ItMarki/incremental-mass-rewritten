@@ -127,7 +127,7 @@ function setupAscensionsHTML() {
 			<button id="asc_auto_${x}" class="btn" style="width: 80px;" onclick="ASCENSIONS.autoSwitch(${x})">關閉</button>
 			第 <h4 id="asc_amt_${x}">X</h4> 個<span id="asc_scale_${x}""></span>${ASCENSIONS.fullNames[x]} <br><br>
 			<button onclick="ASCENSIONS.reset(${x})" class="btn reset" id="asc_${x}">
-				${ASCENSIONS.resetName[x]}（強制執行無限重置），但你會${ASCENSIONS.fullNames[x]}。<span id="asc_desc_${x}"></span><br>
+				${ASCENSIONS.resetName[x]}（並強制執行無限重置），但你會${ASCENSIONS.fullNames[x]}。<span id="asc_desc_${x}"></span><br>
 				要求：<span id="asc_req_${x}">X</span>
 			</button>
 		</div>`

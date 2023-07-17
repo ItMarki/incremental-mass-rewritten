@@ -749,7 +749,7 @@ const BEYOND_RANKS = {
     getRankDisplayFromValue(r) {
         let tier = this.getTier(r), current = this.getRankFromTier(tier,r);
 
-        return getRankTierName(tier+5) + ' ' + current.format(0)
+        return '第 '+current.format(0)+' 個'+getRankTierName(tier+5)
     },
 
     reset(auto=false) {
@@ -1062,7 +1062,7 @@ function updateRanksHTML() {
         let rc = tmp.rank_collapse
 
         tmp.el.rankCollapse.setDisplay(player.ranks.beyond.gte(rc.start))
-        tmp.el.rankCollapse.setHTML(`由於級別塌縮在 <b>${BEYOND_RANKS.getRankDisplayFromValue(rc.start)}</b> 發生，七級層的要求已經提升至 <b>${rc.reduction.format()}</b> 次方！`)
+        tmp.el.rankCollapse.setHTML(`由於級別塌縮在<b>${BEYOND_RANKS.getRankDisplayFromValue(rc.start)}</b>發生，七級層的要求已經提升至 <b>${rc.reduction.format()}</b> 次方！`)
     }
     else if (tmp.rank_tab == 1) {
         tmp.el.pres_base.setHTML(`${tmp.prestiges.baseMul.format(0)}<sup>${format(tmp.prestiges.baseExp)}</sup> = ${tmp.prestiges.base.format(0)}`)
@@ -1173,7 +1173,7 @@ function updateGPHTML() {
 
         tmp.el.gal_prestige.setHTML(gp.format(0))
         tmp.el.gp_btn.setHTML(`
-        重置超新星（並強制執行無限重置），但你的星系重置會提升一級。下一個星系重置可能會解鎖一個新事物。<br><br>
+        重置超新星（並強制執行無限重置），但你的星系重置會提升一級。下一個星系重置可能會解鎖新的事物。<br><br>
         要求：<b>${tmp.gp.req.format()}</b> 次超新星
         `)
         tmp.el.gp_btn.setClasses({btn: true, galactic: true, locked: player.supernova.times.lt(tmp.gp.req)})

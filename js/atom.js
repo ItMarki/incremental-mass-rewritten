@@ -307,8 +307,8 @@ function setupAtomHTML() {
         <div style="width: 30%"><button class="btn" onclick="ATOM.particles.assign(${x})">分配</button><br><br>
             <div style="color: ${ATOM.particles.colors[x]}; min-height: 120px">
                 <h2><span id="particle_${x}_amt">X</span> 個${ATOM.particles.names[x]}</h2><br>
-                生產 <span id="particle_${x}_amtEff">X</span> ${ATOM.particles.names[x]}力量<br>
-                你有 <span id="particle_${x}_power">X</span> ${ATOM.particles.names[x]}力量，
+                生產 <span id="particle_${x}_amtEff">X</span> 的${ATOM.particles.names[x]}力量<br>
+                你有 <span id="particle_${x}_power">X</span> 的${ATOM.particles.names[x]}力量，
             </div><br><div id="particle_${x}_powerEff"></div>
         </div>
         `

@@ -1500,6 +1500,14 @@ const ELEMENTS = {
                 return x
             },
             effDesc(x) { return '弱 '+formatReduction(x) },
+        },{
+            inf: true,
+            desc: `自動更新獲得的最佳無限點數。`,
+            cost: E('e65'),
+        },{
+            dark: true,
+            desc: `深淵之漬的第 10 個獎勵的妊神星稍微更弱。`,
+            cost: E('e1.7e10'),
         },
     ],
     /*

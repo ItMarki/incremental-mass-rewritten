@@ -75,7 +75,7 @@ const TABS = {
             { id: "核心" },
             { id: "核心效果" },
             { id: "無限升級", style: "inf" },
-            { id: "腐化之星", unl() { return tmp.CS_unl } },
+            { id: "腐化恆星", unl() { return tmp.CS_unl } },
         ],
         9: [
             { id: "選項" },

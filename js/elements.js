@@ -534,7 +534,7 @@ function updateHTML() {
 					tmp.el.strongerOverflow.setHTML(`由於你的增強器在 <b>${format(tmp.overflow_start.stronger[0])}</b> 溢出，它的效果已經 ${overflowFormat(tmp.overflow.stronger||1)}!`)
 	
 					tmp.el.strongerOverflow2.setDisplay(tmp.upgs.mass[3].eff.eff.gte(tmp.overflow_start.stronger[1]))
-					tmp.el.strongerOverflow2.setHTML(`由於你的增強器在 <b>${format(tmp.overflow_start.stronger[1])}</b>，你的增強器溢出變得更強了！`)
+					tmp.el.strongerOverflow2.setHTML(`由於你的增強器在 <b>${format(tmp.overflow_start.stronger[1])}</b> 溢出^2，你的增強器溢出變得更強了！`)
 				}
 			}
 			else if (tmp.stab[0] == 1) {
