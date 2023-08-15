@@ -26,7 +26,7 @@ function setupHTML() {
 	for (let x = 0; x < RANKS.names.length; x++) {
 		let rn = RANKS.names[x]
 		table += `<div style="width: 300px" id="ranks_div_${x}">
-			<button id="ranks_auto_${x}" class="btn" style="width: 80px;" onclick="RANKS.autoSwitch('${rn}')">關閉</button>
+			<button id="ranks_auto_${x}" class="btn" style="width: 80px;" onclick="RANKS.autoSwitch('${rn}')">關</button>
 			第 <h4 id="ranks_amt_${x}">X</h4> <span id="ranks_scale_${x}""></span>${RANKS.fullNames[x]}<br><br>
 			<button onclick="RANKS.reset('${rn}')" class="btn reset" id="ranks_${x}">
 				重置${x>0?RANKS.fullNames[x-1]:'質量和升級'}，但你會升${RANKS.fullNames[x]}。<span id="ranks_desc_${x}"></span><br>
@@ -40,7 +40,7 @@ function setupHTML() {
 	table = ""
 	for (let x = 0; x < PRES_LEN; x++) {
 		table += `<div style="width: 300px" id="pres_div_${x}">
-			<button id="pres_auto_${x}" class="btn" style="width: 80px;" onclick="PRESTIGES.autoSwitch(${x})">關閉</button>
+			<button id="pres_auto_${x}" class="btn" style="width: 80px;" onclick="PRESTIGES.autoSwitch(${x})">關</button>
 			第 <h4 id="pres_amt_${x}">X</h4> 個<span id="pres_scale_${x}""></span>${PRESTIGES.fullNames[x]}<br><br>
 			<button onclick="PRESTIGES.reset(${x})" class="btn reset" id="pres_${x}">
 				${x>0?"重置你的"+PRESTIGES.fullNames[x-1]:'強制執行量子重置'}，但你會升${PRESTIGES.fullNames[x]}。<span id="pres_desc_${x}"></span><br>
@@ -52,6 +52,9 @@ function setupHTML() {
 
 	setupAscensionsHTML()
 
+	BUILDINGS.setup()
+
+	/*
 	let mass_upgs_table = new Element("mass_upgs_table")
 	table = ""
 	for (let x = 1; x <= UPGS.mass.cols; x++) {
@@ -72,6 +75,7 @@ function setupHTML() {
 		</div>`
 	}
 	mass_upgs_table.setHTML(table)
+	*/
 
 	let ranks_rewards_table = new Element("ranks_rewards_table")
 	table = ""
@@ -118,9 +122,9 @@ function setupHTML() {
 		for (let y = 1; y <= UPGS.main[x].lens; y++) {
 			let key = UPGS.main[x][y]
 			table += `<img onclick="UPGS.main[${x}].buy(${y})" onmouseover="UPGS.main.over(${x},${y})" onmouseleave="UPGS.main.reset()"
-			 style="margin: 3px;" class="img_btn" id="main_upg_${x}_${y}" src="images/upgrades/main_upg_${id+y}.png">`
+			style="margin: 3px;" class="img_btn" id="main_upg_${x}_${y}" src="${key.noImage?`images/test.png`:`images/upgrades/main_upg_${id+y}.png`}">`
 		}
-		table += `</div><br><button id="main_upg_${x}_auto" class="btn" style="width: 80px;" onclick="player.auto_mainUpg.${id} = !player.auto_mainUpg.${id}">關閉</button></div>`
+		table += `</div><br><button id="main_upg_${x}_auto" class="btn" style="width: 80px;" onclick="player.auto_mainUpg.${id} = !player.auto_mainUpg.${id}">關</button></div>`
 	}
 	main_upgs_table.setHTML(table)
 
@@ -167,7 +171,7 @@ function setupHTML() {
 	let confirm_table = new Element("confirm_table")
 	table = ""
 	for (let x = 0; x < CONFIRMS.length; x++) {
-		table += `<div style="width: 100px" id="confirm_div_${x}"><img src="images/${x == 1 ? "dm" : CONFIRMS[x]}.png"><br><button onclick="player.confirms.${CONFIRMS[x]} = !player.confirms.${CONFIRMS[x]}" class="btn" id="confirm_btn_${x}">關閉</button></div>`
+		table += `<div style="width: 100px" id="confirm_div_${x}"><img src="images/${x == 1 ? "dm" : CONFIRMS[x]}.png"><br><button onclick="player.confirms.${CONFIRMS[x]} = !player.confirms.${CONFIRMS[x]}" class="btn" id="confirm_btn_${x}">關</button></div>`
 	}
 	confirm_table.setHTML(table)
 
@@ -266,6 +270,11 @@ function updateUpperHTML() {
 }
 
 function updateMassUpgradesHTML() {
+	for (let x = 1; x <= 4; x++) {
+		BUILDINGS.update('mass_'+x)
+	}
+
+	/*
 	for (let x = 1; x <= UPGS.mass.cols; x++) {
 		let upg = UPGS.mass[x]
 		tmp.el["massUpg_div_"+x].setDisplay(upg.unl())
@@ -277,13 +286,18 @@ function updateMassUpgradesHTML() {
 			tmp.el["massUpg_step_"+x].setTxt(tmp.upgs.mass[x].effDesc.step)
 			tmp.el["massUpg_eff_"+x].setHTML(tmp.upgs.mass[x].effDesc.eff)
 			tmp.el["massUpg_auto_"+x].setDisplay(player.mainUpg.rp.includes(3))
-			tmp.el["massUpg_auto_"+x].setTxt(player.autoMassUpg[x]?"開啟":"關閉")
+			tmp.el["massUpg_auto_"+x].setTxt(player.autoMassUpg[x]?"開":"關")
 		}
 	}
+	*/
 }
 
 function updateTickspeedHTML() {
+	BUILDINGS.update('tickspeed')
+	BUILDINGS.update('accelerator')
+	/*
 	let unl = player.rp.unl
+
 	tmp.el.tickspeed_div.setDisplay(unl)
 	if (unl) {
 		let teff = tmp.tickspeedEffect
@@ -298,10 +312,11 @@ function updateTickspeedHTML() {
 		
 
 		tmp.el.tickspeed_auto.setDisplay(FORMS.tickspeed.autoUnl())
-		tmp.el.tickspeed_auto.setTxt(player.autoTickspeed?"開啟":"關閉")
+		tmp.el.tickspeed_auto.setTxt(player.autoTickspeed?"開":"關")
 	}
+
 	tmp.el.accel_div.setDisplay(unl && hasElement(199));
-	if(hasElement(199)){
+	if(unl && hasElement(199)){
 		let eff = tmp.accelEffect
 		//tmp.el.accel_scale.setTxt(getScalingName('accel'))
 		tmp.el.accel_lvl.setTxt(format(player.accelerator,0))
@@ -311,8 +326,9 @@ function updateTickspeedHTML() {
 		tmp.el.accel_eff.setHTML("時間速度效果 ^"+format(eff.eff)+eff.eff.softcapHTML(eff.ss))
 
 		tmp.el.accel_auto.setDisplay(FORMS.accel.autoUnl())
-		tmp.el.accel_auto.setTxt(player.autoAccel?"開啟":"關閉")
+		tmp.el.accel_auto.setTxt(player.autoAccel?"開":"關")
 	}
+	*/
 }
 
 function updateRanksRewardHTML() {
@@ -397,7 +413,7 @@ function updateMainUpgradesHTML() {
 				if (unl2) tmp.el["main_upg_"+x+"_"+y].setClasses({img_btn: true, locked: !upg.can(y), bought: player.mainUpg[id].includes(y)})
 			}
 			tmp.el["main_upg_"+x+"_auto"].setDisplay(upg.auto_unl ? upg.auto_unl() : false)
-			tmp.el["main_upg_"+x+"_auto"].setTxt(player.auto_mainUpg[id]?"開啟":"關閉")
+			tmp.el["main_upg_"+x+"_auto"].setTxt(player.auto_mainUpg[id]?"開":"關")
 		}
 	}
 }
@@ -412,15 +428,22 @@ function updateBlackHoleHTML() {
 	tmp.el.massSoftStart2.setTxt(formatMass(tmp.bh.massSoftGain))
 
 	tmp.el.bhEffect.setTxt(hasElement(201)?"^"+format(tmp.bh.effect):format(tmp.bh.effect)+"x")
+	tmp.el.bhCondenserEffect.setHTML(format(BUILDINGS.eff('bhc')))
 
+	BUILDINGS.update('bhc')
+	BUILDINGS.update('fvm')
+
+	/*
 	tmp.el.bhCondenser_lvl.setTxt(format(player.bh.condenser,0)+(tmp.bh.condenser_bonus.gte(1)?" + "+format(tmp.bh.condenser_bonus,0):""))
 	tmp.el.bhCondenser_btn.setClasses({btn: true, locked: !FORMS.bh.condenser.can()})
 	tmp.el.bhCondenser_scale.setTxt(getScalingName('bh_condenser'))
 	tmp.el.bhCondenser_cost.setTxt(format(tmp.bh.condenser_cost,0))
 	tmp.el.bhCondenser_pow.setTxt(format(tmp.bh.condenser_eff.pow))
-	tmp.el.bhCondenserEffect.setHTML(format(tmp.bh.condenser_eff.eff))
 	tmp.el.bhCondenser_auto.setDisplay(FORMS.bh.condenser.autoUnl())
-	tmp.el.bhCondenser_auto.setTxt(player.bh.autoCondenser?"開啟":"關閉")
+	tmp.el.bhCondenser_auto.setTxt(player.bh.autoCondenser?"ON":"OFF")
+	*/
+
+
 
 	tmp.el.bhOverflow.setDisplay(player.bh.mass.gte(tmp.overflow_start.bh[0]))
     tmp.el.bhOverflow.setHTML(`由於你的黑洞質量在 <b>${formatMass(tmp.overflow_start.bh[0])}</b> 溢出，它已經${overflowFormat(tmp.overflow.bh||1)}！`)
@@ -428,25 +451,27 @@ function updateBlackHoleHTML() {
 	tmp.el.bhOverflow2.setDisplay(player.bh.mass.gte(tmp.overflow_start.bh[1]))
     tmp.el.bhOverflow2.setHTML(`由於你的黑洞質量在 <b>${formatMass(tmp.overflow_start.bh[1])}</b> 溢出，你的黑洞溢出變得更強了！`)
 
-
-	tmp.el.bhcEffectOverflow.setDisplay(tmp.bh.condenser_eff.eff.gte(tmp.overflow_start.BHCEffect[0]))
+	tmp.el.bhcEffectOverflow.setDisplay(BUILDINGS.eff('bhc').gte(tmp.overflow_start.BHCEffect[0]))
     tmp.el.bhcEffectOverflow.setHTML(`由於黑洞壓縮器在 <b>${format(tmp.overflow_start.BHCEffect[0])}</b> 積聚，黑洞壓縮器效果的指數已經${overflowFormat(tmp.overflow.BHCEffect||1)}！`)
+
 	// Unstable 
 
 	let unl = hasCharger(1)
 
 	tmp.el.unstable_bhUnl.setDisplay(unl)
-	tmp.el.falseVacuumDiv.setDisplay(unl)
+	// tmp.el.falseVacuumDiv.setDisplay(unl)
 	if (unl) {
 		tmp.el.bhUnstable.setHTML(formatMass(player.bh.unstable)+" "+formatGain(player.bh.unstable,UNSTABLE_BH.calcProduction(),true))
 		tmp.el.bhUnstableEffect.setHTML("^"+format(tmp.unstable_bh.effect))
 
+		/*
 		tmp.el.fvm_lvl.setTxt(format(player.bh.fvm,0))
 		tmp.el.fvm_btn.setClasses({btn: true, locked: !UNSTABLE_BH.fvm.can()})
 		tmp.el.fvm_cost.setTxt(format(tmp.unstable_bh.fvm_cost,0))
 		tmp.el.fvm_pow.setTxt(format(tmp.unstable_bh.fvm_eff.pow))
 		tmp.el.fvm_eff.setHTML(format(tmp.unstable_bh.fvm_eff.eff))
-		tmp.el.fvm_auto.setTxt(player.bh.autoFVM?"開啟":"關閉")
+		tmp.el.fvm_auto.setTxt(player.bh.autoFVM?"ON":"OFF")
+		*/
 	}
 }
 
@@ -465,10 +490,10 @@ function updateOptionsHTML() {
 			:player[CONFIRMS[x]].unl
 	
 			tmp.el["confirm_div_"+x].setDisplay(unl)
-			tmp.el["confirm_btn_"+x].setTxt(player.confirms[CONFIRMS[x]] ? "開啟":"關閉")
+			tmp.el["confirm_btn_"+x].setTxt(player.confirms[CONFIRMS[x]] ? "開":"關")
 		}
         tmp.el.total_time.setTxt(formatTime(player.time))
-        tmp.el.offline_active.setTxt(player.offline.active?"開啟":"關閉")
+        tmp.el.offline_active.setTxt(player.offline.active?"開":"關")
         tmp.el.tree_anim_btn.setDisplay(player.supernova.times.gte(1) || quUnl())
         tmp.el.tree_anim.setTxt(TREE_ANIM[player.options.tree_animation])
         tmp.el.mass_dis.setTxt(["預設",'一律顯示 g','一律顯示 mlt','只顯示重要單位'][player.options.massDis])
@@ -530,10 +555,10 @@ function updateHTML() {
 					tmp.el.massOverflow2.setDisplay(player.mass.gte(tmp.overflow_start.mass[1]))
 					tmp.el.massOverflow2.setHTML(`由於你的質量在 <b>${formatMass(tmp.overflow_start.mass[1])}</b> 溢出^2，你的質量溢出變得更強了！`)
 	
-					tmp.el.strongerOverflow.setDisplay(tmp.upgs.mass[3].eff.eff.gte(tmp.overflow_start.stronger[0]))
+					tmp.el.strongerOverflow.setDisplay(BUILDINGS.eff('mass_3').gte(tmp.overflow_start.stronger[0]))
 					tmp.el.strongerOverflow.setHTML(`由於你的增強器在 <b>${format(tmp.overflow_start.stronger[0])}</b> 溢出，它的效果已經 ${overflowFormat(tmp.overflow.stronger||1)}!`)
 	
-					tmp.el.strongerOverflow2.setDisplay(tmp.upgs.mass[3].eff.eff.gte(tmp.overflow_start.stronger[1]))
+					tmp.el.strongerOverflow2.setDisplay(BUILDINGS.eff('mass_3').gte(tmp.overflow_start.stronger[1]))
 					tmp.el.strongerOverflow2.setHTML(`由於你的增強器在 <b>${format(tmp.overflow_start.stronger[1])}</b> 溢出^2，你的增強器溢出變得更強了！`)
 				}
 			}
@@ -557,7 +582,7 @@ function updateHTML() {
 			else if (tmp.stab[1] == 4) updateAscensionsRewardHTML()
 		}
 		else if (tmp.tab == 2) {
-			updateMainUpgradesHTML()
+			if (tmp.stab[2] == 0) updateMainUpgradesHTML()
 		}
 		else if (tmp.tab == 3) {
 			updateChalHTML()

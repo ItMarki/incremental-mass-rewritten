@@ -126,10 +126,10 @@ const FERMIONS = {
                     return x
                 },
                 desc(x) {
-                    return `Z<sup>0</sup> 玻色子的第 1 個效果強 ${format(x.sub(1).mul(100))}%`+(x.gte(5)?"<span class='soft'>（軟上限）</span>":"")
+                    return `第 1 個 Z<sup>0</sup> 玻色子效果強 ${format(x.sub(1).mul(100))}%`+(x.gte(5)?"<span class='soft'>（軟上限）</span>":"")
                 },
                 inc: "質量",
-                cons: "你困在效果翻倍的質量膨脹裏",
+                cons: "你困在效果翻倍的質量膨脹",
                 isMass: true,
             },{
                 maxTier() {
@@ -158,7 +158,7 @@ const FERMIONS = {
                     return `光子和膠子升級 4 強 ${format(x)}x`+(x.gte(1.5)?"<span class='soft'>（軟上限）</span>":"")
                 },
                 inc: "暴怒點數",
-                cons: "你困在質量膨脹和挑戰 3-5 裏",
+                cons: "你困在質量膨脹和挑戰 3-5",
             },{
                 maxTier() {
                     if (hasElement(156)) return EINF
@@ -198,7 +198,7 @@ const FERMIONS = {
                     return E('e5e8').pow(t.pow(2)).mul('e6e9')
                 },
                 calcTier() {
-                    let res = tmp.tickspeedEffect && !tmp.pass?tmp.tickspeedEffect.eff_bottom:E(1)
+                    let res = !tmp.pass?BUILDINGS.eff('tickspeed','eff_bottom'):E(1)
                     if (res.lt('e6e9')) return E(0)
                     let x = res.div('e6e9').max(1).log('e5e8').max(0).root(2)
                     return FERMIONS.getTierScaling(x, true)
@@ -229,7 +229,7 @@ const FERMIONS = {
                 },
                 eff(i, t) {
                     let x = i.add(1).log10().add(1).log10().div(200).mul(t.softcap(8,0.5,0)).add(1)
-                    return x.softcap(15,hasPrestige(1,300)?0.55:0.5,0)
+                    return x.softcap(15,hasPrestige(1,300)?0.55:0.5,0).overflow(1e8,1/3,0)
                 },
                 desc(x) {
                     return `暗束效果強 ^${x.format()}`.corrupt(tmp.c16active)
@@ -241,7 +241,7 @@ const FERMIONS = {
         ],[
             {
                 maxTier() {
-                    if (hasTree("fn10")) return 1/0
+                    if (hasTree("fn10")) return EINF
                     let x = 15
                     if (hasTree("fn5")) x += 35
                     return x
@@ -308,7 +308,7 @@ const FERMIONS = {
                     return `時間速度便宜 ${format(x)}x（在元級價格增幅生效之前）`
                 },
                 inc: "暗物質",
-                cons: "你困在挑戰 8-9 裏",
+                cons: "你困在挑戰 8-9",
             },{
                 maxTier() {
                     if (hasElement(142)) return EINF
@@ -373,7 +373,7 @@ const FERMIONS = {
                     return E('10').pow(t.pow(1.5)).mul('e80')
                 },
                 calcTier() {
-                    let res = tmp.tickspeedEffect && !tmp.pass?tmp.tickspeedEffect.step:E(1)
+                    let res = !tmp.pass?BUILDINGS.eff('tickspeed','power'):E(1)
                     if (res.lt('e80')) return E(0)
                     let x = res.div('e80').max(1).log('10').max(0).root(1.5)
                     return FERMIONS.getTierScaling(x, true)
@@ -403,7 +403,7 @@ const FERMIONS = {
                 eff(i, t) {
                     let x = i.add(1).log10().add(1).log10().div(2000).mul(t.softcap(8,0.5,0))
                     if (hasBeyondRank(2,2)) x = x.mul(8)
-                    return x.softcap(20,hasPrestige(1,300)?0.55:0.5,0)
+                    return x.softcap(20,hasPrestige(1,300)?0.55:0.5,0).overflow(1e9,1/3,0)
                 },
                 desc(x) {
                     return `將重置底數的指數增加 ${format(x)}`
@@ -488,8 +488,8 @@ function updateFermionsTemp() {
 
 function updateFermionsHTML() {
     let r = [
-        [player.atom.atomic, player.md.particles, player.mass, player.rp.points, player.md.mass, tmp.tickspeedEffect.eff_bottom, tmp.fermions.prod[0]],
-        [player.atom.quarks, player.bh.mass, player.bh.dm, player.stars.points, player.atom.points, tmp.tickspeedEffect.step, tmp.fermions.prod[1]]
+        [player.atom.atomic, player.md.particles, player.mass, player.rp.points, player.md.mass, BUILDINGS.eff('tickspeed','eff_bottom'), tmp.fermions.prod[0]],
+        [player.atom.quarks, player.bh.mass, player.bh.dm, player.stars.points, player.atom.points, BUILDINGS.eff('tickspeed','power'), tmp.fermions.prod[1]]
     ]
     for (i = 0; i < 2; i++) {
         tmp.el["f"+FERMIONS.names[i]+"Amt"].setTxt(format(player.supernova.fermions.points[i],2)+" "+formatGain(player.supernova.fermions.points[i],tmp.fermions.gains[i].mul(tmp.preQUGlobalSpeed)))

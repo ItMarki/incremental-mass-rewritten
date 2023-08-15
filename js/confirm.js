@@ -102,6 +102,7 @@ const CONFIRMS_FUNCTION = {
     dark() {
         player.dark.unl = true
         player.dark.rays = player.dark.rays.add(tmp.dark.gain)
+        if (CHALS.inChal(19)) player.dark.rays = player.dark.rays.min(1e12)
 
         DARK.doReset()
 
@@ -113,7 +114,7 @@ const CONFIRMS_FUNCTION = {
             else {
                 let td = player.inf.pre_theorem[player.inf.pt_choosed==-1?Math.floor(Math.random()*4):player.inf.pt_choosed]
 
-                addTheorem(td.type,td.star_c,tmp.core_lvl.floor(),td.power_m.mul(getPowerMult()).add(1))
+                addTheorem(td.type,td.star_c,tmp.core_lvl.floor(),getPowerMult().mul(td.power_m).add(1))
             }
         } else if (hasElement(239) && player.inf.pt_choosed < 0) {
             let fl = Decimal.floor(tmp.core_lvl), pm = getPowerMult()
@@ -123,7 +124,7 @@ const CONFIRMS_FUNCTION = {
             }
         }
 
-        
+
         if (player.inf.theorem.eq(0)) {
             player.inf.points = player.inf.points.add(2)
             player.inf.total = player.inf.total.add(2)
@@ -134,11 +135,11 @@ const CONFIRMS_FUNCTION = {
         }
 
         player.inf.best = player.inf.best.max(tmp.IP_gain)
-        
+
         if (tmp.inf_reached) player.inf.theorem = player.inf.theorem.add(1)
 
         updateInfTemp()
-        
+
         INF.doReset()
 
         updateTheoremCore()

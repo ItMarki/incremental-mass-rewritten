@@ -2,12 +2,15 @@ const PRIM = {
     unl() { return hasTree('unl2') },
     getTheorems() {
         let b = tmp.prim.t_base
-        let x = player.qu.bp.max(1).log(b).mul(2).mul(tmp.chal?tmp.chal.eff[14]:1).scale(1e42,10,0,true)
-        return x.floor()
+        let x = player.qu.bp.max(1).log(b).mul(2).mul(tmp.chal?tmp.chal.eff[14]:1)
+        if (!hasElement(63,1)) x = x.scale(1e42,10,0,true)
+        return x.root(tmp.prim.prim_pow).floor()
     },
     getNextTheorem() {
         let b = tmp.prim.t_base
-        let x = E(b).pow(player.qu.prim.theorems.scale(1e42,10,0).div(tmp.chal?tmp.chal.eff[14]:1).div(2).add(1))
+        let t = player.qu.prim.theorems.pow(tmp.prim.prim_pow)
+        if (!hasElement(63,1)) t = t.scale(1e42,10,0)
+        let x = E(b).pow(t.div(tmp.chal?tmp.chal.eff[14]:1).div(2).add(1))
 
         return x
     },
@@ -61,8 +64,8 @@ const PRIM = {
             },
             p=>{
                 if (hasElement(107)) p = p.mul(2)
-                let x = p.pow(0.9).mul(2)
-                return x.softcap(1500,0.5,0)
+                let x = hasUpgrade('br',22) ? p.add(1).root(10).softcap(1e30,0.25,0) : p.pow(0.9).mul(2).softcap(1500,0.5,0)
+                return x
             },
         ],
         effDesc: [
@@ -73,7 +76,7 @@ const PRIM = {
             x=>{ return `將希格斯玻色子的效果加強 ${format(x)}x` },
             x=>{ return `將費米子獲得量的底數增加 ${format(x[0])}` + (hasTree("prim3") ? `<br>免費給予 ${format(x[1])} 個費米子階` : "") },
             x=>{ return `將所有輻射的獲得量提升 ${format(x[0])}x` + (hasTree("prim2") ? `<br>將所有輻射的效果加強 ${format(x[1])}x` : "") },
-            x=>{ return `將${player.dark.unl ? "奇異級前" : "所有"}超新星增幅推遲 ${format(x)} 次` + x.softcapHTML(1500)},
+            x=>{ return hasUpgrade('br',22) ? `將超新星生產量提升 ${formatMult(x)}` :`將${player.dark.unl ? "奇異級前" : "所有"}超新星增幅推遲 ${format(x)} 次` + x.softcapHTML(1500)},
         ],
     },
 }
@@ -146,6 +149,9 @@ function updatePrimordiumTemp() {
 
     if (tmp.inf_unl) pstr = pstr.mul(theoremEff('proto',1))
 
+    let p_mul = hasElement(63,1)
+
+    tp.prim_pow = tmp.cs_effect.prim_reduce || 1
     tp.theorems = PRIM.getTheorems()
     tp.next_theorem = PRIM.getNextTheorem()
     tp.spent_theorem = PRIM.spentTheorems()
@@ -167,18 +173,20 @@ function updatePrimordiumTemp() {
         tp.parts[i] = pp
         tp.bonus[i] = b
         if (player.qu.rip.active || tmp.c16active || inDarkRun()) pp = pp.mul(i==5?hasElement(95)?0.1:0:1/2)
-        tp.eff[i] = PRIM.particle.eff[i](pp.add(b).softcap(100,0.75,0).mul(pstr))
+        tp.eff[i] = PRIM.particle.eff[i]((p_mul ? pp.add(1).mul(b.add(1)).sub(1) : pp.add(b)).softcap(100,0.75,0).mul(pstr))
     }
 
     calcPartChances()
 }
 
 function updatePrimordiumHTML() {
+    let p_mul = hasElement(63,1)
+
     tmp.el.prim_btns.setDisplay(!hasTree('qu_qol12'))
     tmp.el.prim_theorem.setTxt(format(tmp.prim.unspent,0)+" / "+format(player.qu.prim.theorems,0))
     tmp.el.prim_next_theorem.setTxt(format(player.qu.bp,1)+" / "+format(tmp.prim.next_theorem,1))
     for (let i = 0; i < player.qu.prim.particles.length; i++) {
-        tmp.el["prim_part"+i].setTxt(format(tmp.prim.parts[i],0)+(tmp.prim.bonus[i].gt(0)?" + "+tmp.prim.bonus[i].format(0):""))
+        tmp.el["prim_part"+i].setTxt(format(tmp.prim.parts[i],0)+(tmp.prim.bonus[i].gt(0)?(p_mul ? " × " : " + ")+tmp.prim.bonus[i].format(0):""))
         tmp.el["prim_part_eff"+i].setHTML(PRIM.particle.effDesc[i](tmp.prim.eff[i]))
     }
 }

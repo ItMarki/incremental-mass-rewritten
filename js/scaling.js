@@ -16,11 +16,15 @@ const SCALE_START = {
 		prestige1: E(7),
 		prestige2: E(30),
 		prestige3: E(8),
+		prestige4: E(10),
 		massUpg4: E(50),
 		FSS: E(5),
+		fvm: E(1e11),
 		pe: E(25),
 		inf_theorem: E(10),
 		ascension0: E(20),
+		ascension1: E(10),
+		gal_prestige: E(10),
     },
 	hyper: {
 		rank: E(120),
@@ -77,6 +81,13 @@ const SCALE_START = {
 		rank: E(1e37),
 		supernova: E(1e7),
 	},
+	instant: {
+		rank: E('e400'),
+		fvm: E(1e25),
+	},
+	mega: {
+
+	},
 }
 
 const SCALE_POWER= {
@@ -97,11 +108,15 @@ const SCALE_POWER= {
 		prestige1: 1.5,
 		prestige2: 2,
 		prestige3: 2,
+		prestige4: 2.5,
 		massUpg4: 3,
 		FSS: 2,
+		fvm: 10,
 		pe: 2,
 		inf_theorem: 2,
 		ascension0: 2,
+		ascension1: 2,
+		gal_prestige: 2,
     },
 	hyper: {
 		rank: 2.5,
@@ -158,6 +173,13 @@ const SCALE_POWER= {
 		rank: 50,
 		supernova: 75,
 	},
+	instant: {
+		rank: 3,
+		fvm: 10,
+	},
+	mega: {
+
+	},
 }
 
 const SCALE_FP = {
@@ -166,8 +188,8 @@ const SCALE_FP = {
 
 const QCM8_SCALES = ['rank','tier','tetr','pent','hex','massUpg','tickspeed','bh_condenser','gamma_ray','supernova','fTier']
 const PreQ_SCALES = ['rank','tier','tetr','massUpg','tickspeed','bh_condenser','gamma_ray']
-const SCALE_TYPE = ['super', 'hyper', 'ultra', 'meta', 'exotic', 'supercritical'] // super, hyper, ultra, meta, 'exotic'
-const FULL_SCALE_NAME = ['超級', '高級', '極高級', '元級', '奇異級', '超臨界']
+const SCALE_TYPE = ['super', 'hyper', 'ultra', 'meta', 'exotic', 'supercritical', 'instant', 'mega'] // super, hyper, ultra, meta, 'exotic'
+const FULL_SCALE_NAME = ['超級', '高級', '極高級', '元級', '奇異級', '超臨界', '瞬時', '兆級']
 
 const SCALING_RES = {
     rank(x=0) { return player.ranks.rank },
@@ -175,22 +197,26 @@ const SCALING_RES = {
 	tetr(x=0) { return player.ranks.tetr },
 	pent(x=0) { return player.ranks.pent },
 	hex(x=0) { return player.ranks.hex },
-	tickspeed(x=0) { return player.tickspeed },
-    massUpg(x=1) { return E(player.massUpg[x]||0) },
-	bh_condenser(x=0) { return player.bh.condenser },
-	gamma_ray(x=0) { return player.atom.gamma_ray },
+	tickspeed(x=0) { return player.build.tickspeed.amt },
+    massUpg(x=1) { return player.build["mass_"+(x+1)].amt },
+	bh_condenser(x=0) { return player.build.bhc.amt },
+	gamma_ray(x=0) { return player.build.cosmic_ray.amt },
 	supernova(x=0) { return player.supernova.times },
 	fTier(x=0, y=0) { return player.supernova.fermions.tiers[x][y] },
-	cosmic_str(x=0) { return player.qu.cosmic_str },
+	cosmic_str(x=0) { return player.build.cosmic_string.amt },
 	prestige0() { return player.prestiges[0] },
 	prestige1() { return player.prestiges[1] },
 	prestige2() { return player.prestiges[2] },
 	prestige3() { return player.prestiges[3] },
-	massUpg4() { return E(player.massUpg[4]||0) },
+	prestige4() { return player.prestiges[4] },
+	massUpg4() { return player.build.mass_4.amt },
 	FSS() { return player.dark.matters.final },
-	pe() { return player.inf.pe},
-	inf_theorem() { return player.inf.theorem},
+	fvm() { return player.build.fvm.amt },
+	pe() { return player.build.pe.amt },
+	inf_theorem() { return player.inf.theorem },
 	ascension0() { return player.ascensions[0] },
+	ascension1() { return player.ascensions[1] },
+	gal_prestige() { return player.gal_prestige },
 }
 
 const NAME_FROM_RES = {
@@ -210,16 +236,20 @@ const NAME_FROM_RES = {
 	prestige1: "榮耀",
 	prestige2: "榮譽",
 	prestige3: "聲望",
+	prestige4: "英勇",
 	massUpg4: "過強器",
 	FSS: "天樞碎片",
+	fvm: "假真空操控器",
 	pe: "平行擠壓器",
 	inf_theorem: "無限定理",
 	ascension0: "升華",
+	ascension1: "超越",
+	gal_prestige: "星系重置",
 }
 
 const C18_SCALING = [
 	'rank','tier','tetr','pent','hex','massUpg','tickspeed','bh_condenser','gamma_ray','supernova','fTier',
-	'cosmic_str','prestige0','prestige1','prestige2','prestige3','massUpg4','FSS'
+	'cosmic_str','prestige0','prestige1','prestige2','prestige3','massUpg4','FSS','fvm'
 ]
 
 function updateScalingHTML() {
@@ -227,15 +257,16 @@ function updateScalingHTML() {
 	// tmp.el.scaling_name.setTxt(FULL_SCALE_NAME[player.scaling_ch])
 	if (!tmp.scaling) return
 	for (let x = 0; x < SCALE_TYPE.length; x++) {
+		let type = SCALE_TYPE[x]
 		tmp.el["scaling_div_"+x].setDisplay(player.scaling_ch == x)
 		if (player.scaling_ch == x) {
-			let key = Object.keys(SCALE_START[SCALE_TYPE[x]])
-			for (let y = 0; y < key.length; y++) {
-				let have = tmp.scaling[SCALE_TYPE[x]].includes(key[y])
-				tmp.el['scaling_'+x+'_'+key[y]+'_div'].setDisplay(have)
+			for (let key in SCALE_START[type]) {
+				let have = tmp.scaling[type].includes(key)
+				tmp.el['scaling_'+x+'_'+key+'_div'].setDisplay(have)
 				if (have) {
-					tmp.el['scaling_'+x+'_'+key[y]+'_power'].setTxt(format(tmp.scaling_power[SCALE_TYPE[x]][key[y]].mul(100))+"%")
-					tmp.el['scaling_'+x+'_'+key[y]+'_start'].setTxt(format(tmp.scaling_start[SCALE_TYPE[x]][key[y]],0))
+					let p = tmp.scaling_power[type][key], q = Decimal.pow(SCALE_POWER[type][key],p)
+					tmp.el['scaling_'+x+'_'+key+'_power'].setTxt(format(p.mul(100))+"%, "+(x%4==3?q.format()+"^":"^"+q.format()+(x>=6?" to exponent":"")))
+					tmp.el['scaling_'+x+'_'+key+'_start'].setTxt(format(tmp.scaling_start[type][key],0))
 				}
 			}
 		}
@@ -259,7 +290,7 @@ function updateScalingTemp() {
 			ss[sn] = getScalingStart(x,sn)
 			if (noScalings(x,sn)) ns.push(sn)
 			else {
-				if (sn == "massUpg") for (let i = 0; i < UPGS.mass.cols; i++) {
+				if (sn == "massUpg") for (let i = 0; i < 3; i++) {
 					if (scalingActive(sn, SCALING_RES[sn](i), st)) {
 						tmp.scaling[st].push(sn)
 						break
@@ -291,14 +322,14 @@ function scalingActive(name, amt, type) {
 function scaleStart(type,name) { return tmp.scaling_start[type][name]||SCALE_START[type][name] }
 
 function getScalingName(name, x=0, y=0) {
-	if (!NAME_FROM_RES[name]) return
+	if (!NAME_FROM_RES[name]) return ''
 
 	let cap = Object.keys(SCALE_START).length;
 	let current = "";
 	let amt = SCALING_RES[name](x,y);
 	for (let n = cap - 1; n >= 0; n--) {
 		if (scalingActive(name, amt, Object.keys(SCALE_START)[n]))
-		return (n==5?"超臨界":n==4?"奇異級":n==3?"元級":n==2?"極高級":n==1?"高級":n==0?"超級":"")
+		return (n==7?"兆級":n==6?"瞬時":n==5?"超臨界":n==4?"奇異級":n==3?"元級":n==2?"極高級":n==1?"高級":n==0?"超級":"")
 	}
 	return current;
 }
@@ -351,6 +382,12 @@ function getScalingStart(type, name) {
 		else if (name=="massUpg4") {
 			if (hasAscension(1,3)) start = start.add(50)
 		}
+		else if (name=="gal_prestige") {
+			if (hasElement(285)) start = start.add(1)
+		}
+		else if (name=='inf_theorem') {
+			if (hasBeyondRank(28,1)) start = start.add(5)
+		}
 	}
 	else if (type==1) {
 		if (name=="tickspeed") {
@@ -369,6 +406,9 @@ function getScalingStart(type, name) {
 		}
 		else if (name=="massUpg4") {
 			if (hasAscension(1,3)) start = start.add(50)
+		}
+		else if (name=="FSS") {
+			if (hasElement(55,1) && hasBeyondRank(5,2)) start = start.add(beyondRankEffect(5,2,0))
 		}
 	}
 	else if (type==2) {
@@ -391,7 +431,7 @@ function getScalingStart(type, name) {
 			if (player.ranks.pent.gte(5)) start = start.mul(RANKS.effect.pent[5]())
 			if (hasPrestige(1,5)) start = start.mul(prestigeEff(1,5))
 			start = start.mul(tmp.radiation.bs.eff[14])
-			start = start.mul(tmp.bd.upgs[4].eff)
+			if (!hasUpgrade('br',24)) start = start.mul(tmp.bd.upgs[4].eff)
 		}
 		else if (name=="tickspeed") {
 			if (hasElement(68)) start = start.mul(2)
@@ -419,6 +459,7 @@ function getScalingStart(type, name) {
 		else if (name=="prestige0") {
 			start = start.mul(exoticAEff(0,1))
 			if (hasAscension(1,4)) start = start.mul(2)
+			if (hasBeyondRank(14,1)) start = start.mul(beyondRankEffect(14,1))
 		}
 		else if (name=="fTier") {
 			if (hasAscension(0,2)) start = start.pow(2)
@@ -441,8 +482,13 @@ function getScalingStart(type, name) {
 		else if (name=="supernova") {
 			if (hasBeyondRank(4,1)) start = start.add(beyondRankEffect(4,1,0))
 		}
+	} else if (type==6) {
+		if (name=="rank") {
+			if (hasUpgrade('br',24)) start = start.mul(tmp.bd.upgs[4].eff)
+		}
 	}
-	if (name=='supernova' && type < 4) {
+	
+	if (name=='supernova' && type < 4 && !hasUpgrade('br',22)) {
 		start = start.add(tmp.prim.eff[7])
 	}
 	if (name=="fTier" && type < 4) {
@@ -512,6 +558,9 @@ function getScalingPower(type, name) {
 		}
 		else if (name=="prestige3") {
 			if (hasPrestige(4,1)) power = power.mul(0.75)
+		}
+		else if (name=="fvm") {
+			if (hasElement(275)) power = power.mul(0.5)
 		}
 	}
 	else if (type==1) {

@@ -38,7 +38,7 @@ const RANKS = {
     doReset: {
         rank() {
             player.mass = E(0)
-            for (let x = 1; x <= UPGS.mass.cols; x++) if (player.massUpg[x]) player.massUpg[x] = E(0)
+            for (let x = 1; x <= UPGS.mass.cols; x++) BUILDINGS.reset("mass_"+x)
         },
         tier() {
             player.ranks.rank = E(0)
@@ -132,11 +132,11 @@ const RANKS = {
     effect: {
         rank: {
             '3'() {
-                let ret = E(player.massUpg[1]||0).div(20)
+                let ret = player.build.mass_1.amt.div(20)
                 return ret
             },
             '5'() {
-                let ret = E(player.massUpg[2]||0).div(40)
+                let ret = player.build.mass_2.amt.div(40)
                 return ret
             },
             '6'() {
@@ -176,11 +176,11 @@ const RANKS = {
             '6'() {
                 let ret = E(2).pow(player.ranks.tier)
                 if (player.ranks.tier.gte(8)) ret = ret.pow(RANKS.effect.tier[8]())
-                return overflow(ret,'ee100',0.5)
+                return overflow(ret,'ee100',0.5).overflow('ee40000',0.25,2)
             },
             '8'() {
                 let ret = player.bh.dm.max(1).log10().add(1).root(2)
-                return ret
+                return ret.overflow('ee5',0.5)
             },
             '55'() {
                 let ret = player.ranks.tier.max(1).log10().add(1).root(4)
@@ -189,7 +189,7 @@ const RANKS = {
         },
         tetr: {
             '2'() {
-                let ret = E(player.massUpg[3]||0).div(400)
+                let ret = player.build.mass_3.amt.div(400)
                 if (ret.gte(1) && hasPrestige(0,15)) ret = ret.pow(1.5)
                 return ret
             },
@@ -284,7 +284,7 @@ const CORRUPTED_PRES = [
 
 const PRESTIGES = {
     names: ['prestige','honor','glory','renown','valor'],
-    fullNames: ["重置等級", "榮耀", '榮譽', '聲望','英勇'],
+    fullNames: ["重置等級", "榮耀", '榮譽', '聲望', '英勇'],
     baseExponent() {
         let x = E(0)
 
@@ -438,7 +438,7 @@ const PRESTIGES = {
             "91": `FSS 底數 ^1.05。`,
             "127": `移除等級和階的所有奇異級前增幅，但是挑戰 5 的獎勵以及鈾砹混合體對等級和階的第 1 個效果無效。`,
             "139": `每擁有一個 FSS，有色物質生產加快至 3x。FVM 稍微更便宜。`,
-            "167": `FFS 對深淵之漬的第 4 個獎勵提供指數倍數。`,
+            "167": `FFS 對第 4 個深淵之漬獎勵提供指數加成。`,
             "247": `MCF 階數提升 K 介子獲得量。`,
             "300": `[元夸克] 和 [元輕子] 的軟上限稍微更弱。`,
             400: `每個粒子力量的第 1 個效果更強。`,
@@ -470,6 +470,7 @@ const PRESTIGES = {
         {
             1: `超級聲望弱 25%。`,
             7: `腐化恆星升級 1 和 2 的價格除以 1e10。`,
+            12: `大幅增強第 7 個八級層的獎勵。`,
         },
     ],
     rewardEff: [
@@ -634,10 +635,12 @@ function updateRanksTemp() {
     let ffp2 = 1
     if (tmp.c16active || inDarkRun()) ffp2 /= mgEff(5)
 
+    let rooted_fp = GPEffect(3)
+
     let fp = RANKS.fp.rank().mul(ffp)
-    tmp.ranks.rank.req = E(10).pow(player.ranks.rank.div(ifp).div(ffp2).scaleEvery('rank',false,[1,1,1,1,rt_fp2]).div(fp).pow(1.15)).mul(10)
+    tmp.ranks.rank.req = E(10).pow(player.ranks.rank.div(ffp2).scaleEvery('rank',false,[1,1,1,1,rt_fp2,1,ifp]).pow(rooted_fp).div(fp).pow(1.15)).mul(10)
     tmp.ranks.rank.bulk = E(0)
-    if (player.mass.gte(10)) tmp.ranks.rank.bulk = player.mass.div(10).max(1).log10().root(1.15).mul(fp).scaleEvery('rank',true,[1,1,1,1,rt_fp2]).mul(ffp2).mul(ifp).add(1).floor();
+    if (player.mass.gte(10)) tmp.ranks.rank.bulk = player.mass.div(10).max(1).log10().root(1.15).mul(fp).root(rooted_fp).scaleEvery('rank',true,[1,1,1,1,rt_fp2,1,ifp]).mul(ffp2).add(1).floor();
     tmp.ranks.rank.can = player.mass.gte(tmp.ranks.rank.req) && !CHALS.inChal(5) && !CHALS.inChal(10) && !FERMIONS.onActive("03")
 
     fp = RANKS.fp.tier().mul(ffp)
@@ -705,6 +708,16 @@ function updateRanksTemp() {
 
     tmp.beyond_ranks.tier_power = p
 
+    let rcs = E(1e14)
+
+    if (hasUpgrade('rp',22)) rcs = rcs.mul(upgEffect(1,22))
+    if (hasElement(287)) rcs = rcs.mul(elemEffect(287))
+
+    tmp.rank_collapse.start = rcs
+
+    tmp.beyond_ranks.scale_start = 24
+    tmp.beyond_ranks.scale_pow = 1.6
+    
     tmp.beyond_ranks.max_tier = BEYOND_RANKS.getTier()
     tmp.beyond_ranks.latestRank = BEYOND_RANKS.getRankFromTier(tmp.beyond_ranks.max_tier)
 
@@ -736,16 +749,17 @@ const BEYOND_RANKS = {
         return x
     },
     getTier(r=player.ranks.beyond) {
-        let x = r.gt(0)?r.log10().max(0).pow(.8).mul(tmp.beyond_ranks.tier_power).add(1).floor():E(1)
+        let x = r.gt(0)?r.log10().max(0).pow(.8).mul(tmp.beyond_ranks.tier_power).add(1).scale(tmp.beyond_ranks.scale_start,tmp.beyond_ranks.scale_pow,0,true).floor():E(1)
         return x
     },
     getRankFromTier(i,r=player.ranks.beyond) {
-        let hp = Decimal.pow(10,Decimal.pow(Decimal.sub(i,1).div(tmp.beyond_ranks.tier_power),1/.8)).ceil()
+        let hp = Decimal.pow(10,Decimal.pow(Decimal.sub(i.scale(tmp.beyond_ranks.scale_start,tmp.beyond_ranks.scale_pow,0),1).div(tmp.beyond_ranks.tier_power),1/.8)).ceil()
 
         return r.div(hp).floor()
     },
     getRequirementFromTier(i,t=tmp.beyond_ranks.latestRank,mt=tmp.beyond_ranks.max_tier) {
-        return Decimal.pow(10,Decimal.pow(Decimal.div(mt,tmp.beyond_ranks.tier_power),1/.8).sub(Decimal.pow(Decimal.sub(mt,i).div(tmp.beyond_ranks.tier_power),1/.8))).mul(Decimal.add(t,1)).ceil()
+        let s = tmp.beyond_ranks.scale_start, p = tmp.beyond_ranks.scale_pow
+        return Decimal.pow(10,Decimal.pow(Decimal.div(mt.add(1).scale(s,p,0).sub(1),tmp.beyond_ranks.tier_power),1/.8).sub(Decimal.pow(Decimal.sub(mt,i).add(1).scale(s,p,0).sub(1).div(tmp.beyond_ranks.tier_power),1/.8))).mul(Decimal.add(t,1)).ceil()
         // Decimal.pow(10,Math.pow(mt/tmp.beyond_ranks.tier_power,1/.8)-Math.pow((mt-i)/tmp.beyond_ranks.tier_power,1/.8)).mul(Decimal.add(t,1)).ceil()
     },
     getRankDisplayFromValue(r) {
@@ -769,7 +783,7 @@ const BEYOND_RANKS = {
         1: {
             1: `有色質量指數增加 0.5。`,
             2: `暗束加強所有有色物質的升級。`,
-            4: `FSS 加強鈾砹混合體的第 2 個效果。`,
+            4: `FSS 加強第 2 個鈾砹混合體效果。`,
             7: `七級層提升有色物質獲得量。`,
         },
         2: {
@@ -786,13 +800,13 @@ const BEYOND_RANKS = {
             1: `普通質量的主宇宙（arv）階數減弱質量和提重器溢出。`,
             2: `超級 FSS 推遲 1 個。`,
             4: `超·級別提升 K 介子和 π 介子獲得量。`,
-            12: `移除暗束的第 4 個獎勵的軟上限。`,
+            12: `移除第 4 個暗束獎勵的軟上限。`,
             18: `超·級別每達到一個級數，超級 FSS 增幅弱 2.5%（最高 50%）。`,
             32: `氬-18 加強時間速度力量。`,
         },
         4: {
             1: `Β 粒子稍微推遲超臨界超新星。`,
-            2: `由十級層開始，超·級別的級數提升重置底數的指數。`,
+            2: `由十級層開始，超·級別的最高級數提升重置底數的指數。`,
             40: `[陶子] 的獎勵 ^3。`,
         },
         5: {
@@ -811,6 +825,18 @@ const BEYOND_RANKS = {
         },
         12: {
             1: `中子元素-0 極微加強挑戰 16 的獎勵。`,
+        },
+        14: {
+            1: `第 2 個十級層的效果公式更好。由二十級層開始，超·級別的最高級數推遲元級重置等級。`,
+        },
+        16: {
+            1: `由二十級層開始，超·級別的最高級數提升升華底數的質數。`,
+        },
+        20: {
+            1: `第 2 個加速器效果軟上限稍微更弱。`,
+        },
+        28: {
+            1: `超級無限定理推遲 +5 個。`,
         },
     },
 
@@ -854,9 +880,9 @@ const BEYOND_RANKS = {
             ],
             7: [
                 ()=>{
-                    let x = player.ranks.beyond.add(1).log10().add(1).pow(2)
+                    let x = hasPrestige(4,12) ? player.ranks.beyond.add(1).pow(0.4) : player.ranks.beyond.add(1).log10().add(1).pow(2).overflow(10,0.5)
 
-                    return overflow(x,10,0.5)
+                    return x
                 },
                 x=>"x"+format(x),
             ],
@@ -908,7 +934,7 @@ const BEYOND_RANKS = {
             ],
             2: [
                 ()=>{
-                    let x = tmp.beyond_ranks.max_tier.sub(3).pow(.2).mul(.2).add(1) // (tmp.beyond_ranks.max_tier-3)**0.2*0.2+1
+                    let x = tmp.beyond_ranks.max_tier.sub(3).pow(hasBeyondRank(14,1) ? 1 : .2).mul(.2).add(1) // (tmp.beyond_ranks.max_tier-3)**0.2*0.2+1
 
                     return Decimal.max(1,x)
                 },
@@ -943,6 +969,26 @@ const BEYOND_RANKS = {
                     return x
                 },
                 x=>formatMult(x),
+            ],
+        },
+        14: {
+            1: [
+                ()=>{
+                    let x = Decimal.pow(1.25,tmp.beyond_ranks.max_tier.sub(13).max(0).root(2))
+
+                    return x
+                },
+                x=>"推遲 "+formatMult(x),
+            ],
+        },
+        16: {
+            1: [
+                ()=>{
+                    let x = tmp.beyond_ranks.max_tier.sub(13).max(0).div(50)
+
+                    return x
+                },
+                x=>"+"+format(x),
             ],
         },
     },
@@ -1016,7 +1062,7 @@ function updateRanksHTML() {
                 tmp.el["ranks_desc_"+x].setTxt(desc)
                 tmp.el["ranks_req_"+x].setTxt(x==0?formatMass(tmp.ranks[rn].req):"第 "+format(tmp.ranks[rn].req,0)+" 個"+RANKS.fullNames[x-1])
                 tmp.el["ranks_auto_"+x].setDisplay(RANKS.autoUnl[rn]())
-                tmp.el["ranks_auto_"+x].setTxt(player.auto_ranks[rn]?"開啟":"關閉")
+                tmp.el["ranks_auto_"+x].setTxt(player.auto_ranks[rn]?"開":"關")
             }
         }
 
@@ -1035,7 +1081,7 @@ function updateRanksHTML() {
             // Beyond Rank
 
             tmp.el.br_auto.setDisplay(hasBeyondRank(2,1)||hasInfUpgrade(10))
-            tmp.el.br_auto.setTxt(player.auto_ranks.beyond?"開啟":"關閉")
+            tmp.el.br_auto.setTxt(player.auto_ranks.beyond?"開":"關")
 
             let t = tmp.beyond_ranks.max_tier
             h = ''
@@ -1066,7 +1112,7 @@ function updateRanksHTML() {
                 升${getRankTierName(t.add(5))}的要求：第 ${
                     t == 1
                     ? tmp.beyond_ranks.req.format(0)
-                    : BEYOND_RANKS.getRequirementFromTier(1,tmp.beyond_ranks.latestRank,t-1).format(0)
+                    : BEYOND_RANKS.getRequirementFromTier(1,tmp.beyond_ranks.latestRank,t.sub(1)).format(0)
                 } 個${getRankTierName(t.add(4))}。<br>
                 升${getRankTierName(t.add(6))}的要求：第 ${BEYOND_RANKS.getRequirementFromTier(1,0).format(0)} 個${getRankTierName(t.add(5))}。
             `
@@ -1106,7 +1152,7 @@ function updateRanksHTML() {
                 tmp.el["pres_desc_"+x].setTxt(desc)
                 tmp.el["pres_req_"+x].setTxt(x==0?"重置底數到達 "+format(tmp.prestiges.req[x],0):"第 "+format(tmp.prestiges.req[x],0)+" 個"+PRESTIGES.fullNames[x-1])
                 tmp.el["pres_auto_"+x].setDisplay(PRESTIGES.autoUnl[x]())
-                tmp.el["pres_auto_"+x].setTxt(player.auto_pres[x]?"開啟":"關閉")
+                tmp.el["pres_auto_"+x].setTxt(player.auto_pres[x]?"開":"關")
             }
         }
 
@@ -1121,7 +1167,7 @@ const PRES_BEFOREC13 = [40,7]
 
 const GAL_PRESTIGE = {
     req() {
-        let x = Decimal.pow(10,player.gal_prestige.pow(1.5)).mul(1e17)
+        let x = Decimal.pow(10,player.gal_prestige.scaleEvery('gal_prestige').pow(1.5)).mul(1e17)
 
         return x
     },
@@ -1138,22 +1184,38 @@ const GAL_PRESTIGE = {
         switch (i) {
             case 0:
                 if (gp.gte(1)) {
-                    x = player.stars.points.add(1).log10().add(1).log10().add(1).pow(gp.root(1.5))
+                    x = player.stars.points.add(1).log10().add(1).log10().add(1).pow(gp.root(1.5)).sub(1)
                 }
             break;
             case 1:
                 if (gp.gte(2)) {
-                    x = tmp.prestiges.base.add(1).log10().add(1).pow(gp.sub(1).root(1.5))
+                    x = tmp.prestiges.base.add(1).log10().add(1).pow(gp.sub(1).root(1.5)).sub(1)
                 }
             break;
             case 2:
                 if (gp.gte(4)) {
-                    x = player.dark.matters.amt[12].add(1).log10().add(1).log10().add(1).pow(2).pow(gp.sub(3).root(1.5))
+                    x = player.dark.matters.amt[12].add(1).log10().add(1).log10().add(1).pow(2).pow(gp.sub(3).root(1.5)).sub(1)
+                }
+            break;
+            case 3:
+                if (gp.gte(6)) {
+                    x = player.supernova.radiation.hz.add(1).log10().add(1).log10().add(1).pow(2).pow(gp.sub(5).root(1.5)).sub(1)
+                }
+            break;
+            case 4:
+                if (gp.gte(9)) {
+                    x = player.inf.cs_amount.add(1).log10().add(1).pow(2).pow(gp.sub(8).root(1.5)).sub(1)
+                }
+            break;
+            case 5:
+                if (gp.gte(14)) {
+                    x = player.supernova.bosons.hb.add(10).log10().log10().add(1).pow(gp.sub(13).root(1.5)).sub(1)
                 }
             break;
         }
 
         if (hasElement(263)) x = x.mul(elemEffect(263))
+        if (hasElement(281)) x = x.mul(elemEffect(281))
 
         return x
     },
@@ -1170,11 +1232,20 @@ const GAL_PRESTIGE = {
             case 2:
                 x = res.add(1).log10().root(3).div(2)
             break;
+            case 3:
+                x = Decimal.pow(0.9,res.add(10).log10().log10().add(1).pow(2).sub(1))
+            break;
+            case 4:
+                x = Decimal.pow(0.95,res.add(1).slog(10))
+            break;
+            case 5:
+                x = expMult(res.add(1),0.5)
+            break;
         }
 
         return x
     },
-    res_length: 3,
+    res_length: 5,
 }
 
 function GPEffect(i,def=1) { return tmp.gp.res_effect[i]||def }
@@ -1197,6 +1268,7 @@ function updateGPHTML() {
         let gp = player.gal_prestige
 
         tmp.el.gal_prestige.setHTML(gp.format(0))
+        tmp.el.gal_prestige_scale.setHTML(getScalingName('gal_prestige'))
         tmp.el.gp_btn.setHTML(`
         重置超新星（並強制執行無限重置），但你的星系重置會提升一級。下一個星系重置可能會解鎖新的事物。<br><br>
         要求：<b>${tmp.gp.req.format()}</b> 次超新星
@@ -1209,7 +1281,16 @@ function updateGPHTML() {
 
         if (gp.gte(2)) h += `你有 <h4>${formatMass(res[1])}</h4> ${res[1].formatGain(res_gain[1],true)} 的重置質量（基於重置底數和星系重置），將質量溢出^1-2 減弱 <h4>${formatReduction(res_effect[1])}</h4>。<br>`
 
-        if (gp.gte(4)) h += `你有 <h4>${formatMass(res[2])}</h4> ${res[1].formatGain(res_gain[2],true)} 的星系物質（基於褪色物質和星系重置），將所有有色物質升級的底數提升 <h4>+${format(res_effect[2])}</h4>。<br>`
+        if (gp.gte(4)) h += `你有 <h4>${res[2].format(0)}</h4> ${res[2].formatGain(res_gain[2])} 的星系物質（基於褪色物質和星系重置），將所有有色物質升級的底數提升 <h4>+${format(res_effect[2])}</h4>。<br>`
+
+        if (gp.gte(6)) h += `你有 <h4>${res[3].format(0)}</h4> ${res[3].formatGain(res_gain[3])} 的紅移（基於頻率和星系重置），
+        將等級要求減少 <h4>^${format(res_effect[3],5)}</h4>。<br>`
+
+        if (gp.gte(9)) h += `你有 <h4>${res[4].format(0)}</h4> ${res[4].formatGain(res_gain[4])} 法向能量（基於腐化之星和星系重置），
+        將腐化之星速度的減少減弱 <h4>${formatReduction(res_effect[4])}</h4>。<br>`
+
+        if (gp.gte(14)) h += `你有 <h4>${res[5].format(0)}</h4> ${res[5].formatGain(res_gain[5])} 個膨脹子（基於希格斯玻色子和星系重置） ，
+        將無限前全局運行速度提升 <h4>${formatMult(res_effect[5])}</h4>。<br>`
 
         tmp.el.gp_rewards.setHTML(h)
     }

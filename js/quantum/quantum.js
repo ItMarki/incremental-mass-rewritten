@@ -9,6 +9,9 @@ const QUANTUM = {
         if (hasTree("qf1")) x = x.mul(treeEff("qf1"))
         if (hasTree("qf2")) x = x.mul(treeEff("qf2"))
         if (hasTree("qf3")) x = x.mul(treeEff("qf3"))
+
+        x = x.pow(theoremEff('proto',5))
+        
         if (hasPrestige(0,2)) x = x.mul(4)
         return x.floor()
     },
@@ -80,7 +83,7 @@ const QUANTUM = {
         if (tmp.qu.mil_reached[5]) x = x.mul(tmp.preQUGlobalSpeed.max(1).root(2).softcap(1e50,0.95,2))
         if (hasTree('qu5')) x = x.mul(tmp.supernova.tree_eff.qu5)
         if (hasElement(138)) x = x.mul(elemEffect(138,1))
-        x = x.mul(tmp.qu.cosmic_str_eff.eff)
+        x = x.mul(BUILDINGS.eff('cosmic_string'))
         x = x.mul(tmp.dark.shadowEff.bp||1)
         return x
     },
@@ -159,7 +162,6 @@ function getQUSave() {
         points: E(0),
         times: E(0),
         bp: E(0),
-        cosmic_str: E(0),
 
         chr_get: [],
         chroma: [E(0),E(0),E(0)],
@@ -257,6 +259,7 @@ function updateQuantumTemp() {
     tmp.qu.theories = player.qu.times.sub(player.qu.chr_get.length).max(0).min(3).toNumber()
     tmp.qu.pick_chr = tmp.qu.theories > 0
 
+    /*
     let fp = E(1)
 
     if (tmp.inf_unl) fp = fp.mul(theoremEff('proto',0))
@@ -266,6 +269,7 @@ function updateQuantumTemp() {
 
     tmp.qu.cosmic_str_can = player.qu.points.gte(tmp.qu.cosmic_str_cost)
     tmp.qu.cosmic_str_eff = QUANTUM.cosmic_str.eff()
+    */
 
     tmp.qu.bpGain = QUANTUM.bpGain()
     tmp.qu.bpEff = QUANTUM.bpEff()
@@ -282,6 +286,9 @@ function updateQuantumHTML() {
         tmp.el.bpAmt.setTxt(format(player.qu.bp,1)+" "+formatGain(player.qu.bp,tmp.qu.bpGain.mul(inf_gs)))
         tmp.el.bpEff.setTxt(format(tmp.qu.bpEff))
 
+        BUILDINGS.update('cosmic_string')
+
+        /*
         tmp.el.cosmic_str_lvl.setTxt(format(player.qu.cosmic_str,0)+(tmp.qu.cosmic_str_eff.bonus.gte(1)?" + "+format(tmp.qu.cosmic_str_eff.bonus,0):""))
         tmp.el.cosmic_str_btn.setClasses({btn: true, locked: !tmp.qu.cosmic_str_can})
         tmp.el.cosmic_str_scale.setTxt(getScalingName('cosmic_str'))
@@ -290,7 +297,8 @@ function updateQuantumHTML() {
         tmp.el.cosmic_str_eff.setHTML(format(tmp.qu.cosmic_str_eff.eff))
 
         tmp.el.cosmic_str_auto.setDisplay(hasElement(147))
-        tmp.el.cosmic_str_auto.setHTML(player.qu.auto_cr?"開啟":"關閉")
+        tmp.el.cosmic_str_auto.setHTML(player.qu.auto_cr?"開":"關")
+        */
     }
 
     if (tmp.tab == 6) {
@@ -304,7 +312,7 @@ function updateQuantumHTML() {
             }
         }
         if (tmp.stab[6] == 2) {
-            tmp.el.auto_qu.setTxt(player.qu.auto.enabled?"開啟":"關閉")
+            tmp.el.auto_qu.setTxt(player.qu.auto.enabled?"開":"關")
             tmp.el.auto_qu_mode.setTxt(QUANTUM.auto.mode[player.qu.auto.mode])
             tmp.el.auto_qu_res.setTxt(player.qu.auto.mode==0?format(tmp.qu.auto_input,0):formatTime(tmp.qu.auto_input,1)+"s")
         }

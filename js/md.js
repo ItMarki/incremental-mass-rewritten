@@ -51,6 +51,8 @@ const MASS_DILATION = {
 
         if (hasElement(40)) x = x.pow(tmp.elements.effect[40][1])
         
+        x = expMult(x,theoremEff('atom',5))
+
         if (tmp.c16active || inDarkRun()) x = expMult(x,mgEff(3))
 
         let o = x
@@ -160,7 +162,7 @@ const MASS_DILATION = {
                 maxLvl: 1,
                 cost(x) { return E(1.5e296) },
                 bulk() { return player.md.mass.gte(1.5e296)?E(1):E(0) },
-                effect(x) { return player.tickspeed.add(1).pow(2/3) },
+                effect(x) { return player.build.tickspeed.amt.add(1).pow(2/3) },
                 effDesc(x) { return format(x)+"x" },
             },{
                 unl() { return STARS.unlocked() || player.supernova.times.gte(1) },
@@ -283,11 +285,11 @@ const MASS_DILATION = {
                     cost(x) { return E(1.989e33) },
                     bulk() { return player.md.break.mass.gte(1.989e33)?E(1):E(0) },
                 },{
-                    desc: `元級等級推遲開始。`,
+                    get desc() { return hasUpgrade('br',24) ? `瞬時等級推遲開始。` : `元級等級推遲開始。` },
                     cost(x) { return E(10).pow(x.pow(2)).mul(1.989e36) },
                     bulk() { return player.md.break.mass.gte(1.989e36)?player.md.break.mass.div(1.989e36).max(1).log10().root(2).add(1).floor():E(0) },
                     effect(y) {
-                        let x = y.div(10).add(1)
+                        let x = hasUpgrade('br',24) ? Decimal.pow(2,y.overflow(1e5,1/3).root(2)) : y.div(10).add(1)
 
                         return x
                     },

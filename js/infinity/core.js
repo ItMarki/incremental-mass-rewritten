@@ -8,6 +8,7 @@ const CORE = {
             `使超·級別前的級別更便宜。`,
             `增加重置底數的指數。`,
             `推遲普通質量溢出^2。`,
+            `提升升華底數的指數。`,
         ],
         res: `普通質量`,
         boost() {return player.mass.add(1).log10().add(1).log10().add(1).log10().add(1)},
@@ -46,7 +47,7 @@ const CORE = {
                 return overflow(x,100,0.5)
             },
             s => {
-                let x = E(0)
+                let x = s.add(1).log10().div(50)
 
                 return x
             },
@@ -67,7 +68,7 @@ const CORE = {
             x => formatMult(x),
             x => "+"+format(x),
             x => "^"+format(x),
-            x => formatMult(x),
+            x => "+"+format(x),
             x => formatMult(x),
             x => formatMult(x),
         ],
@@ -90,6 +91,7 @@ const CORE = {
             `減弱不穩定黑洞的削弱。`,
             `提升 FVM 力量。`,
             `加強不穩定黑洞的效果。`,
+            `減弱黑洞質量溢出。`,
         ],
         res: `黑洞質量`,
         boost() {return player.bh.mass.add(1).log10().add(1).log10().add(1).log10().add(1)},
@@ -119,7 +121,7 @@ const CORE = {
             s => {
                 let x = s.add(1).log10().div(100).add(1).pow(-1) // Math.pow(1+Math.log10(s+1)/100,-1)
 
-                if (tmp.NHDimprove) x = x.pow(10)
+                if (tmp.NHDimprove) x = x.pow(2)
 
                 return x
             },
@@ -136,7 +138,7 @@ const CORE = {
                 return x
             },
             s => {
-                let x = E(0)
+                let x = s.gt(0) ? Decimal.pow(0.95,s.add(1).ssqrt().root(2)) : E(1)
 
                 return x
             },
@@ -157,7 +159,7 @@ const CORE = {
             x => formatReduction(x),
             x => formatMult(x),
             x => "^"+format(x),
-            x => formatMult(x),
+            x => formatReduction(x),
             x => formatMult(x),
             x => formatMult(x),
         ],
@@ -180,6 +182,7 @@ const CORE = {
             `提升過強器力量。`,
             `提升加速器力量。`,
             `提升奇異原子獲得量。`,
+            `提升膨脹質量獲得量。`,
         ],
         res: `奇異原子`,
         boost() {return tmp.exotic_atom.amount.add(1).log10().add(1).log10().add(1)},
@@ -226,7 +229,7 @@ const CORE = {
                 return x
             },
             s => {
-                let x = E(0)
+                let x = s.add(1).log10().root(2).div(10).add(1)
 
                 return x
             },
@@ -247,7 +250,7 @@ const CORE = {
             x => "+"+format(x),
             x => "+"+format(x),
             x => "^"+format(x),
-            x => formatMult(x),
+            x => "指數 ^"+format(x),
             x => formatMult(x),
             x => formatMult(x),
         ],
@@ -270,6 +273,7 @@ const CORE = {
             `減弱所有「熵」獎勵的增幅。`,
             `減弱 QC 模組。`,
             `提升熵的獲得量和上限。`,
+            `提升量子泡沫和死亡碎片獲得量。`,
         ],
         res: `量子泡沫`,
         boost() {return player.qu.points.add(1).log10().add(1).log10().add(1)},
@@ -300,7 +304,7 @@ const CORE = {
                 return x
             },
             s => {
-                let x = E(0)
+                let x = s.add(1).log10().root(2).div(10).add(1)
 
                 return x
             },
@@ -321,7 +325,7 @@ const CORE = {
             x => formatReduction(x),
             x => formatReduction(x),
             x => "^"+format(x),
-            x => formatMult(x),
+            x => "^"+format(x),
             x => formatMult(x),
             x => formatMult(x),
         ],
@@ -344,6 +348,7 @@ const CORE = {
             `提升暗影和深淵之漬的獲得量。`,
             `減弱所有符文質量的削弱。`,
             `提升奇異原子獎勵強度。`,
+            `提升超新星生產量。`,
         ],
         res: `腐化碎片`,
         boost() {return player.dark.c16.totalS.add(1).log10().add(1).log10().add(1)},
@@ -374,7 +379,7 @@ const CORE = {
                 return x
             },
             s => {
-                let x = E(0)
+                let x = s.add(1).root(3)
 
                 return x
             },
@@ -419,7 +424,7 @@ const MAX_INV_LENGTH = 100
 
 const CORE_CHANCE_MIN = 0.1
 const CORE_TYPE = Object.keys(CORE)
-const MIN_STAR_CHANCES = [0.1,0.1,0.1,0.1,0.01,0.001,0.0001,0.00001] // new Array(MAX_STARS).fill(0.1)
+const MIN_STAR_CHANCES = [0.1,0.1,0.1,0.1,0.01,0.01,0.0025,0.000125] // new Array(MAX_STARS).fill(0.1)
 
 const MAX_CORE_FIT = 1
 
@@ -792,6 +797,7 @@ function updateCoreTemp() {
 
     let t = 4
     if (tmp.c18reward) t++
+    if (hasElement(58,1)) t++
 
     for (let i = 0; i < MAX_STARS; i++) {
         let l = E(1)
@@ -807,6 +813,14 @@ function updateCoreTemp() {
     
     tmp.core_lvl = INF.level()
 
+    let c20 = CHALS.inChal(20)
+
+    let ss = E(1e3)
+
+    if (hasElement(272)) ss = ss.mul(elemEffect(272))
+
+    tmp.meta_score_ss = ss
+
     for (let i in CORE) {
         let t = CORE[i], s = tmp.core_score[i], eff = tmp.core_eff[i], ct = core_tmp[i]
 
@@ -814,8 +828,10 @@ function updateCoreTemp() {
 
         for (let j = 0; j < MAX_STARS; j++) {
             let sc = Decimal.pow(ct.total_s[j].mul(Decimal.pow(boost, ct.total_s[j].add(1).log10().add(1))),ct.total_p) // Decimal.pow(ct.total_s[j] * Math.pow(boost, Math.log10(ct.total_s[j]+1)+1),ct.total_p)
-            sc = overflow(sc,1000,0.5)
+            sc = overflow(sc,ss,0.5)
             if (sc.gt(0)) sc = sc.add(tmp.dim_mass_eff)
+
+            if (c20) sc = E(0)
 
             s[j] = sc
             eff[j] = t.eff[j](sc)

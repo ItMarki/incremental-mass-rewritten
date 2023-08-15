@@ -66,7 +66,7 @@ const MUONIC_ELEM = {
             cost: E(1e32),
         },
         {
-            desc: `移除暗影的第 4 個獎勵的軟上限。超新星提升 π 介子獲得量。`,
+            desc: `移除第 4 個暗影獎勵的軟上限。超新星提升 π 介子獲得量。`,
             cost: E(1e42),
             eff() {
                 let x = player.supernova.times.div(1e6).add(1)
@@ -83,7 +83,7 @@ const MUONIC_ELEM = {
             cost: E(1e54),
         },
         {
-            desc: `π 介子的第 1 個獎勵更強。第 247 榮耀的獎勵提升 π 介子獲得量。`,
+            desc: `第 1 個 π 介子獎勵更強。第 247 個榮耀的獎勵提升 π 介子獲得量。`,
             cost: E(1e64),
         },
         {
@@ -123,7 +123,7 @@ const MUONIC_ELEM = {
             desc: `加速器對氬-18 的效果提供極弱的指數加成（在第 1 個溢出後）。`,
             cost: E(1e170),
             eff() {
-                let x = player.accelerator.add(10).log10()
+                let x = player.build.accelerator.amt.add(10).log10()
                 return x
             },
             effDesc: x=>"^"+format(x),
@@ -132,8 +132,9 @@ const MUONIC_ELEM = {
             cost: E(1e270),
             eff() {
                 if (!tmp.atom) return E(0)
-                let x = tmp.atom.atomicEff.max(1).log10().floor()
-                return x
+                let x = tmp.atom.atomicEff.max(1).log10()
+                if (hasElement(60,1)) x = x.pow(1.75)
+                return x.floor()
             },
             effDesc: x=>"+"+format(x,0),
         },{
@@ -193,13 +194,13 @@ const MUONIC_ELEM = {
             desc: `挑戰 16 的獎勵也適用於挑戰 9 的獎勵。`,
             cost: E('e1970'),
         },{
-            desc: `K 介子的第 1 個獎勵更強。`,
+            desc: `第 1 個 K 介子獎勵更強。`,
             cost: E('e2200'),
         },{
             desc: `無限前全局運行速度稍微提升腐化恆星的速度。`,
             cost: E('e2600'),
             eff() {
-                let x = tmp.preInfGlobalSpeed.max(1).log10().add(1).pow(2)
+                let x = hasElement(59,1) ? expMult(tmp.preInfGlobalSpeed.max(1),0.5).pow(2) : tmp.preInfGlobalSpeed.max(1).log10().add(1).pow(2)
                 return x
             },
             effDesc: x=>formatMult(x),
@@ -232,7 +233,7 @@ const MUONIC_ELEM = {
             desc: `解鎖腐化恆星的另一個效果。`,
             cost: E('e56'),
         },{
-            desc: `π 介子的第 1 個獎勵提供指數加成。`,
+            desc: `第 1 個 π 介子獎勵提供指數加成。`,
             cost: E('e7300'),
         },{
             cs: true,
@@ -240,6 +241,7 @@ const MUONIC_ELEM = {
             cost: E('e72'),
             eff() {
                 let x = player.stars.points.add(1).log10().add(1).log10().add(1)
+                if (hasElement(56,1)) x = x.pow(2)
                 return x
             },
             effDesc: x=>"推遲 "+formatMult(x),
@@ -287,6 +289,102 @@ const MUONIC_ELEM = {
                 return x
             },
             effDesc: x=>formatMult(x),
+        },{
+            desc: `霍金定理的第 5 種獎勵影響黑洞的效果。`,
+            cost: E('e14900'),
+        },{
+            desc: `無限前全局運行速度影響超新星生產。`,
+            cost: E('e15900'),
+            eff() {
+                let x = expMult(tmp.preInfGlobalSpeed.max(1),0.5).pow(2)
+                return x
+            },
+            effDesc: x=>formatMult(x),
+        },{
+            cs: true,
+            desc: `腐化之星稍微推遲自己速度的減慢。`,
+            cost: E('e230'),
+            eff() {
+                let x = player.inf.cs_amount.add(1).log10().add(1).pow(3)
+                return x
+            },
+            effDesc: x=>formatMult(x),
+        },{
+            desc: `第 2 個 π 介子獎勵稍微影響黑洞溢出^2。`,
+            cost: E('e20400'),
+            eff() {
+                let x = exoticAEff(1,1,E(1)).root(5)
+                if (tmp.c16active) x = x.max(1).log10().add(1)
+                return x
+            },
+            effDesc: x=>"^"+format(x),
+        },{
+            desc: `第 3 個 π 介子獎勵強 50%。`,
+            cost: E('e23400'),
+        },{
+            cs: true,
+            desc: `腐化之星升級 1 和 2 的價格除以超新星次數。`,
+            cost: E('e440'),
+            eff() {
+                let x = player.supernova.times.add(1)
+                if (hasElement(61,1)) x = x.pow(muElemEff(61))
+                return x
+            },
+            effDesc: x=>"/"+format(x),
+        },{
+            cs: true,
+            desc: `解鎖第 6 個恆星生產器。`,
+            cost: E('e625'),
+        },{
+            desc: `第 2 個十一級層的效果影響高級 FSS。`,
+            cost: E('e26900'),
+        },{
+            desc: `緲子鋯-40 效果翻倍。`,
+            cost: E('e33100'),
+        },{
+            desc: `在挑戰 16 外，不穩定黑洞效果 ^10。`,
+            cost: E('e35000'),
+        },{
+            cs: true,
+            desc: `解鎖定理的第 6 種效果。`,
+            cost: E('e840'),
+        },{
+            desc: `緲子砷-33 更強。`,
+            cost: E('e91000'),
+        },{
+            desc: `緲子鉀-19 更強。`,
+            cost: E('e95600'),
+        },{
+            desc: `無限定理加強緲子碘-53。`,
+            cost: E('e112800'),
+            eff() {
+                let x = player.inf.theorem.div(10).add(1).root(2)
+                return x
+            },
+            effDesc: x=>"^"+format(x),
+        },{
+            cs: true,
+            desc: `解鎖第 7 個恆星生產器。`,
+            cost: E('e1000'),
+        },{
+            desc: `移除原始素定理的增幅。所有原始素粒子的加成都會乘自己的等級。`,
+            cost: E('e155000'),
+        },{
+            cs: true,
+            desc: `解鎖腐化之星的另一個效果。`,
+            cost: E('e1100'),
+        },{
+            desc: `法向能量推遲腐化之星速度的減慢。`,
+            cost: E('e161800'),
+            eff() {
+                let x = expMult(player.gp_resources[4].add(1),0.5)
+                return x
+            },
+            effDesc: x=>"推遲 "+formatMult(x),
+        },{
+            cs: true,
+            desc: `解鎖第 8 個恆星生產器。`,
+            cost: E('e1430'),
         },
 
         /*
@@ -312,6 +410,7 @@ const MUONIC_ELEM = {
         if (tmp.ascensions_unl) u += 6
         if (tmp.CS_unl) u += 6
         if (tmp.c18reward) u += 10
+        if (tmp.fifthRowUnl) u += 8 + 10
 
         return u
     },
@@ -438,10 +537,11 @@ const EXOTIC_ATOM = {
             },x=>`不穩定黑洞質量獲得量提升 <b>${formatMult(x[0])}</b>`+(hasElement(39,1)?`，<b>^${format(x[1])}</b>`:'')],
             [a=>{
                 let x = a.add(1).pow(3)
-                return x
+                return x.overflow('1e10000',0.5)
             },x=>`黑洞溢出推遲 <b>^${format(x)}</b>`],
             [a=>{
                 let x = a.add(1).log10().div(80).add(1).root(2)
+                if (hasElement(52,1)) x = x.pow(1.5)
                 return x
             },x=>`FSS 的底數提升 ^<b>${format(x)}</b>`],
             [a=>{

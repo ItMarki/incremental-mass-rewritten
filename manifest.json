@@ -1,0 +1,19 @@
+{
+    "name": "增量質量（重寫版）",
+    "short_name": "IMR",
+    "start_url": "/incremental-mass-rewritten",
+    "display": "standalone",
+    "background_color": "#121212",
+    "description": "由 MrRedShark77 製作的一款增量遊戲。",
+    "icons": [
+      {
+        "src": "images/mass.png",
+        "sizes": "40x40",
+        "type": "image/png"
+      },{
+        "src": "images/mass_manifest.png",
+        "sizes": "160x160",
+        "type": "image/png"
+      }
+    ]
+  }

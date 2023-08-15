@@ -20,6 +20,7 @@ const DARK = {
         x = x.mul(glyphUpgEff(6))
 
         if (hasUpgrade('br',20)) x = x.mul(upgEffect(4,20))
+        if (hasUpgrade('rp',21)) x = x.mul(upgEffect(1,21))
 
         return x.floor()
     },
@@ -50,7 +51,7 @@ const DARK = {
         qu.points = E(0)
         qu.bp = E(0)
         qu.chroma = [E(0),E(0),E(0)]
-        qu.cosmic_str = E(0)
+        BUILDINGS.reset('cosmic_string')
 
         qu.prim.theorems = E(0)
         qu.prim.particles = [E(0),E(0),E(0),E(0),E(0),E(0),E(0),E(0)]
@@ -99,6 +100,8 @@ const DARK = {
         tmp.pass = 2
     },
     shadowGain() {
+        if (CHALS.inChal(19)) return E(0)
+
         let x = E(1)
 
         x = x.mul(tmp.dark.rayEff.shadow)
@@ -130,6 +133,8 @@ const DARK = {
         return x
     },
     abGain() {
+        if (CHALS.inChal(19)) return E(0)
+        
         let x = E(1)
 
         x = x.mul(tmp.dark.shadowEff.ab||1)
@@ -173,8 +178,12 @@ function calcDark(dt) {
         player.dark.shadow = player.dark.shadow.add(tmp.dark.shadowGain.mul(dt))
 
         if (tmp.chal14comp) player.dark.abyssalBlot = player.dark.abyssalBlot.add(tmp.dark.abGain.mul(dt))
-
-        if (tmp.dark.rayEff.passive) player.dark.rays = player.dark.rays.add(tmp.dark.gain.mul(dt).mul(tmp.dark.rayEff.passive))
+        
+        if (tmp.dark.rayEff.passive) {
+            let c = player.dark.rays.add(tmp.dark.gain.mul(dt).mul(tmp.dark.rayEff.passive))
+            if (CHALS.inChal(19)) c = c.min(1e12)
+            player.dark.rays = c
+        }
 
         if (tmp.matterUnl) {
             let mu = player.dark.matters.unls

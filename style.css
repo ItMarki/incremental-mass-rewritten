@@ -59,6 +59,11 @@
 }
 
 @font-face {
+	font-family: 'KingHwa';
+	src: url('fonts/京華老宋体v1.007.ttf');
+}
+
+@font-face {
 	font-family: 'Lato';
 	src: url('fonts/Lato-Regular.ttf');
 }
@@ -67,6 +72,11 @@
 	font-family: 'Lucida Handwriting';
 	src: url('fonts/qkmarisa.ttf');
 	size-adjust: 85%;
+}
+
+@font-face {
+	font-family: 'Lunasima';
+	src: url('fonts/Lunasima-Regular.ttf');
 }
 
 @font-face {
@@ -202,6 +212,12 @@
 @font-face {
 	font-family: 'Unifont';
 	src: url('fonts/unifont-15.0.02.otf');
+}
+
+@font-face {
+	font-family: 'Wingding';
+	src: url('fonts/wingding.ttf');
+	size-adjust: 90%;
 }
 
 * {

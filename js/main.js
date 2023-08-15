@@ -18,9 +18,11 @@ const CONFIRMS = ['rp', 'bh', 'atom', 'sn', 'qu', 'br', 'dark', 'inf']
 
 const FORMS = {
         getPreInfGlobalSpeed() {
-        let x = E(1)
+        let x = GPEffect(5)
         
         if (tmp.inf_unl) x = x.mul(10).mul(theoremEff('time',0))
+
+        if (hasUpgrade('br',21)) x = x.pow(upgEffect(4,21))
 
         return x
     },
@@ -44,7 +46,7 @@ const FORMS = {
     },
     massGain() {
         let x = E(1)
-        x = x.add(tmp.upgs.mass[1]?tmp.upgs.mass[1].eff.eff:1)
+        x = x.add(BUILDINGS.eff('mass_1'))
         if (player.ranks.rank.gte(6)) x = x.mul(RANKS.effect.rank[6]())
         if (player.ranks.rank.gte(13)) x = x.mul(3)
         if (player.mainUpg.bh.includes(10)) x = x.mul(tmp.upgs.main?tmp.upgs.main[2][10].effect:E(1))
@@ -61,8 +63,8 @@ const FORMS = {
         if (!hasElement(105)) x = x.mul(tmp.atom.particles[0].powerEffect.eff1)
         else x = x.pow(tmp.atom.particles[0].powerEffect.eff1)
 
-        if (!hasElement(199) || CHALS.inChal(15)) x = x.mul(tmp.tickspeedEffect.eff||E(1))
-        else x = x.pow(tmp.tickspeedEffect.eff||E(1))
+        if (!hasElement(199) || CHALS.inChal(15)) x = x.mul(BUILDINGS.eff('tickspeed'))
+        else x = x.pow(BUILDINGS.eff('tickspeed'))
 
         if (player.ranks.tier.gte(2)) x = x.pow(1.15)
         if (player.ranks.rank.gte(180)) x = x.pow(1.025)
@@ -114,7 +116,7 @@ const FORMS = {
         let op = E(.5)
         let os2 = tmp.c16active ? E('ee11') : E('ee279')
         let op2 = E(.25)
-        let os3 = E('eee5')
+        let os3 = E('eee6')
         let op3 = E(.15)
 
         if (hasTree('ct6')) os = os.pow(treeEff('ct6'))
@@ -141,6 +143,11 @@ const FORMS = {
         if (hasElement(24,1)) {
             op = op.pow(.95)
             op2 = op2.pow(.95)
+        }
+
+        if (hasUpgrade('rp',24)) {
+            op = op.pow(.8)
+            op2 = op2.pow(.8)
         }
 
         let pp = GPEffect(1)
@@ -453,8 +460,7 @@ const FORMS = {
             return x
         },
         massGain() {
-            let x = tmp.bh.f
-            .mul(this.condenser.effect().eff)
+            let x = tmp.bh.f.mul(BUILDINGS.eff('bhc'))
             if (player.mainUpg.rp.includes(11)) x = x.mul(tmp.upgs.main?tmp.upgs.main[1][11].effect:E(1))
             if (player.mainUpg.bh.includes(14)) x = x.mul(tmp.upgs.main?tmp.upgs.main[2][14].effect:E(1))
             if (hasElement(46) && !hasElement(162)) x = x.mul(tmp.elements.effect[46])
@@ -485,12 +491,14 @@ const FORMS = {
 
             if (hasElement(162)) x = x.pow(tmp.stars.effect).pow(tmp.c16active || inDarkRun() ? 5 : 100)
             
+            let bhw = theoremEff('bh',5)
+
             let o = x
             let os = tmp.c16active ? E('ee3') : E('ee69').pow(exoticAEff(1,1))
-            let op = E(0.5)
+            let op = E(0.5).pow(bhw)
 
             let os2 = tmp.c16active ? E('ee6') : E('ee249')
-            let op2 = E(0.25)
+            let op2 = E(0.25).pow(bhw)
 
             if (hasElement(187)) os = os.pow(elemEffect(187))
             if (hasElement(200)) os = os.pow(tmp.chal.eff[15])
@@ -498,6 +506,9 @@ const FORMS = {
             if (tmp.inf_unl) os = os.pow(theoremEff('bh',1))
 
             if (hasPrestige(2,45)) os2 = os2.pow(prestigeEff(2,45))
+            if (hasElement(269)) os2 = os2.pow(elemEffect(269))
+            if (hasElement(51,1)) os2 = os2.pow(muElemEff(51))
+            
             if (hasElement(252)) os2 = expMult(os2,1.5)
             
             os = os.min(os2)
@@ -548,10 +559,10 @@ const FORMS = {
         doReset() {
             let keep = []
             for (let x = 0; x < player.mainUpg.rp.length; x++) if ([3,5,6].includes(player.mainUpg.rp[x])) keep.push(player.mainUpg.rp[x])
-            player.mainUpg.rp = keep
+            if (!hasInfUpgrade(18)) player.mainUpg.rp = keep
             player.rp.points = E(0)
-            player.tickspeed = E(0)
-            player.accelerator = E(0)
+            BUILDINGS.reset('tickspeed')
+            BUILDINGS.reset('accelerator')
             player.bh.mass = E(0)
             FORMS.rp.doReset()
         },
@@ -566,6 +577,8 @@ const FORMS = {
             if (hasUpgrade('bh',18)) x = x.pow(2.5)
             
             if (hasElement(201)) x = x.overflow('e1000',0.5)
+
+            if (hasElement(48,1)) x = x.pow(theoremEff('bh',4))
             
             return x//.softcap("ee14",0.95,2)
         },
@@ -599,7 +612,7 @@ const FORMS = {
                     if (hasTree('bs5')) pow = pow.mul(tmp.bosons.effect.z_boson[0])
                     if (hasTree("bh2")) pow = pow.pow(1.15)
                 if (hasElement(129)) pow = pow.pow(elemEffect(18))
-                if (hasBeyondRank(2,4)) pow = pow.pow(tmp.accelEffect.eff)
+                if (hasBeyondRank(2,4)) pow = pow.pow(BUILDINGS.eff('accelerator'))
                 
                 if (CHALS.inChal(17)) pow = E(1)
                 
@@ -607,6 +620,8 @@ const FORMS = {
                 
                 let os = tmp.c16active ? E('ee150') : E('ee10000'), op = E(0.5)
 
+                if (hasUpgrade('bh',21)) os = expMult(os, 2)
+                
                 let o = eff
 
                 eff = overflow(eff,os,op,2)

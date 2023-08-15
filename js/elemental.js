@@ -113,14 +113,22 @@ const ELEMENTS = {
             desc: `每完成一次挑戰，夸克獲得量增加 1%。`,
             cost: E(5e18),
             effect() {
-                let x = E(0)
-                for (let i = 1; i <= CHALS.cols; i++) x = x.add(player.chal.comps[i].mul(i>4?2:1))
-                if (hasElement(7)) x = x.mul(tmp.elements.effect[7])
-                if (hasElement(87)) x = E(1.01).pow(x).root(3)
-                else x = x.div(100).add(1).max(1)
+                let x
+                if (hasElement(276)) {
+                    x = E(1)
+                    for (let i = 1; i <= CHALS.cols; i++) x = x.mul(player.chal.comps[i].add(1))
+                    if (hasElement(7)) x = x.pow(elemEffect(7))
+                    x = x.overflow('e1000',1/3)
+                } else {
+                    x = E(0)
+                    for (let i = 1; i <= CHALS.cols; i++) x = x.add(player.chal.comps[i].mul(i>4?2:1))
+                    if (hasElement(7)) x = x.mul(elemEffect(7))
+                    if (hasElement(87)) x = E(1.01).pow(x).root(3)
+                    else x = x.div(100).add(1).max(1)
+                }
                 return x
             },
-            effDesc(x) { return format(x)+"x" },
+            effDesc(x) { return hasElement(276) ? "^"+format(x) : formatMult(x) },
         },
         {
             desc: `碳的效果乘以已購買元素數。`,
@@ -187,14 +195,14 @@ const ELEMENTS = {
             desc: `你可以自動購買宇宙射線。宇宙射線極稍微加強時間速度效果。`,
             cost: E(1e44),
             effect() {
-                let x = overflow(hasElement(129) ? player.atom.gamma_ray.pow(0.5).mul(0.02).add(1) : player.atom.gamma_ray.pow(0.35).mul(0.01).add(1),1000,0.5)
+                let x = overflow(hasElement(129) ? player.build.cosmic_ray.amt.pow(0.5).mul(0.02).add(1) : player.build.cosmic_ray.amt.pow(0.35).mul(0.01).add(1),1000,0.5)
                 if (hasElement(18,1)) x = x.pow(muElemEff(18))
                 return x
             },
             effDesc(x) { return "^"+format(x) },
         },
         {
-            desc: `加強中子的第 2 個效果。`,
+            desc: `加強第 2 個中子效果。`,
             cost: E(1e50),
         },
         {
@@ -209,7 +217,7 @@ const ELEMENTS = {
             desc: `時間速度稍微提升膨脹質量獲得量。`,
             cost: E(1e61),
             effect() {
-                let x = E(1.25).pow(player.tickspeed.pow(0.55))
+                let x = E(1.25).pow(player.build.tickspeed.amt.pow(0.55))
                 return x.min('ee11000')
             },
             effDesc(x) { return format(x)+"x" },
@@ -429,7 +437,7 @@ const ELEMENTS = {
             desc: `時間速度力量稍微加強恆星提升器的底數。`,
             cost: E('e3.6e4'),
             effect() {
-                let x = tmp.tickspeedEffect?tmp.tickspeedEffect.step.max(1).log10().div(10).max(1):E(1)
+                let x = BUILDINGS.eff('tickspeed','power').max(1).log10().div(10).max(1)
                 if (hasElement(66)) x = x.pow(2)
                 return x
             },
@@ -852,7 +860,7 @@ const ELEMENTS = {
             desc: `超新星提升藍圖粒子獲得量。`,
             cost: E("e8.6e26"),
             effect() {
-                let x = Decimal.pow(1.1,player.supernova.times.softcap(2e5,0.25,0))
+                let x = Decimal.pow(1.1,player.supernova.times.overflow(1e75,0.1).softcap(2e5,0.25,0))
                 return x
             },
             effDesc(x) { return "x"+format(x,1) },
@@ -878,7 +886,7 @@ const ELEMENTS = {
             cost: E("2e26"),
         },{
             dark: true,
-            desc: `加強暗影的第 2 個效果。進入暗界時保留第 118 個或以前的大撕裂元素。`,
+            desc: `加強第 2 個暗影效果。進入暗界時保留第 118 個或以前的大撕裂元素。`,
             cost: E("1e27"),
         },{
             dark: true,
@@ -963,7 +971,7 @@ const ELEMENTS = {
             desc: `元級時間速度增幅推遲 ^2。`,
             cost: E("e2.5e53"),
         },{
-            desc: `深淵之漬的第 2 個效果也適用於質量軟上限^7-8。這些上限弱 20%。`,
+            desc: `第 2 個深淵之漬效果也適用於質量軟上限^7-8。這些上限弱 20%。`,
             cost: E("e2.2e69"),
         },{
             br: true,
@@ -1033,7 +1041,7 @@ const ELEMENTS = {
             effDesc(x) { return "x"+format(x) },
         },{
             dark: true,
-            desc: `暗影的第 5 個效果稍微提升熵上限。`,
+            desc: `第 5 個暗影效果稍微提升熵上限。`,
             cost: E("1e141"),
             effect() {
                 let e = tmp.dark.shadowEff.en||E(1)
@@ -1080,7 +1088,7 @@ const ELEMENTS = {
             },
             effDesc(x) { return "x"+format(x) },
         },{
-            desc: `鈾砹混合體的第 1 個效果推遲超級五級階和六級階增幅。`,
+            desc: `第 1 個鈾砹混合體效果推遲超級五級階和六級階增幅。`,
             cost: E("e3e85"),
             effect() {
                 let x = tmp.qu.chroma_eff[1][0].max(1).log10().div(2).add(1)
@@ -1121,7 +1129,7 @@ const ELEMENTS = {
             desc: `賦色子獲得量 ^1.1。`,
             cost: E("e1.8e91"),
         },{
-            desc: `Z0 玻色子的第 1 個效果稍微加強時間速度力量。`,
+            desc: `第 1 個 Z0 玻色子效果稍微加強時間速度力量。`,
             cost: E("e3.5e92"),
             effect() {
                 let x = tmp.bosons.effect.z_boson[0].add(1).log10().add(1).log10().add(1)
@@ -1138,7 +1146,7 @@ const ELEMENTS = {
             },
             effDesc(x) { return "x"+format(x) },
         },{
-            desc: `鈾砹混合體的第 1 個效果推遲奇異級等級和元級階，效率為 ^0.5。`,
+            desc: `第 1 個鈾砹混合體效果推遲奇異級等級和元級階，效率為 ^0.5。`,
             cost: E("e3.3e93"),
             effect() {
                 let x = tmp.qu.chroma_eff[1][0].max(1).root(2)
@@ -1161,7 +1169,7 @@ const ELEMENTS = {
             desc: `奇異級等級和極高級重置等級增幅弱 10%。`,
             cost: E('e435'),
         },{
-            desc: `粒子力量的第 1 個效果更強。`,
+            desc: `第 1 個粒子力量效果更強。`,
             cost: E("e1.6e94"),
         },{
             desc: `解鎖加速器，時間速度會提供指數加成，但是氬-18 和 150 號元素失效（在挑戰 15 裏除外）。`,
@@ -1181,7 +1189,7 @@ const ELEMENTS = {
             desc: `提升器加強自己。`,
             cost: E("e4e99"),
             effect() {
-                let m = player.massUpg[2]||E(0)
+                let m = player.build.mass_2.amt
                 let x = m.add(10).log10().pow(0.8);
 
                 if (hasElement(228)) x = x.mul(Decimal.pow(1.1,m.max(1).log10()))
@@ -1197,7 +1205,7 @@ const ELEMENTS = {
             desc: `過強器稍微提升加速器力量。`,
             cost: E("e4.2e101"),
             effect() {
-                let x = (player.massUpg[4]||E(1)).pow(1.5).add(10).log10()
+                let x = player.build.mass_4.amt.pow(1.5).add(10).log10()
 
 				return x
             },
@@ -1214,7 +1222,7 @@ const ELEMENTS = {
             effDesc(x) { return "+^"+format(x) },
         },{
             br: true,
-            desc: `鈾砹混合體的第 2 個效果適用於六級階增幅，效果也更強。`,
+            desc: `第 2 個鈾砹混合體效果適用於六級階增幅，效果也更強。`,
             cost: E("1e1.67e103"),
         },{
             desc: `解鎖超·級別。`,
@@ -1223,7 +1231,7 @@ const ELEMENTS = {
             desc: `提重器加強自己。`,
             cost: E('e1.4e112'),
             effect() {
-                let m = player.massUpg[1]||E(0)
+                let m = player.build.mass_1.amt
                 let x = m.add(10).log10().pow(0.8);
 
                 if (hasElement(245)) x = x.mul(Decimal.pow(1.1,m.max(1).log10()))
@@ -1356,7 +1364,7 @@ const ELEMENTS = {
             cost: E('ee505'),
         },{
             dark: true,
-            desc: `移除深淵之漬的第 7 個獎勵的軟上限。`,
+            desc: `移除第 7 個深淵之漬獎勵的軟上限。`,
             cost: E('e1800000'),
         },{
             inf: true,
@@ -1371,7 +1379,7 @@ const ELEMENTS = {
             cost: E('e5e34'),
         },{
             dark: true,
-            desc: `深淵之漬的第 8 個獎勵更強。`,
+            desc: `第 8 個深淵之漬獎勵更強。`,
             cost: E('e6e6'),
         },{
             inf: true,
@@ -1390,13 +1398,13 @@ const ELEMENTS = {
             cost: E('ee888'),
         },{
             dark: true,
-            desc: `移除五級層的所有增幅。鈾砹混合體的第 1 個效果適用於等級，但它的效果會改變。`,
+            desc: `移除五級層的所有增幅。第 1 個鈾砹混合體效果適用於等級，但它的效果會改變。`,
             cost: E('e9.2e6'),
         },{
             desc: `無限定理提升維度質量獲得量。它的公式稍微更好。`,
             cost: E('ee1155'),
             effect() {
-                let x = player.inf.theorem.add(1).tetrate(1.75)
+                let x = hasElement(273) ? Decimal.pow(10,player.inf.theorem.pow(2)) : player.inf.theorem.add(1).tetrate(1.75)
 
                 return x
             },
@@ -1415,14 +1423,14 @@ const ELEMENTS = {
             effDesc(x) { return "推遲 +"+format(x,0)+' 個' },
         },{
             c16: true,
-            desc: `FSS 的第 1 個獎勵在挑戰 16 中稍微更強。`,
+            desc: `第 1 個 FSS 獎勵在挑戰 16 中稍微更強。`,
             cost: E('e2e55'),
         },{
             desc: `熵倍數不會推遲起點，而會減少價格。`,
             cost: E('ee1680'),
         },{
             dark: true,
-            desc: `深淵之漬的第 10 個獎勵的第 1 個軟上限稍微更弱。`,
+            desc: `第 10 個深淵之漬獎勵的第 1 個軟上限稍微更弱。`,
             cost: E('e8.1e7'),
         },{
             desc: `W+ 玻色子提供指數加成。`,
@@ -1473,7 +1481,7 @@ const ELEMENTS = {
             cost: E('ee6366'),
         },{
             dark: true,
-            desc: `深淵之漬的第 8 個獎勵在挑戰 16 中有效。`,
+            desc: `第 8 個深淵之漬獎勵在挑戰 16 中有效。`,
             cost: E('e1.3e10'),
         },{
             c16: true,
@@ -1515,6 +1523,127 @@ const ELEMENTS = {
         },{
             desc: `大幅加強牛頓、霍金和道爾頓定理.`,
             cost: E('ee7773'),
+        },{
+            c16: true,
+            desc: `牛頓的第 5 種獎勵影響黑洞移除^2，但該效果在挑戰 16 中稍微更弱。`,
+            cost: E('ee1745'),
+            effect() {
+                let x = theoremEff('mass',4)
+                if (tmp.c16active) x = x.max(1).log10().add(1)
+                return x
+            },
+            effDesc(x) { return "^"+format(x)+' later' },
+        },{
+            desc: `解鎖第 5 列主升級。`,
+            cost: E('ee10333'),
+        },{
+            dark: true,
+            desc: `挑戰 16 的完成上限增加 300 次。`,
+            cost: E('e2.5e10'),
+        },{
+            inf: true,
+            desc: `每擁有一個無限定理，元得分的軟上限推遲 x1.05。`,
+            cost: E('1e94'),
+            effect() {
+                let x = Decimal.pow(1.05,player.inf.theorem)
+                return x
+            },
+            effDesc(x) { return '推遲 '+formatMult(x) },
+        },{
+            desc: `244 號元素的公式更好。`,
+            cost: E('ee17600'),
+        },{
+            dark: true,
+            desc: `第 4 個暗影獎勵稍微影響超新星生產量。`,
+            cost: E('e1.67e11'),
+            effect() {
+                let x = tmp.dark.shadowEff.sn||E(1)
+                x = x.root(3)
+                return x
+            },
+            effDesc(x) { return formatMult(x) },
+        },{
+            c16: true,
+            desc: `超級 FVM 增幅弱 50%。`,
+            cost: E('ee3500'),
+        },{
+            desc: `再次大幅加強碳-6 的效果。`,
+            cost: E('ee19800'),
+        },{
+            c16: true,
+            desc: `你可以在挑戰 16 外購買 FVM。`,
+            cost: E('ee6170'),
+        },{
+            desc: `額外宇宙弦稍微加強自己的力量。`,
+            cost: E('ee23500'),
+            effect() {
+                let x = tmp.build.cosmic_string.bonus.add(1).pow(0.75)
+                return x
+            },
+            effDesc(x) { return "^"+format(x) },
+        },{
+            dark: true,
+            desc: `塌縮恆星對超新星生產量的效果底數稍微更強。`,
+            cost: E('e1.13e12'),
+        },{
+            inf: true,
+            desc: `解鎖挑戰 19。`,
+            cost: E('1e110'),
+        },{
+            desc: `超新星次數稍微提升星系重置的資源獲得量。`,
+            cost: E('ee25400'),
+            effect() {
+                let x = expMult(player.supernova.times.add(1),0.5)
+                return x
+            },
+            effDesc(x) { return formatMult(x) },
+        },{
+            c16: true,
+            desc: `腐化碎片總數提升無限點數獲得量。`,
+            cost: E('ee6700'),
+            effect() {
+                let x = player.dark.c16.totalS.add(10).log10()
+                return x
+            },
+            effDesc(x) { return formatMult(x) },
+        },{
+            desc: `平行擠壓器效果升至 3x。`,
+            cost: E('ee46000'),
+        },{
+            dark: true,
+            desc: `FSS 提升升華底數的指數。`,
+            cost: E('e3.24e12'),
+            effect() {
+                let x = player.dark.matters.final.root(2).div(100)
+                return x
+            },
+            effDesc(x) { return "+"+format(x) },
+        },{
+            desc: `超級星系重置推遲 +1 個。`,
+            cost: E('ee59000'),
+        },{
+            desc: `挑戰 16 的完成上限增加 500 次。`,
+            cost: E('ee64600'),
+        },{
+            dark: true,
+            desc: `褪色物質推遲等級塌縮。`,
+            cost: E('e6.5e12'),
+            effect() {
+                let x = player.dark.matters.amt[12].add(1e10).log10().log10().pow(4/3)
+                return x
+            },
+            effDesc(x) { return formatMult(x)+" later" },
+        },{
+            c16: true,
+            desc: `挑戰 5 的獎勵效果翻倍。`,
+            cost: E('ee23700'),
+        },{
+            desc: `維度質量的效果更強。`,
+            cost: E('ee83000'),
+        },{
+            inf: true,
+            desc: `解鎖挑戰 20。`,
+            cost: E(Number.MAX_VALUE),
         },
     ],
     /*
@@ -1566,7 +1695,8 @@ const ELEMENTS = {
         if (tmp.tfUnl) u += 12
         if (tmp.ascensions_unl) u += 9
         if (tmp.CS_unl) u += 7
-        if (tmp.c18reward) u += 10
+        if (tmp.c18reward) u += 12
+        if (tmp.fifthRowUnl) u += 20
 
         return u
     },

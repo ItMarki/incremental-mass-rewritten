@@ -7,9 +7,11 @@ const INF = {
 
         let iu11 = hasInfUpgrade(11), iu15 = hasInfUpgrade(15)
 
-        resetMainUpgs(1,[3])
-        resetMainUpgs(2,[5,6])
-        resetMainUpgs(3,[2,6])
+        if (!hasInfUpgrade(18) || CHALS.inChal(20)) {
+            resetMainUpgs(1,[3])
+            resetMainUpgs(2,[5,6])
+            resetMainUpgs(3,[1,2,6])
+        }
         if (!iu11) resetMainUpgs(4,[8])
 
         let e = [14,18,24,30,122,124,131,136,143,194]
@@ -20,7 +22,7 @@ const INF = {
         for (let i = 0; i < player.atom.elements.length; i++) if (player.atom.elements[i] > 218) e.push(player.atom.elements[i])
 
         player.atom.elements = e
-        
+
         e = []
 
         for (let i = 0; i < player.atom.muonic_el.length; i++) if (MUONIC_ELEM.upgs[player.atom.muonic_el[i]].cs) e.push(player.atom.muonic_el[i])
@@ -39,13 +41,13 @@ const INF = {
         RANKS.doReset[RANKS.names[RANKS.names.length-1]]()
 
         player.rp.points = E(0)
-        player.tickspeed = E(0)
-        player.accelerator = E(0)
+        BUILDINGS.reset('tickspeed')
+        BUILDINGS.reset('accelerator')
         player.bh.mass = E(0)
 
         player.atom.atomic = E(0)
         player.bh.dm = E(0)
-        player.bh.condenser = E(0)
+        BUILDINGS.reset('bhc')
 
         tmp.supernova.time = 0
 
@@ -54,7 +56,7 @@ const INF = {
         player.atom.particles = [E(0),E(0),E(0)]
         player.atom.powers = [E(0),E(0),E(0)]
         player.atom.atomic = E(0)
-        player.atom.gamma_ray = E(0)
+        BUILDINGS.reset('cosmic_ray')
 
         player.md.active = false
         player.md.particles = E(0)
@@ -62,14 +64,14 @@ const INF = {
         for (let x = 0; x < MASS_DILATION.upgs.ids.length; x++) player.md.upgs[x] = E(0)
 
         player.stars.unls = 0
-        player.stars.generators = [E(0),E(0),E(0),E(0),E(0)]
+        player.stars.generators = [E(0),E(0),E(0),E(0),E(0),E(0),E(0),E(0)]
         player.stars.points = E(0)
-        player.stars.boost = E(0)
+        BUILDINGS.reset('star_booster')
 
         player.supernova.chal.noTick = true
         player.supernova.chal.noBHC = true
 
-        if (!hasElement(47,1)) player.supernova.times = E(0)
+        if (CHALS.inChal(19) || !hasElement(47,1)) player.supernova.times = E(0)
         player.supernova.stars = E(0)
 
         player.supernova.bosons = {
@@ -103,7 +105,8 @@ const INF = {
         qu.points = E(0)
         qu.bp = E(0)
         qu.chroma = [E(0),E(0),E(0)]
-        qu.cosmic_str = E(0)
+        
+        BUILDINGS.reset('cosmic_string')
 
         qu.prim.theorems = E(0)
         qu.prim.particles = [E(0),E(0),E(0),E(0),E(0),E(0),E(0),E(0)]
@@ -150,7 +153,7 @@ const INF = {
 
         dark.exotic_atom = darkSave.exotic_atom
 
-        if (!hasElement(242)) player.bh.fvm = E(0)
+        if (!hasElement(242)) BUILDINGS.reset('fvm')
         player.bh.unstable = E(0)
 
         // Other
@@ -207,14 +210,19 @@ const INF = {
     },
     gain() {
         if (player.mass.lt(this.req)) return E(0)
-        let x = player.mass.add(1).log10().add(1).log10().sub(307).root(2).div(2)
+        let x = player.mass.add(1).log10().add(1).log10().sub(307).root(hasInfUpgrade(20) ? 1.9 : 2).div(2)
         x = Decimal.pow(10,x.sub(1))
 
         if (hasInfUpgrade(5)) x = x.mul(infUpgEffect(5))
         if (hasElement(17,1)) x = x.mul(muElemEff(17))
         if (hasElement(20,1)) x = x.mul(muElemEff(20))
+        if (hasElement(282)) x = x.mul(elemEffect(282))
 
         if (hasBeyondRank(8,1)) x = x.mul(beyondRankEffect(8,1))
+
+        if (hasUpgrade('rp',25)) x = x.mul(upgEffect(1,25))
+        if (hasUpgrade('bh',25)) x = x.mul(upgEffect(2,25))
+        if (hasUpgrade('atom',25)) x = x.mul(upgEffect(3,25))
 
         return x.max(1).floor()
     },
@@ -335,6 +343,24 @@ const INF = {
                 desc: "到達無限不會再播放動畫。你可以舉起的普通質量不受上限限制，且隨時可以獲得無限定理。最後，解鎖元素第 3 階和更多的緲子元素。",
                 cost: E(1e12),
             },
+        ],[
+            {
+                title: "不凡物質",
+                desc: "所有有色物質升級（除了紅物質）對上一個有色物質提供額外加成。",
+                cost: E(1e145),
+            },{
+                title: `「永久」升級`,
+                desc: "重置時保留主升級。",
+                cost: E(1e155),
+            },{
+                title: "至暗挑戰",
+                desc: "移除挑戰 13-15 的完成上限。",
+                cost: E(1e190),
+            },{
+                title: "更好無限",
+                desc: "無限點數獲得量的公式更好。",
+                cost: E(1e225),
+            },
         ],
     ],
 
@@ -344,22 +370,25 @@ const INF = {
         3,
         6,
         9,
+        22,
     ],
 
     dim_mass: {
         gain() {
             if (!hasInfUpgrade(9)) return E(0)
 
-            let x = tmp.peEffect.eff||E(1)
+            let x = BUILDINGS.eff('pe')
 
             if (hasElement(244)) x = x.mul(elemEffect(244))
 
             return x
         },
         effect() {
-            let x = player.inf.dim_mass.add(1).log10().pow(hasElement(244)?2.2:2).div(10)
+            let x = player.inf.dim_mass.add(1).log10().pow(hasElement(244)?2.2:2)
 
-            return x//.softcap(10,0.5,0)
+            if (hasElement(289)) x = x.pow(1.2)
+
+            return x.div(10)//.softcap(10,0.5,0)
         },
     },
     pe: {
@@ -408,13 +437,16 @@ function generatePreTheorems() {
 function hasInfUpgrade(i) { return player.inf.upg.includes(i) }
 
 function buyInfUpgrade(r,c) {
-    if (hasInfUpgrade(r*4+c)) return
+    let id = r*4+c
+    if (r > 4) id -= 3
+
+    if (hasInfUpgrade(id)) return
 
     let u = INF.upgs[r][c]
     let cost = u.cost
 
     if (player.inf.points.gte(cost) && player.inf.theorem.gte(INF.upg_row_req[r])) {
-        player.inf.upg.push(r*4+c)
+        player.inf.upg.push(id)
         player.inf.points = player.inf.points.sub(cost).max(0).round()
 
         if (r == 4 && c == 0) addQuote(12)
@@ -437,7 +469,6 @@ function getInfSave() {
         pt_choosed: -1,
 
         dim_mass: E(0),
-        pe: E(0),
 
         cs_amount: E(0),
         cs_double: [E(0),E(0)],
@@ -452,10 +483,12 @@ function infUpgEffect(i,def=1) { return tmp.iu_eff[i] || def }
 function updateInfTemp() {
     updateCSTemp()
 
+    /*
     tmp.peCost = INF.pe.cost(player.inf.pe)
     tmp.peBulk = E(0)
     if (player.inf.points.gte(100)) tmp.peBulk = player.inf.points.div(1000).log(1.2).scaleEvery('pe',true).add(1).floor()
     tmp.peEffect = INF.pe.effect()
+    */
 
     tmp.dim_mass_gain = INF.dim_mass.gain()
     tmp.dim_mass_eff = INF.dim_mass.effect()
@@ -469,8 +502,10 @@ function updateInfTemp() {
             c = parseInt(c)
 
             let u = ru[c]
+            let id = r*4+c
+            if (r > 4) id -= 3
 
-            if (u.effect) tmp.iu_eff[r*4+c] = u.effect()
+            if (u.effect) tmp.iu_eff[id] = u.effect()
         }
     }
 
@@ -566,6 +601,9 @@ function updateInfHTML() {
         tmp.el.dim_mass.setTxt(formatMass(player.inf.dim_mass)+" "+player.inf.dim_mass.formatGain(tmp.dim_mass_gain,true))
         tmp.el.dim_mass_eff.setHTML("+"+tmp.dim_mass_eff.format())
 
+        BUILDINGS.update('pe')
+
+        /*
         let pe_eff = tmp.peEffect
 		tmp.el.pe_scale.setTxt(getScalingName('pe'))
 		tmp.el.pe_lvl.setTxt(format(player.inf.pe,0)+(pe_eff.bonus.gte(1)?" + "+format(pe_eff.bonus,0):""))
@@ -573,6 +611,7 @@ function updateInfHTML() {
 		tmp.el.pe_cost.setTxt(format(tmp.peCost,0))
 		tmp.el.pe_step.setHTML(formatMult(pe_eff.step))
 		tmp.el.pe_eff.setTxt(formatMult(pe_eff.eff))
+        */
     }
     else if (tmp.tab == 8) {
         if (tmp.stab[8] == 0) updateCoreHTML()
@@ -595,7 +634,7 @@ function updateInfHTML() {
             for (let r in INF.upgs) {
                 r = parseInt(r)
 
-                let unl = r == 0 || player.inf.theorem.gte(INF.upg_row_req[r-1])
+                let unl = (r == 0 || player.inf.theorem.gte(INF.upg_row_req[r-1])) && (r < 5 || player.chal.comps[19].gte(10))
 
                 tmp.el['iu_row'+r].setDisplay(unl)
 
@@ -607,6 +646,7 @@ function updateInfHTML() {
                     c = parseInt(c)
 
                     let id = r*4+c
+                    if (r > 4) id -= 3
 
                     let el = tmp.el[`iu_${id}_div`]
 
@@ -639,6 +679,7 @@ function setupInfUpgradesHTML() {
             c = parseInt(c)
 
             let u = ru[c], id = r*4+c
+            if (r > 4) id -= 3
 
             h += `
             <button class='inf_upg' id='iu_${id}_div' onclick='buyInfUpgrade(${r},${c})'>

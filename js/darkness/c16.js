@@ -27,10 +27,10 @@ const CHARGERS = [
         req: E('e33000'),
         cost: E(5e8),
         desc: `
-        大幅加強暗影的第 1 個獎勵。移除時間速度的所有增幅，但是移除 [陶子] 的效果。
+        大幅加強第 1 個暗影獎勵。移除時間速度的所有增幅，但是移除 [陶子] 的效果。
         `,
     },{
-        req: E('e89000'),
+        req: E('e77000'),
         cost: E(5e10),
         desc: `
         在元素標籤裏解鎖奇異元素，並解鎖新的元素層。
@@ -51,24 +51,25 @@ const CHARGERS = [
         req: E('e3.9e9'),
         cost: E(1e270),
         desc: `
-        移除層的所有增幅，但鈾砹混合體的第 1 個效果不再影響它。層在挑戰 16 中便宜 500x。
+        移除層的所有增幅，但第 1 個鈾砹混合體效果不再影響它。層在挑戰 16 中便宜 500x。
         `,
     },{
         req: E('e4e10'),
         cost: E('e400'),
         desc: `
-        移除第 40、64、67、150、199、200 和 204 個元素的腐化。
+        移除 40、64、67、150、199、200 和 204 號元素的腐化。
         `, // 40,64,67,150,199,200,204
     },
 ]
 
 const UNSTABLE_BH = {
     gain() {
-        let x = tmp.unstable_bh.fvm_eff.eff||E(1)
+        let x = BUILDINGS.eff('fvm')
 
         let ea=exoticAEff(1,0)
 
-        x = x.mul(ea[0])
+        if (Array.isArray(ea)) x = x.mul(ea[0])
+        else                   x = x.mul(ea)
 
         x = x.pow(getFragmentEffect('bh'))
         if (hasElement(39,1)) x = x.pow(ea[1])
@@ -95,6 +96,8 @@ const UNSTABLE_BH = {
 
         if (hasCharger(2)) x = x.pow(1.5)
 
+        if (hasElement(57,1) && !tmp.c16active) x = x.pow(10)
+        
         return x
     },
     fvm: {
@@ -174,13 +177,17 @@ function corruptedShardGain() {
     if (hasElement(232)) bh = player.dark.c16.bestBH.max('e100')
     else if (!tmp.c16active || bh.lt('e100')) return E(0)
 
-    let x = Decimal.pow(10,overflow(bh.max(1).log10(),1e9,0.5).div(100).root(hasElement(223) ? 2.9 : 3).sub(1))
+    let w = 1
+
+    if (hasUpgrade('br',25)) w *= 0.8
+
+    let x = Decimal.pow(10,bh.max(1).log10().overflow(1e70,(1/3)**w).overflow(1e9,0.5**w).div(100).root(hasElement(223) ? 2.9 : 3).sub(1))
 
     if (hasPrestige(3,4)) x = x.mul(prestigeEff(3,4))
     
     x = x.mul(exoticAEff(0,0))
 
-    return x.floor()
+    return x.overflow('ee12',0.25).floor()
 }
 
 function updateC16Temp() {

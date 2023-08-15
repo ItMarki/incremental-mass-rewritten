@@ -84,7 +84,7 @@ const CHALS = {
         }
         player.chal.choosed = x
     },
-    inChal(x) { return player.chal.active == x || (player.chal.active == 15 && x <= 12) },
+    inChal(x) { return player.chal.active == x || (player.chal.active == 15 && x <= 12) || (player.chal.active == 20 && x <= 19) },
     reset(x, chal_reset=true) {
         if (x < 5) FORMS.bh.doReset()
         else if (x < 9) ATOM.doReset(chal_reset)
@@ -143,11 +143,14 @@ const CHALS = {
         return "進入挑戰會強制執行無限重置。"
     },
     getMax(i) {
-        if (i <= 12 && hasPrestige(2,25)) return EINF
+        if (i <= 12 && hasPrestige(2,25)) return EINF 
+        if ((i==13||i==14||i==15) && hasInfUpgrade(19)) return EINF 
         let x = this[i].max
         if (i == 16) {
             if (hasElement(229)) x = E(100)
             if (hasElement(261)) x = x.add(100)
+            if (hasElement(271)) x = x.add(300)
+            if (hasElement(286)) x = x.add(500)
         }
         else if (i < 16) {
             if (i <= 4 && !hasPrestige(2,25)) x = x.add(tmp.chal?tmp.chal.eff[7]:0)
@@ -176,12 +179,15 @@ const CHALS = {
         return x.floor()
     },
     getScaleName(i) {
-        if (i < 16 && i != 16) {
-            if (player.chal.comps[i].gte(i==13?10:1000)) return " 魔王"
-            if (player.chal.comps[i].gte(i==13?5:i==8?200:i>8&&i!=13&&i!=16?50:300)) return " 超難"
-            if (player.chal.comps[i].gte(i==13?2:i>8&&i!=13&&i!=16?10:75)) return " 困難"
+        let c = player.chal.comps[i]
+        if (i < 16) {
+            if (c.gte(i==13?10:1000)) return " 魔王"
+            if (c.gte(i==13?5:i==8?200:i>8&&i!=13&&i!=16?50:300)) return " 超難"
+            if (c.gte(i==13?2:i>8&&i!=13&&i!=16?10:75)) return " 困難"
+        } else if (i == 16) {
+            if (c.gte(500)) return " 困難"
         } else {
-            if (player.chal.comps[i].gte(10)) return " 困難"
+            if (c.gte(10)) return " 困難"
         }
         return ""
     },
@@ -219,8 +225,8 @@ const CHALS = {
             goal = chal.start.pow(Decimal.pow(chal.inc,lvl.scale(10,2,0).pow(chal.pow)))
             if (res.gte(chal.start)) bulk = res.log(chal.start).log(chal.inc).root(chal.pow).scale(10,2,0,true).add(1).floor()
         } else if (x == 16) {
-            goal = lvl.gt(0) ? Decimal.pow('ee23',Decimal.pow(2,lvl.sub(1).pow(1.5))) : chal.start
-            if (res.gte(chal.start)) bulk = res.log('ee23').max(1).log(2).root(1.5).add(1).floor()
+            goal = lvl.gt(0) ? Decimal.pow('ee23',Decimal.pow(2,lvl.scale(500,2,0).sub(1).pow(1.5))) : chal.start
+            if (res.gte(chal.start)) bulk = res.log('ee23').max(1).log(2).root(1.5).add(1).scale(500,2,0,true).floor()
             if (res.gte('ee23')) bulk = bulk.add(1)
         } else {
             if (QCs.active() && x <= 12) fp /= tmp.qu.qc_eff[5]
@@ -393,6 +399,7 @@ const CHALS = {
             if (!c && hasPrestige(1,127)) return E(1)
             let ret = c?Decimal.pow(0.97,x.add(1).log10().root(4)):E(0.97).pow(x.root(2).softcap(5,0.5,0))
             if (hasAscension(0,22)) ret = ret.root(2)
+            if (hasElement(288)) ret = ret.pow(2)
             return ret
         },
         effDesc(x) { return hasCharger(3)?"弱 "+formatReduction(x):"弱 "+format(E(1).sub(x).mul(100))+"%"+(x.log(0.97).gte(5)?"<span class='soft'>（軟上限）</span>":"") },
@@ -470,7 +477,7 @@ const CHALS = {
     10: {
         unl() { return hasTree("chal5") },
         title: "現實·一",
-        desc: "你困在挑戰 1-8 和質量膨脹裏。",
+        desc: "你困在挑戰 1-8 和質量膨脹。",
         reward: `相對粒子公式的指數根據完成次數獲得加成。（該效果不適用於此挑戰）<br><span class="yellow">初次完成時，你會解鎖費米子。</span>`,
         max: E(100),
         inc: E('e2000'),
@@ -485,7 +492,7 @@ const CHALS = {
     11: {
         unl() { return hasTree("chal6") },
         title: "絕對主義",
-        desc: "你不能獲得膨脹質量，而且你困在質量膨脹裏。",
+        desc: "你不能獲得膨脹質量，而且你困在質量膨脹。",
         reward: `完成次數加強恆星提升器。`,
         max: E(100),
         inc: E("ee6"),
@@ -530,7 +537,7 @@ const CHALS = {
     14: {
         unl() { return hasElement(144) },
         title: "門捷列夫的怨靈",
-        desc: "你不能購買第 118 個或以前的元素。此外，你困在模組為 [5,5,5,5,5,5,5,5] 的量子挑戰裏。",
+        desc: "你不能購買第 118 個或以前的元素。此外，你困在模組為 [5,5,5,5,5,5,5,5] 的量子挑戰。",
         reward: `獲得更多原始素定理。<br><span class="yellow">初次完成時，你會解鎖更多功能！</span>`,
         max: E(100),
         inc: E('e2e19'),
@@ -545,7 +552,7 @@ const CHALS = {
     15: {
         unl() { return hasElement(168) },
         title: "現實·二",
-        desc: "你困在挑戰 1-12 和模組為 [10,5,10,10,10,10,10,10] 的量子挑戰裏。",
+        desc: "你困在挑戰 1-12 和模組為 [10,5,10,10,10,10,10,10] 的量子挑戰。",
         reward: `基於完成次數，普通質量溢出推遲。<br><span class="yellow">初次完成時，你會解鎖更多功能！</span>`,
         max: E(100),
         inc: E('e1e6'),
@@ -563,12 +570,12 @@ const CHALS = {
         desc: `
         • 你不能獲得暴怒點數。所有有色物質的公式失效，但它們會產生其他有色物質。紅物質會生產暗物質。<br>
         • 挑戰 16 前的部分內容，例如級別和重置等級、主升級、元素、中子樹等，會被腐化（禁用）。<br>
-        • 你困在質量膨脹和黑暗試煉裏，每種符文都有 100 個（斯洛伐克符文則有 10 個）。<br>
+        • 你困在質量膨脹和黑暗試煉，每種符文都有 100 個（斯洛伐克符文則有 10 個）。<br>
         • 禁用原始素粒子。<br>
         • 量子前全局運行速度一律定為 /100。<br>
         退出挑戰時，你會基於黑洞質量獲得腐化碎片。
         `,
-        reward: `加強鈾砹混合體。<br><span class="yellow">初次完成時，你會解鎖新的重置層次</span>`,
+        get reward() { return `加強鈾砹混合體。<br><span class="yellow">初次完成時，你會在普通質量到達 ${formatMass(Decimal.pow(10,Number.MAX_VALUE))} 時解鎖新的重置層次。</span>` },
         max: E(1),
         start: E('e1.25e11'),
         effect(x) {
@@ -584,7 +591,7 @@ const CHALS = {
         unl() { return hasElement(240) },
         title: "不自然時間速度",
         desc: `
-        時間速度、加速器、黑洞壓縮器、FVM、宇宙射線、恆星提升器和宇宙弦（包括加成）無效，且不可購買或不可獲得。第 2 個中子效果在購買原子升級 18 前無效。黑洞效果在購買 201 號元素前無效。你困在黑暗試煉裏，每種符文都有 250 個（不受削弱影響）。
+        時間速度、加速器、黑洞壓縮器、FVM、宇宙射線、恆星提升器和宇宙弦（包括加成）無效，且不可購買或不可獲得。第 2 個中子效果在購買原子升級 18 前無效。黑洞效果在購買 201 號元素前無效。你困在黑暗試煉，每種符文都有 250 個（不受削弱影響）。
         `,
         reward: `每完成一次，定理等級的軟上限推遲 +3 個。<br><span class="yellow">完成 4 次時，你會解鎖升華和更多的元素。</span>`,
         max: E(100),
@@ -605,7 +612,7 @@ const CHALS = {
         unl() { return hasElement(258) },
         title: "強化增幅",
         desc: `
-        你不能減弱或移除無限前資源的增幅。你困在黑暗試煉裏，每種符文都有 500 個（不受削弱影響）。
+        你不能減弱或移除無限前資源的增幅。你困在黑暗試煉，每種符文都有 500 個（不受削弱影響）。
         `,
         reward: `鈾砹混合體會影響奇異級增幅，而且加強挑戰 16 的獎勵。<br><span class="yellow">完成 4 次時，你會解鎖定理的第 5 種獎勵和更多功能。</span>`,
         max: E(100),
@@ -619,7 +626,39 @@ const CHALS = {
         },
         effDesc(x) { return "強 "+formatPercent(x.sub(1)) },
     },
-    cols: 18,
+    19: {
+        unl() { return hasElement(280) },
+        title: "陰陽失衡",
+        get desc() { return `
+        你不能變成/生產超新星，不能生產恆星資源、暗束（上限為 ${format(1e12)}）、暗影和深淵之漬，也不能購買中子樹升級。你困在黑暗試煉，每種符文都有 1000 個（不受削弱影響）。本挑戰會重置超新星次數。
+        `},
+        reward: `完成次數提升超新星生產量。<br><span class="yellow">完成 10 次時，解鎖第 6 列無限升級。</span>`,
+        max: E(100),
+        inc: E('1e10'),
+        pow: E(3),
+        start: E('ee5555'),
+        effect(x) {
+            let ret = Decimal.pow(100,expMult(x.mul(10),2/3).div(10))
+            return ret
+        },
+        effDesc(x) { return formatMult(x) },
+    },
+    20: {
+        unl() { return hasElement(290) },
+        title: "現實·三",
+        desc: "你困在挑戰 1-19 和黑暗試煉，每種符文都有 1500 個。核心中的定理無效。本挑戰會重置主升級。",
+        reward: `???。<br><span class="yellow">初次完成時，解鎖 ???。</span>`,
+        max: E(100),
+        inc: E(10),
+        pow: E(1.25),
+        start: EINF,
+        effect(x) {
+            let ret = E(1)
+            return ret
+        },
+        effDesc(x) { return "???" },
+    },
+    cols: 20,
 }
 
 /*

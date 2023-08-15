@@ -95,7 +95,7 @@ const TREE_UPGS = {
             desc: `時間速度稍微加強中子星獲得量。`,
             cost: E(10),
             effect() {
-                let x = player.tickspeed.add(1).pow(0.25)
+                let x = player.build.tickspeed.amt.add(1).pow(0.25)
                 return x
             },
             effDesc(x) { return format(x)+"x" },
@@ -252,7 +252,7 @@ const TREE_UPGS = {
             branch: ["s3"],
             req() { return player.supernova.times.gte(6) },
             reqDesc: `6 個超新星。`,
-            desc: `解鎖所有 5 種恆星後，恆星解鎖器會變成提升器。`,
+            desc: `解鎖恆星提升器。`,
             cost: E(1e5),
         },
         qol1: {
@@ -397,7 +397,7 @@ const TREE_UPGS = {
             reqDesc: `7 個超新星。`,
             cost: E(1e6),
             effect() {
-                let x = tmp.bh?tmp.bh.condenser_eff.pow.max(1).root(3):E(1)
+                let x = BUILDINGS.eff('bhc','power').max(1).root(3)
                 return x
             },
             effDesc(x) { return format(x)+"x" },
@@ -415,7 +415,7 @@ const TREE_UPGS = {
             desc: `時間速度稍微加強希格斯玻色子獲得量。`,
             cost: E(1e13),
             effect() {
-                let x = player.tickspeed.add(1).pow(0.6)
+                let x = player.build.tickspeed.amt.add(1).pow(0.6)
                 return x
             },
             effDesc(x) { return format(x)+"x" },
@@ -459,7 +459,7 @@ const TREE_UPGS = {
             desc: `時間速度稍微提升各費米子的獲得量。`,
             cost: E(1e27),
             effect() {
-                let x = E(1.25).pow(player.tickspeed.softcap(1e24,0.5,2).pow(0.4))
+                let x = E(1.25).pow(player.build.tickspeed.amt.softcap(1e24,0.5,2).pow(0.4))
                 return x
             },
             effDesc(x) { return format(x)+"x" },
@@ -636,7 +636,7 @@ const TREE_UPGS = {
         qu2: {
             qf: true,
             branch: ["qu0"],
-            desc: `大幅增強 W<sup>+</sup> 玻色子的第 1 個效果。`,
+            desc: `大幅增強第 1 個 W<sup>+</sup> 玻色子效果。`,
             cost: E(1),
         },
         qu3: {
@@ -658,7 +658,7 @@ const TREE_UPGS = {
             desc: `時間速度效果稍微提升藍圖粒子和賦色子的獲得量。`,
             cost: E(100),
             effect() {
-                let x = tmp.tickspeedEffect?tmp.tickspeedEffect.eff_bottom.add(1).log10().add(1).log10().add(1).pow(3):E(1)
+                let x = BUILDINGS.eff('tickspeed','eff_bottom').add(1).log10().add(1).log10().add(1).pow(3)
                 return x
             },
             effDesc(x) { return format(x)+"x" },
@@ -1071,12 +1071,12 @@ const TREE_UPGS = {
             desc: `你在挑戰 16 中的最佳黑洞質量免費提供輻射加成。`,
             cost: E(5000),
 
-            req() { return tmp.c16active && player.supernova.fermions.choosed == "16" && player.bh.mass.gte('1e400') && player.bh.condenser.lte(0) },
+            req() { return tmp.c16active && player.supernova.fermions.choosed == "16" && player.bh.mass.gte('1e400') && player.build.bhc.amt.lte(0) },
             reqDesc() { return `在挑戰 16 和 [元輕子] 中，在不購買黑洞壓縮器的情況下到達 ${formatMass('1e400')} 的黑洞質量。` },
 
             effect() {
                 let x = player.dark.c16.bestBH.add(1).log10().root(3)
-                return x
+                return x.overflow('1e300',0.25)
             },
             effDesc(x) { return "+"+format(x) },
         },
@@ -1117,11 +1117,11 @@ const TREE_UPGS = {
             desc: `你在挑戰 16 中的最佳黑洞質量免費提供原始素粒子。`,
             cost: E(5e7),
 
-            req() { return tmp.c16active && player.supernova.fermions.choosed == "06" && player.bh.mass.gte('1e1960') && player.bh.condenser.lte(0) },
+            req() { return tmp.c16active && player.supernova.fermions.choosed == "06" && player.bh.mass.gte('1e1960') && player.build.bhc.amt.lte(0) },
             reqDesc() { return `挑戰 16 和 [元夸克] 中，在不購買黑洞壓縮器的情況下到達 ${formatMass('1e1960')} 的黑洞質量。` },
 
             effect() {
-                let x = player.dark.c16.bestBH.add(1).log10().root(2)
+                let x = player.dark.c16.bestBH.add(1).log10().root(2).overflow('1e430',0.25)
                 return x
             },
             effDesc(x) { return "+"+format(x) },
@@ -1303,7 +1303,7 @@ function treeCanvas() {
     }
 }
 
-const TREE_ANIM = ["圓形", "正方形", "關閉"]
+const TREE_ANIM = ["圓形", "正方形", "關"]
 const CR = 5
 const SR = 7.0710678118654755
 

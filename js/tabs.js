@@ -40,6 +40,9 @@ const TABS = {
             { id: "超·級別獎勵", unl() { return tmp.brUnl } },
             { id: "升華獎勵", unl() { return tmp.ascensions_unl } },
         ],
+        2: [
+            { id: "主升級" },
+        ],
         3: [
             { id: "挑戰" },
             { id: "量子挑戰（QC）", unl() { return hasTree("unl3") }, style: "qu" },
